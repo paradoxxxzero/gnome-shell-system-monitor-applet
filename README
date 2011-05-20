@@ -2,14 +2,17 @@ Install:
 
 Install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc)
 Then :
-     mkdir -p ~/.local/share/gnome-shell/extensions
-     cd ~/.local/share/gnome-shell/extensions
-     git clone git://github.com/paradoxxxzero/memory-usage.git
+     cd
+     mkdir git_projects
+     cd git_projects
+     git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git
+     cd .local/share/gnome-shell/extensions
+     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 
 License:
 
-memory-usage: Gnome shell extension displaying your memory usage
+system-monitor: Gnome shell extension displaying system informations in gnome shell status bar, such as memory usage, cpu usage, network rates…
 Copyright (C) 2011 Florian Mounier aka paradoxxxzero
 
 This program is free software: you can redistribute it and/or modify

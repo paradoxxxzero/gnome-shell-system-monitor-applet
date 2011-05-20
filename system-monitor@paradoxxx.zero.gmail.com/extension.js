@@ -18,14 +18,10 @@
 
 const St = imports.gi.St;
 const GLib = imports.gi.GLib;
-const Mainloop = imports.mainloop;
 const Main = imports.ui.main;
-const Shell = imports.gi.Shell;
-const Lang = imports.lang;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
-const MessageTray = imports.ui.messageTray;
 
 function SystemMonitor() {
     this._init.apply(this, arguments);
@@ -36,22 +32,37 @@ SystemMonitor.prototype = {
 
     _init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Memory");
-        let item = new PopupMenu.PopupMenuItem("Memory Usage:");
+        let item = new PopupMenu.PopupMenuItem("Memory");
         this._mem = new St.Label();
         this._mem_total = new St.Label();
+        item.addActor(new St.Label({ text:':'}));
         item.addActor(this._mem);
         item.addActor(new St.Label({ text: "/"}));
         item.addActor(this._mem_total);
+        item.addActor(new St.Label({ text: "M"}));
         section.addMenuItem(item);
         this.menu.addMenuItem(section);
 
         section = new PopupMenu.PopupMenuSection("Swap");
-        item = new PopupMenu.PopupMenuItem("Swap Usage:");
+        item = new PopupMenu.PopupMenuItem("Swap");
         this._swap = new St.Label();
         this._swap_total = new St.Label();
+        item.addActor(new St.Label({ text:':'}));
         item.addActor(this._swap);
         item.addActor(new St.Label({ text: "/"}));
         item.addActor(this._swap_total);
+        item.addActor(new St.Label({ text: "M"}));
+        section.addMenuItem(item);
+        this.menu.addMenuItem(section);
+
+        section = new PopupMenu.PopupMenuSection("Cpu");
+        item = new PopupMenu.PopupMenuItem("Cpu");
+        item.addActor(new St.Label({ text:':'}));
+        this._cpu = new St.Label();
+        item.addActor(new St.Label());
+        item.addActor(new St.Label());
+        item.addActor(this._cpu);
+        item.addActor(new St.Label({ text:'%'}));
         section.addMenuItem(item);
         this.menu.addMenuItem(section);
     },
@@ -63,8 +74,11 @@ SystemMonitor.prototype = {
         this._cpu_ = new St.Label();
 
         box.add_actor(icon);
+        box.add_actor(new St.Label({ text: ' mem: '}));
         box.add_actor(this._mem_);
+        box.add_actor(new St.Label({ text: ' swap: '}));
         box.add_actor(this._swap_);
+        box.add_actor(new St.Label({ text: ' cpu: '}));
         box.add_actor(this._cpu_);
 
         this.actor.set_child(box);
@@ -83,7 +97,7 @@ SystemMonitor.prototype = {
             Panel.__system_monitor._update_mem_swap();
             return true;
         });
-        GLib.timeout_add(0, 500, function () {
+        GLib.timeout_add(0, 750, function () {
             Panel.__system_monitor._update_cpu();
             return true;
         });
@@ -99,14 +113,14 @@ SystemMonitor.prototype = {
             let mem_params = free_lines[1].replace(/ +/g, " ").split(" ");
             let percentage = Math.round(mem_params[2]/mem_params[1]*100);
             this_._mem_.set_text(" " + percentage + "%");
-            this_._mem.set_text(mem_params[2] + "M");
-            this_._mem_total.set_text(mem_params[1] + "M");
+            this_._mem.set_text(mem_params[2]);
+            this_._mem_total.set_text(mem_params[1]);
 
             let swap_params = free_lines[3].replace(/ +/g, " ").split(" ");
             percentage = Math.round(swap_params[2]/swap_params[1]*100);
             this_._swap_.set_text(" " + percentage + "%");
-            this_._swap.set_text(swap_params[2] + "M");
-            this_._swap_total.set_text(swap_params[1] + "M");
+            this_._swap.set_text(swap_params[2]);
+            this_._swap_total.set_text(swap_params[1]);
         } else {
 	    global.log("system-monitor: free -m returned an error");
 	}
@@ -124,13 +138,15 @@ SystemMonitor.prototype = {
 	    if(this_.__last_cpu_time != 0) {
 		let delta = time - this_.__last_cpu_time;
 		global.log(delta);
-		this_._cpu_.set_text(' ' + (100 - Math.round(100 * (idle - this_.__last_cpu_idle) / (total - this_.__last_cpu_total))) + '%');
+		let cpu_usage = (100 - Math.round(100 * (idle - this_.__last_cpu_idle) / (total - this_.__last_cpu_total)));
+		this_._cpu_.set_text(' ' + cpu_usage + '%');
+		this_._cpu.set_text(cpu_usage.toString());
 	    }
 	    this_.__last_cpu_idle = idle;
 	    this_.__last_cpu_total = total;
 	    this_.__last_cpu_time = time;
         } else {
-	    global.log("system-monitor: cat /proc/statr returned an error");
+	    global.log("system-monitor: cat /proc/stat returned an error");
 	}
     },
 

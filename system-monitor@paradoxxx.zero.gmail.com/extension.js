@@ -114,7 +114,6 @@ SystemMonitor.prototype = {
 
     _update_cpu: function() {
         this_ = Panel.__system_monitor;
-	global.log("----->");
         let stat = GLib.spawn_command_line_sync('cat /proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
@@ -122,10 +121,6 @@ SystemMonitor.prototype = {
 	    let idle = parseInt(cpu_params[4]);
 	    let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
 	    let time = GLib.get_monotonic_time() / 1000;
-	    global.log("->");
-	    global.log(idle);
-	    global.log(total);
-	    global.log(time);
 	    if(this_.__last_cpu_time != 0) {
 		let delta = time - this_.__last_cpu_time;
 		global.log(delta);

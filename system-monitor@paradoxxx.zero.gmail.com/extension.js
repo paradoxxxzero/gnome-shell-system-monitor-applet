@@ -76,9 +76,9 @@ SystemMonitor.prototype = {
         box.add_actor(icon);
         box.add_actor(new St.Label({ text: ' mem: '}));
         box.add_actor(this._mem_);
-        box.add_actor(new St.Label({ text: ' swap: '}));
+        box.add_actor(new St.Label({ text: ' ~ swap: '}));
         box.add_actor(this._swap_);
-        box.add_actor(new St.Label({ text: ' cpu: '}));
+        box.add_actor(new St.Label({ text: ' ~ cpu: '}));
         box.add_actor(this._cpu_);
 
         this.actor.set_child(box);
@@ -93,11 +93,14 @@ SystemMonitor.prototype = {
         this._init_menu();
         this._init_status();
 
-        GLib.timeout_add(0, 1000, function () {
+	this._update_mem_swap();
+	this._update_cpu();
+
+        GLib.timeout_add(0, 10000, function () {
             Panel.__system_monitor._update_mem_swap();
             return true;
         });
-        GLib.timeout_add(0, 750, function () {
+        GLib.timeout_add(0, 1500, function () {
             Panel.__system_monitor._update_cpu();
             return true;
         });

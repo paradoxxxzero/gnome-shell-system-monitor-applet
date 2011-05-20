@@ -140,7 +140,6 @@ SystemMonitor.prototype = {
 	    let time = GLib.get_monotonic_time() / 1000;
 	    if(this_.__last_cpu_time != 0) {
 		let delta = time - this_.__last_cpu_time;
-		global.log(delta);
 		let cpu_usage = (100 - Math.round(100 * (idle - this_.__last_cpu_idle) / (total - this_.__last_cpu_total)));
 		this_._cpu_.set_text(' ' + cpu_usage + '%');
 		this_._cpu.set_text(cpu_usage.toString());

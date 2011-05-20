@@ -107,7 +107,7 @@ SystemMonitor.prototype = {
     },
 
     _update_mem_swap: function() {
-        this_ = Panel.__system_monitor;
+        let this_ = Panel.__system_monitor;
 
         let free = GLib.spawn_command_line_sync('free -m');
         if(free[0]) {
@@ -130,7 +130,7 @@ SystemMonitor.prototype = {
     },
 
     _update_cpu: function() {
-        this_ = Panel.__system_monitor;
+        let this_ = Panel.__system_monitor;
         let stat = GLib.spawn_command_line_sync('cat /proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");

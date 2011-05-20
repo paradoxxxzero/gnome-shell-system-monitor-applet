@@ -70,8 +70,12 @@ SystemMonitor.prototype = {
         this.actor.set_child(box);
     },
     _init: function() {
-	    Panel.__system_monitor = this;
+	Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
+	this.__last_cpu_time = 0
+	this.__last_cpu_idle = 0
+	this.__last_cpu_total = 0
+
         this._init_menu();
         this._init_status();
 
@@ -103,17 +107,36 @@ SystemMonitor.prototype = {
             this_._swap_.set_text(" " + percentage + "%");
             this_._swap.set_text(swap_params[2] + "M");
             this_._swap_total.set_text(swap_params[1] + "M");
-        }
+        } else {
+	    global.log("system-monitor: free -m returned an error");
+	}
     },
 
     _update_cpu: function() {
         this_ = Panel.__system_monitor;
-
-        let stat = GLib.spawn_command_line_sync('cat /proc/stats');
+	global.log("----->");
+        let stat = GLib.spawn_command_line_sync('cat /proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
-
-        }
+	    let cpu_params = stat_lines[1].replace(/ +/g, " ").split(" ");
+	    let idle = parseInt(cpu_params[4]);
+	    let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
+	    let time = GLib.get_monotonic_time() / 1000;
+	    global.log("->");
+	    global.log(idle);
+	    global.log(total);
+	    global.log(time);
+	    if(this_.__last_cpu_time != 0) {
+		let delta = time - this_.__last_cpu_time;
+		global.log(delta);
+		this_._cpu_.set_text(' ' + (100 - Math.round(100 * (idle - this_.__last_cpu_idle) / (total - this_.__last_cpu_total))) + '%');
+	    }
+	    this_.__last_cpu_idle = idle;
+	    this_.__last_cpu_total = total;
+	    this_.__last_cpu_time = time;
+        } else {
+	    global.log("system-monitor: cat /proc/statr returned an error");
+	}
     },
 
     _onDestroy: function() {}

@@ -64,14 +64,26 @@ SystemMonitor.prototype = {
         section.addMenuItem(item);
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        // section = new PopupMenu.PopupMenuSection("Toggling");
-        // this.menu.addMenuItem(section);
-	// let widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
-        // section.addMenuItem(widget);
-	// widget = new PopupMenu.PopupSwitchMenuItem("Display swap", false);
-        // section.addMenuItem(widget);
-	// widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", false);
-        // section.addMenuItem(widget);
+        section = new PopupMenu.PopupMenuSection("Toggling");
+        this.menu.addMenuItem(section);
+	let widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
+	widget.connect('toggled', function(item) {
+            let this_ = Panel.__system_monitor;
+	    this_._mem_box.visible = item.state;
+        });
+        section.addMenuItem(widget);
+	widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
+	widget.connect('toggled', function(item) {
+            let this_ = Panel.__system_monitor;
+	    this_._swap_box.visible = item.state;
+        });
+        section.addMenuItem(widget);
+	widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
+	widget.connect('toggled', function(item) {
+            let this_ = Panel.__system_monitor;
+	    this_._cpu_box.visible = item.state;
+        });
+        section.addMenuItem(widget);
     },
     _init_status: function() {
         let box = new St.BoxLayout();
@@ -81,12 +93,21 @@ SystemMonitor.prototype = {
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
 
         box.add_actor(icon);
-        box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
-        box.add_actor(this._mem_);
-        box.add_actor(new St.Label({ text: 'swap', style_class: "sm-status-label"}));
-        box.add_actor(this._swap_);
-        box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
-        box.add_actor(this._cpu_);
+
+	this._mem_box = new St.BoxLayout();
+        this._mem_box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
+        this._mem_box.add_actor(this._mem_);
+	box.add_actor(this._mem_box);
+
+	this._swap_box = new St.BoxLayout();
+        this._swap_box.add_actor(new St.Label({ text: 'swap', style_class: "sm-status-label"}));
+        this._swap_box.add_actor(this._swap_);
+	box.add_actor(this._swap_box);
+
+	this._cpu_box = new St.BoxLayout();
+        this._cpu_box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
+        this._cpu_box.add_actor(this._cpu_);
+	box.add_actor(this._cpu_box);
 
         this.actor.set_child(box);
     },
@@ -115,7 +136,6 @@ SystemMonitor.prototype = {
 
     _update_mem_swap: function() {
         let this_ = Panel.__system_monitor;
-
         let free = GLib.spawn_command_line_sync('free -m');
         if(free[0]) {
             let free_lines = free[1].split("\n");

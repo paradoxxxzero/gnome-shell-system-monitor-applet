@@ -18,6 +18,7 @@
 
 const St = imports.gi.St;
 const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
@@ -66,24 +67,33 @@ SystemMonitor.prototype = {
 
         section = new PopupMenu.PopupMenuSection("Toggling");
         this.menu.addMenuItem(section);
-	let widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
-	widget.connect('toggled', function(item) {
+	this._mem_widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
+	this._mem_widget.connect('toggled', function(item) {
             let this_ = Panel.__system_monitor;
 	    this_._mem_box.visible = item.state;
+	    if(this_._schema) {
+		this_._schema.set_boolean("memory-display", item.state);
+	    }
         });
-        section.addMenuItem(widget);
-	widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
-	widget.connect('toggled', function(item) {
+        section.addMenuItem(this._mem_widget);
+	this._swap_widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
+	this._swap_widget.connect('toggled', function(item) {
             let this_ = Panel.__system_monitor;
 	    this_._swap_box.visible = item.state;
+	    if(this_._schema) {
+		this_._schema.set_boolean("swap-display", item.state);
+	    }
         });
-        section.addMenuItem(widget);
-	widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
-	widget.connect('toggled', function(item) {
+        section.addMenuItem(this._swap_widget);
+	this._cpu_widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
+	this._cpu_widget.connect('toggled', function(item) {
             let this_ = Panel.__system_monitor;
 	    this_._cpu_box.visible = item.state;
+	    if(this_._schema) {
+		this_._schema.set_boolean("cpu-display", item.state);
+	    }
         });
-        section.addMenuItem(widget);
+        section.addMenuItem(this._cpu_widget);
     },
     _init_status: function() {
         let box = new St.BoxLayout();
@@ -118,8 +128,36 @@ SystemMonitor.prototype = {
 	this.__last_cpu_idle = 0
 	this.__last_cpu_total = 0
 
-        this._init_menu();
         this._init_status();
+	this._schema = false
+        this._init_menu();
+	try {
+	    this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+	    this._mem_box.visible = this._schema.get_boolean("memory-display")
+	    this._mem_widget.setToggleState(this._mem_box.visible);
+	    this._swap_box.visible = this._schema.get_boolean("swap-display");
+	    this._swap_widget.setToggleState(this._swap_box.visible);
+	    this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+	    this._cpu_widget.setToggleState(this._cpu_box.visible);
+
+	    this._schema.connect('changed::memory-display', function () {
+		let this_ = Panel.__system_monitor;
+		this_._mem_box.visible = this_._schema.get_boolean("memory-display");
+		this_._mem_widget.setToggleState(this_._mem_box.visible);
+	    });
+	    this._schema.connect('changed::swap-display', function () {
+		let this_ = Panel.__system_monitor;
+		this_._swap_box.visible = this_._schema.get_boolean("swap-display");
+		this_._swap_widget.setToggleState(this_._swap_box.visible);
+	    });
+	    this._schema.connect('changed::cpu-display', function () {
+		let this_ = Panel.__system_monitor;
+		this_._cpu_box.visible = this_._schema.get_boolean("cpu-display");
+		this_._cpu_widget.setToggleState(this_._cpu_box.visible);
+	    });
+	} catch (e) {
+	    global.log("Problem with schema org.gnome.shell.extensions.system-monitor" + e);
+	}
 
 	this._update_mem_swap();
 	this._update_cpu();

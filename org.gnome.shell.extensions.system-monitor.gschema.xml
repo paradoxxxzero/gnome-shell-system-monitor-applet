@@ -1,0 +1,19 @@
+<schemalist gettext-domain="gnome-shell-extensions">
+  <schema id="org.gnome.shell.extensions.system-monitor" path="/org/gnome/shell/extensions/system-monitor/">
+    <key name="memory-display" type="b">
+      <default>true</default>
+      <summary>Display memory</summary>
+      <description>Set to false to remove memory display in status bar</description>
+    </key>
+    <key name="swap-display" type="b">
+      <default>true</default>
+      <summary>Display swap</summary>
+      <description>Set to false to remove swap display in status bar</description>
+    </key>
+    <key name="cpu-display" type="b">
+      <default>true</default>
+      <summary>Display cpu</summary>
+      <description>Set to false to remove cpu display in status bar</description>
+    </key>
+  </schema>
+</schemalist>

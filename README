@@ -8,6 +8,10 @@ Then :
      mkdir -p ~/.local/share/gnome-shell/extensions
      cd ~/.local/share/gnome-shell/extensions
      ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
+Then install the schema (important):
+     sudo cp ~/git_projects/gnome-shell-system-monitor-applet/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/share/glib-2.0/schemas
+     cd /usr/share/glib-2.0/schemas
+     sudo glib-compile-schemas  .
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 
 License:

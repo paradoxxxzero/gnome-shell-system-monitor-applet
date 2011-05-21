@@ -1,0 +1,24 @@
+.sm-label {
+    color: #bbb;
+    font-size: 12px;
+}
+
+.sm-status-label {
+    color: #bbb;
+    font-size: 10px;
+    padding: 0 5px 0 15px;
+}
+
+.sm-status-value {
+
+}
+
+.sm-value {
+    text-align: right;
+    width: 45px;
+}
+
+.sm-void {
+    width: 0px;
+}
+

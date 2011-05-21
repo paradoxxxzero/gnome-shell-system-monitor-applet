@@ -31,54 +31,61 @@ SystemMonitor.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
 
     _init_menu: function() {
-        let section = new PopupMenu.PopupMenuSection("Memory");
+        let section = new PopupMenu.PopupMenuSection("Usages");
+        this.menu.addMenuItem(section);
+
         let item = new PopupMenu.PopupMenuItem("Memory");
-        this._mem = new St.Label();
-        this._mem_total = new St.Label();
-        item.addActor(new St.Label({ text:':'}));
+        this._mem = new St.Label({ style_class: "sm-value"});
+        this._mem_total = new St.Label({ style_class: "sm-value"});
+        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         item.addActor(this._mem);
-        item.addActor(new St.Label({ text: "/"}));
+        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._mem_total);
-        item.addActor(new St.Label({ text: "M"}));
+        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
         section.addMenuItem(item);
-        this.menu.addMenuItem(section);
 
-        section = new PopupMenu.PopupMenuSection("Swap");
         item = new PopupMenu.PopupMenuItem("Swap");
-        this._swap = new St.Label();
-        this._swap_total = new St.Label();
-        item.addActor(new St.Label({ text:':'}));
+        this._swap = new St.Label({ style_class: "sm-value"});
+        this._swap_total = new St.Label({ style_class: "sm-value"});
+        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         item.addActor(this._swap);
-        item.addActor(new St.Label({ text: "/"}));
+        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._swap_total);
-        item.addActor(new St.Label({ text: "M"}));
+        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
         section.addMenuItem(item);
-        this.menu.addMenuItem(section);
 
-        section = new PopupMenu.PopupMenuSection("Cpu");
         item = new PopupMenu.PopupMenuItem("Cpu");
-        item.addActor(new St.Label({ text:':'}));
-        this._cpu = new St.Label();
-        item.addActor(new St.Label());
-        item.addActor(new St.Label());
+        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+        this._cpu = new St.Label({ style_class: "sm-value"});
+        item.addActor(new St.Label({ style_class: "sm-void"}));
+        item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(this._cpu);
-        item.addActor(new St.Label({ text:'%'}));
+        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
         section.addMenuItem(item);
-        this.menu.addMenuItem(section);
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        // section = new PopupMenu.PopupMenuSection("Toggling");
+        // this.menu.addMenuItem(section);
+	// let widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
+        // section.addMenuItem(widget);
+	// widget = new PopupMenu.PopupSwitchMenuItem("Display swap", false);
+        // section.addMenuItem(widget);
+	// widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", false);
+        // section.addMenuItem(widget);
     },
     _init_status: function() {
         let box = new St.BoxLayout();
         let icon = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height - 4, icon_name:'utilities-system-monitor'});
-        this._mem_ = new St.Label();
-        this._swap_ = new St.Label();
-        this._cpu_ = new St.Label();
+        this._mem_ = new St.Label({ style_class: "sm-status-value"});
+        this._swap_ = new St.Label({ style_class: "sm-status-value"});
+        this._cpu_ = new St.Label({ style_class: "sm-status-value"});
 
         box.add_actor(icon);
-        box.add_actor(new St.Label({ text: ' mem: '}));
+        box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
         box.add_actor(this._mem_);
-        box.add_actor(new St.Label({ text: ' ~ swap: '}));
+        box.add_actor(new St.Label({ text: 'swap', style_class: "sm-status-label"}));
         box.add_actor(this._swap_);
-        box.add_actor(new St.Label({ text: ' ~ cpu: '}));
+        box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
         box.add_actor(this._cpu_);
 
         this.actor.set_child(box);

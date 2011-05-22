@@ -188,8 +188,7 @@ SystemMonitor.prototype = {
             let memfree_line = meminfo_lines[1].replace(/ +/g, " ").split(" ");
             let buffers_line = meminfo_lines[2].replace(/ +/g, " ").split(" ");
             let cached_line = meminfo_lines[3].replace(/ +/g, " ").split(" ");
-            if( memtotal_line[0] != "MemTotal:" || memfree_line[0] != "MemFree:" || 
-                buffers_line[0] != "Buffers:"   || cached_line != "Cached:") {
+            if( memtotal_line[0] != "MemTotal:" || memfree_line[0] != "MemFree:" || buffers_line[0] != "Buffers:" || cached_line[0] != "Cached:") {
                 global.log("Error reading memory in /proc/meminfo");
                 return;
             }

@@ -185,7 +185,7 @@ SystemMonitor.prototype = {
             let free_lines = free[1].split("\n");
 
             let mem_params = free_lines[1].replace(/ +/g, " ").split(" ");
-            let mem_used = mem_params[2]-mem_params[5];  
+            let mem_used = mem_params[2]-mem_params[5]-mem_params[6];  
             let percentage = Math.round(mem_used/mem_params[1]*100);
             this._mem_.set_text(" " + percentage + "%");
             this._mem.set_text(mem_params[2]);

@@ -132,36 +132,37 @@ SystemMonitor.prototype = {
         this._init_status();
 	this._schema = false;
         this._init_menu();
-	try {
-	    this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
-	    this._mem_box.visible = this._schema.get_boolean("memory-display");
-	    this._mem_widget.setToggleState(this._mem_box.visible);
-	    this._swap_box.visible = this._schema.get_boolean("swap-display");
-	    this._swap_widget.setToggleState(this._swap_box.visible);
-	    this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-	    this._cpu_widget.setToggleState(this._cpu_box.visible);
 
-	    this._schema.connect('changed::memory-display',
-                                 Lang.bind(this,
-                                           function () {
-		                               this._mem_box.visible = this._schema.get_boolean("memory-display");
-		                               this._mem_widget.setToggleState(this._mem_box.visible);
-	                                   }));
-	    this._schema.connect('changed::swap-display',
-                                 Lang.bind(this,
-                                           function () {
-		                               this._swap_box.visible = this._schema.get_boolean("swap-display");
-		                               this._swap_widget.setToggleState(this._swap_box.visible);
-	                                   }));
-	    this._schema.connect('changed::cpu-display',
-                                 Lang.bind(this,
-                                           function () {
-		                               this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-		                               this._cpu_widget.setToggleState(this._cpu_box.visible);
-	                                   }));
-	} catch (e) {
-	    global.log("Problem with schema org.gnome.shell.extensions.system-monitor" + e);
-	}
+	this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+	this._mem_box.visible = this._schema.get_boolean("memory-display");
+	this._mem_widget.setToggleState(this._mem_box.visible);
+	this._swap_box.visible = this._schema.get_boolean("swap-display");
+	this._swap_widget.setToggleState(this._swap_box.visible);
+	this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+	this._cpu_widget.setToggleState(this._cpu_box.visible);
+
+	this._schema.connect('changed::memory-display',
+                             Lang.bind(this,
+                                       function () {
+		                           this._mem_box.visible = this._schema.get_boolean("memory-display");
+		                           this._mem_widget.setToggleState(this._mem_box.visible);
+	                               }));
+	this._schema.connect('changed::swap-display',
+                             Lang.bind(this,
+                                       function () {
+		                           this._swap_box.visible = this._schema.get_boolean("swap-display");
+		                           this._swap_widget.setToggleState(this._swap_box.visible);
+	                               }));
+	this._schema.connect('changed::cpu-display',
+                             Lang.bind(this,
+                                       function () {
+		                           this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+		                           this._cpu_widget.setToggleState(this._cpu_box.visible);
+	                               }));
+
+        if(this._schema.get_boolean("center-display")) {
+	    Main.panel._centerBox.add(this.actor);
+        }
 
 	this._update_mem_swap();
 	this._update_cpu();
@@ -176,33 +177,53 @@ SystemMonitor.prototype = {
                                        this._update_cpu();
                                        return true;
                                    }));
-	Main.panel._centerBox.add(this.actor);
     },
 
     _update_mem_swap: function() {
-        let free = GLib.spawn_command_line_sync('free -m');
-        if(free[0]) {
-            let free_lines = free[1].split("\n");
+        let meminfo = GLib.file_get_contents('/proc/meminfo');
+        if(meminfo[0]) {
+            let meminfo_lines = meminfo[1].split("\n");
 
-            let mem_params = free_lines[1].replace(/ +/g, " ").split(" ");
-            let mem_used = mem_params[2]-mem_params[5]-mem_params[6];  
-            let percentage = Math.round(mem_used/mem_params[1]*100);
-            this._mem_.set_text(" " + percentage + "%");
+            let memtotal_line = meminfo_lines[0].replace(/ +/g, " ").split(" ");
+            let memfree_line = meminfo_lines[1].replace(/ +/g, " ").split(" ");
+            let buffers_line = meminfo_lines[2].replace(/ +/g, " ").split(" ");
+            let cached_line = meminfo_lines[3].replace(/ +/g, " ").split(" ");
+            if( memtotal_line[0] != "MemTotal:" || memfree_line[0] != "MemFree:" || 
+                buffers_line[0] != "Buffers:"   || cached_line != "Cached:") {
+                global.log("Error reading memory in /proc/meminfo");
+                return;
+            }
+            let mem_total = Math.round(memtotal_line[1] / 1024);
+            let mem_free = Math.round(memfree_line[1] / 1024);
+            let buffers = Math.round(buffers_line[1] / 1024);
+            let cached = Math.round(cached_line[1] / 1024);
+            let mem_used = mem_total - mem_free - buffers -cached;
+            let mem_percentage = Math.round(100 * mem_used / mem_total);
+            this._mem_.set_text(" " + mem_percentage + "%");
             this._mem.set_text(mem_used.toString());
-            this._mem_total.set_text(mem_params[1]);
+            this._mem_total.set_text(mem_total.toString());
 
-            let swap_params = free_lines[3].replace(/ +/g, " ").split(" ");
-            percentage = Math.round(swap_params[2]/swap_params[1]*100);
-            this._swap_.set_text(" " + percentage + "%");
-            this._swap.set_text(swap_params[2]);
-            this._swap_total.set_text(swap_params[1]);
+            let swaptotal_line = meminfo_lines[13].replace(/ +/g, " ").split(" ");
+            let swapfree_line = meminfo_lines[14].replace(/ +/g, " ").split(" ");
+            if(swaptotal_line[0] != "SwapTotal:" || swapfree_line[0] != "SwapFree:") {
+                global.log("Error reading swap in /proc/meminfo");
+                return;
+            }
+            let swap_total = Math.round(swaptotal_line[1] / 1024);
+            let swap_free = Math.round(swapfree_line[1] / 1024);
+            let swap_used = swap_total - swap_free;
+            let swap_percentage = Math.round(100 * swap_used / swap_total);
+            this._swap_.set_text(" " + swap_percentage + "%");
+            this._swap.set_text(swap_used.toString());
+            this._swap_total.set_text(swap_total.toString());
+
         } else {
-	    global.log("system-monitor: free -m returned an error");
+	    global.log("system-monitor: reading /proc/meminfo gave an error");
 	}
     },
 
     _update_cpu: function() {
-        let stat = GLib.spawn_command_line_sync('cat /proc/stat');
+        let stat = GLib.file_get_contents('/proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
 	    let cpu_params = stat_lines[1].replace(/ +/g, " ").split(" ");
@@ -219,7 +240,7 @@ SystemMonitor.prototype = {
 	    this.__last_cpu_total = total;
 	    this.__last_cpu_time = time;
         } else {
-	    global.log("system-monitor: cat /proc/stat returned an error");
+	    global.log("system-monitor: reading /proc/stat gave an error");
 	}
     },
 

@@ -15,5 +15,10 @@
       <summary>Display cpu</summary>
       <description>Set to false to remove cpu display in status bar</description>
     </key>
+    <key name="center-display" type="b">
+      <default>false</default>
+      <summary>Display informations next to the clock</summary>
+      <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
+    </key>
   </schema>
 </schemalist>

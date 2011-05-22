@@ -23,6 +23,7 @@ const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Lang = imports.lang;
 
 function SystemMonitor() {
     this._init.apply(this, arguments);
@@ -68,31 +69,28 @@ SystemMonitor.prototype = {
         section = new PopupMenu.PopupMenuSection("Toggling");
         this.menu.addMenuItem(section);
 	this._mem_widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
-	this._mem_widget.connect('toggled', function(item) {
-            let this_ = Panel.__system_monitor;
-	    this_._mem_box.visible = item.state;
-	    if(this_._schema) {
-		this_._schema.set_boolean("memory-display", item.state);
+	this._mem_widget.connect('toggled', Lang.bind(this, function(item) {
+	    this._mem_box.visible = item.state;
+	    if(this._schema) {
+		this._schema.set_boolean("memory-display", item.state);
 	    }
-        });
+        }));
         section.addMenuItem(this._mem_widget);
 	this._swap_widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
-	this._swap_widget.connect('toggled', function(item) {
-            let this_ = Panel.__system_monitor;
-	    this_._swap_box.visible = item.state;
-	    if(this_._schema) {
-		this_._schema.set_boolean("swap-display", item.state);
+	this._swap_widget.connect('toggled', Lang.bind(this, function(item) {
+	    this._swap_box.visible = item.state;
+	    if(this._schema) {
+		this._schema.set_boolean("swap-display", item.state);
 	    }
-        });
+        }));
         section.addMenuItem(this._swap_widget);
 	this._cpu_widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
-	this._cpu_widget.connect('toggled', function(item) {
-            let this_ = Panel.__system_monitor;
-	    this_._cpu_box.visible = item.state;
-	    if(this_._schema) {
-		this_._schema.set_boolean("cpu-display", item.state);
+	this._cpu_widget.connect('toggled', Lang.bind(this, function(item) {
+	    this._cpu_box.visible = item.state;
+	    if(this._schema) {
+		this._schema.set_boolean("cpu-display", item.state);
 	    }
-        });
+        }));
         section.addMenuItem(this._cpu_widget);
     },
     _init_status: function() {
@@ -140,21 +138,18 @@ SystemMonitor.prototype = {
 	    this._cpu_box.visible = this._schema.get_boolean("cpu-display");
 	    this._cpu_widget.setToggleState(this._cpu_box.visible);
 
-	    this._schema.connect('changed::memory-display', function () {
-		let this_ = Panel.__system_monitor;
-		this_._mem_box.visible = this_._schema.get_boolean("memory-display");
-		this_._mem_widget.setToggleState(this_._mem_box.visible);
-	    });
-	    this._schema.connect('changed::swap-display', function () {
-		let this_ = Panel.__system_monitor;
-		this_._swap_box.visible = this_._schema.get_boolean("swap-display");
-		this_._swap_widget.setToggleState(this_._swap_box.visible);
-	    });
-	    this._schema.connect('changed::cpu-display', function () {
-		let this_ = Panel.__system_monitor;
-		this_._cpu_box.visible = this_._schema.get_boolean("cpu-display");
-		this_._cpu_widget.setToggleState(this_._cpu_box.visible);
-	    });
+	    this._schema.connect('changed::memory-display', Lang.bind(this, function () {
+		this._mem_box.visible = this._schema.get_boolean("memory-display");
+		this._mem_widget.setToggleState(this._mem_box.visible);
+	    }));
+	    this._schema.connect('changed::swap-display', Lang.bind(this, function () {
+		this._swap_box.visible = this._schema.get_boolean("swap-display");
+		this._swap_widget.setToggleState(this._swap_box.visible);
+	    }));
+	    this._schema.connect('changed::cpu-display', Lang.bind(this, function () {
+		this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+		this._cpu_widget.setToggleState(this._cpu_box.visible);
+	    }));
 	} catch (e) {
 	    global.log("Problem with schema org.gnome.shell.extensions.system-monitor" + e);
 	}
@@ -162,41 +157,39 @@ SystemMonitor.prototype = {
 	this._update_mem_swap();
 	this._update_cpu();
 
-        GLib.timeout_add(0, 10000, function () {
-            Panel.__system_monitor._update_mem_swap();
+        GLib.timeout_add(0, 10000,  Lang.bind(this, function () {
+            this._update_mem_swap();
             return true;
-        });
-        GLib.timeout_add(0, 1500, function () {
-            Panel.__system_monitor._update_cpu();
+        }));
+        GLib.timeout_add(0, 1500, Lang.bind(this, function () {
+            this._update_cpu();
             return true;
-        });
+        }));
 	Main.panel._centerBox.add(this.actor);
     },
 
     _update_mem_swap: function() {
-        let this_ = Panel.__system_monitor;
         let free = GLib.spawn_command_line_sync('free -m');
         if(free[0]) {
             let free_lines = free[1].split("\n");
 
             let mem_params = free_lines[1].replace(/ +/g, " ").split(" ");
             let percentage = Math.round(mem_params[2]/mem_params[1]*100);
-            this_._mem_.set_text(" " + percentage + "%");
-            this_._mem.set_text(mem_params[2]);
-            this_._mem_total.set_text(mem_params[1]);
+            this._mem_.set_text(" " + percentage + "%");
+            this._mem.set_text(mem_params[2]);
+            this._mem_total.set_text(mem_params[1]);
 
             let swap_params = free_lines[3].replace(/ +/g, " ").split(" ");
             percentage = Math.round(swap_params[2]/swap_params[1]*100);
-            this_._swap_.set_text(" " + percentage + "%");
-            this_._swap.set_text(swap_params[2]);
-            this_._swap_total.set_text(swap_params[1]);
+            this._swap_.set_text(" " + percentage + "%");
+            this._swap.set_text(swap_params[2]);
+            this._swap_total.set_text(swap_params[1]);
         } else {
 	    global.log("system-monitor: free -m returned an error");
 	}
     },
 
     _update_cpu: function() {
-        let this_ = Panel.__system_monitor;
         let stat = GLib.spawn_command_line_sync('cat /proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
@@ -204,15 +197,15 @@ SystemMonitor.prototype = {
 	    let idle = parseInt(cpu_params[4]);
 	    let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
 	    let time = GLib.get_monotonic_time() / 1000;
-	    if(this_.__last_cpu_time != 0) {
-		let delta = time - this_.__last_cpu_time;
-		let cpu_usage = (100 - Math.round(100 * (idle - this_.__last_cpu_idle) / (total - this_.__last_cpu_total)));
-		this_._cpu_.set_text(' ' + cpu_usage + '%');
-		this_._cpu.set_text(cpu_usage.toString());
+	    if(this.__last_cpu_time != 0) {
+		let delta = time - this.__last_cpu_time;
+		let cpu_usage = (100 - Math.round(100 * (idle - this.__last_cpu_idle) / (total - this.__last_cpu_total)));
+		this._cpu_.set_text(' ' + cpu_usage + '%');
+		this._cpu.set_text(cpu_usage.toString());
 	    }
-	    this_.__last_cpu_idle = idle;
-	    this_.__last_cpu_total = total;
-	    this_.__last_cpu_time = time;
+	    this.__last_cpu_idle = idle;
+	    this.__last_cpu_total = total;
+	    this.__last_cpu_time = time;
         } else {
 	    global.log("system-monitor: cat /proc/stat returned an error");
 	}

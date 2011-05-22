@@ -170,6 +170,7 @@ SystemMonitor.prototype = {
             Panel.__system_monitor._update_cpu();
             return true;
         });
+	Main.panel._centerBox.add(this.actor);
     },
 
     _update_mem_swap: function() {

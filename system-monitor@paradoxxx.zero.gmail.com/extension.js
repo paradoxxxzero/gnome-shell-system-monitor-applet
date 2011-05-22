@@ -132,36 +132,37 @@ SystemMonitor.prototype = {
         this._init_status();
 	this._schema = false;
         this._init_menu();
-	try {
-	    this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
-	    this._mem_box.visible = this._schema.get_boolean("memory-display");
-	    this._mem_widget.setToggleState(this._mem_box.visible);
-	    this._swap_box.visible = this._schema.get_boolean("swap-display");
-	    this._swap_widget.setToggleState(this._swap_box.visible);
-	    this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-	    this._cpu_widget.setToggleState(this._cpu_box.visible);
 
-	    this._schema.connect('changed::memory-display',
-                                 Lang.bind(this,
-                                           function () {
-		                               this._mem_box.visible = this._schema.get_boolean("memory-display");
-		                               this._mem_widget.setToggleState(this._mem_box.visible);
-	                                   }));
-	    this._schema.connect('changed::swap-display',
-                                 Lang.bind(this,
-                                           function () {
-		                               this._swap_box.visible = this._schema.get_boolean("swap-display");
-		                               this._swap_widget.setToggleState(this._swap_box.visible);
-	                                   }));
-	    this._schema.connect('changed::cpu-display',
-                                 Lang.bind(this,
-                                           function () {
-		                               this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-		                               this._cpu_widget.setToggleState(this._cpu_box.visible);
-	                                   }));
-	} catch (e) {
-	    global.log("Problem with schema org.gnome.shell.extensions.system-monitor" + e);
-	}
+	this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+	this._mem_box.visible = this._schema.get_boolean("memory-display");
+	this._mem_widget.setToggleState(this._mem_box.visible);
+	this._swap_box.visible = this._schema.get_boolean("swap-display");
+	this._swap_widget.setToggleState(this._swap_box.visible);
+	this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+	this._cpu_widget.setToggleState(this._cpu_box.visible);
+
+	this._schema.connect('changed::memory-display',
+                             Lang.bind(this,
+                                       function () {
+		                           this._mem_box.visible = this._schema.get_boolean("memory-display");
+		                           this._mem_widget.setToggleState(this._mem_box.visible);
+	                               }));
+	this._schema.connect('changed::swap-display',
+                             Lang.bind(this,
+                                       function () {
+		                           this._swap_box.visible = this._schema.get_boolean("swap-display");
+		                           this._swap_widget.setToggleState(this._swap_box.visible);
+	                               }));
+	this._schema.connect('changed::cpu-display',
+                             Lang.bind(this,
+                                       function () {
+		                           this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+		                           this._cpu_widget.setToggleState(this._cpu_box.visible);
+	                               }));
+
+        if(this._schema.get_boolean("center-display")) {
+	    Main.panel._centerBox.add(this.actor);
+        }
 
 	this._update_mem_swap();
 	this._update_cpu();
@@ -176,7 +177,6 @@ SystemMonitor.prototype = {
                                        this._update_cpu();
                                        return true;
                                    }));
-	Main.panel._centerBox.add(this.actor);
     },
 
     _update_mem_swap: function() {

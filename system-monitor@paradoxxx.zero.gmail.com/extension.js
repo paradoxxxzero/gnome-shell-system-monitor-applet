@@ -186,13 +186,17 @@ SystemMonitor.prototype = {
 
             let memtotal_line = meminfo_lines[0].replace(/ +/g, " ").split(" ");
             let memfree_line = meminfo_lines[1].replace(/ +/g, " ").split(" ");
-            if(memtotal_line[0] != "MemTotal:" || memfree_line[0] != "MemFree:") {
+            let buffers_line = meminfo_lines[2].replace(/ +/g, " ").split(" ");
+            let cached_line = meminfo_lines[3].replace(/ +/g, " ").split(" ");
+            if( memtotal_line[0] != "MemTotal:" || memfree_line[0] != "MemFree:" || buffers_line[0] != "Buffers:" || cached_line[0] != "Cached:") {
                 global.log("Error reading memory in /proc/meminfo");
                 return;
             }
             let mem_total = Math.round(memtotal_line[1] / 1024);
             let mem_free = Math.round(memfree_line[1] / 1024);
-            let mem_used = mem_total - mem_free;
+            let buffers = Math.round(buffers_line[1] / 1024);
+            let cached = Math.round(cached_line[1] / 1024);
+            let mem_used = mem_total - mem_free - buffers -cached;
             let mem_percentage = Math.round(100 * mem_used / mem_total);
             this._mem_.set_text(" " + mem_percentage + "%");
             this._mem.set_text(mem_used.toString());

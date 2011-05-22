@@ -185,11 +185,10 @@ SystemMonitor.prototype = {
             let free_lines = free[1].split("\n");
 
             let mem_params = free_lines[1].replace(/ +/g, " ").split(" ");
-            //used memory = used - buffers - cached
-            let mem_used = mem_params[2]-(mem_params[5]+mem_params[6]);
-            let percentage = Math.round(mem_used * 100 /mem_params[1]);
+            
+            let percentage = Math.round(mem_params[2]/mem_params[1]*100);
             this._mem_.set_text(" " + percentage + "%");
-            this._mem.set_text(mem_used);
+            this._mem.set_text(mem_params[2]);
             this._mem_total.set_text(mem_params[1]);
 
             let swap_params = free_lines[3].replace(/ +/g, " ").split(" ");

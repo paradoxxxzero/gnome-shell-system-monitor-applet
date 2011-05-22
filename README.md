@@ -2,7 +2,9 @@
 
 ### Install:
 #### On archlinux:
+
 I've created a package in aur: https://aur.archlinux.org/packages.php?ID=49250
+
 You can install it with: yaourt or packer -S gnome-shell-system-monitor-applet-git
 
 #### Everywhere else for now:

@@ -102,6 +102,7 @@ SystemMonitor.prototype = {
         this._mem_ = new St.Label({ style_class: "sm-status-value"});
         this._swap_ = new St.Label({ style_class: "sm-status-value"});
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
+        this._net_ = new St.Label({ style_class: "sm-status-value"});
 
         box.add_actor(icon);
 
@@ -120,6 +121,11 @@ SystemMonitor.prototype = {
         this._cpu_box.add_actor(this._cpu_);
 	box.add_actor(this._cpu_box);
 
+	this._net_box = new St.BoxLayout();
+        this._net_box.add_actor(new St.Label({ text: 'net', style_class: "sm-status-label"}));
+        this._net_box.add_actor(this._net_);
+	box.add_actor(this._net_box);
+
         this.actor.set_child(box);
     },
     _init: function() {
@@ -128,6 +134,9 @@ SystemMonitor.prototype = {
 	this.__last_cpu_time = 0;
 	this.__last_cpu_idle = 0;
 	this.__last_cpu_total = 0;
+	this.__last_net_time = 0;
+	this.__last_net_down = 0;
+	this.__last_net_up = 0;
 
         this._init_status();
 	this._schema = false;
@@ -166,6 +175,7 @@ SystemMonitor.prototype = {
 
 	this._update_mem_swap();
 	this._update_cpu();
+	this._update_net();
 
         GLib.timeout_add(0, 10000,
                          Lang.bind(this, function () {
@@ -175,6 +185,11 @@ SystemMonitor.prototype = {
         GLib.timeout_add(0, 1500,
                          Lang.bind(this, function () {
                                        this._update_cpu();
+                                       return true;
+                                   }));
+        GLib.timeout_add(0, 1000,
+                         Lang.bind(this, function () {
+                                       this._update_net();
                                        return true;
                                    }));
     },
@@ -236,6 +251,28 @@ SystemMonitor.prototype = {
 	    this.__last_cpu_time = time;
         } else {
 	    global.log("system-monitor: reading /proc/stat gave an error");
+	}
+    },
+
+    _update_net: function() {
+        let net = GLib.file_get_contents('/proc/net/dev');
+        if(net[0]) {
+            let net_lines = net[1].split("\n");
+	    let net_params = net_lines[4].replace(/ +/g, " ").split(" ");
+	    let down = parseInt(net_params[2]);
+	    let up = parseInt(net_params[10]);
+	    let time = GLib.get_monotonic_time() / 1000;
+	    if(this.__last_net_time != 0) {
+		let delta = time - this.__last_net_time;
+		let net_down = Math.round((down - this.__last_net_down) / delta);
+		let net_up = Math.round((up - this.__last_net_up) / delta);
+		this._net_.set_text(' ' + net_down + 'd ' + net_up + 'u');
+	    }
+	    this.__last_net_down = down;
+	    this.__last_net_up = up;
+	    this.__last_net_time = time;
+        } else {
+	    global.log("system-monitor: reading /proc/net/dev gave an error");
 	}
     },
 

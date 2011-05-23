@@ -6,11 +6,29 @@
 .sm-status-label {
     color: #bbb;
     font-size: 10px;
-    padding: 0 5px 0 15px;
+    padding: 0 2px 0 5px;
+}
+
+.sm-unit-label {
+    color: #aaa;
+    font-size: 8px;
+    padding: 6px 5px 0 2px;
+}
+
+.sm-perc-label {
+    color: #aaa;
+    font-size: 10px;
+    padding: 0 5px 0 2px;
 }
 
 .sm-status-value {
+    min-width: 25px;
+    text-align: right;
+}
 
+.sm-big-status-value {
+    min-width: 32px;
+    text-align: right;
 }
 
 .sm-value {

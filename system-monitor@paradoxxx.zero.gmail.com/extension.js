@@ -67,16 +67,15 @@ SystemMonitor.prototype = {
         item.addActor(this._cpu);
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
         section.addMenuItem(item);
-        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         item = new PopupMenu.PopupMenuItem("Net");
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this._netdown = new St.Label({ style_class: "sm-value"});
         item.addActor(this._netdown);
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height, icon_name:'go-down'}));
+        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
         this._netup = new St.Label({ style_class: "sm-value"});
         item.addActor(this._netup);
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height, icon_name:'go-up'}));
+        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
         section.addMenuItem(item);
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
@@ -121,32 +120,37 @@ SystemMonitor.prototype = {
         this._mem_ = new St.Label({ style_class: "sm-status-value"});
         this._swap_ = new St.Label({ style_class: "sm-status-value"});
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
-        this._netdown_ = new St.Label({ style_class: "sm-status-value"});
-        this._netup_ = new St.Label({ style_class: "sm-status-value"});
+        this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
+        this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
 
         box.add_actor(icon);
 
 	    this._mem_box = new St.BoxLayout();
         this._mem_box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
         this._mem_box.add_actor(this._mem_);
+        this._mem_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
 	    box.add_actor(this._mem_box);
 
 	    this._swap_box = new St.BoxLayout();
         this._swap_box.add_actor(new St.Label({ text: 'swap', style_class: "sm-status-label"}));
         this._swap_box.add_actor(this._swap_);
+        this._swap_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
 	    box.add_actor(this._swap_box);
 
 	    this._cpu_box = new St.BoxLayout();
         this._cpu_box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
         this._cpu_box.add_actor(this._cpu_);
+        this._cpu_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
 	    box.add_actor(this._cpu_box);
 
 	    this._net_box = new St.BoxLayout();
         this._net_box.add_actor(new St.Label({ text: 'net', style_class: "sm-status-label"}));
+        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * Main.panel.button.height / 3, icon_name:'go-down'}));
         this._net_box.add_actor(this._netdown_);
-        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height / 2, icon_name:'go-down'}));
+        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
+        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * Main.panel.button.height / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
-        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height / 2, icon_name:'go-up'}));
+        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
 	    box.add_actor(this._net_box);
 
         this.actor.set_child(box);
@@ -234,7 +238,7 @@ SystemMonitor.prototype = {
             let memtotal = 0, memfree = 0, membuffers = 0, memcached = 0, swaptotal = 0, swapfree = 0;
             // Lines are not always at the same positions
             for(var i = 0 ; i < meminfo_lines.length ; i++) {
-                line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
+                let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
                 switch(line[0]) {
                 case "MemTotal:":
                     memtotal = Math.round(line[1] / 1024);
@@ -264,7 +268,7 @@ SystemMonitor.prototype = {
 
             let mem_used = memtotal - memfree - membuffers - memcached;
             let mem_percentage = Math.round(100 * mem_used / memtotal);
-            this._mem_.set_text(" " + mem_percentage + "%");
+            this._mem_.set_text(mem_percentage.toString());
             this._mem.set_text(mem_used.toString());
             this._mem_total.set_text(memtotal.toString());
 
@@ -274,7 +278,7 @@ SystemMonitor.prototype = {
             }
             let swap_used = swaptotal - swapfree;
             let swap_percentage = Math.round(100 * swap_used / swaptotal);
-            this._swap_.set_text(" " + swap_percentage + "%");
+            this._swap_.set_text(swap_percentage.toString());
             this._swap.set_text(swap_used.toString());
             this._swap_total.set_text(swaptotal.toString());
 
@@ -294,7 +298,7 @@ SystemMonitor.prototype = {
 	        if(this.__last_cpu_time != 0) {
 		        let delta = time - this.__last_cpu_time;
 		        let cpu_usage = (100 - Math.round(100 * (idle - this.__last_cpu_idle) / (total - this.__last_cpu_total)));
-		        this._cpu_.set_text(' ' + cpu_usage + '%');
+		        this._cpu_.set_text(cpu_usage.toString());
 		        this._cpu.set_text(cpu_usage.toString());
 	        }
 	        this.__last_cpu_idle = idle;
@@ -312,7 +316,6 @@ SystemMonitor.prototype = {
             let down = 0, up = 0;
             for(var i = 3; i < net_lines.length - 1 ; i++) {
 	            let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
-                global.log(net_params[2]);
 	            down += parseInt(net_params[2]);
 	            up += parseInt(net_params[10]);
             }
@@ -322,7 +325,7 @@ SystemMonitor.prototype = {
 		        let net_down = Math.round((down - this.__last_net_down) / delta);
 		        let net_up = Math.round((up - this.__last_net_up) / delta);
 		        this._netdown_.set_text(net_down.toString());
-		        this._netup_.set_text(' ' + net_up);
+		        this._netup_.set_text(net_up.toString());
 		        this._netdown.set_text(net_down + " kB/s");
 		        this._netup.set_text(net_up + " kB/s");
 	        }

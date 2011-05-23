@@ -15,6 +15,11 @@
       <summary>Display cpu</summary>
       <description>Set to false to remove cpu display in status bar</description>
     </key>
+    <key name="net-display" type="b">
+      <default>false</default>
+      <summary>Display net</summary>
+      <description>Set to false to remove net display in status bar</description>
+    </key>
     <key name="center-display" type="b">
       <default>false</default>
       <summary>Display informations next to the clock</summary>

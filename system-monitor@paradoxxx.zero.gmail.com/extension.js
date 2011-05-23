@@ -69,6 +69,17 @@ SystemMonitor.prototype = {
         section.addMenuItem(item);
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
+        item = new PopupMenu.PopupMenuItem("Net");
+        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+        this._netdown = new St.Label({ style_class: "sm-value"});
+        item.addActor(this._netdown);
+        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height, icon_name:'go-down'}));
+        this._netup = new St.Label({ style_class: "sm-value"});
+        item.addActor(this._netup);
+        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height, icon_name:'go-up'}));
+        section.addMenuItem(item);
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
         section = new PopupMenu.PopupMenuSection("Toggling");
         this.menu.addMenuItem(section);
 	    this._mem_widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
@@ -95,6 +106,14 @@ SystemMonitor.prototype = {
 	                                                      }
                                                       }));
         section.addMenuItem(this._cpu_widget);
+	    this._net_widget = new PopupMenu.PopupSwitchMenuItem("Display net", true);
+	    this._net_widget.connect('toggled', Lang.bind(this, function(item) {
+	                                                      this._net_box.visible = item.state;
+	                                                      if(this._schema) {
+		                                                      this._schema.set_boolean("net-display", item.state);
+	                                                      }
+                                                      }));
+        section.addMenuItem(this._net_widget);
     },
     _init_status: function() {
         let box = new St.BoxLayout();
@@ -102,7 +121,8 @@ SystemMonitor.prototype = {
         this._mem_ = new St.Label({ style_class: "sm-status-value"});
         this._swap_ = new St.Label({ style_class: "sm-status-value"});
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
-        this._net_ = new St.Label({ style_class: "sm-status-value"});
+        this._netdown_ = new St.Label({ style_class: "sm-status-value"});
+        this._netup_ = new St.Label({ style_class: "sm-status-value"});
 
         box.add_actor(icon);
 
@@ -123,7 +143,10 @@ SystemMonitor.prototype = {
 
 	    this._net_box = new St.BoxLayout();
         this._net_box.add_actor(new St.Label({ text: 'net', style_class: "sm-status-label"}));
-        this._net_box.add_actor(this._net_);
+        this._net_box.add_actor(this._netdown_);
+        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height / 2, icon_name:'go-down'}));
+        this._net_box.add_actor(this._netup_);
+        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height / 2, icon_name:'go-up'}));
 	    box.add_actor(this._net_box);
 
         this.actor.set_child(box);
@@ -150,6 +173,8 @@ SystemMonitor.prototype = {
 	    this._swap_widget.setToggleState(this._swap_box.visible);
 	    this._cpu_box.visible = this._schema.get_boolean("cpu-display");
 	    this._cpu_widget.setToggleState(this._cpu_box.visible);
+	    this._net_box.visible = this._schema.get_boolean("net-display");
+	    this._net_widget.setToggleState(this._net_box.visible);
 
 	    this._schema.connect('changed::memory-display',
                              Lang.bind(this,
@@ -168,6 +193,13 @@ SystemMonitor.prototype = {
                                        function () {
 		                                   this._cpu_box.visible = this._schema.get_boolean("cpu-display");
 		                                   this._cpu_widget.setToggleState(this._cpu_box.visible);
+	                                   }));
+
+	    this._schema.connect('changed::net-display',
+                             Lang.bind(this,
+                                       function () {
+		                                   this._cpu_box.visible = this._schema.get_boolean("net-display");
+		                                   this._cpu_widget.setToggleState(this._net_box.visible);
 	                                   }));
 
         if(this._schema.get_boolean("center-display")) {
@@ -277,15 +309,22 @@ SystemMonitor.prototype = {
         let net = GLib.file_get_contents('/proc/net/dev');
         if(net[0]) {
             let net_lines = net[1].split("\n");
-	        let net_params = net_lines[4].replace(/ +/g, " ").split(" ");
-	        let down = parseInt(net_params[2]);
-	        let up = parseInt(net_params[10]);
+            let down = 0, up = 0;
+            for(var i = 3; i < net_lines.length - 1 ; i++) {
+	            let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
+                global.log(net_params[2]);
+	            down += parseInt(net_params[2]);
+	            up += parseInt(net_params[10]);
+            }
 	        let time = GLib.get_monotonic_time() / 1000;
 	        if(this.__last_net_time != 0) {
 		        let delta = time - this.__last_net_time;
 		        let net_down = Math.round((down - this.__last_net_down) / delta);
 		        let net_up = Math.round((up - this.__last_net_up) / delta);
-		        this._net_.set_text(' ' + net_down + 'd ' + net_up + 'u');
+		        this._netdown_.set_text(net_down.toString());
+		        this._netup_.set_text(' ' + net_up);
+		        this._netdown.set_text(net_down + " kB/s");
+		        this._netup.set_text(net_up + " kB/s");
 	        }
 	        this.__last_net_down = down;
 	        this.__last_net_up = up;

@@ -77,6 +77,7 @@ SystemMonitor.prototype = {
         item.addActor(this._netup);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
         section.addMenuItem(item);
+
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         section = new PopupMenu.PopupMenuSection("Toggling");
@@ -202,8 +203,8 @@ SystemMonitor.prototype = {
 	    this._schema.connect('changed::net-display',
                              Lang.bind(this,
                                        function () {
-		                                   this._cpu_box.visible = this._schema.get_boolean("net-display");
-		                                   this._cpu_widget.setToggleState(this._net_box.visible);
+		                                   this._net_box.visible = this._schema.get_boolean("net-display");
+		                                   this._net_widget.setToggleState(this._net_box.visible);
 	                                   }));
 
         if(this._schema.get_boolean("center-display")) {

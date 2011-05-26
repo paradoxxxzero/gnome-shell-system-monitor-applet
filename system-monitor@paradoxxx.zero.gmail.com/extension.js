@@ -34,6 +34,7 @@ function SystemMonitor() {
 
 SystemMonitor.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
+    icon_size: Panel.PANEL_ICON_SIZE,
 
     _init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Usages");
@@ -117,7 +118,7 @@ SystemMonitor.prototype = {
     },
     _init_status: function() {
         let box = new St.BoxLayout();
-        let icon = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: Main.panel.button.height - 4, icon_name:'utilities-system-monitor'});
+        let icon = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: this.icon_size, icon_name:'utilities-system-monitor'});
         this._mem_ = new St.Label({ style_class: "sm-status-value"});
         this._swap_ = new St.Label({ style_class: "sm-status-value"});
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
@@ -146,10 +147,10 @@ SystemMonitor.prototype = {
 
 	    this._net_box = new St.BoxLayout();
         this._net_box.add_actor(new St.Label({ text: 'net', style_class: "sm-status-label"}));
-        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * Main.panel.button.height / 3, icon_name:'go-down'}));
+        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
         this._net_box.add_actor(this._netdown_);
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
-        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * Main.panel.button.height / 3, icon_name:'go-up'}));
+        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
 	    box.add_actor(this._net_box);

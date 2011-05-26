@@ -34,7 +34,7 @@ function SystemMonitor() {
 
 SystemMonitor.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
-    icon_size: Panel.PANEL_ICON_SIZE,
+    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
 
     _init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Usages");

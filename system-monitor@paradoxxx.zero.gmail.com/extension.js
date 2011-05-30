@@ -27,6 +27,7 @@ const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Util = imports.misc.util;
 
 function SystemMonitor() {
     this._init.apply(this, arguments);
@@ -48,6 +49,9 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._mem_total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
+        item.connect('activate', function() {
+                         Util.spawn(["gnome-system-monitor"]);
+                     });
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Swap");
@@ -58,6 +62,9 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._swap_total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
+        item.connect('activate', function() {
+                         Util.spawn(["gnome-system-monitor"]);
+                     });
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Cpu");
@@ -67,6 +74,9 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(this._cpu);
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
+        item.connect('activate', function() {
+                         Util.spawn(["gnome-system-monitor"]);
+                     });
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Net");
@@ -77,6 +87,9 @@ SystemMonitor.prototype = {
         this._netup = new St.Label({ style_class: "sm-value"});
         item.addActor(this._netup);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
+        item.connect('activate', function() {
+                         Util.spawn(["gnome-system-monitor"]);
+                     });
         section.addMenuItem(item);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());

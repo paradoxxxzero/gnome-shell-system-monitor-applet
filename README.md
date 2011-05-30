@@ -10,7 +10,7 @@ You can install it with: yaourt or packer -S gnome-shell-system-monitor-applet-g
 #### Everywhere else for now:
 
 Install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc)
-Then :
+Then:
 
     mkdir ~/git_projects
     cd ~/git_projects
@@ -19,13 +19,15 @@ Then :
     cd ~/.local/share/gnome-shell/extensions
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
 
-Then install the schema (important) replace /usr/share/glib-2.0/schemas with /usr/local/share/glib-2.0/schemas if your prefix is /usr/local
+Then install the schema:
 
-    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/share/glib-2.0/schemas
-    cd /usr/share/glib-2.0/schemas
+    sudo mkdir -p /usr/local/share/glib-2.0/schemas
+    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/local/share/glib-2.0/schemas
+    cd /usr/local/share/glib-2.0/schemas
     sudo glib-compile-schemas . # Don't forget the dot!
 
 And restart gnome-shell (Alt + F2 -> r) or reboot.
+
 
 ### License:
 

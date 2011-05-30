@@ -306,7 +306,7 @@ SystemMonitor.prototype = {
         let stat = GLib.file_get_contents('/proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
-	        let cpu_params = stat_lines[1].replace(/ +/g, " ").split(" ");
+	        let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
 	        let idle = parseInt(cpu_params[4]);
 	        let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
 	        let time = GLib.get_monotonic_time() / 1000;

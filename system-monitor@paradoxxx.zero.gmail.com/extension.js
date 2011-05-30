@@ -30,6 +30,43 @@ const PopupMenu = imports.ui.popupMenu;
 
 const Util = imports.misc.util;
 
+function Cpu_State() {
+    this._init();
+}
+
+Cpu_State.prototype = {
+    _init: function() {
+        this.get_data();
+    }
+    get_data: function() {
+        let stat = GLib.file_get_contents('/proc/stat');
+        if(stat[0]) {
+            let stat_lines = stat[1].split("\n");
+            let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
+            this.user_t = parseInt(cpu_params[1]);
+            this.nice_t = parseInt(cpu_params[2]);
+            this.sys_t = parseInt(cpu_params[3]);
+            this.idle_t = parseInt(cpu_params[4]);
+            this.io_t = parseInt(cpu_params[5]);
+            this.total_t = 0;
+            for (var i = 0;i < cpu_params.length;i++) {
+                this.total_t += parseInt(cpu_params[i]);
+            }
+        } else {
+	    global.log("system-monitor: reading /proc/stat gave an error");
+        }
+    }
+    update: function() {
+        this.last_user = this.user_t;
+        this.last_nice = this.nice_t;
+        this.last_sys = this.sys_t;
+        this.last_idle = this.idle_t;
+        this.last_io = this.io_t;
+        this.last_total = this.total_t;
+        this.get_date();
+    }
+}
+
 function SystemMonitor() {
     this._init.apply(this, arguments);
 }

@@ -300,28 +300,27 @@ SystemMonitor.prototype = {
                     break;
                 }
             }
-
             if(memtotal == 0) {
                 global.log("Error reading memory in /proc/meminfo");
-                return;
+            } else {
+                let mem_used = memtotal - memfree - membuffers - memcached;
+                let mem_percentage = Math.round(100 * mem_used / memtotal);
+                this._mem_.set_text(mem_percentage.toString());
+                this._mem.set_text(mem_used.toString());
+                this._mem_total.set_text(memtotal.toString());
             }
-
-            let mem_used = memtotal - memfree - membuffers - memcached;
-            let mem_percentage = Math.round(100 * mem_used / memtotal);
-            this._mem_.set_text(mem_percentage.toString());
-            this._mem.set_text(mem_used.toString());
-            this._mem_total.set_text(memtotal.toString());
-
+            // Swap may be 0 if swap is off, in this case set all to 0
             if(swaptotal == 0) {
-                global.log("Error reading memory in /proc/meminfo");
-                return;
+                this._swap_.set_text("0");
+                this._swap.set_text("0");
+                this._swap_total.set_text("0");
+            } else {
+                let swap_used = swaptotal - swapfree;
+                let swap_percentage = Math.round(100 * swap_used / swaptotal);
+                this._swap_.set_text(swap_percentage.toString());
+                this._swap.set_text(swap_used.toString());
+                this._swap_total.set_text(swaptotal.toString());
             }
-            let swap_used = swaptotal - swapfree;
-            let swap_percentage = Math.round(100 * swap_used / swaptotal);
-            this._swap_.set_text(swap_percentage.toString());
-            this._swap.set_text(swap_used.toString());
-            this._swap_total.set_text(swaptotal.toString());
-
         } else {
 	        global.log("system-monitor: reading /proc/meminfo gave an error");
 	    }

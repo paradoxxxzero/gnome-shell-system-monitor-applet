@@ -66,6 +66,20 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="diskio-display" type="b">
+      <default>false</default>
+      <summary>Display net</summary>
+      <description>Set to false to remove net display in status bar</description>
+    </key>
+    <key name="diskio-show-text" type="b">
+      <default>false</default>
+      <summary>Display 'net'</summary>
+      <description>Set to true to show 'net' before net display</description>
+    </key>
+    <key name="diskio-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="center-display" type="b">
       <default>false</default>
       <summary>Display informations next to the clock</summary>

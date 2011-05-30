@@ -1,5 +1,5 @@
 <schemalist gettext-domain="gnome-shell-extensions">
-  <enum id="org.gnome.shell.extensions.system-monitor.display">
+  <enum id="org.gnome.shell.extensions.system-monitor.display-style">
     <value value="0" nick="digit"/>
     <value value="1" nick="graph"/>
     <value value="2" nick="both"/>
@@ -20,6 +20,10 @@
       <summary>Display 'mem'</summary>
       <description>Set to true to show 'mem' before memory display</description>
     </key>
+    <key name="memory-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="swap-display" type="b">
       <default>true</default>
       <summary>Display swap</summary>
@@ -29,6 +33,10 @@
       <default>false</default>
       <summary>Display 'swap'</summary>
       <description>Set to true to show 'swap' before swap display</description>
+    </key>
+    <key name="swap-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
     </key>
     <key name="cpu-display" type="b">
       <default>true</default>
@@ -40,6 +48,10 @@
       <summary>Display 'cpu'</summary>
       <description>Set to true to show 'cpu' before cpu display</description>
     </key>
+    <key name="cpu-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="net-display" type="b">
       <default>false</default>
       <summary>Display net</summary>
@@ -49,6 +61,10 @@
       <default>false</default>
       <summary>Display 'net'</summary>
       <description>Set to true to show 'net' before net display</description>
+    </key>
+    <key name="net-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
     </key>
     <key name="center-display" type="b">
       <default>false</default>

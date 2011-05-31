@@ -63,7 +63,7 @@ Cpu_State.prototype = {
         this.last_total = this.total_t;
         this.get_data();
         let total = this.total_t - this.last_total;
-        global.log("error" + total.toString());
+        global.log("Error" + total.toString());
         if (total != 0) {
             for (var i = 0;i < 5;i++) {
                 this.usage[i] = (this.accum[i] - this.last[i]) / total;

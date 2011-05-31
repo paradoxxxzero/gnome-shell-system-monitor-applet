@@ -27,6 +27,7 @@ const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Util = imports.misc.util;
 
 const Util = imports.misc.util;
 
@@ -50,9 +51,11 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._mem_total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        item.connect('activate', function() {
-            Util.spawn(["gnome-system-monitor"]);
-        });
+        item.connect(
+            'activate',
+            function() {
+                Util.spawn(["gnome-system-monitor"]);
+            });
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Swap");
@@ -63,9 +66,11 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._swap_total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        item.connect('activate', function() {
-            Util.spawn(["gnome-system-monitor"]);
-        });
+        item.connect(
+            'activate',
+            function() {
+                Util.spawn(["gnome-system-monitor"]);
+            });
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Cpu");
@@ -75,9 +80,11 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(this._cpu);
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.connect('activate', function() {
-            Util.spawn(["gnome-system-monitor"]);
-        });
+        item.connect(
+            'activate',
+            function() {
+                Util.spawn(["gnome-system-monitor"]);
+            });
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Net");
@@ -88,46 +95,60 @@ SystemMonitor.prototype = {
         this._netup = new St.Label({ style_class: "sm-value"});
         item.addActor(this._netup);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-        item.connect('activate', function() {
-            Util.spawn(["gnome-system-monitor"]);
-        });
+        item.connect(
+            'activate',
+            function() {
+                Util.spawn(["gnome-system-monitor"]);
+            });
         section.addMenuItem(item);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         section = new PopupMenu.PopupMenuSection("Toggling");
         this.menu.addMenuItem(section);
-	this._mem_widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
-	this._mem_widget.connect('toggled', Lang.bind(this, function(item) {
-	    this._mem_box.visible = item.state;
-	    if(this._schema) {
-		this._schema.set_boolean("memory-display", item.state);
-	    }
-        }));
+        this._mem_widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
+        this._mem_widget.connect(
+            'toggled',
+            Lang.bind(this,
+                      function(item) {
+                          this._mem_box.visible = item.state;
+                          if(this._schema) {
+                              this._schema.set_boolean("memory-display", item.state);
+                          }
+                      }));
         section.addMenuItem(this._mem_widget);
-	this._swap_widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
-	this._swap_widget.connect('toggled', Lang.bind(this, function(item) {
-	    this._swap_box.visible = item.state;
-	    if(this._schema) {
-		this._schema.set_boolean("swap-display", item.state);
-	    }
-        }));
+        this._swap_widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
+        this._swap_widget.connect(
+            'toggled',
+            Lang.bind(this,
+                      function(item) {
+                          this._swap_box.visible = item.state;
+                          if(this._schema) {
+                              this._schema.set_boolean("swap-display", item.state);
+                          }
+                      }));
         section.addMenuItem(this._swap_widget);
-	this._cpu_widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
-	this._cpu_widget.connect('toggled', Lang.bind(this, function(item) {
-	    this._cpu_box.visible = item.state;
-	    if(this._schema) {
-		this._schema.set_boolean("cpu-display", item.state);
-	    }
-        }));
+        this._cpu_widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
+        this._cpu_widget.connect(
+            'toggled',
+            Lang.bind(this,
+                      function(item) {
+                          this._cpu_box.visible = item.state;
+                          if(this._schema) {
+                              this._schema.set_boolean("cpu-display", item.state);
+                          }
+                      }));
         section.addMenuItem(this._cpu_widget);
-	this._net_widget = new PopupMenu.PopupSwitchMenuItem("Display net", true);
-	this._net_widget.connect('toggled', Lang.bind(this, function(item) {
-	    this._net_box.visible = item.state;
-	    if(this._schema) {
-		this._schema.set_boolean("net-display", item.state);
-	    }
-        }));
+        this._net_widget = new PopupMenu.PopupSwitchMenuItem("Display net", true);
+        this._net_widget.connect(
+            'toggled',
+            Lang.bind(this,
+                      function(item) {
+                          this._net_box.visible = item.state;
+                          if(this._schema) {
+                              this._schema.set_boolean("net-display", item.state);
+                          }
+                      }));
         section.addMenuItem(this._net_widget);
     },
     _init_status: function() {
@@ -141,25 +162,25 @@ SystemMonitor.prototype = {
 
         box.add_actor(icon);
 
-	this._mem_box = new St.BoxLayout();
+        this._mem_box = new St.BoxLayout();
         this._mem_box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
         this._mem_box.add_actor(this._mem_);
         this._mem_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
-	box.add_actor(this._mem_box);
+        box.add_actor(this._mem_box);
 
-	this._swap_box = new St.BoxLayout();
+        this._swap_box = new St.BoxLayout();
         this._swap_box.add_actor(new St.Label({ text: 'swap', style_class: "sm-status-label"}));
         this._swap_box.add_actor(this._swap_);
         this._swap_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
-	box.add_actor(this._swap_box);
+        box.add_actor(this._swap_box);
 
-	this._cpu_box = new St.BoxLayout();
+        this._cpu_box = new St.BoxLayout();
         this._cpu_box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
         this._cpu_box.add_actor(this._cpu_);
         this._cpu_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
-	box.add_actor(this._cpu_box);
+        box.add_actor(this._cpu_box);
 
-	this._net_box = new St.BoxLayout();
+        this._net_box = new St.BoxLayout();
         this._net_box.add_actor(new St.Label({ text: 'net', style_class: "sm-status-label"}));
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
         this._net_box.add_actor(this._netdown_);
@@ -167,84 +188,89 @@ SystemMonitor.prototype = {
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
-	box.add_actor(this._net_box);
+        box.add_actor(this._net_box);
 
         this.actor.set_child(box);
     },
     _init: function() {
-	Panel.__system_monitor = this;
+        Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
 
-	this.__last_cpu_time = 0;
-	this.__last_cpu_idle = 0;
-	this.__last_cpu_total = 0;
-	this.__last_net_time = 0;
-	this.__last_net_down = 0;
-	this.__last_net_up = 0;
+        this.__last_cpu_time = 0;
+        this.__last_cpu_idle = 0;
+        this.__last_cpu_total = 0;
+        this.__last_net_time = 0;
+        this.__last_net_down = 0;
+        this.__last_net_up = 0;
 
         this._init_status();
-	this._schema = false;
+        this._schema = false;
         this._init_menu();
 
-	this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
-	this._mem_box.visible = this._schema.get_boolean("memory-display");
-	this._mem_widget.setToggleState(this._mem_box.visible);
-	this._swap_box.visible = this._schema.get_boolean("swap-display");
-	this._swap_widget.setToggleState(this._swap_box.visible);
-	this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-	this._cpu_widget.setToggleState(this._cpu_box.visible);
-	this._net_box.visible = this._schema.get_boolean("net-display");
-	this._net_widget.setToggleState(this._net_box.visible);
+        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+        this._mem_box.visible = this._schema.get_boolean("memory-display");
+        this._mem_widget.setToggleState(this._mem_box.visible);
+        this._swap_box.visible = this._schema.get_boolean("swap-display");
+        this._swap_widget.setToggleState(this._swap_box.visible);
+        this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+        this._cpu_widget.setToggleState(this._cpu_box.visible);
+        this._net_box.visible = this._schema.get_boolean("net-display");
+        this._net_widget.setToggleState(this._net_box.visible);
 
-	this._schema.connect('changed::memory-display',
-                             Lang.bind(this,
-                                       function () {
-		                           this._mem_box.visible = this._schema.get_boolean("memory-display");
-		                           this._mem_widget.setToggleState(this._mem_box.visible);
-	                               }));
-	this._schema.connect('changed::swap-display',
-                             Lang.bind(this,
-                                       function () {
-		                           this._swap_box.visible = this._schema.get_boolean("swap-display");
-		                           this._swap_widget.setToggleState(this._swap_box.visible);
-	                               }));
-	this._schema.connect('changed::cpu-display',
-                             Lang.bind(this,
-                                       function () {
-		                           this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-		                           this._cpu_widget.setToggleState(this._cpu_box.visible);
-	                               }));
-
-	this._schema.connect('changed::net-display',
-                             Lang.bind(this,
-                                       function () {
-		                           this._net_box.visible = this._schema.get_boolean("net-display");
-		                           this._net_widget.setToggleState(this._net_box.visible);
-	                               }));
-
+        this._schema.connect(
+            'changed::memory-display',
+            Lang.bind(this,
+                      function () {
+                          this._mem_box.visible = this._schema.get_boolean("memory-display");
+                          this._mem_widget.setToggleState(this._mem_box.visible);
+                      }));
+        this._schema.connect(
+            'changed::swap-display',
+            Lang.bind(this,
+                      function () {
+                          this._swap_box.visible = this._schema.get_boolean("swap-display");
+                          this._swap_widget.setToggleState(this._swap_box.visible);
+                      }));
+        this._schema.connect(
+            'changed::cpu-display',
+            Lang.bind(this,
+                      function () {
+                          this._cpu_box.visible = this._schema.get_boolean("cpu-display");
+                          this._cpu_widget.setToggleState(this._cpu_box.visible);
+                      }));
+        this._schema.connect(
+            'changed::net-display',
+            Lang.bind(this,
+                      function () {
+                          this._net_box.visible = this._schema.get_boolean("net-display");
+                          this._net_widget.setToggleState(this._net_box.visible);
+                      }));
         if(this._schema.get_boolean("center-display")) {
-	    Main.panel._centerBox.add(this.actor);
+            Main.panel._centerBox.add(this.actor);
         }
 
-	this._update_mem_swap();
-	this._update_cpu();
-	this._update_net();
+        this._update_mem_swap();
+        this._update_cpu();
+        this._update_net();
 
         GLib.timeout_add(0, 10000,
-                         Lang.bind(this, function () {
-                             this._update_mem_swap();
-                             return true;
-                         }));
+                         Lang.bind(this,
+                                   function () {
+                                       this._update_mem_swap();
+                                       return true;
+                                   }));
         GLib.timeout_add(0, 1500,
-                         Lang.bind(this, function () {
-                             this._update_cpu();
-                             return true;
-                         }));
+                         Lang.bind(this,
+                                   function () {
+                                       this._update_cpu();
+                                       return true;
+                                   }));
         GLib.timeout_add(0, 1000,
-                         Lang.bind(this, function () {
-                             this._update_net();
-                             return true;
-                         }));
+                         Lang.bind(this,
+                                   function () {
+                                       this._update_net();
+                                       return true;
+                                   }));
     },
 
     _update_mem_swap: function() {
@@ -276,53 +302,52 @@ SystemMonitor.prototype = {
                     break;
                 }
             }
-
             if(memtotal == 0) {
                 global.log("Error reading memory in /proc/meminfo");
-                return;
+            } else {
+                let mem_used = memtotal - memfree - membuffers - memcached;
+                let mem_percentage = Math.round(100 * mem_used / memtotal);
+                this._mem_.set_text(mem_percentage.toString());
+                this._mem.set_text(mem_used.toString());
+                this._mem_total.set_text(memtotal.toString());
             }
-
-            let mem_used = memtotal - memfree - membuffers - memcached;
-            let mem_percentage = Math.round(100 * mem_used / memtotal);
-            this._mem_.set_text(mem_percentage.toString());
-            this._mem.set_text(mem_used.toString());
-            this._mem_total.set_text(memtotal.toString());
-
+            // Swap may be 0 if swap is off, in this case set all to 0
             if(swaptotal == 0) {
-                global.log("Error reading memory in /proc/meminfo");
-                return;
+                this._swap_.set_text("0");
+                this._swap.set_text("0");
+                this._swap_total.set_text("0");
+            } else {
+                let swap_used = swaptotal - swapfree;
+                let swap_percentage = Math.round(100 * swap_used / swaptotal);
+                this._swap_.set_text(swap_percentage.toString());
+                this._swap.set_text(swap_used.toString());
+                this._swap_total.set_text(swaptotal.toString());
             }
-            let swap_used = swaptotal - swapfree;
-            let swap_percentage = Math.round(100 * swap_used / swaptotal);
-            this._swap_.set_text(swap_percentage.toString());
-            this._swap.set_text(swap_used.toString());
-            this._swap_total.set_text(swaptotal.toString());
-
         } else {
-	    global.log("system-monitor: reading /proc/meminfo gave an error");
-	}
+            global.log("system-monitor: reading /proc/meminfo gave an error");
+        }
     },
 
     _update_cpu: function() {
         let stat = GLib.file_get_contents('/proc/stat');
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
-	    let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
-	    let idle = parseInt(cpu_params[4]);
-	    let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
-	    let time = GLib.get_monotonic_time() / 1000;
-	    if(this.__last_cpu_time != 0) {
-		let delta = time - this.__last_cpu_time;
-		let cpu_usage = (100 - Math.round(100 * (idle - this.__last_cpu_idle) / (total - this.__last_cpu_total)));
-		this._cpu_.set_text(cpu_usage.toString());
-		this._cpu.set_text(cpu_usage.toString());
-	    }
-	    this.__last_cpu_idle = idle;
-	    this.__last_cpu_total = total;
-	    this.__last_cpu_time = time;
+            let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
+            let idle = parseInt(cpu_params[4]);
+            let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
+            let time = GLib.get_monotonic_time() / 1000;
+            if(this.__last_cpu_time != 0) {
+                let delta = time - this.__last_cpu_time;
+                let cpu_usage = (100 - Math.round(100 * (idle - this.__last_cpu_idle) / (total - this.__last_cpu_total)));
+                this._cpu_.set_text(cpu_usage.toString());
+                this._cpu.set_text(cpu_usage.toString());
+            }
+            this.__last_cpu_idle = idle;
+            this.__last_cpu_total = total;
+            this.__last_cpu_time = time;
         } else {
-	    global.log("system-monitor: reading /proc/stat gave an error");
-	}
+            global.log("system-monitor: reading /proc/stat gave an error");
+        }
     },
 
     _update_net: function() {
@@ -331,26 +356,26 @@ SystemMonitor.prototype = {
             let net_lines = net[1].split("\n");
             let down = 0, up = 0;
             for(var i = 3; i < net_lines.length - 1 ; i++) {
-	        let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
-	        down += parseInt(net_params[2]);
-	        up += parseInt(net_params[10]);
+                let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
+                down += parseInt(net_params[2]);
+                up += parseInt(net_params[10]);
             }
-	    let time = GLib.get_monotonic_time() / 1000;
-	    if(this.__last_net_time != 0) {
-		let delta = time - this.__last_net_time;
-		let net_down = Math.round((down - this.__last_net_down) / delta);
-		let net_up = Math.round((up - this.__last_net_up) / delta);
-		this._netdown_.set_text(net_down.toString());
-		this._netup_.set_text(net_up.toString());
-		this._netdown.set_text(net_down + " kB/s");
-		this._netup.set_text(net_up + " kB/s");
-	    }
-	    this.__last_net_down = down;
-	    this.__last_net_up = up;
-	    this.__last_net_time = time;
+            let time = GLib.get_monotonic_time() / 1000;
+            if(this.__last_net_time != 0) {
+                let delta = time - this.__last_net_time;
+                let net_down = Math.round((down - this.__last_net_down) / delta);
+                let net_up = Math.round((up - this.__last_net_up) / delta);
+                this._netdown_.set_text(net_down.toString());
+                this._netup_.set_text(net_up.toString());
+                this._netdown.set_text(net_down + " kB/s");
+                this._netup.set_text(net_up + " kB/s");
+            }
+            this.__last_net_down = down;
+            this.__last_net_up = up;
+            this.__last_net_time = time;
         } else {
-	    global.log("system-monitor: reading /proc/net/dev gave an error");
-	}
+            global.log("system-monitor: reading /proc/net/dev gave an error");
+        }
     },
 
     _onDestroy: function() {}

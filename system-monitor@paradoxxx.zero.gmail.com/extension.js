@@ -29,8 +29,6 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
 
-const Util = imports.misc.util;
-
 function Cpu_State() {
     this._init();
 }

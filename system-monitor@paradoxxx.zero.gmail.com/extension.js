@@ -36,6 +36,9 @@ function Cpu_State() {
 
 Cpu_State.prototype = {
     _init: function() {
+        this.accum = {};
+        this.last = {};
+        this.usage = {};
         this.get_data();
     }
     get_data: function() {
@@ -43,11 +46,9 @@ Cpu_State.prototype = {
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
             let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
-            this.user_t = parseInt(cpu_params[1]);
-            this.nice_t = parseInt(cpu_params[2]);
-            this.sys_t = parseInt(cpu_params[3]);
-            this.idle_t = parseInt(cpu_params[4]);
-            this.io_t = parseInt(cpu_params[5]);
+            for (var i = 1;i <= 5;i++) {
+                this.accum[i - 1] = parseInt(cpu_params[i]);
+            }
             this.total_t = 0;
             for (var i = 0;i < cpu_params.length;i++) {
                 this.total_t += parseInt(cpu_params[i]);
@@ -57,13 +58,28 @@ Cpu_State.prototype = {
         }
     }
     update: function() {
-        this.last_user = this.user_t;
-        this.last_nice = this.nice_t;
-        this.last_sys = this.sys_t;
-        this.last_idle = this.idle_t;
-        this.last_io = this.io_t;
+        for (var i = 0;i < 5;i++) {
+            this.last[i] = this.accum[i];
+        }
         this.last_total = this.total_t;
-        this.get_date();
+        this.get_data();
+        let total = this.total_t - this.last_total;
+        for (var i = 0;i < 5;i++) {
+            this.usage[i] = (this.accum[i] - this.last[i]) / total;
+        }
+    }
+    using: function() {
+        return 1 - usage[3];
+    }
+}
+
+function Mem_Swap() {
+    this._init();
+}
+
+Mem_Swap.prototype = {
+    _init: function() {
+        
     }
 }
 

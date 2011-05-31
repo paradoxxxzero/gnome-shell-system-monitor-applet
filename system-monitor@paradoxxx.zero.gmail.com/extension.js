@@ -274,8 +274,7 @@ SystemMonitor.prototype = {
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
-        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-lab
-el"}));
+        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
         box.add_actor(this._net_box);
 
         this.actor.set_child(box);

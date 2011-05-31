@@ -40,7 +40,7 @@ Cpu_State.prototype = {
         this.last = {};
         this.usage = {};
         this.get_data();
-    }
+    },
     get_data: function() {
         let stat = GLib.file_get_contents('/proc/stat');
         if(stat[0]) {
@@ -56,7 +56,7 @@ Cpu_State.prototype = {
         } else {
 	    global.log("system-monitor: reading /proc/stat gave an error");
         }
-    }
+    },
     update: function() {
         for (var i = 0;i < 5;i++) {
             this.last[i] = this.accum[i];
@@ -67,7 +67,7 @@ Cpu_State.prototype = {
         for (var i = 0;i < 5;i++) {
             this.usage[i] = (this.accum[i] - this.last[i]) / total;
         }
-    }
+    },
     using: function() {
         return 1 - usage[3];
     }

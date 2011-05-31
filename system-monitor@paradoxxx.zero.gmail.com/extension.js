@@ -70,7 +70,7 @@ Cpu_State.prototype = {
         }
     },
     used: function() {
-        return 1 - usage[3];
+        return 1 - this.usage[3];
     }
 }
 

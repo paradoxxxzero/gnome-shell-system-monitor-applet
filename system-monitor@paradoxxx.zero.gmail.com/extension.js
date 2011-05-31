@@ -37,9 +37,9 @@ function Cpu_State() {
 
 Cpu_State.prototype = {
     _init: function() {
-        this.accum = {};
-        this.last = {};
-        this.usage = {};
+        this.accum = [0,0,0,0,0];
+        this.last = [0,0,0,0,0];
+        this.usage = [0,0,0,0,0];
         this.get_data();
     },
     get_data: function() {
@@ -65,11 +65,13 @@ Cpu_State.prototype = {
         this.last_total = this.total_t;
         this.get_data();
         let total = this.total_t - this.last_total;
-        for (var i = 0;i < 5;i++) {
-            this.usage[i] = (this.accum[i] - this.last[i]) / total;
+        if (total != 0) {
+            for (var i = 0;i < 5;i++) {
+                this.usage[i] = (this.accum[i] - this.last[i]) / total;
+            }
         }
     },
-    using: function() {
+    used: function() {
         return 1 - usage[3];
     }
 }
@@ -80,7 +82,64 @@ function Mem_Swap() {
 
 Mem_Swap.prototype = {
     _init: function() {
-        
+        this.mem = [0,0,0,0,0];
+        this.swap = [0,0];
+        this.update();
+    }
+    
+    {
+        if(mem[0] == 0) {
+            global.log("Error reading memory in /proc/meminfo");
+        } else {
+            let mem_used = memtotal - memfree - membuffers - memcached;
+            let mem_percentage = Math.round(100 * mem_used / memtotal);
+            this._mem_.set_text(mem_percentage.toString());
+            this._mem.set_text(mem_used.toString());
+            this._mem_total.set_text(memtotal.toString());
+        }
+        if(swaptotal == 0) {
+            this._swap_.set_text("0");
+            this._swap.set_text("0");
+            this._swap_total.set_text("0");
+        } else {
+            let swap_used = swaptotal - swapfree;
+            let swap_percentage = Math.round(100 * swap_used / swaptotal);
+            this._swap_.set_text(swap_percentage.toString());
+            this._swap.set_text(swap_used.toString());
+            this._swap_total.set_text(swaptotal.toString());
+        }
+    },
+    update: function() {
+        let meminfo = GLib.file_get_contents('/proc/meminfo');
+        if(meminfo[0]) {
+            let meminfo_lines = meminfo[1].split("\n");
+            for(var i = 0 ; i < meminfo_lines.length ; i++) {
+                let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
+                switch(line[0]) {
+                case "MemTotal:":
+                    mem[0] = Math.round(line[1] / 1024);
+                    break;
+                case "MemFree:":
+                    mem[1] = Math.round(line[1] / 1024);
+                    break;
+                case "Buffers:":
+                    mem[3] = Math.round(line[1] / 1024);
+                    break;
+                case "Cached:":
+                    mem[4] = Math.round(line[1] / 1024);
+                    break;
+                case "SwapTotal:":
+                    swap[0] = Math.round(line[1] / 1024);
+                    break;
+                case "SwapFree:":
+                    swap[1] = Math.round(line[1] / 1024);
+                    break;
+                }
+            }
+            mem[2] = mem[0] - mem[1] - mem[3] - mem[4];
+        } else {
+	    global.log("system-monitor: reading /proc/meminfo gave an error");
+	}
     }
 }
 

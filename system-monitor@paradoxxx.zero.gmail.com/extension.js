@@ -416,7 +416,8 @@ SystemMonitor.prototype = {
 
     _update_cpu: function() {
         this.cpu.update();
-        this._cpu_.set_text(this.cpu.used().toString());
+//        this._cpu_.set_text(this.cpu.used().toString());
+        this._cpu_.set_text("50");
         this._cpu.set_text(this.cpu.used().toString());
     },
 

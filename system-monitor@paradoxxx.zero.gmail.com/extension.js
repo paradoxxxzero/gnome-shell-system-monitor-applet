@@ -33,6 +33,10 @@ function Cpu_State() {
     this._init();
 }
 
+function print(p) {
+    global.log("Error " + p.toString());
+}
+
 Cpu_State.prototype = {
     _init: function() {
         this.accum = [0,0,0,0,0];
@@ -49,7 +53,7 @@ Cpu_State.prototype = {
                 this.accum[i - 1] = parseInt(cpu_params[i]);
             }
             this.total_t = 0;
-            for (var i = 0;i < cpu_params.length;i++) {
+            for (var i = 1;i < cpu_params.length;i++) {
                 this.total_t += parseInt(cpu_params[i]);
             }
         } else {
@@ -63,15 +67,14 @@ Cpu_State.prototype = {
         this.last_total = this.total_t;
         this.get_data();
         let total = this.total_t - this.last_total;
-        global.log("Error" + total.toString());
         if (total != 0) {
             for (var i = 0;i < 5;i++) {
                 this.usage[i] = (this.accum[i] - this.last[i]) / total;
             }
         }
     },
-    used: function() {
-        return 1 - this.usage[3];
+    precent: function() {
+        return Math.round((1 - this.usage[3]) * 100);
     }
 }
 
@@ -416,9 +419,8 @@ SystemMonitor.prototype = {
 
     _update_cpu: function() {
         this.cpu.update();
-//        this._cpu_.set_text(this.cpu.used().toString());
-        this._cpu_.set_text("50");
-        this._cpu.set_text(this.cpu.used().toString());
+        this._cpu_.set_text(this.cpu.precent().toString());
+        this._cpu.set_text(this.cpu.precent().toString());
     },
 
     _update_net: function() {

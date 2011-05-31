@@ -55,7 +55,7 @@ Cpu_State.prototype = {
                 this.total_t += parseInt(cpu_params[i]);
             }
         } else {
-	    global.log("system-monitor: reading /proc/stat gave an error");
+            global.log("system-monitor: reading /proc/stat gave an error");
         }
     },
     update: function() {
@@ -85,29 +85,6 @@ Mem_Swap.prototype = {
         this.mem = [0,0,0,0,0];
         this.swap = [0,0];
         this.update();
-    }
-    
-    {
-        if(mem[0] == 0) {
-            global.log("Error reading memory in /proc/meminfo");
-        } else {
-            let mem_used = memtotal - memfree - membuffers - memcached;
-            let mem_percentage = Math.round(100 * mem_used / memtotal);
-            this._mem_.set_text(mem_percentage.toString());
-            this._mem.set_text(mem_used.toString());
-            this._mem_total.set_text(memtotal.toString());
-        }
-        if(swaptotal == 0) {
-            this._swap_.set_text("0");
-            this._swap.set_text("0");
-            this._swap_total.set_text("0");
-        } else {
-            let swap_used = swaptotal - swapfree;
-            let swap_percentage = Math.round(100 * swap_used / swaptotal);
-            this._swap_.set_text(swap_percentage.toString());
-            this._swap.set_text(swap_used.toString());
-            this._swap_total.set_text(swaptotal.toString());
-        }
     },
     update: function() {
         let meminfo = GLib.file_get_contents('/proc/meminfo');
@@ -138,8 +115,8 @@ Mem_Swap.prototype = {
             }
             mem[2] = mem[0] - mem[1] - mem[3] - mem[4];
         } else {
-	    global.log("system-monitor: reading /proc/meminfo gave an error");
-	}
+            global.log("system-monitor: reading /proc/meminfo gave an error");
+        }
     }
 }
 
@@ -265,14 +242,14 @@ SystemMonitor.prototype = {
     },
     _init_status: function() {
         let box = new St.BoxLayout();
-        let icon = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: this.icon_size, icon_name:'utilities-system-monitor'});
+        this._icon_ = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: this.icon_size, icon_name:'utilities-system-monitor'});
         this._mem_ = new St.Label({ style_class: "sm-status-value"});
         this._swap_ = new St.Label({ style_class: "sm-status-value"});
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
         this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
         this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
 
-        box.add_actor(icon);
+        box.add_actor(this._icon_);
 
         this._mem_box = new St.BoxLayout();
         this._mem_box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
@@ -299,7 +276,8 @@ SystemMonitor.prototype = {
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
-        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
+        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-lab
+el"}));
         box.add_actor(this._net_box);
 
         this.actor.set_child(box);
@@ -308,9 +286,6 @@ SystemMonitor.prototype = {
         Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
 
-        this.__last_cpu_time = 0;
-        this.__last_cpu_idle = 0;
-        this.__last_cpu_total = 0;
         this.__last_net_time = 0;
         this.__last_net_down = 0;
         this.__last_net_up = 0;
@@ -320,6 +295,7 @@ SystemMonitor.prototype = {
         this._init_menu();
 
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+        this._icon_.visible = this._schema.get_boolean("icon-display");
         this._mem_box.visible = this._schema.get_boolean("memory-display");
         this._mem_widget.setToggleState(this._mem_box.visible);
         this._swap_box.visible = this._schema.get_boolean("swap-display");
@@ -330,11 +306,10 @@ SystemMonitor.prototype = {
         this._net_widget.setToggleState(this._net_box.visible);
 
         this._schema.connect(
-            'changed::memory-display',
+            'changed::icon-display',
             Lang.bind(this,
                       function () {
-                          this._mem_box.visible = this._schema.get_boolean("memory-display");
-                          this._mem_widget.setToggleState(this._mem_box.visible);
+                          this._icon_.visible = this._schema.get_boolean("icon-display");
                       }));
         this._schema.connect(
             'changed::swap-display',
@@ -360,6 +335,8 @@ SystemMonitor.prototype = {
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
         }
+
+        this.cpu = new Cpu_State();
 
         this._update_mem_swap();
         this._update_cpu();
@@ -440,25 +417,9 @@ SystemMonitor.prototype = {
     },
 
     _update_cpu: function() {
-        let stat = GLib.file_get_contents('/proc/stat');
-        if(stat[0]) {
-            let stat_lines = stat[1].split("\n");
-            let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
-            let idle = parseInt(cpu_params[4]);
-            let total = parseInt(cpu_params[1]) + parseInt(cpu_params[2]) + parseInt(cpu_params[3]) + parseInt(cpu_params[4]);
-            let time = GLib.get_monotonic_time() / 1000;
-            if(this.__last_cpu_time != 0) {
-                let delta = time - this.__last_cpu_time;
-                let cpu_usage = (100 - Math.round(100 * (idle - this.__last_cpu_idle) / (total - this.__last_cpu_total)));
-                this._cpu_.set_text(cpu_usage.toString());
-                this._cpu.set_text(cpu_usage.toString());
-            }
-            this.__last_cpu_idle = idle;
-            this.__last_cpu_total = total;
-            this.__last_cpu_time = time;
-        } else {
-            global.log("system-monitor: reading /proc/stat gave an error");
-        }
+        this.cpu.update();
+        this._cpu_.set_text(this.cpu.used().toString());
+        this._cpu.set_text(this.cpu.used().toString());
     },
 
     _update_net: function() {

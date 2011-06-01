@@ -33,10 +33,6 @@ function Cpu_State() {
     this._init();
 }
 
-function print(p) {
-    global.log("Error " + p.toString());
-}
-
 Cpu_State.prototype = {
     _init: function() {
         this.accum = [0,0,0,0,0];
@@ -84,40 +80,60 @@ function Mem_Swap() {
 
 Mem_Swap.prototype = {
     _init: function() {
-        this.mem = [0,0,0,0,0];
-        this.swap = [0,0];
         this.update();
     },
     update: function() {
+        this.mem = [0,0,0];
+        this.mem_total = 0;
+        this.swap = 0;
+        this.swap_total = 0;
         let meminfo = GLib.file_get_contents('/proc/meminfo');
+        let mem_free = 0;
+        let swap_free = 0;
         if(meminfo[0]) {
             let meminfo_lines = meminfo[1].split("\n");
             for(var i = 0 ; i < meminfo_lines.length ; i++) {
                 let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
                 switch(line[0]) {
                 case "MemTotal:":
-                    mem[0] = Math.round(line[1] / 1024);
+                    this.mem_total = Math.round(line[1] / 1024);
                     break;
                 case "MemFree:":
-                    mem[1] = Math.round(line[1] / 1024);
+                    mem_free = Math.round(line[1] / 1024);
                     break;
                 case "Buffers:":
-                    mem[3] = Math.round(line[1] / 1024);
+                    this.mem[1] = Math.round(line[1] / 1024);
                     break;
                 case "Cached:":
-                    mem[4] = Math.round(line[1] / 1024);
+                    this.mem[2] = Math.round(line[1] / 1024);
                     break;
                 case "SwapTotal:":
-                    swap[0] = Math.round(line[1] / 1024);
+                    this.swap_total = Math.round(line[1] / 1024);
                     break;
                 case "SwapFree:":
-                    swap[1] = Math.round(line[1] / 1024);
+                    swap_free = Math.round(line[1] / 1024);
                     break;
                 }
             }
-            mem[2] = mem[0] - mem[1] - mem[3] - mem[4];
+            this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
+            this.swap = this.swap_total - swap_free;
         } else {
             global.log("system-monitor: reading /proc/meminfo gave an error");
+        }
+        this.mem_used = this.mem_total - mem_free;
+    },
+    swap_precent: function() {
+        if (this.swap_total == 0) {
+            return 0;
+        } else {
+            return Math.round(this.swap / this.swap_total * 100);
+        }
+    },
+    mem_precent: function() {
+        if (this.mem_total == 0) {
+            return 0;
+        } else {
+            return Math.round(this.mem_used / this.mem_total * 100);
         }
     }
 }
@@ -338,6 +354,7 @@ SystemMonitor.prototype = {
         }
 
         this.cpu = new Cpu_State();
+        this.mem_swap = new Mem_Swap();
 
         this._update_mem_swap();
         this._update_cpu();
@@ -364,57 +381,13 @@ SystemMonitor.prototype = {
     },
 
     _update_mem_swap: function() {
-        let meminfo = GLib.file_get_contents('/proc/meminfo');
-        if(meminfo[0]) {
-            let meminfo_lines = meminfo[1].split("\n");
-            let memtotal = 0, memfree = 0, membuffers = 0, memcached = 0, swaptotal = 0, swapfree = 0;
-            // Lines are not always at the same positions
-            for(var i = 0 ; i < meminfo_lines.length ; i++) {
-                let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
-                switch(line[0]) {
-                case "MemTotal:":
-                    memtotal = Math.round(line[1] / 1024);
-                    break;
-                case "MemFree:":
-                    memfree = Math.round(line[1] / 1024);
-                    break;
-                case "Buffers:":
-                    membuffers = Math.round(line[1] / 1024);
-                    break;
-                case "Cached:":
-                    memcached = Math.round(line[1] / 1024);
-                    break;
-                case "SwapTotal:":
-                    swaptotal = Math.round(line[1] / 1024);
-                    break;
-                case "SwapFree:":
-                    swapfree = Math.round(line[1] / 1024);
-                    break;
-                }
-            }
-            if(memtotal == 0) {
-                global.log("Error reading memory in /proc/meminfo");
-            } else {
-                let mem_used = memtotal - memfree - membuffers - memcached;
-                let mem_percentage = Math.round(100 * mem_used / memtotal);
-                this._mem_.set_text(mem_percentage.toString());
-                this._mem.set_text(mem_used.toString());
-                this._mem_total.set_text(memtotal.toString());
-            }
-            if(swaptotal == 0) {
-                this._swap_.set_text("0");
-                this._swap.set_text("0");
-                this._swap_total.set_text("0");
-            } else {
-                let swap_used = swaptotal - swapfree;
-                let swap_percentage = Math.round(100 * swap_used / swaptotal);
-                this._swap_.set_text(swap_percentage.toString());
-                this._swap.set_text(swap_used.toString());
-                this._swap_total.set_text(swaptotal.toString());
-            }
-        } else {
-            global.log("system-monitor: reading /proc/meminfo gave an error");
-        }
+        this.mem_swap.update();
+        this._mem_.set_text(this.mem_swap.mem_precent().toString());
+        this._mem.set_text(this.mem_swap.mem_used.toString());
+        this._mem_total.set_text(this.mem_swap.mem_total.toString());
+        this._swap_.set_text(this.mem_swap.swap_precent().toString());
+        this._swap.set_text(this.mem_swap.swap.toString());
+        this._swap_total.set_text(this.mem_swap.swap_total.toString());
     },
 
     _update_cpu: function() {

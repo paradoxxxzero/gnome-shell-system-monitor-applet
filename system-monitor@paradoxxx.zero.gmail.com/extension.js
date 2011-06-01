@@ -120,7 +120,6 @@ Mem_Swap.prototype = {
         } else {
             global.log("system-monitor: reading /proc/meminfo gave an error");
         }
-        this.mem_used = this.mem_total - mem_free;
     },
     swap_precent: function() {
         if (this.swap_total == 0) {
@@ -133,7 +132,7 @@ Mem_Swap.prototype = {
         if (this.mem_total == 0) {
             return 0;
         } else {
-            return Math.round(this.mem_used / this.mem_total * 100);
+            return Math.round(this.mem[0] / this.mem_total * 100);
         }
     }
 }
@@ -383,7 +382,7 @@ SystemMonitor.prototype = {
     _update_mem_swap: function() {
         this.mem_swap.update();
         this._mem_.set_text(this.mem_swap.mem_precent().toString());
-        this._mem.set_text(this.mem_swap.mem_used.toString());
+        this._mem.set_text(this.mem_swap.mem[0].toString());
         this._mem_total.set_text(this.mem_swap.mem_total.toString());
         this._swap_.set_text(this.mem_swap.swap_precent().toString());
         this._swap.set_text(this.mem_swap.swap.toString());

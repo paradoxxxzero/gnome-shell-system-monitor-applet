@@ -35,38 +35,38 @@ function Cpu_State() {
 
 Cpu_State.prototype = {
     _init: function() {
-        this.accum = [0,0,0,0,0];
         this.last = [0,0,0,0,0];
-        this.usage = [0,0,0,0,0];
-        this.get_data();
+        this.last_total = 0;
+        this.usage = [0,0,0,1,0];
+        this.update();
     },
-    get_data: function() {
+    update: function() {
         let stat = GLib.file_get_contents('/proc/stat');
+        let accum = [0,0,0,0,0];
+        let total_t = 0;
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
             let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
             for (var i = 1;i <= 5;i++) {
-                this.accum[i - 1] = parseInt(cpu_params[i]);
+                accum[i - 1] = parseInt(cpu_params[i]);
             }
-            this.total_t = 0;
             for (var i = 1;i < cpu_params.length;i++) {
-                this.total_t += parseInt(cpu_params[i]);
+                let tmp = parseInt(cpu_params[i]);
+                if (tmp > 0) total_t += tmp;
             }
         } else {
             global.log("system-monitor: reading /proc/stat gave an error");
+            
         }
-    },
-    update: function() {
-        for (var i = 0;i < 5;i++) {
-            this.last[i] = this.accum[i];
-        }
-        this.last_total = this.total_t;
-        this.get_data();
-        let total = this.total_t - this.last_total;
-        if (total != 0) {
+        let total = total_t - this.last_total;
+        if (total > 0) {
             for (var i = 0;i < 5;i++) {
-                this.usage[i] = (this.accum[i] - this.last[i]) / total;
+                this.usage[i] = (accum[i] - this.last[i]) / total;
             }
+            for (var i = 0;i < 5;i++) {
+                this.last[i] = accum[i];
+            }
+            this.last_total = total_t;
         }
     },
     precent: function() {
@@ -134,6 +134,43 @@ Mem_Swap.prototype = {
         } else {
             return Math.round(this.mem[0] / this.mem_total * 100);
         }
+    }
+}
+
+function Net_State() {
+    this._init();
+}
+
+Net_State.prototype = {
+    _init: function() {
+        this.last = [0,0];
+        this.usage = [0,0];
+        this.last_time = 0;
+        this.update();
+    },
+    update: function() {
+        let net = GLib.file_get_contents('/proc/net/dev');
+        let accum = [0,0];
+        let time = 0;
+        if(net[0]) {
+            let net_lines = net[1].split("\n");
+            for(var i = 3; i < net_lines.length - 1 ; i++) {
+                let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
+                accum[0] += parseInt(net_params[2]);
+                accum[1] += parseInt(net_params[10]);
+            }
+            time = GLib.get_monotonic_time() / 1000;
+        } else {
+            global.log("system-monitor: reading /proc/net/dev gave an error");
+        }
+        let delta = time - this.last_time;
+        if (delta > 0) {
+            for (var i = 0;i < 2;i++) {
+                this.usage[i] = Math.round((accum[i] - this.last[i]) / delta);
+                this.last[i] = accum[i];
+            }
+        }
+        this.last_time = time;
     }
 }
 
@@ -354,24 +391,29 @@ SystemMonitor.prototype = {
 
         this.cpu = new Cpu_State();
         this.mem_swap = new Mem_Swap();
+        this.net = new Net_State();
 
         this._update_mem_swap();
         this._update_cpu();
         this._update_net();
 
-        GLib.timeout_add(0, 10000,
+        this.mem_swap_interv = 4000;
+        this.cpu_interv = 1500;
+        this.net_interv = 1000;
+
+        GLib.timeout_add(0, this.mem_swap_interv,
                          Lang.bind(this,
                                    function () {
                                        this._update_mem_swap();
                                        return true;
                                    }));
-        GLib.timeout_add(0, 1500,
+        GLib.timeout_add(0, this.cpu_interv,
                          Lang.bind(this,
                                    function () {
                                        this._update_cpu();
                                        return true;
                                    }));
-        GLib.timeout_add(0, 1000,
+        GLib.timeout_add(0, this.net_interv,
                          Lang.bind(this,
                                    function () {
                                        this._update_net();
@@ -396,31 +438,11 @@ SystemMonitor.prototype = {
     },
 
     _update_net: function() {
-        let net = GLib.file_get_contents('/proc/net/dev');
-        if(net[0]) {
-            let net_lines = net[1].split("\n");
-            let down = 0, up = 0;
-            for(var i = 3; i < net_lines.length - 1 ; i++) {
-                let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
-                down += parseInt(net_params[2]);
-                up += parseInt(net_params[10]);
-            }
-            let time = GLib.get_monotonic_time() / 1000;
-            if(this.__last_net_time != 0) {
-                let delta = time - this.__last_net_time;
-                let net_down = Math.round((down - this.__last_net_down) / delta);
-                let net_up = Math.round((up - this.__last_net_up) / delta);
-                this._netdown_.set_text(net_down.toString());
-                this._netup_.set_text(net_up.toString());
-                this._netdown.set_text(net_down + " kB/s");
-                this._netup.set_text(net_up + " kB/s");
-            }
-            this.__last_net_down = down;
-            this.__last_net_up = up;
-            this.__last_net_time = time;
-        } else {
-            global.log("system-monitor: reading /proc/net/dev gave an error");
-        }
+        this.net.update();
+        this._netdown_.set_text(this.net.usage[0].toString());
+        this._netup_.set_text(this.net.usage[1].toString());
+        this._netdown.set_text(this.net.usage[0] + " kB/s");
+        this._netup.set_text(this.net.usage[1] + " kB/s");
     },
 
     _onDestroy: function() {}

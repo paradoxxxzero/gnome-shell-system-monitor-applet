@@ -183,6 +183,7 @@ function Chart() {
 
 Chart.prototype = {
     _init: function() {
+        arguments.length != 3 && return;
         this.actor = new St.DrawingArea();
     },
     _draw: function() {

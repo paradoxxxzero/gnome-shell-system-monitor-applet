@@ -21,7 +21,7 @@
       <description>Time in ms between 2 refresh of memory and swap</description>
     </key>
     <key name="memory-show-text" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Display 'mem'</summary>
       <description>Set to true to show 'mem' before memory display</description>
     </key>
@@ -35,7 +35,7 @@
       <description>Set to false to remove swap display in status bar</description>
     </key>
     <key name="swap-show-text" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Display 'swap'</summary>
       <description>Set to true to show 'swap' before swap display</description>
     </key>
@@ -54,7 +54,7 @@
       <description>Time in ms between 2 refresh of cpu</description>
     </key>
     <key name="cpu-show-text" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Display 'cpu'</summary>
       <description>Set to true to show 'cpu' before cpu display</description>
     </key>
@@ -73,7 +73,7 @@
       <description>Time in ms between 2 refresh of net</description>
     </key>
     <key name="net-show-text" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Display 'net'</summary>
       <description>Set to true to show 'net' before net display</description>
     </key>
@@ -83,13 +83,13 @@
     </key>
     <key name="diskio-display" type="b">
       <default>false</default>
-      <summary>Display net</summary>
-      <description>Set to false to remove net display in status bar</description>
+      <summary>Display disk io speed</summary>
+      <description>Set to false to remove disk display in status bar</description>
     </key>
     <key name="diskio-show-text" type="b">
-      <default>false</default>
-      <summary>Display 'net'</summary>
-      <description>Set to true to show 'net' before net display</description>
+      <default>true</default>
+      <summary>Display 'disk'</summary>
+      <description>Set to true to show 'disk' before disk io display</description>
     </key>
     <key name="diskio-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'digit'</default>

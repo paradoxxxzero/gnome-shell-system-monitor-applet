@@ -453,28 +453,45 @@ SystemMonitor.prototype = {
 
         box.add_actor(this._icon_);
 
+        let text_disp = function(text, schema) {
+            let apply = function() {
+                text.visible = this._schema.get_boolean(schema);
+            };
+            Lang.bind(this, apply)();
+            this._schema.connect('changed::' + schema, Lang.bind(this, apply));
+        }
+
+        let text;
         this._mem_box = new St.BoxLayout();
-        this._mem_box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
+        text = new St.Label({ text: 'mem', style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'memory-show-text');
+        this._mem_box.add_actor(text);
         this._mem_box.add_actor(this._mem_);
         this._mem_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this._mem_box.add_actor(this._mem_chart_.actor);
         box.add_actor(this._mem_box);
 
         this._swap_box = new St.BoxLayout();
-        this._swap_box.add_actor(new St.Label({ text: 'swap', style_class: "sm-status-label"}));
+        text = new St.Label({ text: 'swap', style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'swap-show-text');
+        this._swap_box.add_actor(text);
         this._swap_box.add_actor(this._swap_);
         this._swap_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         box.add_actor(this._swap_box);
 
         this._cpu_box = new St.BoxLayout();
-        this._cpu_box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
+        text = new St.Label({ text: 'cpu', style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'cpu-show-text');
+        this._cpu_box.add_actor(text);
         this._cpu_box.add_actor(this._cpu_);
         this._cpu_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this._cpu_box.add_actor(this._cpu_chart_.actor);
         box.add_actor(this._cpu_box);
 
         this._net_box = new St.BoxLayout();
-        this._net_box.add_actor(new St.Label({ text: 'net', style_class: "sm-status-label"}));
+        text = new St.Label({ text: 'net', style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'net-show-text');
+        this._net_box.add_actor(text);
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
         this._net_box.add_actor(this._netdown_);
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));

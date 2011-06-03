@@ -22,6 +22,7 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const St = imports.gi.St;
+const Clutter = imports.gi.Clutter;
 
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
@@ -185,7 +186,7 @@ Chart.prototype = {
     _init: function() {
         //if (arguments.length != 3) return; //TODO
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
-        this.actor.connect('repaint', Lang,bind(this, this._draw));
+        this.actor.connect('repaint', Lang.bind(this, this._draw));
         this._rcolor(arguments[0]);
         this.data = [];
     },
@@ -193,7 +194,7 @@ Chart.prototype = {
         this.colors = [];
         for (let i = 0;i < color_s.length;i++) {
             this.colors[i] = new Clutter.Color();
-            colors[i].from_string(color_s[i]);
+            this.colors[i].from_string(color_s[i]);
         }
     },
     _draw: function() {
@@ -208,7 +209,7 @@ Chart.prototype = {
             cr.lineTo(j, height);
             cr.lineTo(0, height);
             cr.closePath();
-            Clutter.cairo_set_source_color(cr, color);
+            Clutter.cairo_set_source_color(cr, this.colors[i]);
             cr.fill();
         }
     },
@@ -219,8 +220,9 @@ Chart.prototype = {
             accdata[i] = (i == 0) ? data_a[0] : accdata[i - i] + (data_a[i] > 0) ? data_a[i] : 0;
         }
         this.data.push(accdata);
-        while (this.data.push.length > width)
-            this.data.shift();
+        //if (this.data.push.length > width)
+        //this.data.shift();
+        this.actor.queue_repaint();
     }
 }
 
@@ -337,12 +339,19 @@ SystemMonitor.prototype = {
         this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
         this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
 
+        let colors = [];
+        colors.push(this._schema.get_string('memory-user-color'));
+        colors.push(this._schema.get_string('memory-buffer-color'));
+        colors.push(this._schema.get_string('memory-cache-color'));
+        this._mem_chart_ = new Chart(colors);
+
         box.add_actor(this._icon_);
 
         this._mem_box = new St.BoxLayout();
         this._mem_box.add_actor(new St.Label({ text: 'mem', style_class: "sm-status-label"}));
         this._mem_box.add_actor(this._mem_);
         this._mem_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        this._mem_box.add_actor(this._mem_chart_.actor);
         box.add_actor(this._mem_box);
 
         this._swap_box = new St.BoxLayout();
@@ -373,11 +382,14 @@ SystemMonitor.prototype = {
         Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
 
+        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+
         this._init_status();
         this._schema = false;
         this._init_menu();
 
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+
         this._icon_.visible = this._schema.get_boolean("icon-display");
         this._mem_box.visible = this._schema.get_boolean("memory-display");
         this._mem_widget.setToggleState(this._mem_box.visible);
@@ -456,6 +468,11 @@ SystemMonitor.prototype = {
         this._mem_.set_text(this.mem_swap.mem_precent().toString());
         this._mem.set_text(this.mem_swap.mem[0].toString());
         this._mem_total.set_text(this.mem_swap.mem_total.toString());
+        let mem = [];
+        for (let i = 0;i < this.mem_swap.mem.length;i++) {
+            mem[i] = this.mem_swap.mem[i] / this.mem_swap.total;
+        }
+        this._mem_chart_._addValue(mem);
         this._swap_.set_text(this.mem_swap.swap_precent().toString());
         this._swap.set_text(this.mem_swap.swap.toString());
         this._swap_total.set_text(this.mem_swap.swap_total.toString());

@@ -112,8 +112,16 @@
       <default>'#ffff00'</default>
       <summary>Color of cache memory in the chart</summary>
     </key>
+    <key name="net-down-color" type="s">
+      <default>'#ff0000'</default>
+      <summary>Color of user memory in the chart</summary>
+    </key>
+    <key name="net-up-color" type="s">
+      <default>'#00ff00'</default>
+      <summary>Color of buffer memory in the chart</summary>
+    </key>
     <key name="background" type="s">
-      <default>'#ffffff'</default>
+      <default>'#000'</default>
       <summary>Color of background</summary>
     </key>
   </schema>

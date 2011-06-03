@@ -188,7 +188,11 @@ Chart.prototype = {
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this._rcolor(arguments[0]);
+        this._bk_grd(arguments[1]);
         this.data = [];
+        for (let i = 0;i < this.colors.length;i++) {
+            this.data[i] = [];
+        }
     },
     _rcolor: function(color_s) {
         this.colors = [];
@@ -197,19 +201,28 @@ Chart.prototype = {
             this.colors[i].from_string(color_s[i]);
         }
     },
+    _bk_grd: function(background) {
+        this.background = background;
+    },
     _draw: function() {
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
+        let max = Math.max.apply(this,this.data[this.data.length - 1]);
+        if (max <= 1) {
+            max = 1;
+        } else {
+            max = Math.pow(2, Math.ceil(Math.log(max) / Math.log(2)));
+        }
         let back_color = new Clutter.Color();
-        back_color.from_string("#00000000");
+        back_color.from_string(this.background);
         Clutter.cairo_set_source_color(cr, back_color);
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.colors.length - 1;i >= 0;i--) {
             cr.moveTo(0, height);
             let j;
-            for (j = 0;j < this.data.length;j++) {
-                cr.lineTo(j, (1 - this.data[j][i]) * height);
+            for (j = 0;j < this.data[i].length;j++) {
+                cr.lineTo(j, (1 - this.data[i][j] / max) * height);
             }
             cr.lineTo(j, height);
             cr.lineTo(0, height);
@@ -219,14 +232,15 @@ Chart.prototype = {
         }
     },
     _addValue: function(data_a) {
+        if (data_a.length != this.colors.length) return;
         let width = 30;//TODO: this.actor.get_width();
         let accdata = [];
         for (let i = 0;i < data_a.length;i++) {
             accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
+            this.data[i].push(accdata[i]);
+            if (this.data[i].length > width)
+                this.data[i].shift();
         }
-        this.data.push(accdata);
-        if (this.data.push.length > width)
-            this.data.shift();
         this.actor.queue_repaint();
     }
 };
@@ -344,11 +358,50 @@ SystemMonitor.prototype = {
         this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
         this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
 
+        let background = this._schema.get_string('background')
+
         let colors = [];
         colors.push(this._schema.get_string('memory-user-color'));
         colors.push(this._schema.get_string('memory-buffer-color'));
         colors.push(this._schema.get_string('memory-cache-color'));
-        this._mem_chart_ = new Chart(colors);
+        this._mem_chart_ = new Chart(colors, background);
+
+        let mem_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('memory-user-color'));
+            colors.push(this._schema.get_string('memory-buffer-color'));
+            colors.push(this._schema.get_string('memory-cache-color'));
+            let background = this._schema.get_string('background')
+            this._mem_chart_._rcolor(colors);
+            this._mem_chart_._bk_grd(background)
+            this._mem_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::memory-user-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::memory-buffer-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::memory-cache-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::background', Lang.bind(this, mem_color));
+
+        colors = [];
+        colors.push(this._schema.get_string('net-down-color'));
+        colors.push(this._schema.get_string('net-up-color'));
+        this._net_chart_ = new Chart(colors, background);
+
+        let net_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('net-down-color'));
+            colors.push(this._schema.get_string('net-up-color'));
+            let background = this._schema.get_string('background')
+            this._net_chart_._rcolor(colors);
+            this._net_chart_._bk_grd(background)
+            this._net_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::net-down-color', Lang.bind(this, net_color));
+        this._schema.connect('changed::net-up-color', Lang.bind(this, net_color));
+        this._schema.connect('changed::background', Lang.bind(this, net_color));
 
         box.add_actor(this._icon_);
 
@@ -379,6 +432,7 @@ SystemMonitor.prototype = {
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
+        this._net_box.add_actor(this._net_chart_.actor);
         box.add_actor(this._net_box);
 
         this.actor.set_child(box);
@@ -529,6 +583,7 @@ SystemMonitor.prototype = {
         this._netup_.set_text(this.net.usage[1].toString());
         this._netdown.set_text(this.net.usage[0] + " kB/s");
         this._netup.set_text(this.net.usage[1] + " kB/s");
+        this._net_chart_._addValue(this.net.usage);
     },
 
     _onDestroy: function() {}

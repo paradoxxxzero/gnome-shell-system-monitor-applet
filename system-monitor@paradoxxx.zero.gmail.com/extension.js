@@ -189,6 +189,9 @@ Chart.prototype = {
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this._rcolor(arguments[0]);
         this.data = [];
+        for (let i = 0;i < this.colors.length;i++) {
+            this.data[i] = [];
+        }
     },
     _rcolor: function(color_s) {
         this.colors = [];
@@ -200,11 +203,17 @@ Chart.prototype = {
     _draw: function() {
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
+        let max = Math.max.apply(this,this.data[this.data.length - 1]);
+        if (max <= 1) {
+            max = 1;
+        } else {
+            max = Math.pow(2, Math.ceil(Math.log(max) / Math.log(2)));
+        }
         for (let i = this.colors.length - 1;i >= 0;i--) {
             cr.moveTo(0, height);
             let j;
-            for (j = 0;j < this.data.length;j++) {
-                cr.lineTo(j, (1 - this.data[j][i]) * height);
+            for (j = 0;j < this.data[i].length;j++) {
+                cr.lineTo(j, (1 - this.data[i][j] / max) * height);
             }
             cr.lineTo(j, height);
             cr.lineTo(0, height);
@@ -214,14 +223,15 @@ Chart.prototype = {
         }
     },
     _addValue: function(data_a) {
+        if (data_a.length != this.colors.length) return;
         let width = 30;//TODO: this.actor.get_width();
         let accdata = [];
         for (let i = 0;i < data_a.length;i++) {
             accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
+            this.data[i].push(accdata[i]);
+            if (this.data[i].length > width)
+                this.data[i].shift();
         }
-        this.data.push(accdata);
-        if (this.data.push.length > width)
-            this.data.shift();
         this.actor.queue_repaint();
     }
 }
@@ -345,6 +355,11 @@ SystemMonitor.prototype = {
         colors.push(this._schema.get_string('memory-cache-color'));
         this._mem_chart_ = new Chart(colors);
 
+        colors = [];
+        colors.push(this._schema.get_string('net-down-color'));
+        colors.push(this._schema.get_string('net-up-color'));
+        this._net_chart_ = new Chart(colors);
+
         box.add_actor(this._icon_);
 
         this._mem_box = new St.BoxLayout();
@@ -374,6 +389,7 @@ SystemMonitor.prototype = {
         this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
         this._net_box.add_actor(this._netup_);
         this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
+        this._net_box.add_actor(this._net_chart_.actor);
         box.add_actor(this._net_box);
 
         this.actor.set_child(box);
@@ -487,6 +503,7 @@ SystemMonitor.prototype = {
         this._netup_.set_text(this.net.usage[1].toString());
         this._netdown.set_text(this.net.usage[0] + " kB/s");
         this._netup.set_text(this.net.usage[1] + " kB/s");
+        this._net_chart_._addValue(this.net.usage);
     },
 
     _onDestroy: function() {}

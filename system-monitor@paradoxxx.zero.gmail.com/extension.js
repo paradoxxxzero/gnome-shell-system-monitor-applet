@@ -51,10 +51,10 @@ Cpu_State.prototype = {
         if(stat[0]) {
             let stat_lines = stat[1].split("\n");
             let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
-            for (var i = 1;i <= 5;i++) {
+            for (let i = 1;i <= 5;i++) {
                 accum[i - 1] = parseInt(cpu_params[i]);
             }
-            for (var i = 1;i < cpu_params.length;i++) {
+            for (let i = 1;i < cpu_params.length;i++) {
                 let tmp = parseInt(cpu_params[i]);
                 if (tmp > 0) total_t += tmp;
             }
@@ -63,10 +63,10 @@ Cpu_State.prototype = {
         }
         let total = total_t - this.last_total;
         if (total > 0) {
-            for (var i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++) {
                 this.usage[i] = (accum[i] - this.last[i]) / total;
             }
-            for (var i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++) {
                 this.last[i] = accum[i];
             }
             this.last_total = total_t;
@@ -95,7 +95,7 @@ Mem_Swap.prototype = {
         let swap_free = 0;
         if(meminfo[0]) {
             let meminfo_lines = meminfo[1].split("\n");
-            for(var i = 0 ; i < meminfo_lines.length ; i++) {
+            for(let i = 0 ; i < meminfo_lines.length ; i++) {
                 let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
                 switch(line[0]) {
                 case "MemTotal:":
@@ -157,7 +157,7 @@ Net_State.prototype = {
         let time = 0;
         if(net[0]) {
             let net_lines = net[1].split("\n");
-            for(var i = 3; i < net_lines.length - 1 ; i++) {
+            for(let i = 3; i < net_lines.length - 1 ; i++) {
                 let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
                 accum[0] += parseInt(net_params[2]);
                 accum[1] += parseInt(net_params[10]);
@@ -168,7 +168,7 @@ Net_State.prototype = {
         }
         let delta = time - this.last_time;
         if (delta > 0) {
-            for (var i = 0;i < 2;i++) {
+            for (let i = 0;i < 2;i++) {
                 this.usage[i] = Math.round((accum[i] - this.last[i]) / delta);
                 this.last[i] = accum[i];
             }
@@ -183,24 +183,44 @@ function Chart() {
 
 Chart.prototype = {
     _init: function() {
-        if (arguments.length != 3) return;
+        //if (arguments.length != 3) return; //TODO
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
         this.actor.connect('repaint', Lang,bind(this, this._draw));
-        this._rcolor(arguments[2]);
+        this._rcolor(arguments[0]);
         this.data = [];
     },
     _rcolor: function(color_s) {
         this.colors = [];
-        for (var i = 0;i < color_s.length;i++) {
+        for (let i = 0;i < color_s.length;i++) {
             this.colors[i] = new Clutter.Color();
             colors[i].from_string(color_s[i]);
         }
     },
     _draw: function() {
         let [width, height] = this.actor.get_surface_size();
+        let cr = this.actor.get_context();
+        for (let i = this.colors.length - 1;i >= 0;i--) {
+            cr.moveTo(0, height);
+            let j;
+            for (j = 0;j < this.data.length;j++) {
+                cr.lineTo(j, (1 - this.data[j][i]) * height);
+            }
+            cr.lineTo(j, height);
+            cr.lineTo(0, height);
+            cr.closePath();
+            Clutter.cairo_set_source_color(cr, color);
+            cr.fill();
+        }
     },
     _addValue: function(data_a) {
-        
+        let [width, height] = this.actor.get_surface_size();
+        let accdata = [];
+        for (let i = 0;i < data_a.length;i++) {
+            accdata[i] = (i == 0) ? data_a[0] : accdata[i - i] + (data_a[i] > 0) ? data_a[i] : 0;
+        }
+        this.data.push(accdata);
+        while (this.data.push.length > width)
+            this.data.shift();
     }
 }
 

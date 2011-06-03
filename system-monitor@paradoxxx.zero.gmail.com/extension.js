@@ -76,7 +76,7 @@ Cpu_State.prototype = {
     precent: function() {
         return Math.round((1 - this.usage[3]) * 100);
     }
-}
+};
 
 function Mem_Swap() {
     this._init();
@@ -139,7 +139,7 @@ Mem_Swap.prototype = {
             return Math.round(this.mem[0] / this.mem_total * 100);
         }
     }
-}
+};
 
 function Net_State() {
     this._init();
@@ -176,7 +176,7 @@ Net_State.prototype = {
         }
         this.last_time = time;
     }
-}
+};
 
 function Chart() {
     this._init.apply(this, arguments);
@@ -224,7 +224,7 @@ Chart.prototype = {
             this.data.shift();
         this.actor.queue_repaint();
     }
-}
+};
 
 function SystemMonitor() {
     this._init.apply(this, arguments);

@@ -102,7 +102,7 @@
       <summary>Color of user memory in the chart</summary>
     </key>
     <key name="net-up-color" type="s">
-      <default>'#0000ff'</default>
+      <default>'#00ff00'</default>
       <summary>Color of buffer memory in the chart</summary>
     </key>
     <key name="background" type="s">

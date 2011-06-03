@@ -30,8 +30,8 @@ And restart gnome-shell (Alt + F2 -> r) or reboot.
 
 
 ### Authors:
-    [paradoxxxzero](https://github.com/paradoxxxzero)
-    [yuyichao](https://github.com/yuyichao)
+[paradoxxxzero](https://github.com/paradoxxxzero)
+[yuyichao](https://github.com/yuyichao)
 
 ### License:
 

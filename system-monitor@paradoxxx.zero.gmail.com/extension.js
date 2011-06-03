@@ -75,6 +75,13 @@ Cpu_State.prototype = {
     },
     precent: function() {
         return Math.round((1 - this.usage[3]) * 100);
+    },
+    list: function() {
+        let free = 1;
+        for (let i = 0;i < this.usage.length;i++) {
+            free -= this.usage[i];
+        }
+        return [this.usage[0], this.usage[1], this.usage[2], this.usage[4], free];
     }
 };
 
@@ -132,12 +139,22 @@ Mem_Swap.prototype = {
             return Math.round(this.swap / this.swap_total * 100);
         }
     },
+    swap_list: function() {
+        return [this.swap / this.swap_total];
+    },
     mem_precent: function() {
         if (this.mem_total == 0) {
             return 0;
         } else {
             return Math.round(this.mem[0] / this.mem_total * 100);
         }
+    },
+    mem_list: function() {
+        let mem = [];
+        for (let i = 0;i < this.mem.length;i++) {
+            mem[i] = this.mem[i] / this.mem_total;
+        }
+        return mem;
     }
 };
 
@@ -175,6 +192,9 @@ Net_State.prototype = {
             }
         }
         this.last_time = time;
+    },
+    list: function() {
+        return this.usage;
     }
 };
 
@@ -561,11 +581,7 @@ SystemMonitor.prototype = {
         this._mem_.set_text(this.mem_swap.mem_precent().toString());
         this._mem.set_text(this.mem_swap.mem[0].toString());
         this._mem_total.set_text(this.mem_swap.mem_total.toString());
-        let mem = [];
-        for (let i = 0;i < this.mem_swap.mem.length;i++) {
-            mem[i] = this.mem_swap.mem[i] / this.mem_swap.mem_total;
-        }
-        this._mem_chart_._addValue(mem);
+        this._mem_chart_._addValue(this.mem_swap.mem_list());
         this._swap_.set_text(this.mem_swap.swap_precent().toString());
         this._swap.set_text(this.mem_swap.swap.toString());
         this._swap_total.set_text(this.mem_swap.swap_total.toString());
@@ -583,7 +599,7 @@ SystemMonitor.prototype = {
         this._netup_.set_text(this.net.usage[1].toString());
         this._netdown.set_text(this.net.usage[0] + " kB/s");
         this._netup.set_text(this.net.usage[1] + " kB/s");
-        this._net_chart_._addValue(this.net.usage);
+        this._net_chart_._addValue(this.net.list());
     },
 
     _onDestroy: function() {}

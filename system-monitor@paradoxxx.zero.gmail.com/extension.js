@@ -461,44 +461,84 @@ SystemMonitor.prototype = {
             this._schema.connect('changed::' + schema, Lang.bind(this, apply));
         }
 
-        let text;
+        let disp_style = function(digits, chart, schema) {
+            let apply = function() {
+                let d_digit = false, d_chart = false;
+                let style = this._schema.get_string(schema);
+                if (style == 'digit' || style == 'both') d_digit = true;
+                if (style == 'graph' || style == 'both') d_chart = true;
+                for (let i = 0;i < digits.length;i++) {
+                    digits[i].visible = d_digit;
+                }
+                chart.visible = d_chart;
+            }
+            Lang.bind(this, apply)();
+            this._schema.connect('changed::' + schema, Lang.bind(this, apply));
+        }
+
+        let text, digits = [], digit;
         this._mem_box = new St.BoxLayout();
         text = new St.Label({ text: 'mem', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'memory-show-text');
         this._mem_box.add_actor(text);
         this._mem_box.add_actor(this._mem_);
-        this._mem_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        digits.push(this._mem_);
+        digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
+        this._mem_box.add_actor(digit);
+        digits.push(digit);
         this._mem_box.add_actor(this._mem_chart_.actor);
+        Lang.bind(this, disp_style)(digits, this._mem_chart_.actor, 'memory-style');
         box.add_actor(this._mem_box);
 
+        digits = [];
         this._swap_box = new St.BoxLayout();
         text = new St.Label({ text: 'swap', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'swap-show-text');
         this._swap_box.add_actor(text);
         this._swap_box.add_actor(this._swap_);
-        this._swap_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        digits.push(this._swap_);
+        digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
+        this._swap_box.add_actor(digit);
+        digits.push(digit);// err, forget to add chart~~
         box.add_actor(this._swap_box);
 
+        digits = [];
         this._cpu_box = new St.BoxLayout();
         text = new St.Label({ text: 'cpu', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'cpu-show-text');
         this._cpu_box.add_actor(text);
         this._cpu_box.add_actor(this._cpu_);
-        this._cpu_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        digits.push(this._cpu_);
+        digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
+        this._cpu_box.add_actor(digit);
+        digits.push(digit);
         this._cpu_box.add_actor(this._cpu_chart_.actor);
+        Lang.bind(this, disp_style)(digits, this._cpu_chart_.actor, 'cpu-style');
         box.add_actor(this._cpu_box);
 
+        digits = [];
         this._net_box = new St.BoxLayout();
         text = new St.Label({ text: 'net', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'net-show-text');
         this._net_box.add_actor(text);
-        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
+        digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'});
+        this._net_box.add_actor(digit);
+        digits.push(digit);
         this._net_box.add_actor(this._netdown_);
-        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
-        this._net_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
+        digits.push(this._netdown_);
+        digit = new St.Label({ text: 'kB/s', style_class: "sm-unit-label"});
+        this._net_box.add_actor(digit);
+        digits.push(digit);
+        digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'});
+        this._net_box.add_actor(digit);
+        digits.push(digit);
         this._net_box.add_actor(this._netup_);
-        this._net_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
+        digits.push(this._netup_);
+        digit = new St.Label({ text: 'kB/s', style_class: "sm-unit-label"});
+        this._net_box.add_actor(digit);
+        digits.push(digit);
         this._net_box.add_actor(this._net_chart_.actor);
+        Lang.bind(this, disp_style)(digits, this._net_chart_.actor, 'net-style');
         box.add_actor(this._net_box);
 
         this.actor.set_child(box);

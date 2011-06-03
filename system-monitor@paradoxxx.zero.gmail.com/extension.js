@@ -29,6 +29,10 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
 
+function Open_Window() {
+    Util.spawn(["gnome-system-monitor"]);
+}
+
 function Cpu_State() {
     this._init();
 }
@@ -56,7 +60,6 @@ Cpu_State.prototype = {
             }
         } else {
             global.log("system-monitor: reading /proc/stat gave an error");
-            
         }
         let total = total_t - this.last_total;
         if (total > 0) {
@@ -174,6 +177,19 @@ Net_State.prototype = {
     }
 }
 
+function Chart() {
+    this._init.apply(this, arguments);
+}
+
+Chart.prototype = {
+    _init: function() {
+        this.actor = new St.DrawingArea();
+    },
+    _draw: function() {
+        let [width, height] = this.actor.get_surface_size();
+    }
+}
+
 function SystemMonitor() {
     this._init.apply(this, arguments);
 }
@@ -194,11 +210,7 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._mem_total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        item.connect(
-            'activate',
-            function() {
-                Util.spawn(["gnome-system-monitor"]);
-            });
+        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Swap");
@@ -209,11 +221,7 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this._swap_total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        item.connect(
-            'activate',
-            function() {
-                Util.spawn(["gnome-system-monitor"]);
-            });
+        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Cpu");
@@ -223,11 +231,7 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(this._cpu);
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.connect(
-            'activate',
-            function() {
-                Util.spawn(["gnome-system-monitor"]);
-            });
+        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Net");
@@ -238,11 +242,7 @@ SystemMonitor.prototype = {
         this._netup = new St.Label({ style_class: "sm-value"});
         item.addActor(this._netup);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-        item.connect(
-            'activate',
-            function() {
-                Util.spawn(["gnome-system-monitor"]);
-            });
+        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -338,10 +338,6 @@ SystemMonitor.prototype = {
     _init: function() {
         Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
-
-        this.__last_net_time = 0;
-        this.__last_net_down = 0;
-        this.__last_net_up = 0;
 
         this._init_status();
         this._schema = false;

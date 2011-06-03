@@ -217,7 +217,7 @@ Chart.prototype = {
         let [width, height] = this.actor.get_surface_size();
         let accdata = [];
         for (let i = 0;i < data_a.length;i++) {
-            accdata[i] = (i == 0) ? data_a[0] : accdata[i - i] + (data_a[i] > 0) ? data_a[i] : 0;
+            accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
         }
         this.data.push(accdata);
         //if (this.data.push.length > width)
@@ -470,7 +470,7 @@ SystemMonitor.prototype = {
         this._mem_total.set_text(this.mem_swap.mem_total.toString());
         let mem = [];
         for (let i = 0;i < this.mem_swap.mem.length;i++) {
-            mem[i] = this.mem_swap.mem[i] / this.mem_swap.total;
+            mem[i] = this.mem_swap.mem[i] / this.mem_swap.mem_total;
         }
         this._mem_chart_._addValue(mem);
         this._swap_.set_text(this.mem_swap.swap_precent().toString());

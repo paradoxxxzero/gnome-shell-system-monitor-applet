@@ -200,6 +200,11 @@ Chart.prototype = {
     _draw: function() {
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
+        let back_color = new Clutter.Color();
+        back_color.from_string("#00000000");
+        Clutter.cairo_set_source_color(cr, back_color);
+        cr.rectangle(0, 0, width, height);
+        cr.fill();
         for (let i = this.colors.length - 1;i >= 0;i--) {
             cr.moveTo(0, height);
             let j;

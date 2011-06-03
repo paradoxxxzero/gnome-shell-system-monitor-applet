@@ -240,11 +240,10 @@ Chart.prototype = {
         cr.fill();
         for (let i = this.colors.length - 1;i >= 0;i--) {
             cr.moveTo(0, height);
-            let j;
-            for (j = 0;j < this.data[i].length;j++) {
-                cr.lineTo(j, (1 - this.data[i][j] / max) * height);
+            for (let j = this.data[i].length - 1;j >= 0;j--) {
+                cr.lineTo(this.data[i].length - 1 - j, (1 - this.data[i][j] / max) * height);
             }
-            cr.lineTo(j, height);
+            cr.lineTo(this.data[i].length - 1, height);
             cr.lineTo(0, height);
             cr.closePath();
             Clutter.cairo_set_source_color(cr, this.colors[i]);
@@ -423,6 +422,35 @@ SystemMonitor.prototype = {
         this._schema.connect('changed::net-up-color', Lang.bind(this, net_color));
         this._schema.connect('changed::background', Lang.bind(this, net_color));
 
+        colors = [];
+        colors.push(this._schema.get_string('cpu-user-color'));
+        colors.push(this._schema.get_string('cpu-system-color'));
+        colors.push(this._schema.get_string('cpu-nice-color'));
+        colors.push(this._schema.get_string('cpu-iowait-color'));
+        colors.push(this._schema.get_string('cpu-other-color'));
+        this._cpu_chart_ = new Chart(colors, background);
+
+        let cpu_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('cpu-user-color'));
+            colors.push(this._schema.get_string('cpu-system-color'));
+            colors.push(this._schema.get_string('cpu-nice-color'));
+            colors.push(this._schema.get_string('cpu-iowait-color'));
+            colors.push(this._schema.get_string('cpu-other-color'));
+            let background = this._schema.get_string('background')
+            this._cpu_chart_._rcolor(colors);
+            this._cpu_chart_._bk_grd(background)
+            this._cpu_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::cpu-user-color', Lang.bind(this, cpu_color));
+        this._schema.connect('changed::cpu-system-color', Lang.bind(this, cpu_color));
+        this._schema.connect('changed::cpu-nice-color', Lang.bind(this, cpu_color));
+        this._schema.connect('changed::cpu-iowait-color', Lang.bind(this, cpu_color));
+        this._schema.connect('changed::cpu-other-color', Lang.bind(this, cpu_color));
+        this._schema.connect('changed::background', Lang.bind(this, cpu_color));
+
         box.add_actor(this._icon_);
 
         this._mem_box = new St.BoxLayout();
@@ -442,6 +470,7 @@ SystemMonitor.prototype = {
         this._cpu_box.add_actor(new St.Label({ text: 'cpu', style_class: "sm-status-label"}));
         this._cpu_box.add_actor(this._cpu_);
         this._cpu_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        this._cpu_box.add_actor(this._cpu_chart_.actor);
         box.add_actor(this._cpu_box);
 
         this._net_box = new St.BoxLayout();
@@ -591,6 +620,7 @@ SystemMonitor.prototype = {
         this.cpu.update();
         this._cpu_.set_text(this.cpu.precent().toString());
         this._cpu.set_text(this.cpu.precent().toString());
+        this._cpu_chart_._addValue(this.cpu.list());
     },
 
     _update_net: function() {

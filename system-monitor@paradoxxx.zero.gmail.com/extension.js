@@ -188,6 +188,7 @@ Chart.prototype = {
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this._rcolor(arguments[0]);
+        this._bk_grd(arguments[1]);
         this.data = [];
         for (let i = 0;i < this.colors.length;i++) {
             this.data[i] = [];
@@ -200,6 +201,9 @@ Chart.prototype = {
             this.colors[i].from_string(color_s[i]);
         }
     },
+    _bk_grd: function(background) {
+        this.background = background;
+    },
     _draw: function() {
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
@@ -210,7 +214,7 @@ Chart.prototype = {
             max = Math.pow(2, Math.ceil(Math.log(max) / Math.log(2)));
         }
         let back_color = new Clutter.Color();
-        back_color.from_string("#00000000"); //TODO
+        back_color.from_string(this.background);
         Clutter.cairo_set_source_color(cr, back_color);
         cr.rectangle(0, 0, width, height);
         cr.fill();
@@ -354,16 +358,50 @@ SystemMonitor.prototype = {
         this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
         this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
 
+        let background = this._schema.get_string('background')
+
         let colors = [];
         colors.push(this._schema.get_string('memory-user-color'));
         colors.push(this._schema.get_string('memory-buffer-color'));
         colors.push(this._schema.get_string('memory-cache-color'));
-        this._mem_chart_ = new Chart(colors);
+        this._mem_chart_ = new Chart(colors, background);
+
+        let mem_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('memory-user-color'));
+            colors.push(this._schema.get_string('memory-buffer-color'));
+            colors.push(this._schema.get_string('memory-cache-color'));
+            let background = this._schema.get_string('background')
+            this._mem_chart_._rcolor(colors);
+            this._mem_chart_._bk_grd(background)
+            this._mem_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::memory-user-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::memory-buffer-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::memory-cache-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::background', Lang.bind(this, mem_color));
 
         colors = [];
         colors.push(this._schema.get_string('net-down-color'));
         colors.push(this._schema.get_string('net-up-color'));
-        this._net_chart_ = new Chart(colors);
+        this._net_chart_ = new Chart(colors, background);
+
+        let net_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('net-down-color'));
+            colors.push(this._schema.get_string('net-up-color'));
+            let background = this._schema.get_string('background')
+            this._net_chart_._rcolor(colors);
+            this._net_chart_._bk_grd(background)
+            this._net_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::net-down-color', Lang.bind(this, net_color));
+        this._schema.connect('changed::net-up-color', Lang.bind(this, net_color));
+        this._schema.connect('changed::background', Lang.bind(this, net_color));
 
         box.add_actor(this._icon_);
 

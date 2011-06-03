@@ -106,7 +106,7 @@
       <summary>Color of buffer memory in the chart</summary>
     </key>
     <key name="background" type="s">
-      <default>'#ffffff'</default>
+      <default>'#000'</default>
       <summary>Color of background</summary>
     </key>
   </schema>

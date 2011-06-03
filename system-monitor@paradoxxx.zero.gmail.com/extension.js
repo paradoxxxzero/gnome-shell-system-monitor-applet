@@ -76,7 +76,7 @@ Cpu_State.prototype = {
     precent: function() {
         return Math.round((1 - this.usage[3]) * 100);
     }
-}
+};
 
 function Mem_Swap() {
     this._init();
@@ -139,7 +139,7 @@ Mem_Swap.prototype = {
             return Math.round(this.mem[0] / this.mem_total * 100);
         }
     }
-}
+};
 
 function Net_State() {
     this._init();
@@ -176,7 +176,7 @@ Net_State.prototype = {
         }
         this.last_time = time;
     }
-}
+};
 
 function Chart() {
     this._init.apply(this, arguments);
@@ -209,6 +209,11 @@ Chart.prototype = {
         } else {
             max = Math.pow(2, Math.ceil(Math.log(max) / Math.log(2)));
         }
+        let back_color = new Clutter.Color();
+        back_color.from_string("#00000000"); //TODO
+        Clutter.cairo_set_source_color(cr, back_color);
+        cr.rectangle(0, 0, width, height);
+        cr.fill();
         for (let i = this.colors.length - 1;i >= 0;i--) {
             cr.moveTo(0, height);
             let j;
@@ -234,7 +239,7 @@ Chart.prototype = {
         }
         this.actor.queue_repaint();
     }
-}
+};
 
 function SystemMonitor() {
     this._init.apply(this, arguments);
@@ -420,6 +425,13 @@ SystemMonitor.prototype = {
                           this._icon_.visible = this._schema.get_boolean("icon-display");
                       }));
         this._schema.connect(
+            'changed::memory-display',
+            Lang.bind(this,
+                      function () {
+                          this._mem_box.visible = this._schema.get_boolean("memory-display");
+                          this._mem_widget.setToggleState(this._mem_box.visible);
+                      }));
+        this._schema.connect(
             'changed::swap-display',
             Lang.bind(this,
                       function () {
@@ -440,6 +452,7 @@ SystemMonitor.prototype = {
                           this._net_box.visible = this._schema.get_boolean("net-display");
                           this._net_widget.setToggleState(this._net_box.visible);
                       }));
+
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
         }

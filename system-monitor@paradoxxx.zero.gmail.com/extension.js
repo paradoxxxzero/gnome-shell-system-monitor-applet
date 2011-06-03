@@ -404,6 +404,13 @@ SystemMonitor.prototype = {
                           this._icon_.visible = this._schema.get_boolean("icon-display");
                       }));
         this._schema.connect(
+            'changed::memory-display',
+            Lang.bind(this,
+                      function () {
+                          this._mem_box.visible = this._schema.get_boolean("memory-display");
+                          this._mem_widget.setToggleState(this._mem_box.visible);
+                      }));
+        this._schema.connect(
             'changed::swap-display',
             Lang.bind(this,
                       function () {
@@ -424,6 +431,7 @@ SystemMonitor.prototype = {
                           this._net_box.visible = this._schema.get_boolean("net-display");
                           this._net_widget.setToggleState(this._net_box.visible);
                       }));
+
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
         }

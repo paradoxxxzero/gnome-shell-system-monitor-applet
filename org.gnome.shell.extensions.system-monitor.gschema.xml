@@ -15,6 +15,11 @@
       <summary>Display memory</summary>
       <description>Set to false to remove memory display in status bar</description>
     </key>
+    <key name="memory-refresh-time" type="i">
+      <default>5000</default>
+      <summary>Memory/Swap refresh time</summary>
+      <description>Time in ms between 2 refresh of memory and swap</description>
+    </key>
     <key name="memory-show-text" type="b">
       <default>false</default>
       <summary>Display 'mem'</summary>
@@ -43,6 +48,11 @@
       <summary>Display cpu</summary>
       <description>Set to false to remove cpu display in status bar</description>
     </key>
+    <key name="cpu-refresh-time" type="i">
+      <default>1500</default>
+      <summary>Cpu refresh time</summary>
+      <description>Time in ms between 2 refresh of cpu</description>
+    </key>
     <key name="cpu-show-text" type="b">
       <default>false</default>
       <summary>Display 'cpu'</summary>
@@ -56,6 +66,11 @@
       <default>false</default>
       <summary>Display net</summary>
       <description>Set to false to remove net display in status bar</description>
+    </key>
+    <key name="net-refresh-time" type="i">
+      <default>1000</default>
+      <summary>Net refresh time</summary>
+      <description>Time in ms between 2 refresh of net</description>
     </key>
     <key name="net-show-text" type="b">
       <default>false</default>

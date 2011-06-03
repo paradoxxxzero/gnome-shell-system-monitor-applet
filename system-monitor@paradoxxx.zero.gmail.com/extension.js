@@ -449,28 +449,57 @@ SystemMonitor.prototype = {
         this._update_cpu();
         this._update_net();
 
-        this.mem_swap_interv = 4000;
-        this.cpu_interv = 1500;
-        this.net_interv = 1000;
+        this.mem_interv = Math.abs(this._schema.get_int("memory-refresh-time"));
+        this.cpu_interv = Math.abs(this._schema.get_int("cpu-refresh-time"));
+        this.net_interv = Math.abs(this._schema.get_int("net-refresh-time"));
 
-        GLib.timeout_add(0, this.mem_swap_interv,
-                         Lang.bind(this,
-                                   function () {
-                                       this._update_mem_swap();
-                                       return true;
-                                   }));
-        GLib.timeout_add(0, this.cpu_interv,
-                         Lang.bind(this,
-                                   function () {
-                                       this._update_cpu();
-                                       return true;
-                                   }));
-        GLib.timeout_add(0, this.net_interv,
-                         Lang.bind(this,
-                                   function () {
-                                       this._update_net();
-                                       return true;
-                                   }));
+        this.mem_update_fun = Lang.bind(this,
+                                         function () {
+                                             this._update_mem_swap();
+                                             return true;
+                                         });
+
+        this.cpu_update_fun = Lang.bind(this,
+                                        function () {
+                                            this._update_cpu();
+                                            return true;
+                                        });
+
+        this.net_update_fun = Lang.bind(this,
+                                        function () {
+                                            this._update_net();
+                                            return true;
+                                        });
+
+        this.mem_timeout = GLib.timeout_add(0, this.mem_interv, this.mem_update_fun);
+        this.cpu_timeout = GLib.timeout_add(0, this.cpu_interv, this.cpu_update_fun);
+        this.net_timeout = GLib.timeout_add(0, this.net_interv, this.net_update_fun);
+
+        this._schema.connect(
+            'changed::memory-refresh-time',
+            Lang.bind(this,
+                      function () {
+                          GLib.source_remove(this.mem_timeout);
+                          this.mem_interv = Math.abs(this._schema.get_int("memory-refresh-time"));
+                          this.mem_timeout = GLib.timeout_add(0, this.mem_interv, this.mem_update_fun);
+                      }));
+        this._schema.connect(
+            'changed::cpu-refresh-time',
+            Lang.bind(this,
+                      function () {
+                          GLib.source_remove(this.cpu_timeout);
+                          this.cpu_interv = Math.abs(this._schema.get_int("cpu-refresh-time"));
+                          this.cpu_timeout = GLib.timeout_add(0, this.cpu_interv, this.cpu_update_fun);
+                      }));
+        this._schema.connect(
+            'changed::net-refresh-time',
+            Lang.bind(this,
+                      function () {
+                          GLib.source_remove(this.net_timeout);
+                          this.net_interv = Math.abs(this._schema.get_int("net-refresh-time"));
+                          this.net_timeout = GLib.timeout_add(0, this.net_interv, this.net_update_fun);
+                      }));
+
     },
 
     _update_mem_swap: function() {

@@ -183,11 +183,24 @@ function Chart() {
 
 Chart.prototype = {
     _init: function() {
-        arguments.length != 3 && return;
-        this.actor = new St.DrawingArea();
+        if (arguments.length != 3) return;
+        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
+        this.actor.connect('repaint', Lang,bind(this, this._draw));
+        this._rcolor(arguments[2]);
+        this.data = [];
+    },
+    _rcolor: function(color_s) {
+        this.colors = [];
+        for (var i = 0;i < color_s.length;i++) {
+            this.colors[i] = new Clutter.Color();
+            colors[i].from_string(color_s[i]);
+        }
     },
     _draw: function() {
         let [width, height] = this.actor.get_surface_size();
+    },
+    _addValue: function(data_a) {
+        
     }
 }
 

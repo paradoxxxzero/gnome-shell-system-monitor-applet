@@ -209,7 +209,6 @@ Chart.prototype = {
         } else {
             max = Math.pow(2, Math.ceil(Math.log(max) / Math.log(2)));
         }
-        global.log('Error ' + max);
         for (let i = this.colors.length - 1;i >= 0;i--) {
             cr.moveTo(0, height);
             let j;
@@ -453,9 +452,9 @@ SystemMonitor.prototype = {
         this._update_cpu();
         this._update_net();
 
-        this.mem_swap_interv = 400;
+        this.mem_swap_interv = 4000;
         this.cpu_interv = 1500;
-        this.net_interv = 100;
+        this.net_interv = 1000;
 
         GLib.timeout_add(0, this.mem_swap_interv,
                          Lang.bind(this,

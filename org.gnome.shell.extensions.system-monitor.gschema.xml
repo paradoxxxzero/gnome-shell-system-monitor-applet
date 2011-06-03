@@ -140,6 +140,10 @@
       <default>'#00ffff'</default>
       <summary>Color of other cpu in the chart</summary>
     </key>
+    <key name="swap-used-color" type="s">
+      <default>'#ff0000'</default>
+      <summary>Color of used swap in the chart</summary>
+    </key>
     <key name="background" type="s">
       <default>'#000'</default>
       <summary>Color of background</summary>

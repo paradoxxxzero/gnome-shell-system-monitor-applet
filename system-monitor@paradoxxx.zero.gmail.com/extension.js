@@ -423,6 +423,23 @@ SystemMonitor.prototype = {
         this._schema.connect('changed::background', Lang.bind(this, net_color));
 
         colors = [];
+        colors.push(this._schema.get_string('swap-used-color'));
+        this._swap_chart_ = new Chart(colors, background);
+
+        let swap_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('swap-used-color'));
+            let background = this._schema.get_string('background')
+            this._net_chart_._rcolor(colors);
+            this._net_chart_._bk_grd(background)
+            this._net_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::swap-used-color', Lang.bind(this, swap_color));
+        this._schema.connect('changed::background', Lang.bind(this, swap_color));
+
+        colors = [];
         colors.push(this._schema.get_string('cpu-user-color'));
         colors.push(this._schema.get_string('cpu-system-color'));
         colors.push(this._schema.get_string('cpu-nice-color'));
@@ -499,7 +516,9 @@ SystemMonitor.prototype = {
         digits.push(this._swap_);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
         this._swap_box.add_actor(digit);
-        digits.push(digit);// err, forget to add chart~~
+        digits.push(digit);
+        this._swap_box.add_actor(this._swap_chart_.actor);
+        Lang.bind(this, disp_style)(digits, this._swap_chart_.actor, 'swap-style');
         box.add_actor(this._swap_box);
 
         digits = [];
@@ -671,6 +690,7 @@ SystemMonitor.prototype = {
         this._swap_.set_text(this.mem_swap.swap_precent().toString());
         this._swap.set_text(this.mem_swap.swap.toString());
         this._swap_total.set_text(this.mem_swap.swap_total.toString());
+        this._swap_chart_._addValue(this.mem_swap.swap_list());
     },
 
     _update_cpu: function() {

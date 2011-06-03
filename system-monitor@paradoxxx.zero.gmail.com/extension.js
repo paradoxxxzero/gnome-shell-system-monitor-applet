@@ -214,14 +214,14 @@ Chart.prototype = {
         }
     },
     _addValue: function(data_a) {
-        let [width, height] = this.actor.get_surface_size();
+        let width = 30;//TODO: this.actor.get_width();
         let accdata = [];
         for (let i = 0;i < data_a.length;i++) {
-            accdata[i] = (i == 0) ? data_a[0] : accdata[i - i] + (data_a[i] > 0) ? data_a[i] : 0;
+            accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
         }
         this.data.push(accdata);
-        //if (this.data.push.length > width)
-        //this.data.shift();
+        if (this.data.push.length > width)
+            this.data.shift();
         this.actor.queue_repaint();
     }
 }
@@ -385,10 +385,7 @@ SystemMonitor.prototype = {
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._init_status();
-        this._schema = false;
         this._init_menu();
-
-        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._icon_.visible = this._schema.get_boolean("icon-display");
         this._mem_box.visible = this._schema.get_boolean("memory-display");
@@ -470,7 +467,7 @@ SystemMonitor.prototype = {
         this._mem_total.set_text(this.mem_swap.mem_total.toString());
         let mem = [];
         for (let i = 0;i < this.mem_swap.mem.length;i++) {
-            mem[i] = this.mem_swap.mem[i] / this.mem_swap.total;
+            mem[i] = this.mem_swap.mem[i] / this.mem_swap.mem_total;
         }
         this._mem_chart_._addValue(mem);
         this._swap_.set_text(this.mem_swap.swap_precent().toString());

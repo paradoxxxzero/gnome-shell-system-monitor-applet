@@ -198,6 +198,50 @@ Net_State.prototype = {
     }
 };
 
+function Disk_IO() {
+    this._init();
+}
+
+Disk_IO.prototype = {
+    _init: function() {
+        this.last = [0,0];
+        this.usage = [0,0];
+        this.last_time = 0;
+        this.update();
+    },
+    update: function() {
+        let diskio = GLib.file_get_contents('/proc/diskstats');
+        let accum = [0,0];
+        let time = 0;
+        if(diskio[0]) {
+            let diskio_lines = diskio[1].split("\n");
+            for(let i = 0;i < diskio_lines.length - 1;i++) {
+                let diskio_params = diskio_lines[i].replace(/ +/g, " ").split(" ");
+                if (testReg(/[0-9]$/,diskio_params[2])) continue;
+                accum[0] += parseInt(diskio_params[6]);
+                accum[1] += parseInt(diskio_params[10]);
+            }
+            time = GLib.get_monotonic_time() / 1000;
+        } else {
+            global.log("system-monitor: reading /proc/net/dev gave an error");
+        }
+        let delta = time - this.last_time;
+        if (delta > 0) {
+            for (let i = 0;i < 2;i++) {
+                this.usage[i] = (accum[i] - this.last[i]) / delta;
+                this.last[i] = accum[i];
+            }
+        }
+        this.last_time = time;
+    },//I don't think this is the best way to gather statistics
+    precent: function() {
+        return [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
+    },
+    list: function() {
+        return this.usage;
+    }
+};
+
 function Chart() {
     this._init.apply(this, arguments);
 }

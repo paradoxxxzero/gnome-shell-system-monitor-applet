@@ -73,7 +73,7 @@ Cpu_State.prototype = {
             this.last_total = total_t;
         }
     },
-    precent: function() {
+    percent: function() {
         return Math.round((1 - this.usage[3]) * 100);
     },
     list: function() {
@@ -122,7 +122,7 @@ Mem_State.prototype = {
             global.log("system-monitor: reading /proc/meminfo gave an error");
         }
     },
-    mem_precent: function() {
+    mem_percent: function() {
         if (this.mem_total == 0) {
             return 0;
         } else {
@@ -169,7 +169,7 @@ Swap_State.prototype = {
             global.log("system-monitor: reading /proc/meminfo gave an error");
         }
     },
-    swap_precent: function() {
+    swap_percent: function() {
         if (this.swap_total == 0) {
             return 0;
         } else {
@@ -257,7 +257,7 @@ Disk_State.prototype = {
         }
         this.last_time = time;
     },//I don't think this is the best way to gather statistics
-    precent: function() {
+    percent: function() {
         return [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
     },
     list: function() {
@@ -348,8 +348,8 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.cpu;
                 self.state.update();
-                self.panel.value.set_text(self.state.precent().toString());
-                self.menu.value.set_text(self.state.precent().toString());
+                self.panel.value.set_text(self.state.percent().toString());
+                self.menu.value.set_text(self.state.percent().toString());
                 self.chart._addValue(self.state.list());
                 return true;
             }
@@ -361,7 +361,7 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.memory;
                 self.state.update();
-                self.panel.value.set_text(self.state.mem_precent().toString());
+                self.panel.value.set_text(self.state.mem_percent().toString());
                 self.menu.used.set_text(self.state.mem[0].toString());
                 self.menu.total.set_text(self.state.mem_total.toString());
                 self.chart._addValue(self.state.mem_list());
@@ -375,7 +375,7 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.swap;
                 self.state.update();
-                self.panel.value.set_text(self.state.swap_precent().toString());
+                self.panel.value.set_text(self.state.swap_percent().toString());
                 self.menu.used.set_text(self.state.swap.toString());
                 self.menu.total.set_text(self.state.swap_total.toString());
                 self.chart._addValue(self.state.swap_list());
@@ -404,11 +404,11 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.disk;
                 self.state.update();
-                let precents = self.state.precent();
-                self.panel.read.set_text(precents[0].toString());
-                self.panel.write.set_text(precents[1].toString());
-                self.menu.read.set_text(precents[0] + " %");
-                self.menu.write.set_text(precents[1] + " %");
+                let percents = self.state.percent();
+                self.panel.read.set_text(percents[0].toString());
+                self.panel.write.set_text(percents[1].toString());
+                self.menu.read.set_text(percents[0] + " %");
+                self.menu.write.set_text(percents[1] + " %");
                 self.chart._addValue(self.state.list());
                 return true;
             }

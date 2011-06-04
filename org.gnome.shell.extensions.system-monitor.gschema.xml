@@ -17,8 +17,8 @@
     </key>
     <key name="memory-refresh-time" type="i">
       <default>5000</default>
-      <summary>Memory/Swap refresh time</summary>
-      <description>Time in ms between 2 refresh of memory and swap</description>
+      <summary>Memory refresh time</summary>
+      <description>Time in ms between 2 refresh of memory</description>
     </key>
     <key name="memory-graph-width" type="i">
       <default>100</default>
@@ -38,6 +38,11 @@
       <default>true</default>
       <summary>Display swap</summary>
       <description>Set to false to remove swap display in status bar</description>
+    </key>
+    <key name="swap-refresh-time" type="i">
+      <default>5000</default>
+      <summary>Swap refresh time</summary>
+      <description>Time in ms between 2 refresh of swap</description>
     </key>
     <key name="swap-graph-width" type="i">
       <default>100</default>
@@ -101,27 +106,27 @@
       <default>'digit'</default>
       <summary>Choose the display style.</summary>
     </key>
-    <key name="diskio-display" type="b">
+    <key name="disk-display" type="b">
       <default>false</default>
       <summary>Display disk io speed</summary>
       <description>Set to false to remove disk display in status bar</description>
     </key>
-    <key name="diskio-refresh-time" type="i">
+    <key name="disk-refresh-time" type="i">
       <default>2000</default>
       <summary>Disk IO refresh time</summary>
       <description>Time in ms between 2 refresh of Disk IO</description>
     </key>
-    <key name="diskio-graph-width" type="i">
+    <key name="disk-graph-width" type="i">
       <default>100</default>
       <summary>Disk IO graph width</summary>
       <description>Graph width in pixel</description>
     </key>
-    <key name="diskio-show-text" type="b">
+    <key name="disk-show-text" type="b">
       <default>true</default>
       <summary>Display 'disk'</summary>
       <description>Set to true to show 'disk' before disk io display</description>
     </key>
-    <key name="diskio-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+    <key name="disk-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'digit'</default>
       <summary>Choose the display style.</summary>
     </key>

@@ -85,22 +85,19 @@ Cpu_State.prototype = {
     }
 };
 
-function Mem_Swap() {
+function Mem_State() {
     this._init();
 }
 
-Mem_Swap.prototype = {
+Mem_State.prototype = {
     _init: function() {
         this.update();
     },
     update: function() {
         this.mem = [0,0,0];
         this.mem_total = 0;
-        this.swap = 0;
-        this.swap_total = 0;
         let meminfo = GLib.file_get_contents('/proc/meminfo');
         let mem_free = 0;
-        let swap_free = 0;
         if(meminfo[0]) {
             let meminfo_lines = meminfo[1].split("\n");
             for(let i = 0 ; i < meminfo_lines.length ; i++) {
@@ -118,29 +115,12 @@ Mem_Swap.prototype = {
                 case "Cached:":
                     this.mem[2] = Math.round(line[1] / 1024);
                     break;
-                case "SwapTotal:":
-                    this.swap_total = Math.round(line[1] / 1024);
-                    break;
-                case "SwapFree:":
-                    swap_free = Math.round(line[1] / 1024);
-                    break;
                 }
             }
             this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
-            this.swap = this.swap_total - swap_free;
         } else {
             global.log("system-monitor: reading /proc/meminfo gave an error");
         }
-    },
-    swap_precent: function() {
-        if (this.swap_total == 0) {
-            return 0;
-        } else {
-            return Math.round(this.swap / this.swap_total * 100);
-        }
-    },
-    swap_list: function() {
-        return [this.swap / this.swap_total];
     },
     mem_precent: function() {
         if (this.mem_total == 0) {
@@ -155,6 +135,49 @@ Mem_Swap.prototype = {
             mem[i] = this.mem[i] / this.mem_total;
         }
         return mem;
+    }
+};
+
+function Swap_State() {
+    this._init();
+}
+
+Swap_State.prototype = {
+    _init: function() {
+        this.update();
+    },
+    update: function() {
+        this.swap = 0;
+        this.swap_total = 0;
+        let meminfo = GLib.file_get_contents('/proc/meminfo');;
+        let swap_free = 0;
+        if(meminfo[0]) {
+            let meminfo_lines = meminfo[1].split("\n");
+            for(let i = 0 ; i < meminfo_lines.length ; i++) {
+                let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
+                switch(line[0]) {
+                case "SwapTotal:":
+                    this.swap_total = Math.round(line[1] / 1024);
+                    break;
+                case "SwapFree:":
+                    swap_free = Math.round(line[1] / 1024);
+                    break;
+                }
+            }
+            this.swap = this.swap_total - swap_free;
+        } else {
+            global.log("system-monitor: reading /proc/meminfo gave an error");
+        }
+    },
+    swap_precent: function() {
+        if (this.swap_total == 0) {
+            return 0;
+        } else {
+            return Math.round(this.swap / this.swap_total * 100);
+        }
+    },
+    swap_list: function() {
+        return [this.swap / this.swap_total];
     }
 };
 
@@ -198,11 +221,11 @@ Net_State.prototype = {
     }
 };
 
-function Disk_IO() {
+function Disk_State() {
     this._init();
 }
 
-Disk_IO.prototype = {
+Disk_State.prototype = {
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
@@ -210,16 +233,16 @@ Disk_IO.prototype = {
         this.update();
     },
     update: function() {
-        let diskio = GLib.file_get_contents('/proc/diskstats');
+        let disk = GLib.file_get_contents('/proc/diskstats');
         let accum = [0,0];
         let time = 0;
-        if(diskio[0]) {
-            let diskio_lines = diskio[1].split("\n");
-            for(let i = 0;i < diskio_lines.length - 1;i++) {
-                let diskio_params = diskio_lines[i].replace(/ +/g, " ").replace(/^ /,"").split(" ");
-                if (/[0-9]$/.test(diskio_params[2])) continue;
-                accum[0] += parseInt(diskio_params[6]);
-                accum[1] += parseInt(diskio_params[10]);
+        if(disk[0]) {
+            let disk_lines = disk[1].split("\n");
+            for(let i = 0;i < disk_lines.length - 1;i++) {
+                let disk_params = disk_lines[i].replace(/ +/g, " ").replace(/^ /,"").split(" ");
+                if (/[0-9]$/.test(disk_params[2])) continue;
+                accum[0] += parseInt(disk_params[6]);
+                accum[1] += parseInt(disk_params[10]);
             }
             time = GLib.get_monotonic_time() / 1000;
         } else {
@@ -318,11 +341,78 @@ SystemMonitor.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
     icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
     elements: {
-        memory: {},
-        swap: {},
-        cpu: {},
-        net: {},
-        diskio: {}
+        memory: {
+            panel: {},
+            menu: {},
+            state: new Mem_State(),
+            update: function () {
+                let self = this.state ? this : this.elements.memory;
+                self.state.update();
+                self.panel.value.set_text(self.state.mem_precent().toString());
+                self.menu.used.set_text(self.state.mem[0].toString());
+                self.menu.total.set_text(self.state.mem_total.toString());
+                self.chart._addValue(self.state.mem_list());
+                return true;
+            }
+        },
+        swap: {
+            panel: {},
+            menu: {},
+            state: new Swap_State(),
+            update: function () {
+                let self = this.state ? this : this.elements.swap;
+                self.state.update();
+                self.panel.value.set_text(self.state.swap_precent().toString());
+                self.menu.used.set_text(self.state.swap.toString());
+                self.menu.total.set_text(self.state.swap_total.toString());
+                self.chart._addValue(self.state.swap_list());
+                return true;
+            }
+        },
+        cpu: {
+            panel: {},
+            menu: {},
+            state: new Cpu_State(),
+            update: function () {
+                let self = this.state ? this : this.elements.cpu;
+                self.state.update();
+                self.panel.value.set_text(self.state.precent().toString());
+                self.menu.value.set_text(self.state.precent().toString());
+                self.chart._addValue(self.state.list());
+                return true;
+            }
+        },
+        net: {
+            panel: {},
+            menu: {},
+            state: new Net_State(),
+            update: function () {
+                let self = this.state ? this : this.elements.net;
+                self.state.update();
+                self.panel.down.set_text(self.state.usage[0].toString());
+                self.panel.up.set_text(self.state.usage[1].toString());
+                self.menu.down.set_text(self.state.usage[0] + " kB/s");
+                self.menu.up.set_text(self.state.usage[1] + " kB/s");
+                self.chart._addValue(self.state.list());
+                return true;
+            }
+        },
+        disk: {
+            panel: {},
+            menu: {},
+            state: new Disk_State(),
+            update: function () {
+                let self = this.state ? this : this.elements.disk;
+                self.state.update();
+                let precents = self.state.precent();
+                self.panel.read.set_text(precents[0].toString());
+                self.panel.write.set_text(precents[1].toString());
+                self.menu.read.set_text(precents[0] + " %");
+                self.menu.write.set_text(precents[1] + " %");
+                self.chart._addValue(self.state.list());
+                return true;
+            }
+        }
     },
     _init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Usages");
@@ -373,11 +463,11 @@ SystemMonitor.prototype = {
 
         item = new PopupMenu.PopupMenuItem("Disk");
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
-        this.elements.diskio.menu.read = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.elements.diskio.menu.read);
+        this.elements.disk.menu.read = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.elements.disk.menu.read);
         item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
-        this.elements.diskio.menu.write = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.elements.diskio.menu.write);
+        this.elements.disk.menu.write = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.elements.disk.menu.write);
         item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
@@ -386,61 +476,21 @@ SystemMonitor.prototype = {
 
         section = new PopupMenu.PopupMenuSection("Toggling");
         this.menu.addMenuItem(section);
-        this.elements.memory.switch = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
-        this.elements.memory.switch.connect(
-            'toggled',
-            Lang.bind(this,
-                      function(item) {
-                          this.elements.memory.panel.box.visible = item.state;
-                          if(this._schema) {
-                              this._schema.set_boolean("memory-display", item.state);
-                          }
-                      }));
-        section.addMenuItem(this.elements.memory.switch);
-        this.elements.swap.switch = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
-        this.elements.swap.switch.connect(
-            'toggled',
-            Lang.bind(this,
-                      function(item) {
-                          this.elements.swap.panel.box.visible = item.state;
-                          if(this._schema) {
-                              this._schema.set_boolean("swap-display", item.state);
-                          }
-                      }));
-        section.addMenuItem(this.elements.swap.switch);
-        this.elements.cpu.switch = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
-        this.elements.cpu.switch.connect(
-            'toggled',
-            Lang.bind(this,
-                      function(item) {
-                          this.elements.cpu.panel.box.visible = item.state;
-                          if(this._schema) {
-                              this._schema.set_boolean("cpu-display", item.state);
-                          }
-                      }));
-        section.addMenuItem(this.elements.cpu.switch);
-        this.elements.net.switch = new PopupMenu.PopupSwitchMenuItem("Display net", true);
-        this.elements.net.switch.connect(
-            'toggled',
-            Lang.bind(this,
-                      function(item) {
-                          this.elements.net.panel.box.visible = item.state;
-                          if(this._schema) {
-                              this._schema.set_boolean("net-display", item.state);
-                          }
-                      }));
-        section.addMenuItem(this.elements.net.switch);
-        this.elements.diskio.switch = new PopupMenu.PopupSwitchMenuItem("Display disk", true);
-        this.elements.diskio.switch.connect(
-            'toggled',
-            Lang.bind(this,
-                      function(item) {
-                          this.elements.diskio.panel.box.visible = item.state;
-                          if(this._schema) {
-                              this._schema.set_boolean("diskio-display", item.state);
-                          }
-                      }));
-        section.addMenuItem(this.elements.diskio.switch);
+
+        for (let element in this.elements) {
+            let elt = element;
+            this.elements[elt].switch = new PopupMenu.PopupSwitchMenuItem("Display " + elt, true);
+            this.elements[elt].switch.connect(
+                'toggled',
+                Lang.bind(this,
+                          function(item) {
+                              this.elements[elt].panel.box.visible = item.state;
+                              if(this._schema) {
+                                  this._schema.set_boolean(elt + "-display", item.state);
+                              }
+                          }));
+            section.addMenuItem(this.elements[elt].switch);
+        }
     },
     _init_status: function() {
         let box = new St.BoxLayout();
@@ -450,8 +500,8 @@ SystemMonitor.prototype = {
         this.elements.cpu.panel.value = new St.Label({ style_class: "sm-status-value"});
         this.elements.net.panel.down = new St.Label({ style_class: "sm-big-status-value"});
         this.elements.net.panel.up = new St.Label({ style_class: "sm-big-status-value"});
-        this.elements.diskio.panel.read = new St.Label({ style_class: "sm-big-status-value"});
-        this.elements.diskio.panel.write = new St.Label({ style_class: "sm-big-status-value"});
+        this.elements.disk.panel.read = new St.Label({ style_class: "sm-big-status-value"});
+        this.elements.disk.panel.write = new St.Label({ style_class: "sm-big-status-value"});
 
         let background = this._schema.get_string('background');
 
@@ -548,22 +598,22 @@ SystemMonitor.prototype = {
         colors = [];
         colors.push(this._schema.get_string('disk-read-color'));
         colors.push(this._schema.get_string('disk-write-color'));
-        this.elements.diskio.chart = new Chart(colors, background, this._schema.get_int('diskio-graph-width'), this.icon_size);
+        this.elements.disk.chart = new Chart(colors, background, this._schema.get_int('disk-graph-width'), this.icon_size);
 
-        let diskio_color = function() {
+        let disk_color = function() {
             let colors = [];
             colors.push(this._schema.get_string('disk-read-color'));
             colors.push(this._schema.get_string('disk-write-color'));
             let background = this._schema.get_string('background');
-            this.elements.diskio.chart._rcolor(colors);
-            this.elements.diskio.chart._bk_grd(background);
-            this.elements.diskio.chart.actor.queue_repaint();
+            this.elements.disk.chart._rcolor(colors);
+            this.elements.disk.chart._bk_grd(background);
+            this.elements.disk.chart.actor.queue_repaint();
             return true;
         };
 
-        this._schema.connect('changed::disk-read-color', Lang.bind(this, diskio_color));
-        this._schema.connect('changed::disk-write-color', Lang.bind(this, diskio_color));
-        this._schema.connect('changed::background', Lang.bind(this, diskio_color));
+        this._schema.connect('changed::disk-read-color', Lang.bind(this, disk_color));
+        this._schema.connect('changed::disk-write-color', Lang.bind(this, disk_color));
+        this._schema.connect('changed::background', Lang.bind(this, disk_color));
 
         box.add_actor(this._icon_);
 
@@ -658,56 +708,41 @@ SystemMonitor.prototype = {
         box.add_actor(this.elements.net.panel.box);
 
         digits = [];
-        this.elements.diskio.panel.box = new St.BoxLayout();
-        text = new St.Label({ text: 'diskio', style_class: "sm-status-label"});
-        Lang.bind(this, text_disp)(text, 'diskio-show-text');
-        this.elements.diskio.panel.box.add_actor(text);
+        this.elements.disk.panel.box = new St.BoxLayout();
+        text = new St.Label({ text: 'disk', style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'disk-show-text');
+        this.elements.disk.panel.box.add_actor(text);
         digit = new St.Label({ text: 'R', style_class: "sm-status-label"});
-        this.elements.diskio.panel.box.add_actor(digit);
+        this.elements.disk.panel.box.add_actor(digit);
         digits.push(digit);
-        this.elements.diskio.panel.box.add_actor(this.elements.diskio.panel.read);
-        digits.push(this.elements.diskio.panel.read);
+        this.elements.disk.panel.box.add_actor(this.elements.disk.panel.read);
+        digits.push(this.elements.disk.panel.read);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this.elements.diskio.panel.box.add_actor(digit);
+        this.elements.disk.panel.box.add_actor(digit);
         digits.push(digit);
         digit = new St.Label({ text: 'W', style_class: "sm-status-label"});
-        this.elements.diskio.panel.box.add_actor(digit);
+        this.elements.disk.panel.box.add_actor(digit);
         digits.push(digit);
-        this.elements.diskio.panel.box.add_actor(this.elements.diskio.panel.write);
-        digits.push(this.elements.diskio.panel.write);
+        this.elements.disk.panel.box.add_actor(this.elements.disk.panel.write);
+        digits.push(this.elements.disk.panel.write);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this.elements.diskio.panel.box.add_actor(digit);
+        this.elements.disk.panel.box.add_actor(digit);
         digits.push(digit);
-        this.elements.diskio.panel.box.add_actor(this.elements.diskio.chart.actor);
-        Lang.bind(this, disp_style)(digits, this.elements.diskio.chart.actor, 'diskio-style');
-        box.add_actor(this.elements.diskio.panel.box);
+        this.elements.disk.panel.box.add_actor(this.elements.disk.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.elements.disk.chart.actor, 'disk-style');
+        box.add_actor(this.elements.disk.panel.box);
 
         this.actor.set_child(box);
     },
     _init: function() {
         Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
-        for (let element in this.elements) {
-            this.elements[element].panel = {};
-            this.elements[element].menu = {};
-        }
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._init_status();
         this._init_menu();
 
         this._icon_.visible = this._schema.get_boolean("icon-display");
-        this.elements.memory.panel.box.visible = this._schema.get_boolean("memory-display");
-        this.elements.memory.switch.setToggleState(this.elements.memory.panel.box.visible);
-        this.elements.swap.panel.box.visible = this._schema.get_boolean("swap-display");
-        this.elements.swap.switch.setToggleState(this.elements.swap.panel.box.visible);
-        this.elements.cpu.panel.box.visible = this._schema.get_boolean("cpu-display");
-        this.elements.cpu.switch.setToggleState(this.elements.cpu.panel.box.visible);
-        this.elements.net.panel.box.visible = this._schema.get_boolean("net-display");
-        this.elements.net.switch.setToggleState(this.elements.net.panel.box.visible);
-        this.elements.diskio.panel.box.visible = this._schema.get_boolean("diskio-display");
-        this.elements.diskio.switch.setToggleState(this.elements.diskio.panel.box.visible);
-
         this._schema.connect(
             'changed::icon-display',
             Lang.bind(this,
@@ -715,8 +750,14 @@ SystemMonitor.prototype = {
                           this._icon_.visible = this._schema.get_boolean("icon-display");
                       }));
 
+        let l_limit = function(a) {
+            return (a > 0) ? a : 1000;
+        };
+
         for (let element in this.elements) {
             let elt = element;
+            this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
+            this.elements[elt].switch.setToggleState(this.elements[elt].panel.box.visible);
             this._schema.connect(
                 'changed::' + element + '-display',
                 Lang.bind(this,
@@ -725,170 +766,33 @@ SystemMonitor.prototype = {
                               this.elements[elt].switch.setToggleState(this.elements[elt].panel.box.visible);
                           })
             );
+            this.elements[elt].update();
+            this.elements[elt].interval = l_limit(this._schema.get_int(elt + "-refresh-time"));
+            this.elements[elt].timeout = GLib.timeout_add(0, this.elements[elt].interval, Lang.bind(this, this.elements[elt].update));
+            this._schema.connect(
+                'changed::' + elt + '-refresh-time',
+                Lang.bind(this,
+                          function () {
+                              GLib.source_remove(this.elements[elt].timeout);
+                              this.elements[elt].interval = Math.abs(this._schema.get_int(elt + "-refresh-time"));
+                              this.elements[elt].timeout = GLib.timeout_add(0, this.elements[elt].interval, this.elements[elt].update);
+                          })
+            );
+            this._schema.connect(
+                'changed::' + elt + '-graph-width',
+                Lang.bind(this,
+                          function () {
+                              this.elements[elt].chart.width = this._schema.get_int(elt + "-graph-width");
+                              this.elements[elt].chart.actor.set_width(this.elements[elt].chart.width);
+                              this.elements[elt].chart.actor.queue_repaint();
+                          })
+            );
         }
 
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
         }
 
-        this.cpu = new Cpu_State();
-        this.mem_swap = new Mem_Swap();
-        this.net = new Net_State();
-        this.diskio = new Disk_IO();
-
-        this._update_mem_swap();
-        this._update_cpu();
-        this._update_net();
-        this._update_diskio();
-
-        let l_limit = function(a) {
-            return (a > 0) ? a : 1000;
-        };
-
-        this.mem_interv = l_limit(this._schema.get_int("memory-refresh-time"));
-        this.cpu_interv = l_limit(this._schema.get_int("cpu-refresh-time"));
-        this.net_interv = l_limit(this._schema.get_int("net-refresh-time"));
-        this.diskio_interv = l_limit(this._schema.get_int("diskio-refresh-time"));
-
-        this.mem_update_fun = Lang.bind(this,
-                                         function () {
-                                             this._update_mem_swap();
-                                             return true;
-                                         });
-
-        this.cpu_update_fun = Lang.bind(this,
-                                        function () {
-                                            this._update_cpu();
-                                            return true;
-                                        });
-
-        this.net_update_fun = Lang.bind(this,
-                                        function () {
-                                            this._update_net();
-                                            return true;
-                                        });
-        this.diskio_update_fun = Lang.bind(this,
-                                        function () {
-                                            this._update_diskio();
-                                            return true;
-                                        });
-
-        this.mem_timeout = GLib.timeout_add(0, this.mem_interv, this.mem_update_fun);
-        this.cpu_timeout = GLib.timeout_add(0, this.cpu_interv, this.cpu_update_fun);
-        this.net_timeout = GLib.timeout_add(0, this.net_interv, this.net_update_fun);
-        this.net_timeout = GLib.timeout_add(0, this.diskio_interv, this.diskio_update_fun);
-
-        this._schema.connect(
-            'changed::memory-refresh-time',
-            Lang.bind(this,
-                      function () {
-                          GLib.source_remove(this.mem_timeout);
-                          this.mem_interv = Math.abs(this._schema.get_int("memory-refresh-time"));
-                          this.mem_timeout = GLib.timeout_add(0, this.mem_interv, this.mem_update_fun);
-                      }));
-        this._schema.connect(
-            'changed::cpu-refresh-time',
-            Lang.bind(this,
-                      function () {
-                          GLib.source_remove(this.cpu_timeout);
-                          this.cpu_interv = Math.abs(this._schema.get_int("cpu-refresh-time"));
-                          this.cpu_timeout = GLib.timeout_add(0, this.cpu_interv, this.cpu_update_fun);
-                      }));
-        this._schema.connect(
-            'changed::net-refresh-time',
-            Lang.bind(this,
-                      function () {
-                          GLib.source_remove(this.net_timeout);
-                          this.net_interv = Math.abs(this._schema.get_int("net-refresh-time"));
-                          this.net_timeout = GLib.timeout_add(0, this.net_interv, this.net_update_fun);
-                      }));
-        this._schema.connect(
-            'changed::diskio-refresh-time',
-            Lang.bind(this,
-                      function () {
-                          GLib.source_remove(this.diskio_timeout);
-                          this.diskio_interv = Math.abs(this._schema.get_int("diskio-refresh-time"));
-                          this.diskio_timeout = GLib.timeout_add(0, this.diskio_interv, this.diskio_update_fun);
-                      }));
-
-        this._schema.connect(
-            'changed::memory-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.elements.memory.chart.width = this._schema.get_int("memory-graph-width");
-                          this.elements.memory.chart.actor.set_width(this.elements.memory.chart.width);
-                          this.elements.memory.chart.actor.queue_repaint();
-                      }));
-        this._schema.connect(
-            'changed::swap-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.elements.swap.chart.width = this._schema.get_int("swap-graph-width");
-                          this.elements.swap.chart.actor.set_width(this.elements.swap.chart.width);
-                          this.elements.swap.chart.actor.queue_repaint();
-                      }));
-        this._schema.connect(
-            'changed::cpu-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.elements.cpu.chart.width = this._schema.get_int("cpu-graph-width");
-                          this.elements.cpu.chart.actor.set_width(this.elements.cpu.chart.width);
-                          this.elements.cpu.chart.actor.queue_repaint();
-                      }));
-        this._schema.connect(
-            'changed::net-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.elements.net.chart.width = this._schema.get_int("net-graph-width");
-                          this.elements.net.chart.actor.set_width(this.elements.net.chart.width);
-                          this.elements.net.chart.actor.queue_repaint();
-                      }));
-        this._schema.connect(
-            'changed::diskio-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.elements.diskio.chart.width = this._schema.get_int("diskio-graph-width");
-                          this.elements.diskio.chart.actor.set_width(this.elements.diskio.chart.width);
-                          this.elements.diskio.chart.actor.queue_repaint();
-                      }));
-    },
-
-    _update_mem_swap: function() {
-        this.mem_swap.update();
-        this.elements.memory.panel.value.set_text(this.mem_swap.mem_precent().toString());
-        this.elements.memory.menu.used.set_text(this.mem_swap.mem[0].toString());
-        this.elements.memory.menu.total.set_text(this.mem_swap.mem_total.toString());
-        this.elements.memory.chart._addValue(this.mem_swap.mem_list());
-        this.elements.swap.panel.value.set_text(this.mem_swap.swap_precent().toString());
-        this.elements.swap.menu.used.set_text(this.mem_swap.swap.toString());
-        this.elements.swap.menu.total.set_text(this.mem_swap.swap_total.toString());
-        this.elements.swap.chart._addValue(this.mem_swap.swap_list());
-    },
-
-    _update_cpu: function() {
-        this.cpu.update();
-        this.elements.cpu.panel.value.set_text(this.cpu.precent().toString());
-        this.elements.cpu.menu.value.set_text(this.cpu.precent().toString());
-        this.elements.cpu.chart._addValue(this.cpu.list());
-    },
-
-    _update_net: function() {
-        this.net.update();
-        this.elements.net.panel.down.set_text(this.net.usage[0].toString());
-        this.elements.net.panel.up.set_text(this.net.usage[1].toString());
-        this.elements.net.menu.down.set_text(this.net.usage[0] + " kB/s");
-        this.elements.net.menu.up.set_text(this.net.usage[1] + " kB/s");
-        this.elements.net.chart._addValue(this.net.list());
-    },
-
-    _update_diskio: function() {
-        this.diskio.update();
-        let precents = this.diskio.precent();
-        this.elements.diskio.panel.read.set_text(precents[0].toString());
-        this.elements.diskio.panel.write.set_text(precents[1].toString());
-        this.elements.diskio.menu.read.set_text(precents[0] + " %");
-        this.elements.diskio.menu.write.set_text(precents[1] + " %");
-        this.elements.diskio.chart._addValue(this.diskio.list());
     },
 
     _onDestroy: function() {}

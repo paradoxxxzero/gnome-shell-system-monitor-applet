@@ -86,6 +86,11 @@
       <summary>Display disk io speed</summary>
       <description>Set to false to remove disk display in status bar</description>
     </key>
+    <key name="diskio-refresh-time" type="i">
+      <default>2000</default>
+      <summary>Disk IO refresh time</summary>
+      <description>Time in ms between 2 refresh of Disk IO</description>
+    </key>
     <key name="diskio-show-text" type="b">
       <default>true</default>
       <summary>Display 'disk'</summary>
@@ -143,6 +148,14 @@
     <key name="swap-used-color" type="s">
       <default>'#ff0000'</default>
       <summary>Color of used swap in the chart</summary>
+    </key>
+    <key name="disk-read-color" type="s">
+      <default>'#ff0000'</default>
+      <summary>Color of disk reading speed in the chart</summary>
+    </key>
+    <key name="disk-write-color" type="s">
+      <default>'#00ff00'</default>
+      <summary>Color of disk writing speed in the chart</summary>
     </key>
     <key name="background" type="s">
       <default>'#000'</default>

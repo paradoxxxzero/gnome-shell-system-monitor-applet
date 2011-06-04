@@ -216,14 +216,14 @@ Disk_IO.prototype = {
         if(diskio[0]) {
             let diskio_lines = diskio[1].split("\n");
             for(let i = 0;i < diskio_lines.length - 1;i++) {
-                let diskio_params = diskio_lines[i].replace(/ +/g, " ").split(" ");
-                if (testReg(/[0-9]$/,diskio_params[2])) continue;
+                let diskio_params = diskio_lines[i].replace(/ +/g, " ").replace(/^ /,"").split(" ");
+                if (/[0-9]$/.test(diskio_params[2])) continue;
                 accum[0] += parseInt(diskio_params[6]);
                 accum[1] += parseInt(diskio_params[10]);
             }
             time = GLib.get_monotonic_time() / 1000;
         } else {
-            global.log("system-monitor: reading /proc/net/dev gave an error");
+            global.log("system-monitor: reading /proc/diskstats gave an error");
         }
         let delta = time - this.last_time;
         if (delta > 0) {
@@ -364,6 +364,17 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
+        item = new PopupMenu.PopupMenuItem("DiskIO");
+        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+        this._diskread = new St.Label({ style_class: "sm-value"});
+        item.addActor(this._diskread);
+        item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
+        this._diskwrite = new St.Label({ style_class: "sm-value"});
+        item.addActor(this._diskwrite);
+        item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
+        item.connect('activate', Open_Window);
+        section.addMenuItem(item);
+
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         section = new PopupMenu.PopupMenuSection("Toggling");
@@ -412,6 +423,17 @@ SystemMonitor.prototype = {
                           }
                       }));
         section.addMenuItem(this._net_widget);
+        this._diskio_widget = new PopupMenu.PopupSwitchMenuItem("Display DiskIO", true);
+        this._diskio_widget.connect(
+            'toggled',
+            Lang.bind(this,
+                      function(item) {
+                          this._diskio_box.visible = item.state;
+                          if(this._schema) {
+                              this._schema.set_boolean("diskio-display", item.state);
+                          }
+                      }));
+        section.addMenuItem(this._diskio_widget);
     },
     _init_status: function() {
         let box = new St.BoxLayout();
@@ -421,6 +443,8 @@ SystemMonitor.prototype = {
         this._cpu_ = new St.Label({ style_class: "sm-status-value"});
         this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
         this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
+        this._diskread_ = new St.Label({ style_class: "sm-big-status-value"});
+        this._diskwrite_ = new St.Label({ style_class: "sm-big-status-value"});
 
         let background = this._schema.get_string('background')
 
@@ -512,6 +536,26 @@ SystemMonitor.prototype = {
         this._schema.connect('changed::cpu-iowait-color', Lang.bind(this, cpu_color));
         this._schema.connect('changed::cpu-other-color', Lang.bind(this, cpu_color));
         this._schema.connect('changed::background', Lang.bind(this, cpu_color));
+
+        colors = [];
+        colors.push(this._schema.get_string('disk-read-color'));
+        colors.push(this._schema.get_string('disk-write-color'));
+        this._diskio_chart_ = new Chart(colors, background);
+
+        let diskio_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('disk-read-color'));
+            colors.push(this._schema.get_string('disk-write-color'));
+            let background = this._schema.get_string('background')
+            this._diskio_chart_._rcolor(colors);
+            this._diskio_chart_._bk_grd(background)
+            this._diskio_chart_.actor.queue_repaint();
+            return true;
+        }
+
+        this._schema.connect('changed::disk-read-color', Lang.bind(this, diskio_color));
+        this._schema.connect('changed::disk-write-color', Lang.bind(this, diskio_color));
+        this._schema.connect('changed::background', Lang.bind(this, diskio_color));
 
         box.add_actor(this._icon_);
 
@@ -605,6 +649,31 @@ SystemMonitor.prototype = {
         Lang.bind(this, disp_style)(digits, this._net_chart_.actor, 'net-style');
         box.add_actor(this._net_box);
 
+        digits = [];
+        this._diskio_box = new St.BoxLayout();
+        text = new St.Label({ text: 'diskio', style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'diskio-show-text');
+        this._diskio_box.add_actor(text);
+        digit = new St.Label({ text: 'R', style_class: "sm-status-label"});
+        this._diskio_box.add_actor(digit);
+        digits.push(digit);
+        this._diskio_box.add_actor(this._diskread_);
+        digits.push(this._diskread_);
+        digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
+        this._diskio_box.add_actor(digit);
+        digits.push(digit);
+        digit = new St.Label({ text: 'W', style_class: "sm-status-label"});
+        this._diskio_box.add_actor(digit);
+        digits.push(digit);
+        this._diskio_box.add_actor(this._diskwrite_);
+        digits.push(this._diskwrite_);
+        digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
+        this._diskio_box.add_actor(digit);
+        digits.push(digit);
+        this._diskio_box.add_actor(this._diskio_chart_.actor);
+        Lang.bind(this, disp_style)(digits, this._diskio_chart_.actor, 'diskio-style');
+        box.add_actor(this._diskio_box);
+
         this.actor.set_child(box);
     },
     _init: function() {
@@ -625,6 +694,8 @@ SystemMonitor.prototype = {
         this._cpu_widget.setToggleState(this._cpu_box.visible);
         this._net_box.visible = this._schema.get_boolean("net-display");
         this._net_widget.setToggleState(this._net_box.visible);
+        this._diskio_box.visible = this._schema.get_boolean("diskio-display");
+        this._diskio_widget.setToggleState(this._diskio_box.visible);
 
         this._schema.connect(
             'changed::icon-display',
@@ -660,6 +731,13 @@ SystemMonitor.prototype = {
                           this._net_box.visible = this._schema.get_boolean("net-display");
                           this._net_widget.setToggleState(this._net_box.visible);
                       }));
+        this._schema.connect(
+            'changed::diskio-display',
+            Lang.bind(this,
+                      function () {
+                          this._diskio_box.visible = this._schema.get_boolean("diskio-display");
+                          this._diskio_widget.setToggleState(this._diskio_box.visible);
+                      }));
 
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
@@ -668,14 +746,17 @@ SystemMonitor.prototype = {
         this.cpu = new Cpu_State();
         this.mem_swap = new Mem_Swap();
         this.net = new Net_State();
+        this.diskio = new Disk_IO();
 
         this._update_mem_swap();
         this._update_cpu();
         this._update_net();
+        this._update_diskio();
 
         this.mem_interv = Math.abs(this._schema.get_int("memory-refresh-time"));
         this.cpu_interv = Math.abs(this._schema.get_int("cpu-refresh-time"));
         this.net_interv = Math.abs(this._schema.get_int("net-refresh-time"));
+        this.diskio_interv = Math.abs(this._schema.get_int("diskio-refresh-time"));
 
         this.mem_update_fun = Lang.bind(this,
                                          function () {
@@ -694,10 +775,16 @@ SystemMonitor.prototype = {
                                             this._update_net();
                                             return true;
                                         });
+        this.diskio_update_fun = Lang.bind(this,
+                                        function () {
+                                            this._update_diskio();
+                                            return true;
+                                        });
 
         this.mem_timeout = GLib.timeout_add(0, this.mem_interv, this.mem_update_fun);
         this.cpu_timeout = GLib.timeout_add(0, this.cpu_interv, this.cpu_update_fun);
         this.net_timeout = GLib.timeout_add(0, this.net_interv, this.net_update_fun);
+        this.net_timeout = GLib.timeout_add(0, this.diskio_interv, this.diskio_update_fun);
 
         this._schema.connect(
             'changed::memory-refresh-time',
@@ -722,6 +809,14 @@ SystemMonitor.prototype = {
                           GLib.source_remove(this.net_timeout);
                           this.net_interv = Math.abs(this._schema.get_int("net-refresh-time"));
                           this.net_timeout = GLib.timeout_add(0, this.net_interv, this.net_update_fun);
+                      }));
+        this._schema.connect(
+            'changed::diskio-refresh-time',
+            Lang.bind(this,
+                      function () {
+                          GLib.source_remove(this.diskio_timeout);
+                          this.diskio_interv = Math.abs(this._schema.get_int("diskio-refresh-time"));
+                          this.diskio_timeout = GLib.timeout_add(0, this.diskio_interv, this.diskio_update_fun);
                       }));
 
     },
@@ -752,6 +847,16 @@ SystemMonitor.prototype = {
         this._netdown.set_text(this.net.usage[0] + " kB/s");
         this._netup.set_text(this.net.usage[1] + " kB/s");
         this._net_chart_._addValue(this.net.list());
+    },
+
+    _update_diskio: function() {
+        this.diskio.update();
+        let precents = this.diskio.precent();
+        this._diskread_.set_text(precents[0].toString());
+        this._diskwrite_.set_text(precents[1].toString());
+        this._diskread.set_text(precents[0] + " %");
+        this._diskwrite.set_text(precents[1] + " %");
+        this._diskio_chart_._addValue(this.diskio.list());
     },
 
     _onDestroy: function() {}

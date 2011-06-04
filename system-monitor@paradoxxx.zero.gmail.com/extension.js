@@ -317,61 +317,67 @@ function SystemMonitor() {
 SystemMonitor.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
     icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
-
+    elements: {
+        memory: {},
+        swap: {},
+        cpu: {},
+        net: {},
+        diskio: {}
+    },
     _init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Usages");
         this.menu.addMenuItem(section);
 
         let item = new PopupMenu.PopupMenuItem("Memory");
-        this._mem = new St.Label({ style_class: "sm-value"});
-        this._mem_total = new St.Label({ style_class: "sm-value"});
+        this.elements.memory.menu.used = new St.Label({ style_class: "sm-value"});
+        this.elements.memory.menu.total = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
-        item.addActor(this._mem);
+        item.addActor(this.elements.memory.menu.used);
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this._mem_total);
+        item.addActor(this.elements.memory.menu.total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Swap");
-        this._swap = new St.Label({ style_class: "sm-value"});
-        this._swap_total = new St.Label({ style_class: "sm-value"});
+        this.elements.swap.menu.used = new St.Label({ style_class: "sm-value"});
+        this.elements.swap.menu.total = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
-        item.addActor(this._swap);
+        item.addActor(this.elements.swap.menu.used);
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this._swap_total);
+        item.addActor(this.elements.swap.menu.total);
         item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Cpu");
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
-        this._cpu = new St.Label({ style_class: "sm-value"});
+        this.elements.cpu.menu.value = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(this._cpu);
+        item.addActor(this.elements.cpu.menu.value);
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Net");
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
-        this._netdown = new St.Label({ style_class: "sm-value"});
-        item.addActor(this._netdown);
+        this.elements.net.menu.down = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.elements.net.menu.down);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
-        this._netup = new St.Label({ style_class: "sm-value"});
-        item.addActor(this._netup);
+        this.elements.net.menu.up = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.elements.net.menu.up);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem("Disk");
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
-        this._diskread = new St.Label({ style_class: "sm-value"});
-        item.addActor(this._diskread);
+        this.elements.diskio.menu.read = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.elements.diskio.menu.read);
         item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
-        this._diskwrite = new St.Label({ style_class: "sm-value"});
-        item.addActor(this._diskwrite);
+        this.elements.diskio.menu.write = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.elements.diskio.menu.write);
         item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
@@ -380,72 +386,72 @@ SystemMonitor.prototype = {
 
         section = new PopupMenu.PopupMenuSection("Toggling");
         this.menu.addMenuItem(section);
-        this._mem_widget = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
-        this._mem_widget.connect(
+        this.elements.memory.switch = new PopupMenu.PopupSwitchMenuItem("Display memory", true);
+        this.elements.memory.switch.connect(
             'toggled',
             Lang.bind(this,
                       function(item) {
-                          this._mem_box.visible = item.state;
+                          this.elements.memory.panel.box.visible = item.state;
                           if(this._schema) {
                               this._schema.set_boolean("memory-display", item.state);
                           }
                       }));
-        section.addMenuItem(this._mem_widget);
-        this._swap_widget = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
-        this._swap_widget.connect(
+        section.addMenuItem(this.elements.memory.switch);
+        this.elements.swap.switch = new PopupMenu.PopupSwitchMenuItem("Display swap", true);
+        this.elements.swap.switch.connect(
             'toggled',
             Lang.bind(this,
                       function(item) {
-                          this._swap_box.visible = item.state;
+                          this.elements.swap.panel.box.visible = item.state;
                           if(this._schema) {
                               this._schema.set_boolean("swap-display", item.state);
                           }
                       }));
-        section.addMenuItem(this._swap_widget);
-        this._cpu_widget = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
-        this._cpu_widget.connect(
+        section.addMenuItem(this.elements.swap.switch);
+        this.elements.cpu.switch = new PopupMenu.PopupSwitchMenuItem("Display cpu", true);
+        this.elements.cpu.switch.connect(
             'toggled',
             Lang.bind(this,
                       function(item) {
-                          this._cpu_box.visible = item.state;
+                          this.elements.cpu.panel.box.visible = item.state;
                           if(this._schema) {
                               this._schema.set_boolean("cpu-display", item.state);
                           }
                       }));
-        section.addMenuItem(this._cpu_widget);
-        this._net_widget = new PopupMenu.PopupSwitchMenuItem("Display net", true);
-        this._net_widget.connect(
+        section.addMenuItem(this.elements.cpu.switch);
+        this.elements.net.switch = new PopupMenu.PopupSwitchMenuItem("Display net", true);
+        this.elements.net.switch.connect(
             'toggled',
             Lang.bind(this,
                       function(item) {
-                          this._net_box.visible = item.state;
+                          this.elements.net.panel.box.visible = item.state;
                           if(this._schema) {
                               this._schema.set_boolean("net-display", item.state);
                           }
                       }));
-        section.addMenuItem(this._net_widget);
-        this._diskio_widget = new PopupMenu.PopupSwitchMenuItem("Display disk", true);
-        this._diskio_widget.connect(
+        section.addMenuItem(this.elements.net.switch);
+        this.elements.diskio.switch = new PopupMenu.PopupSwitchMenuItem("Display disk", true);
+        this.elements.diskio.switch.connect(
             'toggled',
             Lang.bind(this,
                       function(item) {
-                          this._diskio_box.visible = item.state;
+                          this.elements.diskio.panel.box.visible = item.state;
                           if(this._schema) {
                               this._schema.set_boolean("diskio-display", item.state);
                           }
                       }));
-        section.addMenuItem(this._diskio_widget);
+        section.addMenuItem(this.elements.diskio.switch);
     },
     _init_status: function() {
         let box = new St.BoxLayout();
         this._icon_ = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: this.icon_size, icon_name:'utilities-system-monitor'});
-        this._mem_ = new St.Label({ style_class: "sm-status-value"});
-        this._swap_ = new St.Label({ style_class: "sm-status-value"});
-        this._cpu_ = new St.Label({ style_class: "sm-status-value"});
-        this._netdown_ = new St.Label({ style_class: "sm-big-status-value"});
-        this._netup_ = new St.Label({ style_class: "sm-big-status-value"});
-        this._diskread_ = new St.Label({ style_class: "sm-big-status-value"});
-        this._diskwrite_ = new St.Label({ style_class: "sm-big-status-value"});
+        this.elements.memory.panel.value = new St.Label({ style_class: "sm-status-value"});
+        this.elements.swap.panel.value = new St.Label({ style_class: "sm-status-value"});
+        this.elements.cpu.panel.value = new St.Label({ style_class: "sm-status-value"});
+        this.elements.net.panel.down = new St.Label({ style_class: "sm-big-status-value"});
+        this.elements.net.panel.up = new St.Label({ style_class: "sm-big-status-value"});
+        this.elements.diskio.panel.read = new St.Label({ style_class: "sm-big-status-value"});
+        this.elements.diskio.panel.write = new St.Label({ style_class: "sm-big-status-value"});
 
         let background = this._schema.get_string('background');
 
@@ -453,7 +459,7 @@ SystemMonitor.prototype = {
         colors.push(this._schema.get_string('memory-user-color'));
         colors.push(this._schema.get_string('memory-buffer-color'));
         colors.push(this._schema.get_string('memory-cache-color'));
-        this._mem_chart_ = new Chart(colors, background, this._schema.get_int('memory-graph-width'), this.icon_size);
+        this.elements.memory.chart = new Chart(colors, background, this._schema.get_int('memory-graph-width'), this.icon_size);
 
         let mem_color = function() {
             let colors = [];
@@ -461,9 +467,9 @@ SystemMonitor.prototype = {
             colors.push(this._schema.get_string('memory-buffer-color'));
             colors.push(this._schema.get_string('memory-cache-color'));
             let background = this._schema.get_string('background');
-            this._mem_chart_._rcolor(colors);
-            this._mem_chart_._bk_grd(background);
-            this._mem_chart_.actor.queue_repaint();
+            this.elements.memory.chart._rcolor(colors);
+            this.elements.memory.chart._bk_grd(background);
+            this.elements.memory.chart.actor.queue_repaint();
             return true;
         };
 
@@ -474,15 +480,15 @@ SystemMonitor.prototype = {
 
         colors = [];
         colors.push(this._schema.get_string('swap-used-color'));
-        this._swap_chart_ = new Chart(colors, background, this._schema.get_int('swap-graph-width'), this.icon_size);
+        this.elements.swap.chart = new Chart(colors, background, this._schema.get_int('swap-graph-width'), this.icon_size);
 
         let swap_color = function() {
             let colors = [];
             colors.push(this._schema.get_string('swap-used-color'));
             let background = this._schema.get_string('background');
-            this._swap_chart_._rcolor(colors);
-            this._swap_chart_._bk_grd(background);
-            this._swap_chart_.actor.queue_repaint();
+            this.elements.swap.chart._rcolor(colors);
+            this.elements.swap.chart._bk_grd(background);
+            this.elements.swap.chart.actor.queue_repaint();
             return true;
         };
 
@@ -492,16 +498,16 @@ SystemMonitor.prototype = {
         colors = [];
         colors.push(this._schema.get_string('net-down-color'));
         colors.push(this._schema.get_string('net-up-color'));
-        this._net_chart_ = new Chart(colors, background, this._schema.get_int('net-graph-width'), this.icon_size);
+        this.elements.net.chart = new Chart(colors, background, this._schema.get_int('net-graph-width'), this.icon_size);
 
         let net_color = function() {
             let colors = [];
             colors.push(this._schema.get_string('net-down-color'));
             colors.push(this._schema.get_string('net-up-color'));
             let background = this._schema.get_string('background');
-            this._net_chart_._rcolor(colors);
-            this._net_chart_._bk_grd(background);
-            this._net_chart_.actor.queue_repaint();
+            this.elements.net.chart._rcolor(colors);
+            this.elements.net.chart._bk_grd(background);
+            this.elements.net.chart.actor.queue_repaint();
             return true;
         };
 
@@ -516,7 +522,7 @@ SystemMonitor.prototype = {
         colors.push(this._schema.get_string('cpu-nice-color'));
         colors.push(this._schema.get_string('cpu-iowait-color'));
         colors.push(this._schema.get_string('cpu-other-color'));
-        this._cpu_chart_ = new Chart(colors, background, this._schema.get_int('cpu-graph-width'), this.icon_size);
+        this.elements.cpu.chart = new Chart(colors, background, this._schema.get_int('cpu-graph-width'), this.icon_size);
 
         let cpu_color = function() {
             let colors = [];
@@ -526,9 +532,9 @@ SystemMonitor.prototype = {
             colors.push(this._schema.get_string('cpu-iowait-color'));
             colors.push(this._schema.get_string('cpu-other-color'));
             let background = this._schema.get_string('background');
-            this._cpu_chart_._rcolor(colors);
-            this._cpu_chart_._bk_grd(background);
-            this._cpu_chart_.actor.queue_repaint();
+            this.elements.cpu.chart._rcolor(colors);
+            this.elements.cpu.chart._bk_grd(background);
+            this.elements.cpu.chart.actor.queue_repaint();
             return true;
         };
 
@@ -542,16 +548,16 @@ SystemMonitor.prototype = {
         colors = [];
         colors.push(this._schema.get_string('disk-read-color'));
         colors.push(this._schema.get_string('disk-write-color'));
-        this._diskio_chart_ = new Chart(colors, background, this._schema.get_int('diskio-graph-width'), this.icon_size);
+        this.elements.diskio.chart = new Chart(colors, background, this._schema.get_int('diskio-graph-width'), this.icon_size);
 
         let diskio_color = function() {
             let colors = [];
             colors.push(this._schema.get_string('disk-read-color'));
             colors.push(this._schema.get_string('disk-write-color'));
             let background = this._schema.get_string('background');
-            this._diskio_chart_._rcolor(colors);
-            this._diskio_chart_._bk_grd(background);
-            this._diskio_chart_.actor.queue_repaint();
+            this.elements.diskio.chart._rcolor(colors);
+            this.elements.diskio.chart._bk_grd(background);
+            this.elements.diskio.chart.actor.queue_repaint();
             return true;
         };
 
@@ -585,119 +591,122 @@ SystemMonitor.prototype = {
         };
 
         let text, digits = [], digit;
-        this._mem_box = new St.BoxLayout();
+        this.elements.memory.panel.box = new St.BoxLayout();
         text = new St.Label({ text: 'mem', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'memory-show-text');
-        this._mem_box.add_actor(text);
-        this._mem_box.add_actor(this._mem_);
-        digits.push(this._mem_);
+        this.elements.memory.panel.box.add_actor(text);
+        this.elements.memory.panel.box.add_actor(this.elements.memory.panel.value);
+        digits.push(this.elements.memory.panel.value);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this._mem_box.add_actor(digit);
+        this.elements.memory.panel.box.add_actor(digit);
         digits.push(digit);
-        this._mem_box.add_actor(this._mem_chart_.actor);
-        Lang.bind(this, disp_style)(digits, this._mem_chart_.actor, 'memory-style');
-        box.add_actor(this._mem_box);
+        this.elements.memory.panel.box.add_actor(this.elements.memory.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.elements.memory.chart.actor, 'memory-style');
+        box.add_actor(this.elements.memory.panel.box);
 
         digits = [];
-        this._swap_box = new St.BoxLayout();
+        this.elements.swap.panel.box = new St.BoxLayout();
         text = new St.Label({ text: 'swap', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'swap-show-text');
-        this._swap_box.add_actor(text);
-        this._swap_box.add_actor(this._swap_);
-        digits.push(this._swap_);
+        this.elements.swap.panel.box.add_actor(text);
+        this.elements.swap.panel.box.add_actor(this.elements.swap.panel.value);
+        digits.push(this.elements.swap.panel.value);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this._swap_box.add_actor(digit);
+        this.elements.swap.panel.box.add_actor(digit);
         digits.push(digit);
-        this._swap_box.add_actor(this._swap_chart_.actor);
-        Lang.bind(this, disp_style)(digits, this._swap_chart_.actor, 'swap-style');
-        box.add_actor(this._swap_box);
+        this.elements.swap.panel.box.add_actor(this.elements.swap.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.elements.swap.chart.actor, 'swap-style');
+        box.add_actor(this.elements.swap.panel.box);
 
         digits = [];
-        this._cpu_box = new St.BoxLayout();
+        this.elements.cpu.panel.box = new St.BoxLayout();
         text = new St.Label({ text: 'cpu', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'cpu-show-text');
-        this._cpu_box.add_actor(text);
-        this._cpu_box.add_actor(this._cpu_);
-        digits.push(this._cpu_);
+        this.elements.cpu.panel.box.add_actor(text);
+        this.elements.cpu.panel.box.add_actor(this.elements.cpu.panel.value);
+        digits.push(this.elements.cpu.panel.value);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this._cpu_box.add_actor(digit);
+        this.elements.cpu.panel.box.add_actor(digit);
         digits.push(digit);
-        this._cpu_box.add_actor(this._cpu_chart_.actor);
-        Lang.bind(this, disp_style)(digits, this._cpu_chart_.actor, 'cpu-style');
-        box.add_actor(this._cpu_box);
+        this.elements.cpu.panel.box.add_actor(this.elements.cpu.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.elements.cpu.chart.actor, 'cpu-style');
+        box.add_actor(this.elements.cpu.panel.box);
 
         digits = [];
-        this._net_box = new St.BoxLayout();
+        this.elements.net.panel.box = new St.BoxLayout();
         text = new St.Label({ text: 'net', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'net-show-text');
-        this._net_box.add_actor(text);
+        this.elements.net.panel.box.add_actor(text);
         digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'});
-        this._net_box.add_actor(digit);
+        this.elements.net.panel.box.add_actor(digit);
         digits.push(digit);
-        this._net_box.add_actor(this._netdown_);
-        digits.push(this._netdown_);
+        this.elements.net.panel.box.add_actor(this.elements.net.panel.down);
+        digits.push(this.elements.net.panel.down);
         digit = new St.Label({ text: 'kB/s', style_class: "sm-unit-label"});
-        this._net_box.add_actor(digit);
+        this.elements.net.panel.box.add_actor(digit);
         digits.push(digit);
         digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'});
-        this._net_box.add_actor(digit);
+        this.elements.net.panel.box.add_actor(digit);
         digits.push(digit);
-        this._net_box.add_actor(this._netup_);
-        digits.push(this._netup_);
+        this.elements.net.panel.box.add_actor(this.elements.net.panel.up);
+        digits.push(this.elements.net.panel.up);
         digit = new St.Label({ text: 'kB/s', style_class: "sm-unit-label"});
-        this._net_box.add_actor(digit);
+        this.elements.net.panel.box.add_actor(digit);
         digits.push(digit);
-        this._net_box.add_actor(this._net_chart_.actor);
-        Lang.bind(this, disp_style)(digits, this._net_chart_.actor, 'net-style');
-        box.add_actor(this._net_box);
+        this.elements.net.panel.box.add_actor(this.elements.net.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.elements.net.chart.actor, 'net-style');
+        box.add_actor(this.elements.net.panel.box);
 
         digits = [];
-        this._diskio_box = new St.BoxLayout();
+        this.elements.diskio.panel.box = new St.BoxLayout();
         text = new St.Label({ text: 'diskio', style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'diskio-show-text');
-        this._diskio_box.add_actor(text);
+        this.elements.diskio.panel.box.add_actor(text);
         digit = new St.Label({ text: 'R', style_class: "sm-status-label"});
-        this._diskio_box.add_actor(digit);
+        this.elements.diskio.panel.box.add_actor(digit);
         digits.push(digit);
-        this._diskio_box.add_actor(this._diskread_);
-        digits.push(this._diskread_);
+        this.elements.diskio.panel.box.add_actor(this.elements.diskio.panel.read);
+        digits.push(this.elements.diskio.panel.read);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this._diskio_box.add_actor(digit);
+        this.elements.diskio.panel.box.add_actor(digit);
         digits.push(digit);
         digit = new St.Label({ text: 'W', style_class: "sm-status-label"});
-        this._diskio_box.add_actor(digit);
+        this.elements.diskio.panel.box.add_actor(digit);
         digits.push(digit);
-        this._diskio_box.add_actor(this._diskwrite_);
-        digits.push(this._diskwrite_);
+        this.elements.diskio.panel.box.add_actor(this.elements.diskio.panel.write);
+        digits.push(this.elements.diskio.panel.write);
         digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-        this._diskio_box.add_actor(digit);
+        this.elements.diskio.panel.box.add_actor(digit);
         digits.push(digit);
-        this._diskio_box.add_actor(this._diskio_chart_.actor);
-        Lang.bind(this, disp_style)(digits, this._diskio_chart_.actor, 'diskio-style');
-        box.add_actor(this._diskio_box);
+        this.elements.diskio.panel.box.add_actor(this.elements.diskio.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.elements.diskio.chart.actor, 'diskio-style');
+        box.add_actor(this.elements.diskio.panel.box);
 
         this.actor.set_child(box);
     },
     _init: function() {
         Panel.__system_monitor = this;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
-
+        for (let element in this.elements) {
+            this.elements[element].panel = {};
+            this.elements[element].menu = {};
+        }
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._init_status();
         this._init_menu();
 
         this._icon_.visible = this._schema.get_boolean("icon-display");
-        this._mem_box.visible = this._schema.get_boolean("memory-display");
-        this._mem_widget.setToggleState(this._mem_box.visible);
-        this._swap_box.visible = this._schema.get_boolean("swap-display");
-        this._swap_widget.setToggleState(this._swap_box.visible);
-        this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-        this._cpu_widget.setToggleState(this._cpu_box.visible);
-        this._net_box.visible = this._schema.get_boolean("net-display");
-        this._net_widget.setToggleState(this._net_box.visible);
-        this._diskio_box.visible = this._schema.get_boolean("diskio-display");
-        this._diskio_widget.setToggleState(this._diskio_box.visible);
+        this.elements.memory.panel.box.visible = this._schema.get_boolean("memory-display");
+        this.elements.memory.switch.setToggleState(this.elements.memory.panel.box.visible);
+        this.elements.swap.panel.box.visible = this._schema.get_boolean("swap-display");
+        this.elements.swap.switch.setToggleState(this.elements.swap.panel.box.visible);
+        this.elements.cpu.panel.box.visible = this._schema.get_boolean("cpu-display");
+        this.elements.cpu.switch.setToggleState(this.elements.cpu.panel.box.visible);
+        this.elements.net.panel.box.visible = this._schema.get_boolean("net-display");
+        this.elements.net.switch.setToggleState(this.elements.net.panel.box.visible);
+        this.elements.diskio.panel.box.visible = this._schema.get_boolean("diskio-display");
+        this.elements.diskio.switch.setToggleState(this.elements.diskio.panel.box.visible);
 
         this._schema.connect(
             'changed::icon-display',
@@ -709,36 +718,36 @@ SystemMonitor.prototype = {
             'changed::memory-display',
             Lang.bind(this,
                       function () {
-                          this._mem_box.visible = this._schema.get_boolean("memory-display");
-                          this._mem_widget.setToggleState(this._mem_box.visible);
+                          this.elements.memory.panel.box.visible = this._schema.get_boolean("memory-display");
+                          this.elements.memory.switch.setToggleState(this.elements.memory.panel.box.visible);
                       }));
         this._schema.connect(
             'changed::swap-display',
             Lang.bind(this,
                       function () {
-                          this._swap_box.visible = this._schema.get_boolean("swap-display");
-                          this._swap_widget.setToggleState(this._swap_box.visible);
+                          this.elements.swap.panel.box.visible = this._schema.get_boolean("swap-display");
+                          this.elements.swap.switch.setToggleState(this.elements.swap.panel.box.visible);
                       }));
         this._schema.connect(
             'changed::cpu-display',
             Lang.bind(this,
                       function () {
-                          this._cpu_box.visible = this._schema.get_boolean("cpu-display");
-                          this._cpu_widget.setToggleState(this._cpu_box.visible);
+                          this.elements.cpu.panel.box.visible = this._schema.get_boolean("cpu-display");
+                          this.elements.cpu.switch.setToggleState(this.elements.cpu.panel.box.visible);
                       }));
         this._schema.connect(
             'changed::net-display',
             Lang.bind(this,
                       function () {
-                          this._net_box.visible = this._schema.get_boolean("net-display");
-                          this._net_widget.setToggleState(this._net_box.visible);
+                          this.elements.net.panel.box.visible = this._schema.get_boolean("net-display");
+                          this.elements.net.switch.setToggleState(this.elements.net.panel.box.visible);
                       }));
         this._schema.connect(
             'changed::diskio-display',
             Lang.bind(this,
                       function () {
-                          this._diskio_box.visible = this._schema.get_boolean("diskio-display");
-                          this._diskio_widget.setToggleState(this._diskio_box.visible);
+                          this.elements.diskio.panel.box.visible = this._schema.get_boolean("diskio-display");
+                          this.elements.diskio.switch.setToggleState(this.elements.diskio.panel.box.visible);
                       }));
 
         if(this._schema.get_boolean("center-display")) {
@@ -829,48 +838,80 @@ SystemMonitor.prototype = {
             'changed::memory-graph-width',
             Lang.bind(this,
                       function () {
-                          this._mem_chart_.width = this._schema.get_int("memory-graph-width");
-                          this._mem_chart_.actor.set_width(this._mem_chart_.width);
-                          this._mem_chart_.actor.queue_repaint();
+                          this.elements.memory.chart.width = this._schema.get_int("memory-graph-width");
+                          this.elements.memory.chart.actor.set_width(this.elements.memory.chart.width);
+                          this.elements.memory.chart.actor.queue_repaint();
+                      }));
+        this._schema.connect(
+            'changed::swap-graph-width',
+            Lang.bind(this,
+                      function () {
+                          this.elements.swap.chart.width = this._schema.get_int("swap-graph-width");
+                          this.elements.swap.chart.actor.set_width(this.elements.swap.chart.width);
+                          this.elements.swap.chart.actor.queue_repaint();
+                      }));
+        this._schema.connect(
+            'changed::cpu-graph-width',
+            Lang.bind(this,
+                      function () {
+                          this.elements.cpu.chart.width = this._schema.get_int("cpu-graph-width");
+                          this.elements.cpu.chart.actor.set_width(this.elements.cpu.chart.width);
+                          this.elements.cpu.chart.actor.queue_repaint();
+                      }));
+        this._schema.connect(
+            'changed::net-graph-width',
+            Lang.bind(this,
+                      function () {
+                          this.elements.net.chart.width = this._schema.get_int("net-graph-width");
+                          this.elements.net.chart.actor.set_width(this.elements.net.chart.width);
+                          this.elements.net.chart.actor.queue_repaint();
+                      }));
+        this._schema.connect(
+            'changed::diskio-graph-width',
+            Lang.bind(this,
+                      function () {
+                          this.elements.diskio.chart.width = this._schema.get_int("diskio-graph-width");
+                          this.elements.diskio.chart.actor.set_width(this.elements.diskio.chart.width);
+                          this.elements.diskio.chart.actor.queue_repaint();
                       }));
     },
 
     _update_mem_swap: function() {
         this.mem_swap.update();
-        this._mem_.set_text(this.mem_swap.mem_precent().toString());
-        this._mem.set_text(this.mem_swap.mem[0].toString());
-        this._mem_total.set_text(this.mem_swap.mem_total.toString());
-        this._mem_chart_._addValue(this.mem_swap.mem_list());
-        this._swap_.set_text(this.mem_swap.swap_precent().toString());
-        this._swap.set_text(this.mem_swap.swap.toString());
-        this._swap_total.set_text(this.mem_swap.swap_total.toString());
-        this._swap_chart_._addValue(this.mem_swap.swap_list());
+        this.elements.memory.panel.value.set_text(this.mem_swap.mem_precent().toString());
+        this.elements.memory.menu.used.set_text(this.mem_swap.mem[0].toString());
+        this.elements.memory.menu.total.set_text(this.mem_swap.mem_total.toString());
+        this.elements.memory.chart._addValue(this.mem_swap.mem_list());
+        this.elements.swap.panel.value.set_text(this.mem_swap.swap_precent().toString());
+        this.elements.swap.menu.used.set_text(this.mem_swap.swap.toString());
+        this.elements.swap.menu.total.set_text(this.mem_swap.swap_total.toString());
+        this.elements.swap.chart._addValue(this.mem_swap.swap_list());
     },
 
     _update_cpu: function() {
         this.cpu.update();
-        this._cpu_.set_text(this.cpu.precent().toString());
-        this._cpu.set_text(this.cpu.precent().toString());
-        this._cpu_chart_._addValue(this.cpu.list());
+        this.elements.cpu.panel.value.set_text(this.cpu.precent().toString());
+        this.elements.cpu.menu.value.set_text(this.cpu.precent().toString());
+        this.elements.cpu.chart._addValue(this.cpu.list());
     },
 
     _update_net: function() {
         this.net.update();
-        this._netdown_.set_text(this.net.usage[0].toString());
-        this._netup_.set_text(this.net.usage[1].toString());
-        this._netdown.set_text(this.net.usage[0] + " kB/s");
-        this._netup.set_text(this.net.usage[1] + " kB/s");
-        this._net_chart_._addValue(this.net.list());
+        this.elements.net.panel.down.set_text(this.net.usage[0].toString());
+        this.elements.net.panel.up.set_text(this.net.usage[1].toString());
+        this.elements.net.menu.down.set_text(this.net.usage[0] + " kB/s");
+        this.elements.net.menu.up.set_text(this.net.usage[1] + " kB/s");
+        this.elements.net.chart._addValue(this.net.list());
     },
 
     _update_diskio: function() {
         this.diskio.update();
         let precents = this.diskio.precent();
-        this._diskread_.set_text(precents[0].toString());
-        this._diskwrite_.set_text(precents[1].toString());
-        this._diskread.set_text(precents[0] + " %");
-        this._diskwrite.set_text(precents[1] + " %");
-        this._diskio_chart_._addValue(this.diskio.list());
+        this.elements.diskio.panel.read.set_text(precents[0].toString());
+        this.elements.diskio.panel.write.set_text(precents[1].toString());
+        this.elements.diskio.menu.read.set_text(precents[0] + " %");
+        this.elements.diskio.menu.write.set_text(precents[1] + " %");
+        this.elements.diskio.chart._addValue(this.diskio.list());
     },
 
     _onDestroy: function() {}

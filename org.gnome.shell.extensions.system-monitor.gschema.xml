@@ -144,7 +144,7 @@
       <summary>Color of buffer memory in the chart</summary>
     </key>
     <key name="memory-cache-color" type="s">
-      <default>'#AAF5D0'</default>
+      <default>'#aaf5d0'</default>
       <summary>Color of cache memory in the chart</summary>
     </key>
     <key name="net-down-color" type="s">
@@ -152,7 +152,7 @@
       <summary>Color of download speed in the chart</summary>
     </key>
     <key name="net-up-color" type="s">
-      <default>'#edd400'</default>
+      <default>'#edd4ff'</default>
       <summary>Color of upload speed in the chart</summary>
     </key>
     <key name="cpu-user-color" type="s">
@@ -180,11 +180,11 @@
       <summary>Color of used swap in the chart</summary>
     </key>
     <key name="disk-read-color" type="s">
-      <default>'#C65000'</default>
+      <default>'#c65000'</default>
       <summary>Color of disk reading speed in the chart</summary>
     </key>
     <key name="disk-write-color" type="s">
-      <default>'#FF6700'</default>
+      <default>'#ff6700'</default>
       <summary>Color of disk writing speed in the chart</summary>
     </key>
     <key name="background" type="s">

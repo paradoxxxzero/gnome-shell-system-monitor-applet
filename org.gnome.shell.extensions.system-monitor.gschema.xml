@@ -15,7 +15,7 @@
       <summary>Display memory</summary>
       <description>Set to false to remove memory display in status bar</description>
     </key>
-    <key name="memory-refresh-time" type="i">
+    <key name="memory-refresh-time" type="u">
       <default>5000</default>
       <summary>Memory/Swap refresh time</summary>
       <description>Time in ms between 2 refresh of memory and swap</description>
@@ -48,7 +48,7 @@
       <summary>Display cpu</summary>
       <description>Set to false to remove cpu display in status bar</description>
     </key>
-    <key name="cpu-refresh-time" type="i">
+    <key name="cpu-refresh-time" type="u">
       <default>1500</default>
       <summary>Cpu refresh time</summary>
       <description>Time in ms between 2 refresh of cpu</description>
@@ -67,7 +67,7 @@
       <summary>Display net</summary>
       <description>Set to false to remove net display in status bar</description>
     </key>
-    <key name="net-refresh-time" type="i">
+    <key name="net-refresh-time" type="u">
       <default>1000</default>
       <summary>Net refresh time</summary>
       <description>Time in ms between 2 refresh of net</description>
@@ -86,7 +86,7 @@
       <summary>Display disk io speed</summary>
       <description>Set to false to remove disk display in status bar</description>
     </key>
-    <key name="diskio-refresh-time" type="i">
+    <key name="diskio-refresh-time" type="u">
       <default>2000</default>
       <summary>Disk IO refresh time</summary>
       <description>Time in ms between 2 refresh of Disk IO</description>

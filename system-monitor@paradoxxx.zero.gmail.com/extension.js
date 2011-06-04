@@ -753,10 +753,10 @@ SystemMonitor.prototype = {
         this._update_net();
         this._update_diskio();
 
-        this.mem_interv = Math.abs(this._schema.get_int("memory-refresh-time"));
-        this.cpu_interv = Math.abs(this._schema.get_int("cpu-refresh-time"));
-        this.net_interv = Math.abs(this._schema.get_int("net-refresh-time"));
-        this.diskio_interv = Math.abs(this._schema.get_int("diskio-refresh-time"));
+        this.mem_interv = this._schema.get_int("memory-refresh-time");
+        this.cpu_interv = this._schema.get_int("cpu-refresh-time");
+        this.net_interv = this._schema.get_int("net-refresh-time");
+        this.diskio_interv = this._schema.get_int("diskio-refresh-time");
 
         this.mem_update_fun = Lang.bind(this,
                                          function () {

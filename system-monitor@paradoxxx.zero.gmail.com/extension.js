@@ -714,41 +714,18 @@ SystemMonitor.prototype = {
                       function () {
                           this._icon_.visible = this._schema.get_boolean("icon-display");
                       }));
-        this._schema.connect(
-            'changed::memory-display',
-            Lang.bind(this,
-                      function () {
-                          this.elements.memory.panel.box.visible = this._schema.get_boolean("memory-display");
-                          this.elements.memory.switch.setToggleState(this.elements.memory.panel.box.visible);
-                      }));
-        this._schema.connect(
-            'changed::swap-display',
-            Lang.bind(this,
-                      function () {
-                          this.elements.swap.panel.box.visible = this._schema.get_boolean("swap-display");
-                          this.elements.swap.switch.setToggleState(this.elements.swap.panel.box.visible);
-                      }));
-        this._schema.connect(
-            'changed::cpu-display',
-            Lang.bind(this,
-                      function () {
-                          this.elements.cpu.panel.box.visible = this._schema.get_boolean("cpu-display");
-                          this.elements.cpu.switch.setToggleState(this.elements.cpu.panel.box.visible);
-                      }));
-        this._schema.connect(
-            'changed::net-display',
-            Lang.bind(this,
-                      function () {
-                          this.elements.net.panel.box.visible = this._schema.get_boolean("net-display");
-                          this.elements.net.switch.setToggleState(this.elements.net.panel.box.visible);
-                      }));
-        this._schema.connect(
-            'changed::diskio-display',
-            Lang.bind(this,
-                      function () {
-                          this.elements.diskio.panel.box.visible = this._schema.get_boolean("diskio-display");
-                          this.elements.diskio.switch.setToggleState(this.elements.diskio.panel.box.visible);
-                      }));
+
+        for (let element in this.elements) {
+            let elt = element;
+            this._schema.connect(
+                'changed::' + element + '-display',
+                Lang.bind(this,
+                          function () {
+                              this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
+                              this.elements[elt].switch.setToggleState(this.elements[elt].panel.box.visible);
+                          })
+            );
+        }
 
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);

@@ -499,9 +499,9 @@ SystemMonitor.prototype = {
             let colors = [];
             colors.push(this._schema.get_string('swap-used-color'));
             let background = this._schema.get_string('background');
-            this._net_chart_._rcolor(colors);
-            this._net_chart_._bk_grd(background);
-            this._net_chart_.actor.queue_repaint();
+            this._swap_chart_._rcolor(colors);
+            this._swap_chart_._bk_grd(background);
+            this._swap_chart_.actor.queue_repaint();
             return true;
         };
 

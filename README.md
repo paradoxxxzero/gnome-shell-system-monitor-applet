@@ -29,6 +29,11 @@ Then install the schema:
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 
 
+### Authors:
+[paradoxxxzero](https://github.com/paradoxxxzero)
+
+[yuyichao](https://github.com/yuyichao)
+
 ### License:
 
 Copyright (C) 2011 Florian Mounier aka paradoxxxzero

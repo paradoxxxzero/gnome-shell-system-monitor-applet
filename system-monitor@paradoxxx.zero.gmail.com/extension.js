@@ -122,7 +122,7 @@ Mem_State.prototype = {
             global.log("system-monitor: reading /proc/meminfo gave an error");
         }
     },
-    mem_percent: function() {
+    percent: function() {
         if (this.mem_total == 0) {
             return 0;
         } else {
@@ -169,7 +169,7 @@ Swap_State.prototype = {
             global.log("system-monitor: reading /proc/meminfo gave an error");
         }
     },
-    swap_percent: function() {
+    percent: function() {
         if (this.swap_total == 0) {
             return 0;
         } else {
@@ -361,7 +361,7 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.memory;
                 self.state.update();
-                self.panel.value.set_text(self.state.mem_percent().toString());
+                self.panel.value.set_text(self.state.percent().toString());
                 self.menu.used.set_text(self.state.mem[0].toString());
                 self.menu.total.set_text(self.state.mem_total.toString());
                 self.chart._addValue(self.state.mem_list());
@@ -375,7 +375,7 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.swap;
                 self.state.update();
-                self.panel.value.set_text(self.state.swap_percent().toString());
+                self.panel.value.set_text(self.state.percent().toString());
                 self.menu.used.set_text(self.state.swap.toString());
                 self.menu.total.set_text(self.state.swap_total.toString());
                 self.chart._addValue(self.state.swap_list());

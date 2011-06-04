@@ -248,8 +248,11 @@ function Chart() {
 
 Chart.prototype = {
     _init: function() {
-        //if (arguments.length != 3) return; //TODO
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
+        this.width = arguments[2];
+        this.height = arguments[3];
+        this.actor.set_width(this.width);
+        this.actor.set_height(this.height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this._rcolor(arguments[0]);
         this._bk_grd(arguments[1]);
@@ -284,12 +287,11 @@ Chart.prototype = {
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.colors.length - 1;i >= 0;i--) {
-            cr.moveTo(0, height);
+            cr.moveTo(width, height);
             for (let j = this.data[i].length - 1;j >= 0;j--) {
-                cr.lineTo(this.data[i].length - 1 - j, (1 - this.data[i][j] / max) * height);
+                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
             }
-            cr.lineTo(this.data[i].length - 1, height);
-            cr.lineTo(0, height);
+            cr.lineTo(width - (this.data[i].length - 1), height);
             cr.closePath();
             Clutter.cairo_set_source_color(cr, this.colors[i]);
             cr.fill();
@@ -297,12 +299,11 @@ Chart.prototype = {
     },
     _addValue: function(data_a) {
         if (data_a.length != this.colors.length) return;
-        let width = 30;//TODO: this.actor.get_width();
         let accdata = [];
         for (let i = 0;i < data_a.length;i++) {
             accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
             this.data[i].push(accdata[i]);
-            if (this.data[i].length > width)
+            if (this.data[i].length > this.width)
                 this.data[i].shift();
         }
         this.actor.queue_repaint();
@@ -364,7 +365,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem("DiskIO");
+        item = new PopupMenu.PopupMenuItem("Disk");
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this._diskread = new St.Label({ style_class: "sm-value"});
         item.addActor(this._diskread);
@@ -423,7 +424,7 @@ SystemMonitor.prototype = {
                           }
                       }));
         section.addMenuItem(this._net_widget);
-        this._diskio_widget = new PopupMenu.PopupSwitchMenuItem("Display DiskIO", true);
+        this._diskio_widget = new PopupMenu.PopupSwitchMenuItem("Display disk", true);
         this._diskio_widget.connect(
             'toggled',
             Lang.bind(this,
@@ -452,7 +453,7 @@ SystemMonitor.prototype = {
         colors.push(this._schema.get_string('memory-user-color'));
         colors.push(this._schema.get_string('memory-buffer-color'));
         colors.push(this._schema.get_string('memory-cache-color'));
-        this._mem_chart_ = new Chart(colors, background);
+        this._mem_chart_ = new Chart(colors, background, this._schema.get_int('memory-graph-width'), this.icon_size);
 
         let mem_color = function() {
             let colors = [];
@@ -472,9 +473,26 @@ SystemMonitor.prototype = {
         this._schema.connect('changed::background', Lang.bind(this, mem_color));
 
         colors = [];
+        colors.push(this._schema.get_string('swap-used-color'));
+        this._swap_chart_ = new Chart(colors, background, this._schema.get_int('swap-graph-width'), this.icon_size);
+
+        let swap_color = function() {
+            let colors = [];
+            colors.push(this._schema.get_string('swap-used-color'));
+            let background = this._schema.get_string('background');
+            this._swap_chart_._rcolor(colors);
+            this._swap_chart_._bk_grd(background);
+            this._swap_chart_.actor.queue_repaint();
+            return true;
+        };
+
+        this._schema.connect('changed::swap-used-color', Lang.bind(this, swap_color));
+        this._schema.connect('changed::background', Lang.bind(this, swap_color));
+
+        colors = [];
         colors.push(this._schema.get_string('net-down-color'));
         colors.push(this._schema.get_string('net-up-color'));
-        this._net_chart_ = new Chart(colors, background);
+        this._net_chart_ = new Chart(colors, background, this._schema.get_int('net-graph-width'), this.icon_size);
 
         let net_color = function() {
             let colors = [];
@@ -491,22 +509,6 @@ SystemMonitor.prototype = {
         this._schema.connect('changed::net-up-color', Lang.bind(this, net_color));
         this._schema.connect('changed::background', Lang.bind(this, net_color));
 
-        colors = [];
-        colors.push(this._schema.get_string('swap-used-color'));
-        this._swap_chart_ = new Chart(colors, background);
-
-        let swap_color = function() {
-            let colors = [];
-            colors.push(this._schema.get_string('swap-used-color'));
-            let background = this._schema.get_string('background');
-            this._swap_chart_._rcolor(colors);
-            this._swap_chart_._bk_grd(background);
-            this._swap_chart_.actor.queue_repaint();
-            return true;
-        };
-
-        this._schema.connect('changed::swap-used-color', Lang.bind(this, swap_color));
-        this._schema.connect('changed::background', Lang.bind(this, swap_color));
 
         colors = [];
         colors.push(this._schema.get_string('cpu-user-color'));
@@ -514,7 +516,7 @@ SystemMonitor.prototype = {
         colors.push(this._schema.get_string('cpu-nice-color'));
         colors.push(this._schema.get_string('cpu-iowait-color'));
         colors.push(this._schema.get_string('cpu-other-color'));
-        this._cpu_chart_ = new Chart(colors, background);
+        this._cpu_chart_ = new Chart(colors, background, this._schema.get_int('cpu-graph-width'), this.icon_size);
 
         let cpu_color = function() {
             let colors = [];
@@ -540,7 +542,7 @@ SystemMonitor.prototype = {
         colors = [];
         colors.push(this._schema.get_string('disk-read-color'));
         colors.push(this._schema.get_string('disk-write-color'));
-        this._diskio_chart_ = new Chart(colors, background);
+        this._diskio_chart_ = new Chart(colors, background, this._schema.get_int('diskio-graph-width'), this.icon_size);
 
         let diskio_color = function() {
             let colors = [];
@@ -753,8 +755,8 @@ SystemMonitor.prototype = {
         this._update_net();
         this._update_diskio();
 
-        l_limit = function(a) {
-            return (a > 100) ? a : 100;
+        let l_limit = function(a) {
+            return (a > 0) ? a : 1000;
         };
 
         this.mem_interv = l_limit(this._schema.get_int("memory-refresh-time"));
@@ -823,6 +825,14 @@ SystemMonitor.prototype = {
                           this.diskio_timeout = GLib.timeout_add(0, this.diskio_interv, this.diskio_update_fun);
                       }));
 
+        this._schema.connect(
+            'changed::memory-graph-width',
+            Lang.bind(this,
+                      function () {
+                          this._mem_chart_.width = this._schema.get_int("memory-graph-width");
+                          this._mem_chart_.actor.set_width(this._mem_chart_.width);
+                          this._mem_chart_.actor.queue_repaint();
+                      }));
     },
 
     _update_mem_swap: function() {

@@ -136,55 +136,55 @@
       <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
     </key>
     <key name="memory-user-color" type="s">
-      <default>'#ff0000'</default>
+      <default>'#00b35b'</default>
       <summary>Color of user memory in the chart</summary>
     </key>
     <key name="memory-buffer-color" type="s">
-      <default>'#0000ff'</default>
+      <default>'#00ff82'</default>
       <summary>Color of buffer memory in the chart</summary>
     </key>
     <key name="memory-cache-color" type="s">
-      <default>'#ffff00'</default>
+      <default>'#AAF5D0'</default>
       <summary>Color of cache memory in the chart</summary>
     </key>
     <key name="net-down-color" type="s">
-      <default>'#ff0000'</default>
+      <default>'#fce94f'</default>
       <summary>Color of download speed in the chart</summary>
     </key>
     <key name="net-up-color" type="s">
-      <default>'#00ff00'</default>
+      <default>'#edd400'</default>
       <summary>Color of upload speed in the chart</summary>
     </key>
     <key name="cpu-user-color" type="s">
-      <default>'#ff0000'</default>
+      <default>'#0072b3'</default>
       <summary>Color of user cpu in the chart</summary>
     </key>
     <key name="cpu-system-color" type="s">
-      <default>'#00ff00'</default>
+      <default>'#0092e6'</default>
       <summary>Color of system cpu in the chart</summary>
     </key>
     <key name="cpu-nice-color" type="s">
-      <default>'#ff00ff'</default>
+      <default>'#00a3ff'</default>
       <summary>Color of nice cpu in the chart</summary>
     </key>
     <key name="cpu-iowait-color" type="s">
-      <default>'#ffff00'</default>
+      <default>'#002f3d'</default>
       <summary>Color of iowait in the chart</summary>
     </key>
     <key name="cpu-other-color" type="s">
-      <default>'#00ffff'</default>
+      <default>'#003d2f'</default>
       <summary>Color of other cpu in the chart</summary>
     </key>
     <key name="swap-used-color" type="s">
-      <default>'#ff0000'</default>
+      <default>'#8b00c3'</default>
       <summary>Color of used swap in the chart</summary>
     </key>
     <key name="disk-read-color" type="s">
-      <default>'#ff0000'</default>
+      <default>'#C65000'</default>
       <summary>Color of disk reading speed in the chart</summary>
     </key>
     <key name="disk-write-color" type="s">
-      <default>'#00ff00'</default>
+      <default>'#FF6700'</default>
       <summary>Color of disk writing speed in the chart</summary>
     </key>
     <key name="background" type="s">

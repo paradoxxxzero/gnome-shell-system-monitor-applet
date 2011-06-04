@@ -1,4 +1,7 @@
 ## Gnome shell system monitor extension
+![](http://i.imgur.com/mmRTu.png)
+![](http://i.imgur.com/Eg6sC.png)
+
 
 ### Install:
 #### On archlinux:

@@ -446,7 +446,7 @@ SystemMonitor.prototype = {
         this._diskread_ = new St.Label({ style_class: "sm-big-status-value"});
         this._diskwrite_ = new St.Label({ style_class: "sm-big-status-value"});
 
-        let background = this._schema.get_string('background')
+        let background = this._schema.get_string('background');
 
         let colors = [];
         colors.push(this._schema.get_string('memory-user-color'));
@@ -459,12 +459,12 @@ SystemMonitor.prototype = {
             colors.push(this._schema.get_string('memory-user-color'));
             colors.push(this._schema.get_string('memory-buffer-color'));
             colors.push(this._schema.get_string('memory-cache-color'));
-            let background = this._schema.get_string('background')
+            let background = this._schema.get_string('background');
             this._mem_chart_._rcolor(colors);
-            this._mem_chart_._bk_grd(background)
+            this._mem_chart_._bk_grd(background);
             this._mem_chart_.actor.queue_repaint();
             return true;
-        }
+        };
 
         this._schema.connect('changed::memory-user-color', Lang.bind(this, mem_color));
         this._schema.connect('changed::memory-buffer-color', Lang.bind(this, mem_color));
@@ -480,12 +480,12 @@ SystemMonitor.prototype = {
             let colors = [];
             colors.push(this._schema.get_string('net-down-color'));
             colors.push(this._schema.get_string('net-up-color'));
-            let background = this._schema.get_string('background')
+            let background = this._schema.get_string('background');
             this._net_chart_._rcolor(colors);
-            this._net_chart_._bk_grd(background)
+            this._net_chart_._bk_grd(background);
             this._net_chart_.actor.queue_repaint();
             return true;
-        }
+        };
 
         this._schema.connect('changed::net-down-color', Lang.bind(this, net_color));
         this._schema.connect('changed::net-up-color', Lang.bind(this, net_color));
@@ -498,12 +498,12 @@ SystemMonitor.prototype = {
         let swap_color = function() {
             let colors = [];
             colors.push(this._schema.get_string('swap-used-color'));
-            let background = this._schema.get_string('background')
+            let background = this._schema.get_string('background');
             this._net_chart_._rcolor(colors);
-            this._net_chart_._bk_grd(background)
+            this._net_chart_._bk_grd(background);
             this._net_chart_.actor.queue_repaint();
             return true;
-        }
+        };
 
         this._schema.connect('changed::swap-used-color', Lang.bind(this, swap_color));
         this._schema.connect('changed::background', Lang.bind(this, swap_color));
@@ -523,12 +523,12 @@ SystemMonitor.prototype = {
             colors.push(this._schema.get_string('cpu-nice-color'));
             colors.push(this._schema.get_string('cpu-iowait-color'));
             colors.push(this._schema.get_string('cpu-other-color'));
-            let background = this._schema.get_string('background')
+            let background = this._schema.get_string('background');
             this._cpu_chart_._rcolor(colors);
-            this._cpu_chart_._bk_grd(background)
+            this._cpu_chart_._bk_grd(background);
             this._cpu_chart_.actor.queue_repaint();
             return true;
-        }
+        };
 
         this._schema.connect('changed::cpu-user-color', Lang.bind(this, cpu_color));
         this._schema.connect('changed::cpu-system-color', Lang.bind(this, cpu_color));
@@ -546,12 +546,12 @@ SystemMonitor.prototype = {
             let colors = [];
             colors.push(this._schema.get_string('disk-read-color'));
             colors.push(this._schema.get_string('disk-write-color'));
-            let background = this._schema.get_string('background')
+            let background = this._schema.get_string('background');
             this._diskio_chart_._rcolor(colors);
-            this._diskio_chart_._bk_grd(background)
+            this._diskio_chart_._bk_grd(background);
             this._diskio_chart_.actor.queue_repaint();
             return true;
-        }
+        };
 
         this._schema.connect('changed::disk-read-color', Lang.bind(this, diskio_color));
         this._schema.connect('changed::disk-write-color', Lang.bind(this, diskio_color));
@@ -565,7 +565,7 @@ SystemMonitor.prototype = {
             };
             Lang.bind(this, apply)();
             this._schema.connect('changed::' + schema, Lang.bind(this, apply));
-        }
+        };
 
         let disp_style = function(digits, chart, schema) {
             let apply = function() {
@@ -577,10 +577,10 @@ SystemMonitor.prototype = {
                     digits[i].visible = d_digit;
                 }
                 chart.visible = d_chart;
-            }
+            };
             Lang.bind(this, apply)();
             this._schema.connect('changed::' + schema, Lang.bind(this, apply));
-        }
+        };
 
         let text, digits = [], digit;
         this._mem_box = new St.BoxLayout();

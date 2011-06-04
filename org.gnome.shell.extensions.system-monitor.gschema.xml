@@ -20,6 +20,11 @@
       <summary>Memory/Swap refresh time</summary>
       <description>Time in ms between 2 refresh of memory and swap</description>
     </key>
+    <key name="memory-graph-width" type="i">
+      <default>100</default>
+      <summary>Memory graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
     <key name="memory-show-text" type="b">
       <default>true</default>
       <summary>Display 'mem'</summary>
@@ -33,6 +38,11 @@
       <default>true</default>
       <summary>Display swap</summary>
       <description>Set to false to remove swap display in status bar</description>
+    </key>
+    <key name="swap-graph-width" type="i">
+      <default>100</default>
+      <summary>Swap graph width</summary>
+      <description>Graph width in pixel</description>
     </key>
     <key name="swap-show-text" type="b">
       <default>true</default>
@@ -53,6 +63,11 @@
       <summary>Cpu refresh time</summary>
       <description>Time in ms between 2 refresh of cpu</description>
     </key>
+    <key name="cpu-graph-width" type="i">
+      <default>100</default>
+      <summary>Cpu graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
     <key name="cpu-show-text" type="b">
       <default>true</default>
       <summary>Display 'cpu'</summary>
@@ -72,6 +87,11 @@
       <summary>Net refresh time</summary>
       <description>Time in ms between 2 refresh of net</description>
     </key>
+    <key name="net-graph-width" type="i">
+      <default>100</default>
+      <summary>Net graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
     <key name="net-show-text" type="b">
       <default>true</default>
       <summary>Display 'net'</summary>
@@ -90,6 +110,11 @@
       <default>2000</default>
       <summary>Disk IO refresh time</summary>
       <description>Time in ms between 2 refresh of Disk IO</description>
+    </key>
+    <key name="diskio-graph-width" type="i">
+      <default>100</default>
+      <summary>Disk IO graph width</summary>
+      <description>Graph width in pixel</description>
     </key>
     <key name="diskio-show-text" type="b">
       <default>true</default>
@@ -158,7 +183,7 @@
       <summary>Color of disk writing speed in the chart</summary>
     </key>
     <key name="background" type="s">
-      <default>'#000'</default>
+      <default>'#ffffff16'</default>
       <summary>Color of background</summary>
     </key>
   </schema>

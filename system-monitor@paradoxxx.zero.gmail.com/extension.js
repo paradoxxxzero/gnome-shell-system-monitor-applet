@@ -225,6 +225,7 @@ Chart.prototype = {
         this.background = background;
     },
     _draw: function() {
+        if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
         let max = Math.max.apply(this,this.data[this.data.length - 1]);

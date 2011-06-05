@@ -23,9 +23,6 @@
 
 from gi.repository import Gtk, Gio, Gdk
 
-SETTING_ITEMS = "cpu-memory-swap-net-disk"
-DISP_STYLE = ['digit', 'graph', 'both']
-
 
 def up_first(string):
     return string[0].upper() + string[1:]
@@ -113,10 +110,10 @@ class SettingFrame:
         self.label = Gtk.Label(name)
         self.frame = Gtk.Frame()
         self.frame.set_border_width(10)
-        self.vbox = Gtk.VBox()
-        self.hbox0 = Gtk.HBox()
-        self.hbox1 = Gtk.HBox()
-        self.hbox2 = Gtk.HBox()
+        self.vbox = Gtk.VBox(spacing = 20)
+        self.hbox0 = Gtk.HBox(spacing = 20)
+        self.hbox1 = Gtk.HBox(spacing = 20)
+        self.hbox2 = Gtk.HBox(spacing = 20)
         self.frame.add(self.vbox)
         self.vbox.add(self.hbox0)
         self.vbox.add(self.hbox1)
@@ -154,7 +151,7 @@ class SettingFrame:
         elif sections[1] == 'style':
             item = Select('Display Style',
                           self.schema.get_enum(key),
-                          DISP_STYLE)
+                          ('digit', 'graph', 'both'))
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
@@ -168,6 +165,7 @@ class SettingFrame:
 
 class App:
     opt = {}
+    setting_items = ('cpu', 'memory', 'swap', 'net', 'disk')
 
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')
@@ -177,12 +175,14 @@ class App:
         self.window.set_border_width(10)
         self.items = []
         self.settings = {}
-        for setting in SETTING_ITEMS.split('-'):
+        for setting in self.setting_items:
             self.settings[setting] = SettingFrame(
                 up_first(setting), self.schema)
 
-        self.main_vbox = Gtk.VBox()
-        self.hbox1 = Gtk.HBox()
+        self.main_vbox = Gtk.VBox(spacing = 10)
+        self.main_vbox.set_border_width(10)
+        self.hbox1 = Gtk.HBox(spacing = 20)
+        self.hbox1.set_border_width(10)
         self.main_vbox.add(self.hbox1)
         self.window.add(self.main_vbox)
         for key in keys:
@@ -193,7 +193,7 @@ class App:
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'center-display':
-                item = Gtk.CheckButton(label='Display In the Middle')
+                item = Gtk.CheckButton(label='Display in the Middle')
                 item.set_active(self.schema.get_boolean(key))
                 self.items.append(item)
                 self.hbox1.add(item)
@@ -206,12 +206,11 @@ class App:
                 item.picker.connect('color-set', set_color, self.schema, key)
             else:
                 sections = key.split('-')
-                if ('-' + SETTING_ITEMS + '-').find(
-                    '-' + sections[0] + '-') > -1:
+                if sections[0] in self.setting_items:
                     self.settings[sections[0]].add(key)
 
         self.notebook = Gtk.Notebook()
-        for setting in SETTING_ITEMS.split('-'):
+        for setting in self.setting_items:
             self.notebook.append_page(
                 self.settings[setting].frame, self.settings[setting].label)
         self.main_vbox.add(self.notebook)

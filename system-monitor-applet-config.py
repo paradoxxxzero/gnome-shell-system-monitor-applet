@@ -89,7 +89,7 @@ class App:
                     color_to_hex(cb.get_rgba()))
             picker.connect('color-set', color_set, key)
             table.attach_defaults(label, 0, 1, i, i + 1)
-            table.attach_defaults (picker, 1, 2, i, i + 1)
+            table.attach_defaults(picker, 1, 2, i, i + 1)
             i += 1
 
         self.window.show_all()

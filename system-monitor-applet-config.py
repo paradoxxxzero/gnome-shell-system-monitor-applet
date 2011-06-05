@@ -2,7 +2,8 @@
 # -*- Mode: Python; py-indent-offset: 4 -*-
 # vim: tabstop=4 shiftwidth=4 expandtab
 
-# system-monitor: Gnome shell extension displaying system informations in gnome shell status bar, such as memory usage, cpu usage, network rates…
+# system-monitor: Gnome shell extension displaying system informations
+# in gnome shell status bar, such as memory usage, cpu usage, network rates…
 # Copyright (C) 2011 Florian Mounier aka paradoxxxzero
 
 # This program is free software: you can redistribute it and/or modify
@@ -22,12 +23,13 @@
 
 from gi.repository import Gtk, Gio, Gdk
 
-def up_first(str):
-    return str[0].upper() + str[1:]
+SETTING_ITEMS = "cpu-memory-swap-net-disk"
+DISP_STYLE = ['digit', 'graph', 'both']
 
-setting_items = "cpu-memory-swap-net-disk"
 
-disp_style = ['digit', 'graph', 'both']
+def up_first(string):
+    return string[0].upper() + string[1:]
+
 
 def color_to_hex(color):
     return "#%02x%02x%02x%02x" % (
@@ -36,21 +38,25 @@ def color_to_hex(color):
         color.blue * 255,
         color.alpha * 255)
 
+
 def hex_to_color(hexstr):
     return Gdk.RGBA(
         int(hexstr[1:3], 16) / 255,
         int(hexstr[3:5], 16) / 255,
         int(hexstr[5:7], 16) / 255,
-        int(hexstr[7:9], 16) / 255 if len(hexstr) == 9 else 1) if (len(hexstr) != 4 & len(hexstr) != 5) else Gdk.RGBA(
-        int(hexstr[1], 16) / 15,
-        int(hexstr[2], 16) / 15,
-        int(hexstr[3], 16) / 15,
-        int(hexstr[4], 16) / 15 if len(hexstr) == 5 else 1)
+        int(hexstr[7:9], 16) / 255 \
+            if len(hexstr) == 9 \
+            else 1) if (len(hexstr) != 4 & len(hexstr) != 5) \
+            else Gdk.RGBA(
+            int(hexstr[1], 16) / 15,
+            int(hexstr[2], 16) / 15,
+            int(hexstr[3], 16) / 15,
+            int(hexstr[4], 16) / 15 if len(hexstr) == 5 else 1)
 
 
-class color_select:
-    def __init__(self, Name, value):
-        self.label = Gtk.Label(Name + ":")
+class ColorSelect:
+    def __init__(self, name, value):
+        self.label = Gtk.Label(name + ":")
         self.picker = Gtk.ColorButton()
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
@@ -58,9 +64,10 @@ class color_select:
         self.picker.set_use_alpha(True)
         self.picker.set_rgba(hex_to_color(value))
 
-class int_select:
-    def __init__(self, Name, value, minv, maxv, incre, page):
-        self.label = Gtk.Label(Name + ":")
+
+class IntSelect:
+    def __init__(self, name, value, minv, maxv, incre, page):
+        self.label = Gtk.Label(name + ":")
         self.spin = Gtk.SpinButton()
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
@@ -70,9 +77,10 @@ class int_select:
         self.spin.set_numeric(True)
         self.spin.set_value(value)
 
-class select:
-    def __init__(self, Name, value, items):
-        self.label = Gtk.Label(Name + ":")
+
+class Select:
+    def __init__(self, name, value, items):
+        self.label = Gtk.Label(name + ":")
         self.selector = Gtk.ComboBoxText()
         self.actor = Gtk.HBox()
         for item in items:
@@ -81,23 +89,28 @@ class select:
         self.actor.add(self.label)
         self.actor.add(self.selector)
 
+
 def set_boolean(check, schema, name):
     schema.set_boolean(name, check.get_active())
+
 
 def set_int(spin, schema, name):
     schema.set_int(name, spin.get_value_as_int())
     return False
 
+
 def set_enum(combo, schema, name):
     schema.set_enum(name, combo.get_active())
+
 
 def set_color(cb, schema, name):
     schema.set_string(name, color_to_hex(cb.get_rgba()))
 
-class setting_frame:
-    def __init__(self, Name, schema):
+
+class SettingFrame:
+    def __init__(self, name, schema):
         self.schema = schema
-        self.label = Gtk.Label(Name)
+        self.label = Gtk.Label(name)
         self.frame = Gtk.Frame()
         self.frame.set_border_width(10)
         self.vbox = Gtk.VBox()
@@ -119,12 +132,16 @@ class setting_frame:
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'refresh':
-            item = int_select('Refresh Time', self.schema.get_int(key), 100, 100000, 100, 1000)
+            item = IntSelect('Refresh Time',
+                              self.schema.get_int(key),
+                              100, 100000, 100, 1000)
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'graph' and sections[2] == 'width':
-            item = int_select('Graph Width', self.schema.get_int(key), 1, 1000, 1, 10)
+            item = IntSelect('Graph Width',
+                              self.schema.get_int(key),
+                              1, 1000, 1, 10)
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
@@ -135,15 +152,19 @@ class setting_frame:
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'style':
-            item = select('Display Style', self.schema.get_enum(key), disp_style)
+            item = Select('Display Style',
+                          self.schema.get_enum(key),
+                          DISP_STYLE)
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
-            item = color_select(up_first(sections[1]), self.schema.get_string(key))
+            item = ColorSelect(up_first(sections[1]),
+                                self.schema.get_string(key))
             self.items.append(item)
             self.hbox2.add(item.actor)
             item.picker.connect('color-set', set_color, self.schema, key)
+
 
 class App:
     opt = {}
@@ -156,8 +177,9 @@ class App:
         self.window.set_border_width(10)
         self.items = []
         self.settings = {}
-        for setting in setting_items.split('-'):
-            self.settings[setting] = setting_frame(up_first(setting), self.schema)
+        for setting in SETTING_ITEMS.split('-'):
+            self.settings[setting] = SettingFrame(
+                up_first(setting), self.schema)
 
         self.main_vbox = Gtk.VBox()
         self.hbox1 = Gtk.HBox()
@@ -177,23 +199,27 @@ class App:
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'background':
-                item = color_select('Background Color', self.schema.get_string(key))
+                item = ColorSelect('Background Color',
+                                    self.schema.get_string(key))
                 self.items.append(item)
                 self.hbox1.add(item.actor)
                 item.picker.connect('color-set', set_color, self.schema, key)
             else:
                 sections = key.split('-')
-                if ('-' + setting_items + '-').find('-' + sections[0] + '-') > -1:
+                if ('-' + SETTING_ITEMS + '-').find(
+                    '-' + sections[0] + '-') > -1:
                     self.settings[sections[0]].add(key)
 
         self.notebook = Gtk.Notebook()
-        for setting in setting_items.split('-'):
-            self.notebook.append_page(self.settings[setting].frame, self.settings[setting].label)
+        for setting in SETTING_ITEMS.split('-'):
+            self.notebook.append_page(
+                self.settings[setting].frame, self.settings[setting].label)
         self.main_vbox.add(self.notebook)
         self.window.show_all()
 
-def main(demoapp=None):
-    app = App()
+
+def main():
+    App()
     Gtk.main()
 
 if __name__ == '__main__':

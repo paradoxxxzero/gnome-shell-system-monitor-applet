@@ -29,8 +29,10 @@ Then install the schema:
 
     sudo mkdir -p /usr/local/share/glib-2.0/schemas
     sudo cp ~/git_projects/gnome-shell-system-monitor-applet/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/local/share/glib-2.0/schemas
-    cd /usr/local/share/glib-2.0/schemas
-    sudo glib-compile-schemas . # Don't forget the dot!
+    sudo glib-compile-schemas /usr/local/share/glib-2.0/schemas
+
+To install the configurator (you need python and py3gobject):
+    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.py /usr/local/bin/system-monitor-applet-config
 
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 

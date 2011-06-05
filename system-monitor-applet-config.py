@@ -159,7 +159,7 @@ class SettingFrame:
             item = ColorSelect(up_first(sections[1]),
                                 self.schema.get_string(key))
             self.items.append(item)
-            self.hbox2.add(item.actor)
+            self.hbox2.pack_end(item.actor, True, False, 0)
             item.picker.connect('color-set', set_color, self.schema, key)
 
 

@@ -22,22 +22,8 @@
 
 from gi.repository import Gtk, Gio, Gdk
 
-colors = {
-    'background': 'Background:',
-    "memory-user-color": 'Memory (user):',
-    "memory-buffer-color": 'Memory (buffer):',
-    "memory-cache-color": 'Memory (cache):',
-    "net-up-color": 'Network (upload):',
-    "net-down-color": 'Network (download):',
-    "cpu-user-color": 'Cpu (user):',
-    "cpu-system-color": 'Cpu (system):',
-    "cpu-nice-color": 'Cpu (nice):',
-    "cpu-iowait-color": 'Cpu (iowait):',
-    "cpu-other-color": 'Cpu (other):',
-    "swap-used-color": 'Swap:',
-    "disk-read-color": 'Disk read:',
-    "disk-write-color": 'Disk write:',
-    }
+def up_first(str):
+    return str[0].upper() + str[1:]
 
 def color_to_hex(color):
     return "#%02x%02x%02x%02x" % (
@@ -51,25 +37,43 @@ def hex_to_color(hexstr):
         int(hexstr[1:3], 16) / 255,
         int(hexstr[3:5], 16) / 255,
         int(hexstr[5:7], 16) / 255,
-        int(hexstr[7:9], 16) / 255 if len(hexstr) == 9 else 1)
+        int(hexstr[7:9], 16) / 255 if len(hexstr) == 9 else 1) if (len(hexstr) == 4 | len(hexstr) == 5) else Gdk.RGBA(
+        int(hexstr[1], 16) / 255,
+        int(hexstr[2], 16) / 255,
+        int(hexstr[3], 16) / 255,
+        int(hexstr[4], 16) / 255 if len(hexstr) == 5 else 1)
 
+
+class color_select:
+    def __init__(self, Name):
+        self.label = Gtk.Label(Name + ":")
+        self.picker = Gtk.ColorButton()
+        self.actor = Gtk.HBox()
+        self.actor.add(self.label)
+        self.actor.add(self.picker)
+        self.label.show()
+        self.picker.show()
+
+    def show(self):
+        self.actor.show()
+
+class setting:
+    def __init__(self, Name):
+        self.label = Gtk.Label(Name)
+        
 
 class App:
     opt = {}
 
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')
-        for color in colors:
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
+        self.keys = self.schema.keys()
         self.window = Gtk.Window(title='System Monitor Applet Configurator')
         self.window.connect('destroy', Gtk.main_quit)
         self.window.set_border_width(10)
+
+        main_vbox = Gtk.VBox()
+        
 
         table = Gtk.Table(len(colors), 2, False)
         table.set_col_spacing(0, 10)
@@ -101,3 +105,14 @@ def main(demoapp=None):
 
 if __name__ == '__main__':
     main()
+
+
+
+        for color in colors:
+            self.opt[color] = self.schema.get_string(color)
+            self.opt[color] = self.schema.get_string(color)
+            self.opt[color] = self.schema.get_string(color)
+            self.opt[color] = self.schema.get_string(color)
+            self.opt[color] = self.schema.get_string(color)
+            self.opt[color] = self.schema.get_string(color)
+            self.opt[color] = self.schema.get_string(color)

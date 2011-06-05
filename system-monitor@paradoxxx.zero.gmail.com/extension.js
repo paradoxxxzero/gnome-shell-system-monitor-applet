@@ -478,30 +478,10 @@ SystemMonitor.prototype = {
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        section = new PopupMenu.PopupMenuSection("Toggling");
-        this.menu.addMenuItem(section);
-
-        for (let element in this.elements) {
-            let elt = element;
-            this.elements[elt].switch = new PopupMenu.PopupSwitchMenuItem("Display " + elt, true);
-            this.elements[elt].switch.connect(
-                'toggled',
-                Lang.bind(this,
-                          function(item) {
-                              this.elements[elt].panel.box.visible = item.state;
-                              if(this._schema) {
-                                  this._schema.set_boolean(elt + "-display", item.state);
-                              }
-                          }));
-            section.addMenuItem(this.elements[elt].switch);
-        }
-
-        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-        item = new PopupMenu.PopupMenuItem("Perference");
+        item = new PopupMenu.PopupMenuItem("Preferences");
         item.connect('activate', Open_Perference);
         this.menu.addMenuItem(item);
-        
+
     },
     _init_status: function() {
         let box = new St.BoxLayout();
@@ -768,13 +748,11 @@ SystemMonitor.prototype = {
         for (let element in this.elements) {
             let elt = element;
             this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
-            this.elements[elt].switch.setToggleState(this.elements[elt].panel.box.visible);
             this._schema.connect(
                 'changed::' + element + '-display',
                 Lang.bind(this,
                           function () {
                               this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
-                              this.elements[elt].switch.setToggleState(this.elements[elt].panel.box.visible);
                           })
             );
             this.elements[elt].update();

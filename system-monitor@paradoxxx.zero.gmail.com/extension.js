@@ -34,6 +34,10 @@ function Open_Window() {
     Util.spawn(["gnome-system-monitor"]);
 }
 
+function Open_Perference() {
+    Util.spawn(["system-monitor-applet-config.py"]);
+}
+
 function Cpu_State() {
     this._init();
 }
@@ -491,6 +495,13 @@ SystemMonitor.prototype = {
                           }));
             section.addMenuItem(this.elements[elt].switch);
         }
+
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        item = new PopupMenu.PopupMenuItem("Perference");
+        item.connect('activate', Open_Perference);
+        this.menu.addMenuItem(item);
+        
     },
     _init_status: function() {
         let box = new St.BoxLayout();

@@ -134,7 +134,7 @@ class SettingFrame:
         elif sections[1] == 'refresh':
             item = IntSelect('Refresh Time',
                               self.schema.get_int(key),
-                              100, 100000, 100, 1000)
+                              50, 100000, 100, 1000)
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)

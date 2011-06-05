@@ -115,50 +115,43 @@ class SettingFrame:
         self.hbox1 = Gtk.HBox(spacing = 20)
         self.hbox2 = Gtk.HBox(spacing = 20)
         self.frame.add(self.vbox)
-        self.vbox.add(self.hbox0)
-        self.vbox.add(self.hbox1)
-        self.vbox.add(self.hbox2)
-        self.items = []
+        self.vbox.pack_start(self.hbox0, True, False, 0)
+        self.vbox.pack_start(self.hbox1, True, False, 0)
+        self.vbox.pack_start(self.hbox2, True, False, 0)
 
     def add(self, key):
         sections = key.split('-')
         if sections[1] == 'display':
             item = Gtk.CheckButton(label='Display')
             item.set_active(self.schema.get_boolean(key))
-            self.items.append(item)
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'refresh':
             item = IntSelect('Refresh Time',
                               self.schema.get_int(key),
                               50, 100000, 100, 1000)
-            self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'graph' and sections[2] == 'width':
             item = IntSelect('Graph Width',
                               self.schema.get_int(key),
                               1, 1000, 1, 10)
-            self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'show' and sections[2] == 'text':
             item = Gtk.CheckButton(label='Show Text')
             item.set_active(self.schema.get_boolean(key))
-            self.items.append(item)
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'style':
             item = Select('Display Style',
                           self.schema.get_enum(key),
                           ('digit', 'graph', 'both'))
-            self.items.append(item)
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
             item = ColorSelect(up_first(sections[1]),
                                 self.schema.get_string(key))
-            self.items.append(item)
             self.hbox2.pack_end(item.actor, True, False, 0)
             item.picker.connect('color-set', set_color, self.schema, key)
 
@@ -183,7 +176,7 @@ class App:
         self.main_vbox.set_border_width(10)
         self.hbox1 = Gtk.HBox(spacing = 20)
         self.hbox1.set_border_width(10)
-        self.main_vbox.add(self.hbox1)
+        self.main_vbox.pack_start(self.hbox1, True, False, 0)
         self.window.add(self.main_vbox)
         for key in keys:
             if key == 'icon-display':
@@ -202,7 +195,7 @@ class App:
                 item = ColorSelect('Background Color',
                                     self.schema.get_string(key))
                 self.items.append(item)
-                self.hbox1.add(item.actor)
+                self.hbox1.pack_start(item.actor, True, False, 0)
                 item.picker.connect('color-set', set_color, self.schema, key)
             else:
                 sections = key.split('-')

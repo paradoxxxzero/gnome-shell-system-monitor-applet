@@ -185,7 +185,7 @@ class App:
                     self.settings[sections[0]].add(key)
 
         self.notebook = Gtk.Notebook()
-        for setting in self.settings:
+        for setting in setting_items.split('-'):
             self.notebook.append_page(self.settings[setting].frame, self.settings[setting].label)
         self.main_vbox.add(self.notebook)
         self.window.show_all()

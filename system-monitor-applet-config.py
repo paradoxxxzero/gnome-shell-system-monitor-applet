@@ -76,6 +76,12 @@ class select:
         self.selector.show()
         self.actor.show()
 
+def set_boolean(check, schema, name):
+    schema.set_boolean(name, check.get_active())
+
+def set_int(spin, schema, name):
+    schema.set_int(name, spin.get_value_as_int())
+    return False
 
 class setting:
     def __init__(self, Name, schema):
@@ -99,10 +105,21 @@ class setting:
 
     def add(self, key):
         sections = key.split('-')
-        if sections[0] == 'display':
-            disp = self.schema.get_boolean(key)
-            item = 
-
+        if sections[1] == 'display':
+            item = Gtk.CheckButton(label='Display')
+            item.set_active(self.schema.get_boolean(key))
+            self.items.append(item)
+            self.hbox1.add(item)
+            item.connect('toggled', set_boolean, self.schema, key)
+        elif section[1] == 'refresh':
+            item = Gtk.SpinButton()
+            item.set_range(100,100000)
+            item.set_increments(100,1000)
+            item.set_numeric(True)
+            item.set_value(self.schema.get_int(key))
+            self.items.append(item)
+            self.hbox1.add(item)
+            item.connect('output', set_int, self.schema, key)
 
 class App:
     opt = {}

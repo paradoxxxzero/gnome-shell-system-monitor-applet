@@ -35,7 +35,7 @@ function Open_Window() {
 }
 
 function Open_Perference() {
-    Util.spawn(["system-monitor-applet-config.py"]);
+    Util.spawn(["system-monitor-applet-config"]);
 }
 
 function Cpu_State() {

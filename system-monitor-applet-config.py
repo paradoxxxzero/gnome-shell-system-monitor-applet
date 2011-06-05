@@ -25,6 +25,10 @@ from gi.repository import Gtk, Gio, Gdk
 def up_first(str):
     return str[0].upper() + str[1:]
 
+items = "-cpu-memory-swap-net-disk-"
+
+disp_style = ['digit', 'graph', 'both']
+
 def color_to_hex(color):
     return "#%02x%02x%02x%02x" % (
         color.red * 255,
@@ -51,16 +55,54 @@ class color_select:
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
         self.actor.add(self.picker)
-        self.label.show()
-        self.picker.show()
 
     def show(self):
+        self.label.show()
+        self.picker.show()
         self.actor.show()
 
+class select:
+    def __init__(self, Name, items):
+        self.label = Gtk.Label(Name + ":")
+        self.selector = Gtk.ComboBoxText()
+        for item in items:
+            self.selector.append(item)
+        self.actor = Gtk.HBox()
+        self.actor.add(self.label)
+        self.actor.add(self.selector)
+
+    def show(self):
+        self.label.show()
+        self.selector.show()
+        self.actor.show()
+
+
 class setting:
-    def __init__(self, Name):
+    def __init__(self, Name, schema):
+        self.schema = schema
         self.label = Gtk.Label(Name)
-        
+        self.frame = Gtk.Frame()
+        self.frame.set_border_width(10)
+        self.vbox = Gtk.VBox()
+        self.hbox1 = Gtk.HBox()
+        self.hbox2 = Gtk.HBox()
+        self.items = []
+
+    def show(self):
+        self.label.show()
+        self.frame.show()
+        self.vbox.show()
+        self.hbox1.show()
+        self.hbox2.show()
+        for item in this.items:
+            item.show()
+
+    def add(self, key):
+        sections = key.split('-')
+        if sections[0] == 'display':
+            disp = self.schema.get_boolean(key)
+            item = 
+
 
 class App:
     opt = {}

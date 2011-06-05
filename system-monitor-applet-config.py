@@ -101,9 +101,11 @@ class setting_frame:
         self.frame = Gtk.Frame()
         self.frame.set_border_width(10)
         self.vbox = Gtk.VBox()
+        self.hbox0 = Gtk.HBox()
         self.hbox1 = Gtk.HBox()
         self.hbox2 = Gtk.HBox()
         self.frame.add(self.vbox)
+        self.vbox.add(self.hbox0)
         self.vbox.add(self.hbox1)
         self.vbox.add(self.hbox2)
         self.items = []
@@ -114,7 +116,7 @@ class setting_frame:
             item = Gtk.CheckButton(label='Display')
             item.set_active(self.schema.get_boolean(key))
             self.items.append(item)
-            self.hbox1.add(item)
+            self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'refresh':
             item = int_select('Refresh Time', self.schema.get_int(key), 100, 100000, 100, 1000)
@@ -130,7 +132,7 @@ class setting_frame:
             item = Gtk.CheckButton(label='Show Text')
             item.set_active(self.schema.get_boolean(key))
             self.items.append(item)
-            self.hbox1.add(item)
+            self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'style':
             item = select('Display Style', self.schema.get_enum(key), disp_style)

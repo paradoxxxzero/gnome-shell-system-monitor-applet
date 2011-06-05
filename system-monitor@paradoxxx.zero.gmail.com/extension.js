@@ -764,7 +764,7 @@ SystemMonitor.prototype = {
                           function () {
                               GLib.source_remove(this.elements[elt].timeout);
                               this.elements[elt].interval = Math.abs(this._schema.get_int(elt + "-refresh-time"));
-                              this.elements[elt].timeout = GLib.timeout_add(0, this.elements[elt].interval, this.elements[elt].update);
+                              this.elements[elt].timeout = GLib.timeout_add(0, this.elements[elt].interval, Lang.bind(this, this.elements[elt].update));
                           })
             );
             this._schema.connect(

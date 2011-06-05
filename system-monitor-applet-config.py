@@ -61,6 +61,23 @@ class color_select:
         self.picker.show()
         self.actor.show()
 
+class int_select:
+    def __init__(self, Name, value, minv, maxv, incre, page):
+        self.label = Gtk.Label(Name + ":")
+        self.spin = Gtk.SpinButton()
+        self.actor = Gtk.HBox()
+        self.actor.add(self.label)
+        self.actor.add(self.spin)
+        self.spin.set_range(minv, maxv)
+        item.set_increments(incre, page)
+        item.set_numeric(True)
+        item.set_value(value)
+
+    def show(self):
+        self.label.show()
+        self.spin.show()
+        self.actor.show()
+
 class select:
     def __init__(self, Name, items):
         self.label = Gtk.Label(Name + ":")
@@ -112,14 +129,15 @@ class setting:
             self.hbox1.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif section[1] == 'refresh':
-            item = Gtk.SpinButton()
-            item.set_range(100,100000)
-            item.set_increments(100,1000)
-            item.set_numeric(True)
-            item.set_value(self.schema.get_int(key))
+            item = int_select('Refresh Time', self.schema.get_int(key), 100, 100000, 100, 1000)
             self.items.append(item)
-            self.hbox1.add(item)
-            item.connect('output', set_int, self.schema, key)
+            self.hbox1.add(item.actor)
+            item.spin.connect('output', set_int, self.schema, key)
+        elif section[1] == 'graph' and section[2] == 'width':
+            item = int_select('Graph Width', self.schema.get_int(key), 1, 1000, 1, 10)
+            self.items.append(item)
+            self.hbox1.add(item.actor)
+            item.spin.connect('output', set_int, self.schema, key)
 
 class App:
     opt = {}

@@ -41,7 +41,7 @@ def hex_to_color(hexstr):
         int(hexstr[1:3], 16) / 255,
         int(hexstr[3:5], 16) / 255,
         int(hexstr[5:7], 16) / 255,
-        int(hexstr[7:9], 16) / 255 if len(hexstr) == 9 else 1) if (len(hexstr) == 4 | len(hexstr) == 5) else Gdk.RGBA(
+        int(hexstr[7:9], 16) / 255 if len(hexstr) == 9 else 1) if (len(hexstr) != 4 & len(hexstr) != 5) else Gdk.RGBA(
         int(hexstr[1], 16) / 15,
         int(hexstr[2], 16) / 15,
         int(hexstr[3], 16) / 15,
@@ -49,12 +49,14 @@ def hex_to_color(hexstr):
 
 
 class color_select:
-    def __init__(self, Name):
+    def __init__(self, Name, value):
         self.label = Gtk.Label(Name + ":")
         self.picker = Gtk.ColorButton()
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
         self.actor.add(self.picker)
+        self.picker.set_use_alpha(True)
+        self.picker.set_rgba(hex_to_color(value))
 
 class int_select:
     def __init__(self, Name, value, minv, maxv, incre, page):
@@ -90,7 +92,7 @@ def set_enum(combo, schema, name):
     schema.set_enum(name, combo.get_active())
 
 def set_color(cb, schema, name):
-    schema.set_string(name, cb.get_rgba())
+    schema.set_string(name, color_to_hex(cb.get_rgba()))
 
 class setting_frame:
     def __init__(self, Name, schema):
@@ -136,7 +138,7 @@ class setting_frame:
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
-            item = color_select(up_first(sections[1]))
+            item = color_select(up_first(sections[1]), self.schema.get_string(key))
             self.items.append(item)
             self.hbox2.add(item.actor)
             item.picker.connect('color-set', set_color, self.schema, key)
@@ -173,7 +175,7 @@ class App:
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'background':
-                item = color_select('Background Color')
+                item = color_select('Background Color', self.schema.get_string(key))
                 self.items.append(item)
                 self.hbox1.add(item.actor)
                 item.picker.connect('color-set', set_color, self.schema, key)

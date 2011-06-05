@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=System Monitor Perference
+Name[zh_CN]=系统监视器选项
+GenericName=Perference Editor for system-monitor-applet
+Exec=system-monitor-applet-config.py
+Terminal=false
+Type=Application
+Icon=utilities-system-monitor
+Categories=GNOME;System;

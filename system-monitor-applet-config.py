@@ -25,7 +25,7 @@ from gi.repository import Gtk, Gio, Gdk
 def up_first(str):
     return str[0].upper() + str[1:]
 
-items = "-cpu-memory-swap-net-disk-"
+setting_items = "cpu-memory-swap-net-disk"
 
 disp_style = ['digit', 'graph', 'both']
 
@@ -79,12 +79,13 @@ class int_select:
         self.actor.show()
 
 class select:
-    def __init__(self, Name, items):
+    def __init__(self, Name, value, items):
         self.label = Gtk.Label(Name + ":")
         self.selector = Gtk.ComboBoxText()
-        for item in items:
-            self.selector.append(item)
         self.actor = Gtk.HBox()
+        for item in items:
+            self.selector.append_text(item)
+        selector.set_active(value)
         self.actor.add(self.label)
         self.actor.add(self.selector)
 
@@ -100,7 +101,13 @@ def set_int(spin, schema, name):
     schema.set_int(name, spin.get_value_as_int())
     return False
 
-class setting:
+def set_enum(combo, schema, name):
+    schema.set_enum(name, combo.get_active())
+
+def set_color(cb, schema, name):
+    schema.set_string(name, cb.get_rgba())
+
+class setting_frame:
     def __init__(self, Name, schema):
         self.schema = schema
         self.label = Gtk.Label(Name)
@@ -138,19 +145,63 @@ class setting:
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
+        elif section[1] == 'show' and section[2] == 'text':
+            item = Gtk.CheckButton(label='Show Text')
+            item.set_active(self.schema.get_boolean(key))
+            self.items.append(item)
+            self.hbox1.add(item)
+            item.connect('toggled', set_boolean, self.schema, key)
+        elif section[1] == 'style':
+            item = select('Display Style', self.schema.get_enum(key), disp_style)
+            self.items.append(item)
+            self.hbox1.add(item)
+            item.selector.connect('changed', set_enum, self.schema, key)
+        elif len(section) == 3 and section[2] == 'color':
+            item = color_select(up_first(section[1]))
+            self.items.append(item)
+            self.hbox2.add(item)
+            item.picker.connect('color-set', set_color, self.schema, key)
 
 class App:
     opt = {}
 
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')
-        self.keys = self.schema.keys()
+        keys = self.schema.keys()
         self.window = Gtk.Window(title='System Monitor Applet Configurator')
         self.window.connect('destroy', Gtk.main_quit)
         self.window.set_border_width(10)
+        self.items = []
+        self.settings = {}
+        for setting in setting_items.split('-'):
+            settings[setting] = setting_frame(up_first(setting), this.schema)
 
-        main_vbox = Gtk.VBox()
-        
+        self.main_vbox = Gtk.VBox()
+        self.hbox1 = Gtk.HBox()
+        self.main_vbox.add(self.hbox1)
+        for key in keys:
+            if key == 'icon-display':
+                item = Gtk.CheckButton(label='Display Icon')
+                item.set_active(self.schema.get_boolean(key))
+                self.items.append(item)
+                self.hbox1.add(item)
+                item.connect('toggled', set_boolean, self.schema, key)
+            elif key == 'center-display':
+                item = Gtk.CheckButton(label='Display In the Middle')
+                item.set_active(self.schema.get_boolean(key))
+                self.items.append(item)
+                self.hbox1.add(item)
+                item.connect('toggled', set_boolean, self.schema, key)
+            elif key == 'background':
+                item = color_select('Background Color')
+                self.items.append(item)
+                self.hbox1.add(item)
+                item.picker.connect('color-set', set_color, self.schema, key)
+            else:
+                sections = key.split(-)
+                if ('-' + setting_items + '-').find('-' + sections[0] + '-') > -1:
+                    settings[sections[0]].add(key)
+
 
         table = Gtk.Table(len(colors), 2, False)
         table.set_col_spacing(0, 10)

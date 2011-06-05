@@ -110,10 +110,10 @@ class SettingFrame:
         self.label = Gtk.Label(name)
         self.frame = Gtk.Frame()
         self.frame.set_border_width(10)
-        self.vbox = Gtk.VBox()
-        self.hbox0 = Gtk.HBox()
-        self.hbox1 = Gtk.HBox()
-        self.hbox2 = Gtk.HBox()
+        self.vbox = Gtk.VBox(spacing = 20)
+        self.hbox0 = Gtk.HBox(spacing = 20)
+        self.hbox1 = Gtk.HBox(spacing = 20)
+        self.hbox2 = Gtk.HBox(spacing = 20)
         self.frame.add(self.vbox)
         self.vbox.add(self.hbox0)
         self.vbox.add(self.hbox1)
@@ -179,8 +179,10 @@ class App:
             self.settings[setting] = SettingFrame(
                 up_first(setting), self.schema)
 
-        self.main_vbox = Gtk.VBox()
-        self.hbox1 = Gtk.HBox()
+        self.main_vbox = Gtk.VBox(spacing = 10)
+        self.main_vbox.set_border_width(10)
+        self.hbox1 = Gtk.HBox(spacing = 20)
+        self.hbox1.set_border_width(10)
         self.main_vbox.add(self.hbox1)
         self.window.add(self.main_vbox)
         for key in keys:
@@ -191,7 +193,7 @@ class App:
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'center-display':
-                item = Gtk.CheckButton(label='Display In the Middle')
+                item = Gtk.CheckButton(label='Display in the Middle')
                 item.set_active(self.schema.get_boolean(key))
                 self.items.append(item)
                 self.hbox1.add(item)

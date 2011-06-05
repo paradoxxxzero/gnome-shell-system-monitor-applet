@@ -56,11 +56,6 @@ class color_select:
         self.actor.add(self.label)
         self.actor.add(self.picker)
 
-    def show(self):
-        self.label.show()
-        self.picker.show()
-        self.actor.show()
-
 class int_select:
     def __init__(self, Name, value, minv, maxv, incre, page):
         self.label = Gtk.Label(Name + ":")
@@ -69,14 +64,9 @@ class int_select:
         self.actor.add(self.label)
         self.actor.add(self.spin)
         self.spin.set_range(minv, maxv)
-        item.set_increments(incre, page)
-        item.set_numeric(True)
-        item.set_value(value)
-
-    def show(self):
-        self.label.show()
-        self.spin.show()
-        self.actor.show()
+        self.spin.set_increments(incre, page)
+        self.spin.set_numeric(True)
+        self.spin.set_value(value)
 
 class select:
     def __init__(self, Name, value, items):
@@ -85,14 +75,9 @@ class select:
         self.actor = Gtk.HBox()
         for item in items:
             self.selector.append_text(item)
-        selector.set_active(value)
+        self.selector.set_active(value)
         self.actor.add(self.label)
         self.actor.add(self.selector)
-
-    def show(self):
-        self.label.show()
-        self.selector.show()
-        self.actor.show()
 
 def set_boolean(check, schema, name):
     schema.set_boolean(name, check.get_active())
@@ -116,16 +101,10 @@ class setting_frame:
         self.vbox = Gtk.VBox()
         self.hbox1 = Gtk.HBox()
         self.hbox2 = Gtk.HBox()
+        self.frame.add(self.vbox)
+        self.vbox.add(self.hbox1)
+        self.vbox.add(self.hbox2)
         self.items = []
-
-    def show(self):
-        self.label.show()
-        self.frame.show()
-        self.vbox.show()
-        self.hbox1.show()
-        self.hbox2.show()
-        for item in this.items:
-            item.show()
 
     def add(self, key):
         sections = key.split('-')
@@ -135,31 +114,31 @@ class setting_frame:
             self.items.append(item)
             self.hbox1.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
-        elif section[1] == 'refresh':
+        elif sections[1] == 'refresh':
             item = int_select('Refresh Time', self.schema.get_int(key), 100, 100000, 100, 1000)
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
-        elif section[1] == 'graph' and section[2] == 'width':
+        elif sections[1] == 'graph' and sections[2] == 'width':
             item = int_select('Graph Width', self.schema.get_int(key), 1, 1000, 1, 10)
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
-        elif section[1] == 'show' and section[2] == 'text':
+        elif sections[1] == 'show' and sections[2] == 'text':
             item = Gtk.CheckButton(label='Show Text')
             item.set_active(self.schema.get_boolean(key))
             self.items.append(item)
             self.hbox1.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
-        elif section[1] == 'style':
+        elif sections[1] == 'style':
             item = select('Display Style', self.schema.get_enum(key), disp_style)
             self.items.append(item)
-            self.hbox1.add(item)
+            self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
-        elif len(section) == 3 and section[2] == 'color':
-            item = color_select(up_first(section[1]))
+        elif len(sections) == 3 and sections[2] == 'color':
+            item = color_select(up_first(sections[1]))
             self.items.append(item)
-            self.hbox2.add(item)
+            self.hbox2.add(item.actor)
             item.picker.connect('color-set', set_color, self.schema, key)
 
 class App:
@@ -174,11 +153,12 @@ class App:
         self.items = []
         self.settings = {}
         for setting in setting_items.split('-'):
-            settings[setting] = setting_frame(up_first(setting), this.schema)
+            self.settings[setting] = setting_frame(up_first(setting), self.schema)
 
         self.main_vbox = Gtk.VBox()
         self.hbox1 = Gtk.HBox()
         self.main_vbox.add(self.hbox1)
+        self.window.add(self.main_vbox)
         for key in keys:
             if key == 'icon-display':
                 item = Gtk.CheckButton(label='Display Icon')
@@ -195,37 +175,18 @@ class App:
             elif key == 'background':
                 item = color_select('Background Color')
                 self.items.append(item)
-                self.hbox1.add(item)
+                self.hbox1.add(item.actor)
                 item.picker.connect('color-set', set_color, self.schema, key)
             else:
-                sections = key.split(-)
+                sections = key.split('-')
                 if ('-' + setting_items + '-').find('-' + sections[0] + '-') > -1:
-                    settings[sections[0]].add(key)
+                    self.settings[sections[0]].add(key)
 
-
-        table = Gtk.Table(len(colors), 2, False)
-        table.set_col_spacing(0, 10)
-        table.set_row_spacings(3)
-        self.window.add(table)
-        table.set_border_width(10)
-        i = 0
-        for key, title in sorted(colors.items()):
-            label = Gtk.Label(title)
-            label.set_alignment(0.0, 0.5)
-            picker = Gtk.ColorButton()
-            picker.set_rgba(hex_to_color(self.opt[key]))
-            picker.set_use_alpha(True)
-            def color_set(cb, lkey):
-                self.schema.set_string(
-                    lkey,
-                    color_to_hex(cb.get_rgba()))
-            picker.connect('color-set', color_set, key)
-            table.attach_defaults(label, 0, 1, i, i + 1)
-            table.attach_defaults(picker, 1, 2, i, i + 1)
-            i += 1
-
+        self.notebook = Gtk.Notebook()
+        for setting in self.settings:
+            self.notebook.append_page(self.settings[setting].frame, self.settings[setting].label)
+        self.main_vbox.add(self.notebook)
         self.window.show_all()
-
 
 def main(demoapp=None):
     app = App()
@@ -233,14 +194,3 @@ def main(demoapp=None):
 
 if __name__ == '__main__':
     main()
-
-
-
-        for color in colors:
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)
-            self.opt[color] = self.schema.get_string(color)

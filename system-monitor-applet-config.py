@@ -42,10 +42,10 @@ def hex_to_color(hexstr):
         int(hexstr[3:5], 16) / 255,
         int(hexstr[5:7], 16) / 255,
         int(hexstr[7:9], 16) / 255 if len(hexstr) == 9 else 1) if (len(hexstr) == 4 | len(hexstr) == 5) else Gdk.RGBA(
-        int(hexstr[1], 16) / 255,
-        int(hexstr[2], 16) / 255,
-        int(hexstr[3], 16) / 255,
-        int(hexstr[4], 16) / 255 if len(hexstr) == 5 else 1)
+        int(hexstr[1], 16) / 15,
+        int(hexstr[2], 16) / 15,
+        int(hexstr[3], 16) / 15,
+        int(hexstr[4], 16) / 15 if len(hexstr) == 5 else 1)
 
 
 class color_select:

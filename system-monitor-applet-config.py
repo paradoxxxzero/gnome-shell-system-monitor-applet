@@ -23,9 +23,6 @@
 
 from gi.repository import Gtk, Gio, Gdk
 
-SETTING_ITEMS = "cpu-memory-swap-net-disk"
-DISP_STYLE = ['digit', 'graph', 'both']
-
 
 def up_first(string):
     return string[0].upper() + string[1:]
@@ -154,7 +151,7 @@ class SettingFrame:
         elif sections[1] == 'style':
             item = Select('Display Style',
                           self.schema.get_enum(key),
-                          DISP_STYLE)
+                          ('digit', 'graph', 'both'))
             self.items.append(item)
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
@@ -168,6 +165,7 @@ class SettingFrame:
 
 class App:
     opt = {}
+    setting_items = ('cpu', 'memory', 'swap', 'net', 'disk')
 
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')
@@ -177,7 +175,7 @@ class App:
         self.window.set_border_width(10)
         self.items = []
         self.settings = {}
-        for setting in SETTING_ITEMS.split('-'):
+        for setting in self.setting_items:
             self.settings[setting] = SettingFrame(
                 up_first(setting), self.schema)
 
@@ -206,12 +204,11 @@ class App:
                 item.picker.connect('color-set', set_color, self.schema, key)
             else:
                 sections = key.split('-')
-                if ('-' + SETTING_ITEMS + '-').find(
-                    '-' + sections[0] + '-') > -1:
+                if sections[0] in self.setting_items:
                     self.settings[sections[0]].add(key)
 
         self.notebook = Gtk.Notebook()
-        for setting in SETTING_ITEMS.split('-'):
+        for setting in self.setting_items:
             self.notebook.append_page(
                 self.settings[setting].frame, self.settings[setting].label)
         self.main_vbox.add(self.notebook)

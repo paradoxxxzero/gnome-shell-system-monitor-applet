@@ -149,7 +149,7 @@ class SettingFrame:
         elif sections[1] == 'style':
             item = Select(_('Display Style'),
                           self.schema.get_enum(key),
-                          ('digit', 'graph', 'both'))
+                          (_('digit'), _('graph'), _('both')))
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':

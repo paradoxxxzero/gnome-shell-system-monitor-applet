@@ -497,14 +497,14 @@ SystemMonitor.prototype = {
         let background = this._schema.get_string('background');
 
         let colors = [];
-        colors.push(this._schema.get_string('memory-user-color'));
+        colors.push(this._schema.get_string('memory-program-color'));
         colors.push(this._schema.get_string('memory-buffer-color'));
         colors.push(this._schema.get_string('memory-cache-color'));
         this.elements.memory.chart = new Chart(colors, background, this._schema.get_int('memory-graph-width'), this.icon_size);
 
         let mem_color = function() {
             let colors = [];
-            colors.push(this._schema.get_string('memory-user-color'));
+            colors.push(this._schema.get_string('memory-program-color'));
             colors.push(this._schema.get_string('memory-buffer-color'));
             colors.push(this._schema.get_string('memory-cache-color'));
             let background = this._schema.get_string('background');
@@ -514,7 +514,7 @@ SystemMonitor.prototype = {
             return true;
         };
 
-        this._schema.connect('changed::memory-user-color', Lang.bind(this, mem_color));
+        this._schema.connect('changed::memory-program-color', Lang.bind(this, mem_color));
         this._schema.connect('changed::memory-buffer-color', Lang.bind(this, mem_color));
         this._schema.connect('changed::memory-cache-color', Lang.bind(this, mem_color));
         this._schema.connect('changed::background', Lang.bind(this, mem_color));

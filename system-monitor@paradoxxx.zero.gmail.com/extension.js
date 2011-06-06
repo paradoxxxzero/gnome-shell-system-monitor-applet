@@ -28,7 +28,10 @@ const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+
 const Util = imports.misc.util;
+const Gettext = imports.gettext.domain('system-monitor-applet');
+const _ = Gettext.gettext;
 
 function Open_Window() {
     Util.spawn(["gnome-system-monitor"]);
@@ -422,7 +425,7 @@ SystemMonitor.prototype = {
         let section = new PopupMenu.PopupMenuSection("Usages");
         this.menu.addMenuItem(section);
 
-        let item = new PopupMenu.PopupMenuItem("Cpu");
+        let item = new PopupMenu.PopupMenuItem(_("Cpu"));
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.cpu.menu.value = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ style_class: "sm-void"}));
@@ -432,7 +435,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem("Memory");
+        item = new PopupMenu.PopupMenuItem(_("Memory"));
         this.elements.memory.menu.used = new St.Label({ style_class: "sm-value"});
         this.elements.memory.menu.total = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
@@ -443,7 +446,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem("Swap");
+        item = new PopupMenu.PopupMenuItem(_("Swap"));
         this.elements.swap.menu.used = new St.Label({ style_class: "sm-value"});
         this.elements.swap.menu.total = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
@@ -454,7 +457,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem("Net");
+        item = new PopupMenu.PopupMenuItem(_("Net"));
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.net.menu.down = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.net.menu.down);
@@ -465,7 +468,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem("Disk");
+        item = new PopupMenu.PopupMenuItem(_("Disk"));
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.disk.menu.read = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.disk.menu.read);
@@ -478,7 +481,7 @@ SystemMonitor.prototype = {
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        item = new PopupMenu.PopupMenuItem("Preferences...");
+        item = new PopupMenu.PopupMenuItem(_("Preferences..."));
         item.connect('activate', Open_Perference);
         this.menu.addMenuItem(item);
 
@@ -633,7 +636,7 @@ SystemMonitor.prototype = {
 
         let text, digits = [], digit;
         this.elements.cpu.panel.box = new St.BoxLayout();
-        text = new St.Label({ text: 'cpu', style_class: "sm-status-label"});
+        text = new St.Label({ text: _('cpu'), style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'cpu-show-text');
         this.elements.cpu.panel.box.add_actor(text);
         this.elements.cpu.panel.box.add_actor(this.elements.cpu.panel.value);
@@ -647,7 +650,7 @@ SystemMonitor.prototype = {
 
         digits = [];
         this.elements.memory.panel.box = new St.BoxLayout();
-        text = new St.Label({ text: 'mem', style_class: "sm-status-label"});
+        text = new St.Label({ text: _('mem'), style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'memory-show-text');
         this.elements.memory.panel.box.add_actor(text);
         this.elements.memory.panel.box.add_actor(this.elements.memory.panel.value);
@@ -661,7 +664,7 @@ SystemMonitor.prototype = {
 
         digits = [];
         this.elements.swap.panel.box = new St.BoxLayout();
-        text = new St.Label({ text: 'swap', style_class: "sm-status-label"});
+        text = new St.Label({ text: _('swap'), style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'swap-show-text');
         this.elements.swap.panel.box.add_actor(text);
         this.elements.swap.panel.box.add_actor(this.elements.swap.panel.value);
@@ -675,7 +678,7 @@ SystemMonitor.prototype = {
 
         digits = [];
         this.elements.net.panel.box = new St.BoxLayout();
-        text = new St.Label({ text: 'net', style_class: "sm-status-label"});
+        text = new St.Label({ text: _('net'), style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'net-show-text');
         this.elements.net.panel.box.add_actor(text);
         digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'});
@@ -700,7 +703,7 @@ SystemMonitor.prototype = {
 
         digits = [];
         this.elements.disk.panel.box = new St.BoxLayout();
-        text = new St.Label({ text: 'disk', style_class: "sm-status-label"});
+        text = new St.Label({ text: _('disk'), style_class: "sm-status-label"});
         Lang.bind(this, text_disp)(text, 'disk-show-text');
         this.elements.disk.panel.box.add_actor(text);
         digit = new St.Label({ text: 'R', style_class: "sm-status-label"});

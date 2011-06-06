@@ -153,7 +153,7 @@ Swap_State.prototype = {
     update: function() {
         this.swap = 0;
         this.swap_total = 0;
-        let meminfo = GLib.file_get_contents('/proc/meminfo');;
+        let meminfo = GLib.file_get_contents('/proc/meminfo');
         let swap_free = 0;
         if(meminfo[0]) {
             let meminfo_lines = meminfo[1].split("\n");

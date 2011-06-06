@@ -39,11 +39,11 @@ To install locale you need gettext:
 
 If we do not have the translation of your language and you want to translate by yourself, please edit po/system-monitor-applet.po (or the translation you want to modify) and send it to us at:
 
-[paradoxxxzero](paradoxxx.zero@gmail.com)
+[paradoxxxzero](mailto://paradoxxx.zero@gmail.com)
 
 or
 
-[yuyichao](yyc1992@gmail.com)
+[yuyichao](mailto://yyc1992@gmail.com)
 
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 

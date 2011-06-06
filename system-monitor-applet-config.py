@@ -3,7 +3,7 @@
 # vim: tabstop=4 shiftwidth=4 expandtab
 
 # system-monitor: Gnome shell extension displaying system informations
-# in gnome shell status bar, such as memory usage, cpu usage, network rates…
+# in gnome shell status bar, such as memory usage, cpu usage, network rates....
 # Copyright (C) 2011 Florian Mounier aka paradoxxxzero
 
 # This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,9 @@
 
 from gi.repository import Gtk, Gio, Gdk
 
+import gettext
+from gettext import gettext as _
+gettext.textdomain('system-monitor-applet')
 
 def up_first(string):
     return string[0].upper() + string[1:]
@@ -122,35 +125,35 @@ class SettingFrame:
     def add(self, key):
         sections = key.split('-')
         if sections[1] == 'display':
-            item = Gtk.CheckButton(label='Display')
+            item = Gtk.CheckButton(label=_('Display'))
             item.set_active(self.schema.get_boolean(key))
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'refresh':
-            item = IntSelect('Refresh Time',
+            item = IntSelect(_('Refresh Time'),
                               self.schema.get_int(key),
                               50, 100000, 100, 1000)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'graph' and sections[2] == 'width':
-            item = IntSelect('Graph Width',
+            item = IntSelect(_('Graph Width'),
                               self.schema.get_int(key),
                               1, 1000, 1, 10)
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'show' and sections[2] == 'text':
-            item = Gtk.CheckButton(label='Show Text')
+            item = Gtk.CheckButton(label=_('Show Text'))
             item.set_active(self.schema.get_boolean(key))
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'style':
-            item = Select('Display Style',
+            item = Select(_('Display Style'),
                           self.schema.get_enum(key),
                           ('digit', 'graph', 'both'))
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
-            item = ColorSelect(up_first(sections[1]),
+            item = ColorSelect(_(up_first(sections[1])),
                                 self.schema.get_string(key))
             self.hbox2.pack_end(item.actor, True, False, 0)
             item.picker.connect('color-set', set_color, self.schema, key)
@@ -163,14 +166,14 @@ class App:
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')
         keys = self.schema.keys()
-        self.window = Gtk.Window(title='System Monitor Applet Configurator')
+        self.window = Gtk.Window(title=_('System Monitor Applet Configurator'))
         self.window.connect('destroy', Gtk.main_quit)
         self.window.set_border_width(10)
         self.items = []
         self.settings = {}
         for setting in self.setting_items:
             self.settings[setting] = SettingFrame(
-                up_first(setting), self.schema)
+                _(up_first(setting)), self.schema)
 
         self.main_vbox = Gtk.VBox(spacing = 10)
         self.main_vbox.set_border_width(10)
@@ -180,19 +183,19 @@ class App:
         self.window.add(self.main_vbox)
         for key in keys:
             if key == 'icon-display':
-                item = Gtk.CheckButton(label='Display Icon')
+                item = Gtk.CheckButton(label=_('Display Icon'))
                 item.set_active(self.schema.get_boolean(key))
                 self.items.append(item)
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'center-display':
-                item = Gtk.CheckButton(label='Display in the Middle')
+                item = Gtk.CheckButton(label=_('Display in the Middle'))
                 item.set_active(self.schema.get_boolean(key))
                 self.items.append(item)
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'background':
-                item = ColorSelect('Background Color',
+                item = ColorSelect(_('Background Color'),
                                     self.schema.get_string(key))
                 self.items.append(item)
                 self.hbox1.pack_start(item.actor, True, False, 0)

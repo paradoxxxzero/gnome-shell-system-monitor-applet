@@ -133,3 +133,6 @@ msgstr "硬盘"
 msgid "Preferences..."
 msgstr "首选项..."
 
+msgid "System monitor"
+msgstr "系统监视器"
+

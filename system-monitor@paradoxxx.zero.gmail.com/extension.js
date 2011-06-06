@@ -730,7 +730,7 @@ SystemMonitor.prototype = {
     },
     _init: function() {
         Panel.__system_monitor = this;
-        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', 'System monitor');
+        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._init_status();

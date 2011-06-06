@@ -113,3 +113,21 @@ msgstr ""
 msgid "both"
 msgstr ""
 
+msgid "cpu"
+msgstr ""
+
+msgid "mem"
+msgstr ""
+
+msgid "swap"
+msgstr ""
+
+msgid "net"
+msgstr ""
+
+msgid "disk"
+msgstr ""
+
+msgid "Preferences..."
+msgstr ""
+

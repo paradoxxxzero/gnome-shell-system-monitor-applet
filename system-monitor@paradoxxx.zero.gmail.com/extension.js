@@ -37,7 +37,7 @@ function Open_Window() {
     Util.spawn(["gnome-system-monitor"]);
 }
 
-function Open_Perference() {
+function Open_Preference() {
     Util.spawn(["system-monitor-applet-config"]);
 }
 
@@ -482,7 +482,7 @@ SystemMonitor.prototype = {
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         item = new PopupMenu.PopupMenuItem(_("Preferences..."));
-        item.connect('activate', Open_Perference);
+        item.connect('activate', Open_Preference);
         this.menu.addMenuItem(item);
 
     },

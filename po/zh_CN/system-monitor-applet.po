@@ -114,3 +114,22 @@ msgstr "数字"
 msgid "both"
 msgstr "同时"
 
+
+msgid "cpu"
+msgstr "处理器"
+
+msgid "mem"
+msgstr "内存"
+
+msgid "swap"
+msgstr "交换"
+
+msgid "net"
+msgstr "网络"
+
+msgid "disk"
+msgstr "硬盘"
+
+msgid "Preferences..."
+msgstr "首选项..."
+

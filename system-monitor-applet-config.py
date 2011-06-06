@@ -55,40 +55,44 @@ def hex_to_color(hexstr):
 
 
 class ColorSelect:
-    def __init__(self, name, value):
+    def __init__(self, name):
         self.label = Gtk.Label(name + ":")
         self.picker = Gtk.ColorButton()
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
         self.actor.add(self.picker)
         self.picker.set_use_alpha(True)
+    def set_value(self, value):
         self.picker.set_rgba(hex_to_color(value))
 
 
 class IntSelect:
-    def __init__(self, name, value, minv, maxv, incre, page):
+    def __init__(self, name):
         self.label = Gtk.Label(name + ":")
         self.spin = Gtk.SpinButton()
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
         self.actor.add(self.spin)
+        self.spin.set_numeric(True)
+    def set_args(self, minv, maxv, incre, page):
         self.spin.set_range(minv, maxv)
         self.spin.set_increments(incre, page)
-        self.spin.set_numeric(True)
+    def set_value(self, value):
         self.spin.set_value(value)
 
 
 class Select:
-    def __init__(self, name, value, items):
+    def __init__(self, name):
         self.label = Gtk.Label(name + ":")
         self.selector = Gtk.ComboBoxText()
         self.actor = Gtk.HBox()
-        for item in items:
-            self.selector.append_text(item)
-        self.selector.set_active(value)
         self.actor.add(self.label)
         self.actor.add(self.selector)
-
+    def set_value(self, value):
+        self.selector.set_active(value)
+    def add(self, items):
+        for item in items:
+            self.selector.append_text(item)
 
 def set_boolean(check, schema, name):
     schema.set_boolean(name, check.get_active())
@@ -103,8 +107,8 @@ def set_enum(combo, schema, name):
     schema.set_enum(name, combo.get_active())
 
 
-def set_color(cb, schema, name):
-    schema.set_string(name, color_to_hex(cb.get_rgba()))
+def set_color(color, schema, name):
+    schema.set_string(name, color_to_hex(color.get_rgba()))
 
 
 class SettingFrame:
@@ -130,15 +134,15 @@ class SettingFrame:
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'refresh':
-            item = IntSelect(_('Refresh Time'),
-                              self.schema.get_int(key),
-                              50, 100000, 100, 1000)
+            item = IntSelect(_('Refresh Time'))
+            item.set_args(50, 100000, 100, 1000)
+            item.set_value(self.schema.get_int(key))
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'graph' and sections[2] == 'width':
-            item = IntSelect(_('Graph Width'),
-                              self.schema.get_int(key),
-                              1, 1000, 1, 10)
+            item = IntSelect(_('Graph Width'))
+            item.set_args(1, 1000, 1, 10)
+            item.set_value(self.schema.get_int(key))
             self.hbox1.add(item.actor)
             item.spin.connect('output', set_int, self.schema, key)
         elif sections[1] == 'show' and sections[2] == 'text':
@@ -147,14 +151,14 @@ class SettingFrame:
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'style':
-            item = Select(_('Display Style'),
-                          self.schema.get_enum(key),
-                          (_('digit'), _('graph'), _('both')))
+            item = Select(_('Display Style'))
+            item.add((_('digit'), _('graph'), _('both')))
+            item.set_value(self.schema.get_enum(key))
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
-            item = ColorSelect(_(up_first(sections[1])),
-                                self.schema.get_string(key))
+            item = ColorSelect(_(up_first(sections[1])))
+            item.set_value(self.schema.get_string(key))
             self.hbox2.pack_end(item.actor, True, False, 0)
             item.picker.connect('color-set', set_color, self.schema, key)
 
@@ -195,8 +199,8 @@ class App:
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'background':
-                item = ColorSelect(_('Background Color'),
-                                    self.schema.get_string(key))
+                item = ColorSelect(_('Background Color'))
+                item.set_value(self.schema.get_string(key))
                 self.items.append(item)
                 self.hbox1.pack_start(item.actor, True, False, 0)
                 item.picker.connect('color-set', set_color, self.schema, key)

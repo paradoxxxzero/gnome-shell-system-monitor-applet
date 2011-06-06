@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # -*- Mode: Python; py-indent-offset: 4 -*-
 # vim: tabstop=4 shiftwidth=4 expandtab
 
@@ -20,6 +21,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Author: Florian Mounier aka paradoxxxzero
+
+"""
+system-monitor-applet-config
+Tool for editing system-monitor-applet preference as
+an alternative of dconf-editor
+
+"""
 
 from gi.repository import Gtk, Gio, Gdk
 
@@ -110,10 +118,10 @@ class SettingFrame:
         self.label = Gtk.Label(name)
         self.frame = Gtk.Frame()
         self.frame.set_border_width(10)
-        self.vbox = Gtk.VBox(spacing = 20)
-        self.hbox0 = Gtk.HBox(spacing = 20)
-        self.hbox1 = Gtk.HBox(spacing = 20)
-        self.hbox2 = Gtk.HBox(spacing = 20)
+        self.vbox = Gtk.VBox(spacing=20)
+        self.hbox0 = Gtk.HBox(spacing=20)
+        self.hbox1 = Gtk.HBox(spacing=20)
+        self.hbox2 = Gtk.HBox(spacing=20)
         self.frame.add(self.vbox)
         self.vbox.add(self.hbox0)
         self.vbox.add(self.hbox1)
@@ -179,9 +187,9 @@ class App:
             self.settings[setting] = SettingFrame(
                 up_first(setting), self.schema)
 
-        self.main_vbox = Gtk.VBox(spacing = 10)
+        self.main_vbox = Gtk.VBox(spacing=10)
         self.main_vbox.set_border_width(10)
-        self.hbox1 = Gtk.HBox(spacing = 20)
+        self.hbox1 = Gtk.HBox(spacing=20)
         self.hbox1.set_border_width(10)
         self.main_vbox.add(self.hbox1)
         self.window.add(self.main_vbox)

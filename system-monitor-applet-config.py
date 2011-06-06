@@ -176,7 +176,7 @@ class App:
         self.main_vbox.set_border_width(10)
         self.hbox1 = Gtk.HBox(spacing = 20)
         self.hbox1.set_border_width(10)
-        self.main_vbox.pack_start(self.hbox1, True, False, 0)
+        self.main_vbox.pack_start(self.hbox1, False, False, 0)
         self.window.add(self.main_vbox)
         for key in keys:
             if key == 'icon-display':
@@ -206,7 +206,7 @@ class App:
         for setting in self.setting_items:
             self.notebook.append_page(
                 self.settings[setting].frame, self.settings[setting].label)
-        self.main_vbox.add(self.notebook)
+        self.main_vbox.pack_start(self.notebook, True, True, 0)
         self.window.show_all()
 
 

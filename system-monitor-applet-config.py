@@ -207,6 +207,7 @@ class App:
             self.notebook.append_page(
                 self.settings[setting].frame, self.settings[setting].label)
         self.main_vbox.pack_start(self.notebook, True, True, 0)
+        self.window.set_resizable(False)
         self.window.show_all()
 
 

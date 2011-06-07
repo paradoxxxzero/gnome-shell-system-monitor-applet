@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=System Monitor Perference
-Name[zh_CN]=系统监视器选项
+Name=System Monitor Preference
+Name[zh_CN]=面板系统监视器选项
 Name[fr_FR]=Préférences de system-monitor-applet
-GenericName=Perference Editor for system-monitor-applet
+GenericName=Preference Editor for system-monitor-applet
 Exec=system-monitor-applet-config
 Terminal=false
 Type=Application

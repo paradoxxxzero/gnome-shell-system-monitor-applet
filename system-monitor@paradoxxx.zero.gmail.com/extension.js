@@ -439,7 +439,7 @@ SystemMonitor.prototype = {
         item.addActor(this.elements.memory.menu.used);
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.elements.memory.menu.total);
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
+        item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
@@ -450,7 +450,7 @@ SystemMonitor.prototype = {
         item.addActor(this.elements.swap.menu.used);
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.elements.swap.menu.total);
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
+        item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 

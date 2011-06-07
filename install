@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+post()
+{
+    glib-compile-schemas "$1"
+}
+
+for ((i = 1;i <= $#;i++)) ;do
+    case "${!i}" in
+	--post)
+	    declare -f post
+	    exit 0
+	    ;;
+	-p)
+	    ((i++))
+	    prefix="${!i}"
+	    ;;
+	--nopost)
+	    nopost=1
+	    ;;
+    esac
+done
+
+mkdir -p "${prefix}/usr/share/gnome-shell/extensions"
+cp -r system-monitor@paradoxxx.zero.gmail.com "${prefix}/usr/share/gnome-shell/extensions/"
+mkdir -p "${prefix}/usr/bin"
+cp system-monitor-applet-config.py "${prefix}/usr/bin/system-monitor-applet-config"
+mkdir -p "${prefix}/usr/share/applications"
+cp system-monitor-applet-config.desktop "${prefix}/usr/share/applications/"
+mkdir -p "${prefix}/usr/share/locale"
+for dir in po/* ;do
+    [[ -d "$dir" ]] && cp -r "$dir" "${prefix}/usr/share/locale/"
+done
+mkdir -p "${prefix}/usr/share/glib-2.0/schemas"
+cp org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/usr/share/glib-2.0/schemas/"
+[[ -z $nopost ]] && post "${prefix}/usr/share/glib-2.0/schemas"

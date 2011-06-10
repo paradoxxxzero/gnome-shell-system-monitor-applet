@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+srcdir=$(dirname $(readlink -f "$0"))
+
 post()
 {
     glib-compile-schemas "$1"
@@ -22,14 +24,17 @@ for ((i = 1;i <= $#;i++)) ;do
 done
 
 mkdir -p "${prefix}/usr/share/gnome-shell/extensions"
-cp -r system-monitor@paradoxxx.zero.gmail.com "${prefix}/usr/share/gnome-shell/extensions/"
+cp -r "${srcdir}/system-monitor@paradoxxx.zero.gmail.com" "${prefix}/usr/share/gnome-shell/extensions/"
 mkdir -p "${prefix}/usr/bin"
-cp system-monitor-applet-config.py "${prefix}/usr/bin/system-monitor-applet-config"
+cp "${srcdir}/system-monitor-applet-config.py" "${prefix}/usr/bin/system-monitor-applet-config"
 mkdir -p "${prefix}/usr/share/applications"
-cp system-monitor-applet-config.desktop "${prefix}/usr/share/applications/"
-mkdir -p "${prefix}/usr/share/locale"
-for dir in po/* ;do
-    [[ -d "$dir" ]] && cp -r "$dir" "${prefix}/usr/share/locale/"
+cp "${srcdir}/system-monitor-applet-config.desktop" "${prefix}/usr/share/applications/"
+for dir in "${srcdir}/"po/* ;do
+    [[ -d "$dir" ]] && {
+	lang=$(basename "$dir")
+	mkdir -p "${prefix}/usr/share/locale/LC_MESSAGES/${lang}"
+	msgfmt "$dir/system-monitor-applet.po" -o "${prefix}/usr/share/locale/LC_MESSAGES/${lang}/system-monitor-applet.mo"
+    }
 done
 mkdir -p "${prefix}/usr/share/glib-2.0/schemas"
 cp org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/usr/share/glib-2.0/schemas/"

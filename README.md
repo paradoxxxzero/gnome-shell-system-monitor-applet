@@ -35,7 +35,7 @@ To install the configurator (you need python and py3gobject):
     sudo cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.py /usr/local/bin/system-monitor-applet-config
 
 To install locale you need gettext:
-    sudo msgfmt ~/git_project/gnome-shell-system-monitor-applet/po/YOUR_LANGUAGE/system-monitor-applet.po -o /usr/share/local/YOUR_LANGUAGE/system-monitor-applet.mo
+    sudo msgfmt ~/git_project/gnome-shell-system-monitor-applet/po/YOUR_LANGUAGE/system-monitor-applet.po -o /usr/share/locale/YOUR_LANGUAGE/LC_MESSAGES/system-monitor-applet.mo
 
 If we do not have the translation of your language and you want to translate by yourself, please edit po/system-monitor-applet.po (or the translation you want to modify) and send it to us at:
 

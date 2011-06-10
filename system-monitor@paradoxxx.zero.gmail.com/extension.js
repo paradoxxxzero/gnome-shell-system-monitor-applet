@@ -334,8 +334,10 @@ Chart.prototype = {
             accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
             this.data[i].push(accdata[i]);
             if (this.data[i].length > this.width)
-                this.data[i].shift();
+                this.data[i].slice(this.data[i].length - this.width);
         }
+        if (arguments.length >= 2 && arguments[1] == false)
+            return;
         this.actor.queue_repaint();
     }
 };
@@ -357,7 +359,7 @@ SystemMonitor.prototype = {
                 self.state.update();
                 self.panel.value.set_text(self.state.percent().toString());
                 self.menu.value.set_text(self.state.percent().toString());
-                self.chart._addValue(self.state.list());
+                self.chart._addValue(self.state.list(), self.panel.box.visible);
                 return true;
             }
         },
@@ -385,7 +387,7 @@ SystemMonitor.prototype = {
                 self.panel.value.set_text(self.state.percent().toString());
                 self.menu.used.set_text(self.state.swap.toString());
                 self.menu.total.set_text(self.state.swap_total.toString());
-                self.chart._addValue(self.state.swap_list());
+                self.chart._addValue(self.state.swap_list(), self.panel.box.visible);
                 return true;
             }
         },
@@ -400,7 +402,7 @@ SystemMonitor.prototype = {
                 self.panel.up.set_text(self.state.usage[1].toString());
                 self.menu.down.set_text(self.state.usage[0] + " kB/s");
                 self.menu.up.set_text(self.state.usage[1] + " kB/s");
-                self.chart._addValue(self.state.list());
+                self.chart._addValue(self.state.list(), self.panel.box.visible);
                 return true;
             }
         },
@@ -416,7 +418,7 @@ SystemMonitor.prototype = {
                 self.panel.write.set_text(percents[1].toString());
                 self.menu.read.set_text(percents[0] + " %");
                 self.menu.write.set_text(percents[1] + " %");
-                self.chart._addValue(self.state.list());
+                self.chart._addValue(self.state.list(), self.panel.box.visible);
                 return true;
             }
         }

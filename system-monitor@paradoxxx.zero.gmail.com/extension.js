@@ -334,7 +334,7 @@ Chart.prototype = {
             accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
             this.data[i].push(accdata[i]);
             if (this.data[i].length > this.width)
-                this.data[i].slice(this.data[i].length - this.width);
+                this.data[i].shift();
         }
         if (arguments.length >= 2 && arguments[1] == false)
             return;

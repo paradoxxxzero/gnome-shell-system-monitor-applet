@@ -29,6 +29,7 @@ const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
+const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
@@ -355,12 +356,13 @@ SystemMonitor.prototype = {
             menu: {},
             state: new Cpu_State(),
             update: function () {
-                let self = this.state ? this : this.elements.cpu;
+                let self = this.elements.cpu;
                 self.state.update();
                 self.panel.value.set_text(self.state.percent().toString());
-                self.menu.value.set_text(self.state.percent().toString());
+                if(this.menu.isOpen) {
+                    self.menu.value.set_text(self.state.percent().toString());
+                }
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
-                return true;
             }
         },
         memory: {
@@ -368,13 +370,14 @@ SystemMonitor.prototype = {
             menu: {},
             state: new Mem_State(),
             update: function () {
-                let self = this.state ? this : this.elements.memory;
+                let self = this.elements.memory;
                 self.state.update();
                 self.panel.value.set_text(self.state.percent().toString());
-                self.menu.used.set_text(self.state.mem[0].toString());
-                self.menu.total.set_text(self.state.mem_total.toString());
+                if(this.menu.isOpen) {
+                    self.menu.used.set_text(self.state.mem[0].toString());
+                    self.menu.total.set_text(self.state.mem_total.toString());
+                }
                 self.chart._addValue(self.state.mem_list());
-                return true;
             }
         },
         swap: {
@@ -382,13 +385,14 @@ SystemMonitor.prototype = {
             menu: {},
             state: new Swap_State(),
             update: function () {
-                let self = this.state ? this : this.elements.swap;
+                let self = this.elements.swap;
                 self.state.update();
                 self.panel.value.set_text(self.state.percent().toString());
-                self.menu.used.set_text(self.state.swap.toString());
-                self.menu.total.set_text(self.state.swap_total.toString());
+                if(this.menu.isOpen) {
+                    self.menu.used.set_text(self.state.swap.toString());
+                    self.menu.total.set_text(self.state.swap_total.toString());
+                }
                 self.chart._addValue(self.state.swap_list(), self.panel.box.visible);
-                return true;
             }
         },
         net: {
@@ -396,14 +400,15 @@ SystemMonitor.prototype = {
             menu: {},
             state: new Net_State(),
             update: function () {
-                let self = this.state ? this : this.elements.net;
+                let self = this.elements.net;
                 self.state.update();
                 self.panel.down.set_text(self.state.usage[0].toString());
                 self.panel.up.set_text(self.state.usage[1].toString());
-                self.menu.down.set_text(self.state.usage[0] + " kB/s");
-                self.menu.up.set_text(self.state.usage[1] + " kB/s");
+                if(this.menu.isOpen) {
+                    self.menu.down.set_text(self.state.usage[0] + " kB/s");
+                    self.menu.up.set_text(self.state.usage[1] + " kB/s");
+                }
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
-                return true;
             }
         },
         disk: {
@@ -411,15 +416,16 @@ SystemMonitor.prototype = {
             menu: {},
             state: new Disk_State(),
             update: function () {
-                let self = this.state ? this : this.elements.disk;
+                let self = this.elements.disk;
                 self.state.update();
                 let percents = self.state.percent();
                 self.panel.read.set_text(percents[0].toString());
                 self.panel.write.set_text(percents[1].toString());
-                self.menu.read.set_text(percents[0] + " %");
-                self.menu.write.set_text(percents[1] + " %");
+                if(this.menu.isOpen) {
+                    self.menu.read.set_text(percents[0] + " %");
+                    self.menu.write.set_text(percents[1] + " %");
+                }
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
-                return true;
             }
         }
     },
@@ -760,17 +766,31 @@ SystemMonitor.prototype = {
                               this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
                           })
             );
-            this.elements[elt].update();
+            Lang.bind(this, this.elements[elt].update)();
             this.elements[elt].interval = l_limit(this._schema.get_int(elt + "-refresh-time"));
-            this.elements[elt].timeout = GLib.timeout_add(0, this.elements[elt].interval, Lang.bind(this, this.elements[elt].update));
+            this.elements[elt].timeout = Mainloop.timeout_add(
+                this.elements[elt].interval,
+                Lang.bind(this, function () {
+                              if(this.elements[elt].panel.box.visible) {
+                                  Lang.bind(this, this.elements[elt].update)();
+                              }
+                              return true;
+                          }));
             this._schema.connect(
                 'changed::' + elt + '-refresh-time',
                 Lang.bind(this,
                           function () {
-                              GLib.source_remove(this.elements[elt].timeout);
+                              Mainloop.source_remove(this.elements[elt].timeout);
                               this.elements[elt].interval = Math.abs(this._schema.get_int(elt + "-refresh-time"));
-                              this.elements[elt].timeout = GLib.timeout_add(0, this.elements[elt].interval, Lang.bind(this, this.elements[elt].update));
-                          })
+                              this.elements[elt].timeout = Mainloop.timeout_add(
+                                  this.elements[elt].interval,
+                                  Lang.bind(this, function () {
+                                                if(this.elements[elt].panel.box.visible) {
+                                                    Lang.bind(this, this.elements[elt].update)();
+                                                }
+                                                return true;
+                                            }));
+                              })
             );
             this._schema.connect(
                 'changed::' + elt + '-graph-width',
@@ -782,7 +802,15 @@ SystemMonitor.prototype = {
                           })
             );
         }
-
+        this.menu.connect('open-state-changed',
+                          Lang.bind(this,
+                                    function (menu, isOpen) {
+                                        if(isOpen) {
+                                            for (let elt in this.elements) {
+                                                Lang.bind(this, this.elements[elt].update)();
+                                            }
+                                        }
+                                    }));
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
         }

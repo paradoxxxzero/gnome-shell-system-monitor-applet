@@ -19,6 +19,7 @@
 // Author: Florian Mounier aka paradoxxxzero
 
 const Gio = imports.gi.Gio;
+const Shell = imports.gi.Shell;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const St = imports.gi.St;
@@ -54,21 +55,15 @@ Cpu_State.prototype = {
         this.update();
     },
     update: function() {
-        let stat = GLib.file_get_contents('/proc/stat');
+        let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
         let accum = [0,0,0,0,0];
         let total_t = 0;
-        if(stat[0]) {
-            let stat_lines = stat[1].split("\n");
-            let cpu_params = stat_lines[0].replace(/ +/g, " ").split(" ");
-            for (let i = 1;i <= 5;i++) {
-                accum[i - 1] = parseInt(cpu_params[i]);
-            }
-            for (let i = 1;i < cpu_params.length;i++) {
-                let tmp = parseInt(cpu_params[i]);
-                if (tmp > 0) total_t += tmp;
-            }
-        } else {
-            global.log("system-monitor: reading /proc/stat gave an error");
+        for (let i = 1;i <= 5;i++) {
+            accum[i - 1] = parseInt(cpu_params[i]);
+        }
+        for (let i = 1;i < cpu_params.length;i++) {
+            let tmp = parseInt(cpu_params[i]);
+            if (tmp > 0) total_t += tmp;
         }
         let total = total_t - this.last_total;
         if (total > 0) {
@@ -104,31 +99,26 @@ Mem_State.prototype = {
     update: function() {
         this.mem = [0,0,0];
         this.mem_total = 0;
-        let meminfo = GLib.file_get_contents('/proc/meminfo');
         let mem_free = 0;
-        if(meminfo[0]) {
-            let meminfo_lines = meminfo[1].split("\n");
-            for(let i = 0 ; i < meminfo_lines.length ; i++) {
-                let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
-                switch(line[0]) {
-                case "MemTotal:":
-                    this.mem_total = Math.round(line[1] / 1024);
-                    break;
-                case "MemFree:":
-                    mem_free = Math.round(line[1] / 1024);
-                    break;
-                case "Buffers:":
-                    this.mem[1] = Math.round(line[1] / 1024);
-                    break;
-                case "Cached:":
-                    this.mem[2] = Math.round(line[1] / 1024);
-                    break;
-                }
+        let meminfo_lines = Shell.get_file_contents_utf8_sync('/proc/meminfo').split("\n");
+        for(let i = 0 ; i < meminfo_lines.length ; i++) {
+            let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
+            switch(line[0]) {
+            case "MemTotal:":
+                this.mem_total = Math.round(line[1] / 1024);
+                break;
+            case "MemFree:":
+                mem_free = Math.round(line[1] / 1024);
+                break;
+            case "Buffers:":
+                this.mem[1] = Math.round(line[1] / 1024);
+                break;
+            case "Cached:":
+                this.mem[2] = Math.round(line[1] / 1024);
+                break;
             }
-            this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
-        } else {
-            global.log("system-monitor: reading /proc/meminfo gave an error");
         }
+        this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
     },
     percent: function() {
         if (this.mem_total == 0) {
@@ -157,25 +147,20 @@ Swap_State.prototype = {
     update: function() {
         this.swap = 0;
         this.swap_total = 0;
-        let meminfo = GLib.file_get_contents('/proc/meminfo');
         let swap_free = 0;
-        if(meminfo[0]) {
-            let meminfo_lines = meminfo[1].split("\n");
-            for(let i = 0 ; i < meminfo_lines.length ; i++) {
-                let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
-                switch(line[0]) {
-                case "SwapTotal:":
-                    this.swap_total = Math.round(line[1] / 1024);
-                    break;
-                case "SwapFree:":
-                    swap_free = Math.round(line[1] / 1024);
-                    break;
-                }
+        let meminfo_lines = Shell.get_file_contents_utf8_sync('/proc/meminfo').split("\n");
+        for(let i = 0 ; i < meminfo_lines.length ; i++) {
+            let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
+            switch(line[0]) {
+            case "SwapTotal:":
+                this.swap_total = Math.round(line[1] / 1024);
+                break;
+            case "SwapFree:":
+                swap_free = Math.round(line[1] / 1024);
+                break;
             }
-            this.swap = this.swap_total - swap_free;
-        } else {
-            global.log("system-monitor: reading /proc/meminfo gave an error");
         }
+        this.swap = this.swap_total - swap_free;
     },
     percent: function() {
         if (this.swap_total == 0) {
@@ -201,20 +186,15 @@ Net_State.prototype = {
         this.update();
     },
     update: function() {
-        let net = GLib.file_get_contents('/proc/net/dev');
         let accum = [0,0];
         let time = 0;
-        if(net[0]) {
-            let net_lines = net[1].split("\n");
-            for(let i = 3; i < net_lines.length - 1 ; i++) {
-                let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
-                accum[0] += parseInt(net_params[2]);
-                accum[1] += parseInt(net_params[10]);
-            }
-            time = GLib.get_monotonic_time() / 1000;
-        } else {
-            global.log("system-monitor: reading /proc/net/dev gave an error");
+        let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
+        for(let i = 3; i < net_lines.length - 1 ; i++) {
+            let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
+            accum[0] += parseInt(net_params[2]);
+            accum[1] += parseInt(net_params[10]);
         }
+        time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
         if (delta > 0) {
             for (let i = 0;i < 2;i++) {
@@ -241,21 +221,16 @@ Disk_State.prototype = {
         this.update();
     },
     update: function() {
-        let disk = GLib.file_get_contents('/proc/diskstats');
         let accum = [0,0];
         let time = 0;
-        if(disk[0]) {
-            let disk_lines = disk[1].split("\n");
-            for(let i = 0;i < disk_lines.length - 1;i++) {
-                let disk_params = disk_lines[i].replace(/ +/g, " ").replace(/^ /,"").split(" ");
-                if (/[0-9]$/.test(disk_params[2])) continue;
-                accum[0] += parseInt(disk_params[6]);
-                accum[1] += parseInt(disk_params[10]);
-            }
-            time = GLib.get_monotonic_time() / 1000;
-        } else {
-            global.log("system-monitor: reading /proc/diskstats gave an error");
+        let disk_lines = Shell.get_file_contents_utf8_sync('/proc/diskstats').split("\n");
+        for(let i = 0;i < disk_lines.length - 1;i++) {
+            let disk_params = disk_lines[i].replace(/ +/g, " ").replace(/^ /,"").split(" ");
+            if (/[0-9]$/.test(disk_params[2])) continue;
+            accum[0] += parseInt(disk_params[6]);
+            accum[1] += parseInt(disk_params[10]);
         }
+        time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
         if (delta > 0) {
             for (let i = 0;i < 2;i++) {

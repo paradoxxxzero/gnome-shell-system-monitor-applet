@@ -357,8 +357,8 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.cpu;
                 self.state.update();
-                self.panel.value.set_text(self.state.percent().toString());
-                self.menu.value.set_text(self.state.percent().toString());
+                self.panel.value.set_text(_(self.state.percent().toString()));
+                self.menu.value.set_text(_(self.state.percent().toString()));
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
                 return true;
             }
@@ -370,9 +370,9 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.memory;
                 self.state.update();
-                self.panel.value.set_text(self.state.percent().toString());
-                self.menu.used.set_text(self.state.mem[0].toString());
-                self.menu.total.set_text(self.state.mem_total.toString());
+                self.panel.value.set_text(_(self.state.percent().toString()));
+                self.menu.used.set_text(_(self.state.mem[0].toString()));
+                self.menu.total.set_text(_(self.state.mem_total.toString()));
                 self.chart._addValue(self.state.mem_list());
                 return true;
             }
@@ -384,9 +384,9 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.swap;
                 self.state.update();
-                self.panel.value.set_text(self.state.percent().toString());
-                self.menu.used.set_text(self.state.swap.toString());
-                self.menu.total.set_text(self.state.swap_total.toString());
+                self.panel.value.set_text(_(self.state.percent().toString()));
+                self.menu.used.set_text(_(self.state.swap.toString()));
+                self.menu.total.set_text(_(self.state.swap_total.toString()));
                 self.chart._addValue(self.state.swap_list(), self.panel.box.visible);
                 return true;
             }
@@ -398,10 +398,10 @@ SystemMonitor.prototype = {
             update: function () {
                 let self = this.state ? this : this.elements.net;
                 self.state.update();
-                self.panel.down.set_text(self.state.usage[0].toString());
-                self.panel.up.set_text(self.state.usage[1].toString());
-                self.menu.down.set_text(self.state.usage[0] + " kB/s");
-                self.menu.up.set_text(self.state.usage[1] + " kB/s");
+                self.panel.down.set_text(_(self.state.usage[0].toString()));
+                self.panel.up.set_text(_(self.state.usage[1].toString()));
+                self.menu.down.set_text(_(self.state.usage[0] + " kB/s"));
+                self.menu.up.set_text(_(self.state.usage[1] + " kB/s"));
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
                 return true;
             }
@@ -414,10 +414,10 @@ SystemMonitor.prototype = {
                 let self = this.state ? this : this.elements.disk;
                 self.state.update();
                 let percents = self.state.percent();
-                self.panel.read.set_text(percents[0].toString());
-                self.panel.write.set_text(percents[1].toString());
-                self.menu.read.set_text(percents[0] + " %");
-                self.menu.write.set_text(percents[1] + " %");
+                self.panel.read.set_text(_(percents[0].toString()));
+                self.panel.write.set_text(_(percents[1].toString()));
+                self.menu.read.set_text(_(percents[0] + " %"));
+                self.menu.write.set_text(_(percents[1] + " %"));
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
                 return true;
             }

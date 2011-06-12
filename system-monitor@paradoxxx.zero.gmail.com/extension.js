@@ -318,6 +318,31 @@ Chart.prototype = {
     }
 };
 
+function Pie() {
+    this._init.apply(this, arguments);
+}
+
+Pie.prototype = {
+    _init: function() {
+        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
+        this.width = arguments[2];
+        this.height = arguments[3];
+        this.actor.set_width(this.width);
+        this.actor.set_height(this.height);
+        this.actor.connect('repaint', Lang.bind(this, this._draw));
+    },
+    _draw: function() {
+        if (!this.actor.visible) return;
+        let [width, height] = this.actor.get_surface_size();
+        let cr = this.actor.get_context();
+        let back_color = new Clutter.Color();
+        back_color.from_string("#222222");
+        Clutter.cairo_set_source_color(cr, back_color);
+        cr.arc(width/2, height/2, Math.min(width/2, height/2), 0, Math.PI * 5 / 3);
+        cr.fill();
+    }
+};
+
 function SystemMonitor() {
     this._init.apply(this, arguments);
 }
@@ -408,7 +433,13 @@ SystemMonitor.prototype = {
         let section = new PopupMenu.PopupMenuSection("Usages");
         this.menu.addMenuItem(section);
 
-        let item = new PopupMenu.PopupMenuItem(_("Cpu"));
+        let item = new PopupMenu.PopupBaseMenuItem();
+	    let pie = new Pie(null, null, 200, 200);
+        item.addActor(pie.actor, {span: -1, expand: true});
+        this.menu.addMenuItem(item);
+
+
+        item = new PopupMenu.PopupMenuItem(_("Cpu"));
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.cpu.menu.value = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ style_class: "sm-void"}));

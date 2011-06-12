@@ -324,7 +324,7 @@ function Pie() {
 
 Pie.prototype = {
     _init: function() {
-        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
+        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
         this.width = arguments[2];
         this.height = arguments[3];
         this.actor.set_width(this.width);
@@ -335,11 +335,27 @@ Pie.prototype = {
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
+        Panel.cr = cr;
         let back_color = new Clutter.Color();
-        back_color.from_string("#222222");
+        let xc = width/2;
+        let yc = height/2;
+        let r = Math.min(xc, yc) - 10;
+        let pi = Math.PI;
+        back_color.from_string("#0072b3");
         Clutter.cairo_set_source_color(cr, back_color);
-        cr.arc(width/2, height/2, Math.min(width/2, height/2), 0, Math.PI * 5 / 3);
-        cr.fill();
+        cr.setLineWidth(10);
+        cr.arc(xc, yc, r, -pi / 2, pi);
+        cr.stroke();
+        back_color.from_string("#00b35b");
+        Clutter.cairo_set_source_color(cr, back_color);
+        cr.setLineWidth(10);
+        cr.arc(xc, yc, r - 15, -pi / 2, 1.2 * pi);
+        cr.stroke();
+        back_color.from_string("#8b00c3");
+        Clutter.cairo_set_source_color(cr, back_color);
+        cr.setLineWidth(10);
+        cr.arc(xc, yc, r - 30, -pi / 2, .2 * pi);
+        cr.stroke();
     }
 };
 

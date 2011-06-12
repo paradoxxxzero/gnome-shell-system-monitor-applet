@@ -394,12 +394,6 @@ SystemMonitor.prototype = {
                 let self = this.elements.disk;
                 self.state.update();
                 let percents = self.state.percent();
-                self.panel.read.set_text(percents[0].toString());
-                self.panel.write.set_text(percents[1].toString());
-                if(this.menu.isOpen) {
-                    self.menu.read.set_text(percents[0] + " %");
-                    self.menu.write.set_text(percents[1] + " %");
-                }
                 self.chart._addValue(self.state.list(), self.panel.box.visible);
             }
         }

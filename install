@@ -36,6 +36,7 @@ mkdir -p "${prefix}/${usr_dir}/bin"
 cp -v "${srcdir}/system-monitor-applet-config.py" "${prefix}/${usr_dir}/bin/system-monitor-applet-config"
 mkdir -p "${prefix}/${usr_dir}/share/applications"
 cp -v "${srcdir}/system-monitor-applet-config.desktop" "${prefix}/${usr_dir}/share/applications/"
+
 for dir in "${srcdir}/"po/* ;do
     [[ -d "$dir" ]] && {
 	lang=$(basename "$dir")
@@ -43,6 +44,7 @@ for dir in "${srcdir}/"po/* ;do
 	msgfmt "$dir/system-monitor-applet.po" -o "${prefix}/${usr_dir}/share/locale/LC_MESSAGES/${lang}/system-monitor-applet.mo"
     }
 done
+
 mkdir -p "${prefix}/${usr_dir}/share/glib-2.0/schemas"
 cp -v org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/${usr_dir}/share/glib-2.0/schemas"
 [[ -z $nopost ]] && post "${prefix}/${usr_dir}/share/glib-2.0/schemas"

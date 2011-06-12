@@ -23,6 +23,12 @@ for ((i = 1;i <= $#;i++)) ;do
     esac
 done
 
+if type lsb_release $> /dev/null && [[ $(lsb_release -i) =~ Ubuntu ]] ;then
+    schema_dir="/usr/local/share/glib-2.0/schemas"
+then
+    schema_dir="/usr/share/glib-2.0/schemas"
+fi
+
 mkdir -p "${prefix}/usr/share/gnome-shell/extensions"
 cp -r "${srcdir}/system-monitor@paradoxxx.zero.gmail.com" "${prefix}/usr/share/gnome-shell/extensions/"
 mkdir -p "${prefix}/usr/bin"
@@ -36,6 +42,6 @@ for dir in "${srcdir}/"po/* ;do
 	msgfmt "$dir/system-monitor-applet.po" -o "${prefix}/usr/share/locale/LC_MESSAGES/${lang}/system-monitor-applet.mo"
     }
 done
-mkdir -p "${prefix}/usr/share/glib-2.0/schemas"
-cp org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/usr/share/glib-2.0/schemas/"
-[[ -z $nopost ]] && post "${prefix}/usr/share/glib-2.0/schemas"
+mkdir -p "${prefix}/${schema_dir}"
+cp org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/${schema_dir}/"
+[[ -z $nopost ]] && post "${prefix}/${schema_dir}"

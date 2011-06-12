@@ -23,25 +23,26 @@ for ((i = 1;i <= $#;i++)) ;do
     esac
 done
 
-if type lsb_release $> /dev/null && [[ $(lsb_release -i) =~ Ubuntu ]] ;then
-    schema_dir="/usr/local/share/glib-2.0/schemas"
-then
-    schema_dir="/usr/share/glib-2.0/schemas"
+# TODO: Handle other distribs
+if type lsb_release &> /dev/null && [[ $(lsb_release -i) =~ Ubuntu ]]; then
+    usr_dir="usr/local"
+else
+    usr_dir="usr"
 fi
 
-mkdir -p "${prefix}/usr/share/gnome-shell/extensions"
-cp -r "${srcdir}/system-monitor@paradoxxx.zero.gmail.com" "${prefix}/usr/share/gnome-shell/extensions/"
-mkdir -p "${prefix}/usr/bin"
-cp "${srcdir}/system-monitor-applet-config.py" "${prefix}/usr/bin/system-monitor-applet-config"
-mkdir -p "${prefix}/usr/share/applications"
-cp "${srcdir}/system-monitor-applet-config.desktop" "${prefix}/usr/share/applications/"
+mkdir -p "${prefix}/${usr_dir}/share/gnome-shell/extensions"
+cp -vr "${srcdir}/system-monitor@paradoxxx.zero.gmail.com" "${prefix}/${usr_dir}/share/gnome-shell/extensions/"
+mkdir -p "${prefix}/${usr_dir}/bin"
+cp -v "${srcdir}/system-monitor-applet-config.py" "${prefix}/${usr_dir}/bin/system-monitor-applet-config"
+mkdir -p "${prefix}/${usr_dir}/share/applications"
+cp -v "${srcdir}/system-monitor-applet-config.desktop" "${prefix}/${usr_dir}/share/applications/"
 for dir in "${srcdir}/"po/* ;do
     [[ -d "$dir" ]] && {
 	lang=$(basename "$dir")
-	mkdir -p "${prefix}/usr/share/locale/LC_MESSAGES/${lang}"
-	msgfmt "$dir/system-monitor-applet.po" -o "${prefix}/usr/share/locale/LC_MESSAGES/${lang}/system-monitor-applet.mo"
+	mkdir -p "${prefix}/${usr_dir}/share/locale/LC_MESSAGES/${lang}"
+	msgfmt "$dir/system-monitor-applet.po" -o "${prefix}/${usr_dir}/share/locale/LC_MESSAGES/${lang}/system-monitor-applet.mo"
     }
 done
-mkdir -p "${prefix}/${schema_dir}"
-cp org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/${schema_dir}/"
-[[ -z $nopost ]] && post "${prefix}/${schema_dir}"
+mkdir -p "${prefix}/${usr_dir}/share/glib-2.0/schemas"
+cp -v org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/${usr_dir}/share/glib-2.0/schemas"
+[[ -z $nopost ]] && post "${prefix}/${usr_dir}/share/glib-2.0/schemas"

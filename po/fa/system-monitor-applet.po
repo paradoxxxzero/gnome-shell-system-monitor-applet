@@ -133,6 +133,6 @@ msgstr "دیسک"
 msgid "Preferences..."
 msgstr "ترجیحات..."
 
-msgid "System monitor"
-msgstr "پایشگر سیستم"
+msgid "System Monitor"
+msgstr "پایشگر سیستم..."
 

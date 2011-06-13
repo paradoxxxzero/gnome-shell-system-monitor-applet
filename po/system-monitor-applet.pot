@@ -131,5 +131,5 @@ msgstr ""
 msgid "Preferences..."
 msgstr ""
 
-msgid "System monitor"
+msgid "System Monitor..."
 msgstr ""

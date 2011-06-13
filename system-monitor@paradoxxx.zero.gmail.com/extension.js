@@ -584,6 +584,10 @@ function main() {
         elts[elt].actor.add_style_class_name("sm-panel-button");
         Main.__sm[elt] = elts[elt];
     }
+    let icon = new PanelMenu.SystemStatusButton('utilities-system-monitor', _('System monitor'));
+    Main.panel._rightBox.insert_actor(icon.actor, 1);
+    Main.panel._rightBox.child_set(icon.actor);
+    Main.panel._menus.addMenu(icon.menu);
 }
 
 

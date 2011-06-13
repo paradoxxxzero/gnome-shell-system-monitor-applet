@@ -43,24 +43,214 @@ function Open_Preference() {
     Util.spawn(["system-monitor-applet-config"]);
 }
 
+
+function Chart() {
+    this._init.apply(this, arguments);
+}
+
+Chart.prototype = {
+    _init: function() {
+        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
+        this.width = arguments[0];
+        this.height = arguments[1];
+        this.parent = arguments[2];
+        this.actor.set_width(this.width);
+        this.actor.set_height(this.height);
+        this.actor.connect('repaint', Lang.bind(this, this._draw));
+        this.data = [];
+        for (let i = 0;i < this.parent.colors.length;i++) {
+            this.data[i] = [];
+        }
+    },
+    _draw: function() {
+        if (!this.actor.visible) return;
+        let data_a = this.parent.list();
+        if (data_a.length != this.parent.colors.length) return;
+        let accdata = [];
+        for (let l = 0 ; l < data_a.length ; l++) {
+            accdata[l] = (l == 0) ? data_a[0] : accdata[l - 1] + ((data_a[l] > 0) ? data_a[l] : 0);
+            this.data[l].push(accdata[l]);
+            if (this.data[l].length > this.width)
+                this.data[l].shift();
+        }
+
+        let [width, height] = this.actor.get_surface_size();
+        let cr = this.actor.get_context();
+        let max = Math.max.apply(this,this.data[this.data.length - 1]);
+        max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
+        Clutter.cairo_set_source_color(cr, this.parent.background);
+        cr.rectangle(0, 0, width, height);
+        cr.fill();
+        for (let i = this.parent.colors.length - 1 ; i >= 0 ; i--) {
+            cr.moveTo(width, height);
+            for (let j = this.data[i].length - 1 ; j >= 0 ; j--) {
+                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
+            }
+            cr.lineTo(width - (this.data[i].length - 1), height);
+            cr.closePath();
+            Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
+            cr.fill();
+        }
+    }
+};
+
+function ElementBase() {
+    this._init.apply(this, arguments);
+}
+
+ElementBase.prototype = {
+    __proto__: PanelMenu.Button.prototype,
+    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
+    color_names: {
+        cpu: ['user', 'system', 'nice', 'iowait', 'other'],
+        memory: ['program', 'buffer', 'cache'],
+        swap: ['used'],
+        net: ['down', 'up'],
+        disk: ['read', 'write']
+    },
+    _init: function(elt) {
+        this.elt = elt;
+        PanelMenu.Button.prototype._init.call(this);
+
+        this.colors = [];
+        this.background = new Clutter.Color();
+        this.background.from_string(this._schema.get_string('background'));
+        for(let color in this.color_names[elt]) {
+            let clutterColor = new Clutter.Color();
+            clutterColor.from_string(this._schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
+            this.colors.push(clutterColor);
+        }
+
+        let elt_color = function() {
+            this.colors = [];
+            this.background = new Clutter.Color();
+            this.background.from_string(this._schema.get_string('background'));
+            for(let color in this.color_names[elt]) {
+                let clutterColor = new Clutter.Color();
+                clutterColor.from_string(this._schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
+                this.colors.push(clutterColor);
+            }
+            this.chart.actor.queue_repaint();
+            return true;
+        };
+        this.chart = new Chart(this._schema.get_int(elt + '-graph-width'), this.icon_size, this);
+        this._schema.connect('changed::background', Lang.bind(this, elt_color));
+        for(let col in this.color_names[elt]) {
+            this._schema.connect('changed::' + elt + '-' + this.color_names[elt][col] + '-color', Lang.bind(this, elt_color));
+        }
+
+        this.box = new St.BoxLayout();
+        this.actor.set_child(this.box);
+        this.actor.visible = this._schema.get_boolean(elt + "-display");
+        this._schema.connect(
+            'changed::' + elt + '-display',
+            Lang.bind(this,
+                      function () {
+                          this.actor.visible = this._schema.get_boolean(this.elt + "-display");
+                      })
+        );
+
+        this.update();
+
+        let l_limit = function(a) {
+            return (a > 0) ? a : 1000;
+        };
+
+        this.interval = l_limit(this._schema.get_int(elt + "-refresh-time"));
+        this.timeout = Mainloop.timeout_add(
+            this.interval,
+            Lang.bind(this, function () {
+                          if(this.actor.visible) {
+                              this.update();
+                          }
+                          return true;
+                      })
+        );
+        this._schema.connect(
+            'changed::' + elt + '-refresh-time',
+            Lang.bind(this,
+                      function () {
+                          Mainloop.source_remove(this.timeout);
+                          this.interval = Math.abs(this._schema.get_int(elt + "-refresh-time"));
+                          this.timeout = Mainloop.timeout_add(
+                              this.interval,
+                              Lang.bind(this, function () {
+                                            if(this.actor.visible) {
+                                                this.update();
+                                            }
+                                            return true;
+                                        })
+                          );
+                      })
+        );
+        this._schema.connect(
+            'changed::' + elt + '-graph-width',
+            Lang.bind(this,
+                      function () {
+                          this.chart.width = this._schema.get_int(elt + "-graph-width");
+                          this.chart.actor.set_width(this.elements[elt].chart.width);
+                          this.chart.actor.queue_repaint();
+                      })
+        );
+    }
+};
+
+
 function Cpu() {
-    this._init();
+    this._init.apply(this, arguments);
 }
 Cpu.prototype = {
+    __proto__: ElementBase.prototype,
     _init: function() {
+        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+        this.value = new St.Label({ style_class: "sm-status-value"});
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        this.panel = {};
-        this.menu = {};
-        this.colors = [];
+
+        let text_disp = function(text, schema) {
+            let apply = function() {
+                text.visible = this._schema.get_boolean(schema);
+            };
+            Lang.bind(this, apply)();
+            this._schema.connect('changed::' + schema, Lang.bind(this, apply));
+        };
+
+        let disp_style = function(digits, chart, schema) {
+            let apply = function() {
+                let d_digit = false, d_chart = false;
+                let style = this._schema.get_string(schema);
+                if (style == 'digit' || style == 'both') d_digit = true;
+                if (style == 'graph' || style == 'both') d_chart = true;
+                for (let i = 0;i < digits.length;i++) {
+                    digits[i].visible = d_digit;
+                }
+                chart.visible = d_chart;
+            };
+            Lang.bind(this, apply)();
+            this._schema.connect('changed::' + schema, Lang.bind(this, apply));
+        };
+
+        ElementBase.prototype._init.call(this, "cpu");
+
+        let text, digits = [], digit;
+        text = new St.Label({ text: _('cpu'), style_class: "sm-status-label"});
+        Lang.bind(this, text_disp)(text, 'cpu-show-text');
+        this.box.add_actor(text);
+        this.box.add_actor(this.value);
+        digits.push(this.value);
+        digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
+        this.box.add_actor(digit);
+        digits.push(digit);
+        this.box.add_actor(this.chart.actor);
+        Lang.bind(this, disp_style)(digits, this.chart.actor, 'cpu-style');
     },
     update_menu: function () {
-        this.menu.value.set_text(this.percent().toString());
+        //this.menu.value.set_text(this.percent().toString());
     },
     update: function () {
         this.refresh();
-        this.panel.value.set_text(this.percent().toString());
+        this.value.set_text(this.percent().toString());
         this.chart.actor.queue_repaint();
     },
     refresh: function() {
@@ -319,55 +509,6 @@ Disk.prototype = {
 };
 Disk.instance = new Disk();
 
-function Chart() {
-    this._init.apply(this, arguments);
-}
-
-Chart.prototype = {
-    _init: function() {
-        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
-        this.width = arguments[0];
-        this.height = arguments[1];
-        this.parent = arguments[2];
-        this.actor.set_width(this.width);
-        this.actor.set_height(this.height);
-        this.actor.connect('repaint', Lang.bind(this, this._draw));
-        this.data = [];
-        for (let i = 0;i < this.parent.colors.length;i++) {
-            this.data[i] = [];
-        }
-    },
-    _draw: function() {
-        if (!this.actor.visible) return;
-        let data_a = this.parent.list();
-        if (data_a.length != this.parent.colors.length) return;
-        let accdata = [];
-        for (let l = 0 ; l < data_a.length ; l++) {
-            accdata[l] = (l == 0) ? data_a[0] : accdata[l - 1] + ((data_a[l] > 0) ? data_a[l] : 0);
-            this.data[l].push(accdata[l]);
-            if (this.data[l].length > this.width)
-                this.data[l].shift();
-        }
-
-        let [width, height] = this.actor.get_surface_size();
-        let cr = this.actor.get_context();
-        let max = Math.max.apply(this,this.data[this.data.length - 1]);
-        max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
-        Clutter.cairo_set_source_color(cr, this.parent.background);
-        cr.rectangle(0, 0, width, height);
-        cr.fill();
-        for (let i = this.parent.colors.length - 1 ; i >= 0 ; i--) {
-            cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1 ; j >= 0 ; j--) {
-                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
-            }
-            cr.lineTo(width - (this.data[i].length - 1), height);
-            cr.closePath();
-            Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
-            cr.fill();
-        }
-    }
-};
 
 function Pie() {
     this._init.apply(this, arguments);
@@ -436,7 +577,7 @@ SystemMonitor.prototype = {
         net: ['down', 'up'],
         disk: ['read', 'write']
     },
-    _init_menu: function() {
+    /*_init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Usages");
         this.menu.addMenuItem(section);
 
@@ -504,7 +645,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Preference);
         this.menu.addMenuItem(item);
 
-    },
+    },*/
     _init_status: function() {
         let box = new St.BoxLayout();
         this._icon_ = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: this.icon_size, icon_name:'utilities-system-monitor'});
@@ -671,7 +812,7 @@ SystemMonitor.prototype = {
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._init_status();
-        this._init_menu();
+        //this._init_menu();
 
         this._icon_.visible = this._schema.get_boolean("icon-display");
         this._schema.connect(
@@ -733,26 +874,26 @@ SystemMonitor.prototype = {
                           })
             );
         }
-        this.menu.connect('open-state-changed',
-                          Lang.bind(this,
-                                    function (menu, isOpen) {
-                                        if(isOpen) {
-                                            for (let elt in this.elements) {
-                                                this.elements[elt].update_menu();
-                                            }
-                                            this.menu_timeout = Mainloop.timeout_add_seconds(
-                                                1,
-                                                Lang.bind(this, function () {
-                                                              for (let elt in this.elements) {
-                                                                  this.elements[elt].update_menu();
-                                                              }
-                                                              Pie.instance.actor.queue_repaint();
-                                                              return true;
-                                                          }));
-                                        } else {
-                                             Mainloop.source_remove(this.menu_timeout);
-                                        }
-                                    }));
+        // this.menu.connect('open-state-changed',
+        //                   Lang.bind(this,
+        //                             function (menu, isOpen) {
+        //                                 if(isOpen) {
+        //                                     for (let elt in this.elements) {
+        //                                         this.elements[elt].update_menu();
+        //                                     }
+        //                                     this.menu_timeout = Mainloop.timeout_add_seconds(
+        //                                         1,
+        //                                         Lang.bind(this, function () {
+        //                                                       for (let elt in this.elements) {
+        //                                                           this.elements[elt].update_menu();
+        //                                                       }
+        //                                                       Pie.instance.actor.queue_repaint();
+        //                                                       return true;
+        //                                                   }));
+        //                                 } else {
+        //                                      Mainloop.source_remove(this.menu_timeout);
+        //                                 }
+        //                             }));
         if(this._schema.get_boolean("center-display")) {
             Main.panel._centerBox.add(this.actor);
         }
@@ -764,6 +905,8 @@ SystemMonitor.prototype = {
 
 
 function main() {
-    Panel.STANDARD_TRAY_ICON_ORDER.unshift('system-monitor');
-    Panel.STANDARD_TRAY_ICON_SHELL_IMPLEMENTATION['system-monitor'] = SystemMonitor;
+//    Panel.STANDARD_TRAY_ICON_ORDER.unshift('system-monitor');
+//    Panel.STANDARD_TRAY_ICON_SHELL_IMPLEMENTATION['system-monitor'] = SystemMonitor;
+    Panel.STANDARD_TRAY_ICON_ORDER.unshift('cpu');
+    Panel.STANDARD_TRAY_ICON_SHELL_IMPLEMENTATION['cpu'] = Cpu;
 }

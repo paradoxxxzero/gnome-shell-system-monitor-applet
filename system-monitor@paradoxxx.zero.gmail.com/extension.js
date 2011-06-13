@@ -55,12 +55,12 @@ Cpu.prototype = {
         this.menu = {};
         this.colors = [];
     },
+    update_menu: function () {
+        this.menu.value.set_text(this.percent().toString());
+    },
     update: function () {
         this.refresh();
         this.panel.value.set_text(this.percent().toString());
-        if(this.menuOpen) {
-            this.menu.value.set_text(this.percent().toString());
-        }
         this.chart.actor.queue_repaint();
     },
     refresh: function() {
@@ -111,13 +111,13 @@ Mem.prototype = {
         this.menu = {};
         this.colors = [];
     },
+    update_menu: function () {
+        this.menu.used.set_text(this.mem[0].toString());
+        this.menu.total.set_text(this.mem_total.toString());
+    },
     update: function () {
         this.refresh();
         this.panel.value.set_text(this.percent().toString());
-        if(this.menuOpen) {
-            this.menu.used.set_text(this.mem[0].toString());
-            this.menu.total.set_text(this.mem_total.toString());
-        }
         this.chart.actor.queue_repaint();
     },
     refresh: function() {
@@ -174,13 +174,13 @@ Swap.prototype = {
         this.menu = {};
         this.colors = [];
     },
+    update_menu: function () {
+        this.menu.used.set_text(this.swap.toString());
+        this.menu.total.set_text(this.swap_total.toString());
+    },
     update: function () {
         this.refresh();
         this.panel.value.set_text(this.percent().toString());
-        if(this.menuOpen) {
-            this.menu.used.set_text(this.swap.toString());
-            this.menu.total.set_text(this.swap_total.toString());
-        }
         this.chart.actor.queue_repaint();
     },
     refresh: function() {
@@ -230,14 +230,14 @@ Net.prototype = {
         this.menu = {};
         this.colors = [];
     },
+    update_menu: function () {
+        this.menu.down.set_text(this.usage[0] + " kB/s");
+        this.menu.up.set_text(this.usage[1] + " kB/s");
+    },
     update: function () {
         this.refresh();
         this.panel.down.set_text(this.usage[0].toString());
         this.panel.up.set_text(this.usage[1].toString());
-        if(this.menuOpen) {
-            this.menu.down.set_text(this.usage[0] + " kB/s");
-            this.menu.up.set_text(this.usage[1] + " kB/s");
-        }
         this.chart.actor.queue_repaint();
     },
     refresh: function() {
@@ -278,15 +278,16 @@ Disk.prototype = {
         this.menu = {};
         this.colors = [];
     },
+    update_menu: function () {
+        let percents = this.percent();
+        this.menu.read.set_text(percents[0] + " %");
+        this.menu.write.set_text(percents[1] + " %");
+    },
     update: function () {
         this.refresh();
         let percents = this.percent();
         this.panel.read.set_text(percents[0].toString());
         this.panel.write.set_text(percents[1].toString());
-        if(this.menuOpen) {
-            this.menu.read.set_text(percents[0] + " %");
-            this.menu.write.set_text(percents[1] + " %");
-        }
         this.chart.actor.queue_repaint();
     },
     refresh: function() {
@@ -439,13 +440,13 @@ SystemMonitor.prototype = {
         let section = new PopupMenu.PopupMenuSection("Usages");
         this.menu.addMenuItem(section);
 
-        let item = new PopupMenu.PopupBaseMenuItem();
+        let item = new PopupMenu.PopupBaseMenuItem({reactive: false});
         item.addActor(Pie.instance.actor, {span: -1, expand: true});
         this.menu.addMenuItem(item);
 
 
         item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
-        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+
         this.elements.cpu.menu.value = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(new St.Label({ style_class: "sm-void"}));
@@ -457,7 +458,7 @@ SystemMonitor.prototype = {
         item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         this.elements.memory.menu.used = new St.Label({ style_class: "sm-value"});
         this.elements.memory.menu.total = new St.Label({ style_class: "sm-value"});
-        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+
         item.addActor(this.elements.memory.menu.used);
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.elements.memory.menu.total);
@@ -468,7 +469,7 @@ SystemMonitor.prototype = {
         item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         this.elements.swap.menu.used = new St.Label({ style_class: "sm-value"});
         this.elements.swap.menu.total = new St.Label({ style_class: "sm-value"});
-        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+
         item.addActor(this.elements.swap.menu.used);
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.elements.swap.menu.total);
@@ -477,7 +478,7 @@ SystemMonitor.prototype = {
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
-        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+
         this.elements.net.menu.down = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.net.menu.down);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
@@ -488,7 +489,7 @@ SystemMonitor.prototype = {
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
-        item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
+
         this.elements.disk.menu.read = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.disk.menu.read);
         item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
@@ -740,13 +741,21 @@ SystemMonitor.prototype = {
         this.menu.connect('open-state-changed',
                           Lang.bind(this,
                                     function (menu, isOpen) {
-                                        for (let elt in this.elements) {
-                                            this.elements[elt].menuOpen = isOpen;
-                                        }
                                         if(isOpen) {
                                             for (let elt in this.elements) {
-                                                this.elements[elt].update();
+                                                this.elements[elt].update_menu();
                                             }
+                                            this.menu_timeout = Mainloop.timeout_add_seconds(
+                                                1,
+                                                Lang.bind(this, function () {
+                                                              for (let elt in this.elements) {
+                                                                  this.elements[elt].update_menu();
+                                                              }
+                                                              Pie.instance.actor.queue_repaint();
+                                                              return true;
+                                                          }));
+                                        } else {
+                                             Mainloop.source_remove(this.menu_timeout);
                                         }
                                     }));
         if(this._schema.get_boolean("center-display")) {

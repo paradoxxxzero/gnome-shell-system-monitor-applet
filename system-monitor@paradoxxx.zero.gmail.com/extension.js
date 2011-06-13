@@ -452,7 +452,6 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(this.elements.cpu.menu.value);
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
@@ -463,7 +462,6 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.elements.memory.menu.total);
         item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
-        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
@@ -474,7 +472,6 @@ SystemMonitor.prototype = {
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.elements.swap.menu.total);
         item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
-        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
@@ -485,7 +482,6 @@ SystemMonitor.prototype = {
         this.elements.net.menu.up = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.net.menu.up);
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
@@ -496,7 +492,6 @@ SystemMonitor.prototype = {
         this.elements.disk.menu.write = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.disk.menu.write);
         item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
-        item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
@@ -672,7 +667,7 @@ SystemMonitor.prototype = {
     },
     _init: function() {
         Panel.__system_monitor = this;
-        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
+        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor');
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
         this._init_status();

@@ -46,7 +46,6 @@ function Open_Preference() {
 function Cpu() {
     this._init();
 }
-
 Cpu.prototype = {
     _init: function() {
         this.last = [0,0,0,0,0];
@@ -96,6 +95,7 @@ Cpu.prototype = {
         return [this.usage[0], this.usage[1], this.usage[2], this.usage[4], free];
     }
 };
+Cpu.instance = new Cpu();
 
 function Mem() {
     this._init();
@@ -154,6 +154,7 @@ Mem.prototype = {
         return mem;
     }
 };
+Mem.instance = new Mem();
 
 function Swap() {
     this._init();
@@ -202,6 +203,7 @@ Swap.prototype = {
         return [this.swap / this.swap_total];
     }
 };
+Swap.instance = new Swap();
 
 function Net() {
     this._init();
@@ -248,6 +250,7 @@ Net.prototype = {
         return this.usage;
     }
 };
+Net.instance = new Net();
 
 function Disk() {
     this._init();
@@ -299,6 +302,7 @@ Disk.prototype = {
         return this.usage;
     }
 };
+Disk.instance = new Disk();
 
 function Chart() {
     this._init.apply(this, arguments);
@@ -384,6 +388,7 @@ Pie.prototype = {
         this.actor.connect('repaint', Lang.bind(this, this._draw));
     },
     _draw: function() {
+
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
@@ -393,20 +398,23 @@ Pie.prototype = {
         let yc = height/2;
         let r = Math.min(xc, yc) - 10;
         let pi = Math.PI;
+        function arc(r, percent) {
+            cr.arc(xc, yc, r, -pi / 2, -pi / 2 + (percent * 2 * pi / 100));
+        }
         back_color.from_string("#0072b3");
         Clutter.cairo_set_source_color(cr, back_color);
         cr.setLineWidth(10);
-        cr.arc(xc, yc, r, -pi / 2, pi);
+        arc(r, Cpu.instance.percent());
         cr.stroke();
         back_color.from_string("#00b35b");
         Clutter.cairo_set_source_color(cr, back_color);
         cr.setLineWidth(10);
-        cr.arc(xc, yc, r - 15, -pi / 2, 1.2 * pi);
+        arc(r - 15, Mem.instance.percent());
         cr.stroke();
         back_color.from_string("#8b00c3");
         Clutter.cairo_set_source_color(cr, back_color);
         cr.setLineWidth(10);
-        cr.arc(xc, yc, r - 30, -pi / 2, .2 * pi);
+        arc(r - 30, Swap.instance.percent());
         cr.stroke();
     }
 };
@@ -419,11 +427,11 @@ SystemMonitor.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
     icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
     elements: {
-        cpu: new Cpu(),
-        memory: new Mem(),
-        swap: new Swap(),
-        net: new Net(),
-        disk: new Disk()
+        cpu: Cpu.instance,
+        memory: Mem.instance,
+        swap: Swap.instance,
+        net: Net.instance,
+        disk: Disk.instance
     },
     _init_menu: function() {
         let section = new PopupMenu.PopupMenuSection("Usages");

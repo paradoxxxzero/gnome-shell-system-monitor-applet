@@ -130,6 +130,6 @@ msgstr "disco"
 msgid "Preferences..."
 msgstr "Preferencias..."
 
-msgid "System monitor"
-msgstr "Monitor de sistema"
+msgid "System Monitor..."
+msgstr "Monitor de sistema..."
 

@@ -131,6 +131,6 @@ msgstr "disk"
 msgid "Preferences..."
 msgstr "Možnosti..."
 
-msgid "System monitor"
-msgstr "System monitor"
+msgid "System Monitor..."
+msgstr "System Monitor..."
 

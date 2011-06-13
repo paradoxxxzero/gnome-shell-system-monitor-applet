@@ -61,7 +61,7 @@ Cpu.prototype = {
         if(this.menuOpen) {
             this.menu.value.set_text(this.percent().toString());
         }
-        this.chart._addValue(this.list(), this.panel.box.visible);
+        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
@@ -94,6 +94,9 @@ Cpu.prototype = {
             free -= this.usage[i];
         }
         return [this.usage[0], this.usage[1], this.usage[2], this.usage[4], free];
+    },
+    total: function() {
+        return 1;
     }
 };
 Cpu.instance = new Cpu();
@@ -115,7 +118,7 @@ Mem.prototype = {
             this.menu.used.set_text(this.mem[0].toString());
             this.menu.total.set_text(this.mem_total.toString());
         }
-        this.chart._addValue(this.mem_list());
+        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.mem = [0,0,0];
@@ -148,12 +151,15 @@ Mem.prototype = {
             return Math.round(this.mem[0] / this.mem_total * 100);
         }
     },
-    mem_list: function() {
+    list: function() {
         let mem = [];
         for (let i = 0;i < this.mem.length;i++) {
             mem[i] = this.mem[i] / this.mem_total;
         }
         return mem;
+    },
+    total: function() {
+        return Math.round(this.mem_total / 1024);
     }
 };
 Mem.instance = new Mem();
@@ -175,7 +181,7 @@ Swap.prototype = {
             this.menu.used.set_text(this.swap.toString());
             this.menu.total.set_text(this.swap_total.toString());
         }
-        this.chart._addValue(this.swap_list(), this.panel.box.visible);
+        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.swap = 0;
@@ -202,8 +208,11 @@ Swap.prototype = {
             return Math.round(this.swap / this.swap_total * 100);
         }
     },
-    swap_list: function() {
+    list: function() {
         return [this.swap / this.swap_total];
+    },
+    total: function() {
+        return Math.round(this.swap_total / 1024);
     }
 };
 Swap.instance = new Swap();
@@ -229,7 +238,7 @@ Net.prototype = {
             this.menu.down.set_text(this.usage[0] + " kB/s");
             this.menu.up.set_text(this.usage[1] + " kB/s");
         }
-        this.chart._addValue(this.list(), this.panel.box.visible);
+        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -278,7 +287,7 @@ Disk.prototype = {
             this.menu.read.set_text(percents[0] + " %");
             this.menu.write.set_text(percents[1] + " %");
         }
-        this.chart._addValue(this.list(), this.panel.box.visible);
+        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -329,20 +338,26 @@ Chart.prototype = {
     },
     _draw: function() {
         if (!this.actor.visible) return;
+        let data_a = this.parent.list();
+        if (data_a.length != this.parent.colors.length) return;
+        let accdata = [];
+        for (let l = 0 ; l < data_a.length ; l++) {
+            accdata[l] = (l == 0) ? data_a[0] : accdata[l - 1] + ((data_a[l] > 0) ? data_a[l] : 0);
+            this.data[l].push(accdata[l]);
+            if (this.data[l].length > this.width)
+                this.data[l].shift();
+        }
+
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
         let max = Math.max.apply(this,this.data[this.data.length - 1]);
-        if (max <= 1) {
-            max = 1;
-        } else {
-            max = Math.pow(2, Math.ceil(Math.log(max) / Math.log(2)));
-        }
+        max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
         Clutter.cairo_set_source_color(cr, this.parent.background);
         cr.rectangle(0, 0, width, height);
         cr.fill();
-        for (let i = this.parent.colors.length - 1;i >= 0;i--) {
+        for (let i = this.parent.colors.length - 1 ; i >= 0 ; i--) {
             cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1;j >= 0;j--) {
+            for (let j = this.data[i].length - 1 ; j >= 0 ; j--) {
                 cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
             }
             cr.lineTo(width - (this.data[i].length - 1), height);
@@ -350,19 +365,6 @@ Chart.prototype = {
             Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
             cr.fill();
         }
-    },
-    _addValue: function(data_a) {
-        if (data_a.length != this.parent.colors.length) return;
-        let accdata = [];
-        for (let i = 0;i < data_a.length;i++) {
-            accdata[i] = (i == 0) ? data_a[0] : accdata[i - 1] + ((data_a[i] > 0) ? data_a[i] : 0);
-            this.data[i].push(accdata[i]);
-            if (this.data[i].length > this.width)
-                this.data[i].shift();
-        }
-        if (arguments.length >= 2 && arguments[1] == false)
-            return;
-        this.actor.queue_repaint();
     }
 };
 
@@ -373,14 +375,13 @@ function Pie() {
 Pie.prototype = {
     _init: function() {
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
-        this.width = arguments[2];
-        this.height = arguments[3];
+        this.width = arguments[0];
+        this.height = arguments[1];
         this.actor.set_width(this.width);
         this.actor.set_height(this.height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
     },
     _draw: function() {
-
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
@@ -390,26 +391,28 @@ Pie.prototype = {
         let yc = height/2;
         let r = Math.min(xc, yc) - 10;
         let pi = Math.PI;
-        function arc(r, percent) {
-            cr.arc(xc, yc, r, -pi / 2, -pi / 2 + (percent * 2 * pi / 100));
+        function arc(r, value, max, angle) {
+            if(max == 0) return angle;
+            let new_angle = angle + (value * 2 * pi / max);
+            cr.arc(xc, yc, r, angle, new_angle);
+            return new_angle;
         }
-        back_color.from_string("#0072b3");
-        Clutter.cairo_set_source_color(cr, back_color);
         cr.setLineWidth(10);
-        arc(r, Cpu.instance.percent());
-        cr.stroke();
-        back_color.from_string("#00b35b");
-        Clutter.cairo_set_source_color(cr, back_color);
-        cr.setLineWidth(10);
-        arc(r - 15, Mem.instance.percent());
-        cr.stroke();
-        back_color.from_string("#8b00c3");
-        Clutter.cairo_set_source_color(cr, back_color);
-        cr.setLineWidth(10);
-        arc(r - 30, Swap.instance.percent());
-        cr.stroke();
+        let things = [Cpu, Mem, Swap];
+        for (let thing in things) {
+            r -= 15;
+            let elt = things[thing].instance;
+            let angle = -pi / 2;
+            for (let i = 0 ; i < elt.colors.length ; i++) {
+                Clutter.cairo_set_source_color(cr, elt.colors[i]);
+                // Abs is for float errors
+                angle = arc(r, Math.abs(elt.list()[i]), elt.total(), angle);
+                cr.stroke();
+            }
+        }
     }
 };
+Pie.instance = new Pie(200, 200);
 
 function SystemMonitor() {
     this._init.apply(this, arguments);
@@ -437,12 +440,11 @@ SystemMonitor.prototype = {
         this.menu.addMenuItem(section);
 
         let item = new PopupMenu.PopupBaseMenuItem();
-	    let pie = new Pie(null, null, 200, 200);
-        item.addActor(pie.actor, {span: -1, expand: true});
+        item.addActor(Pie.instance.actor, {span: -1, expand: true});
         this.menu.addMenuItem(item);
 
 
-        item = new PopupMenu.PopupMenuItem(_("Cpu"));
+        item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.cpu.menu.value = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ style_class: "sm-void"}));
@@ -452,7 +454,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem(_("Memory"));
+        item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         this.elements.memory.menu.used = new St.Label({ style_class: "sm-value"});
         this.elements.memory.menu.total = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
@@ -463,7 +465,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem(_("Swap"));
+        item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         this.elements.swap.menu.used = new St.Label({ style_class: "sm-value"});
         this.elements.swap.menu.total = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
@@ -474,7 +476,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem(_("Net"));
+        item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.net.menu.down = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.net.menu.down);
@@ -485,7 +487,7 @@ SystemMonitor.prototype = {
         item.connect('activate', Open_Window);
         section.addMenuItem(item);
 
-        item = new PopupMenu.PopupMenuItem(_("Disk"));
+        item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         item.addActor(new St.Label({ text:':', style_class: "sm-label"}));
         this.elements.disk.menu.read = new St.Label({ style_class: "sm-value"});
         item.addActor(this.elements.disk.menu.read);
@@ -497,6 +499,10 @@ SystemMonitor.prototype = {
         section.addMenuItem(item);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+        item.connect('activate', Open_Window);
+        this.menu.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Preferences..."));
         item.connect('activate', Open_Preference);

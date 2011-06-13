@@ -575,12 +575,46 @@ function main() {
         memory: Mem.instance,
         cpu: Cpu.instance
     };
+    Main.__sm = {};
     for (let elt in elts) {
         Main.panel._rightBox.insert_actor(elts[elt].actor, 1);
         Main.panel._rightBox.child_set(elts[elt].actor, { y_fill : true } );
         Main.panel._menus.addMenu(elts[elt].menu);
+        elts[elt].actor.remove_style_class_name("panel-button");
+        elts[elt].actor.add_style_class_name("sm-panel-button");
+        Main.__sm[elt] = elts[elt];
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

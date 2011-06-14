@@ -34,6 +34,7 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
+
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
 function Chart() {
@@ -202,9 +203,49 @@ ElementBase.prototype = {
         Lang.bind(this, change_style)();
         Schema.connect('changed::' + elt + '-style', Lang.bind(this, change_style));
 
-        let item = new PopupMenu.PopupMenuItem(_(elt), {reactive: false});
-        item.addActor(new St.Label({ text:'Coming soon', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
+        // Menu
+        // let item = new PopupMenu.PopupMenuItem(_(elt), {reactive: false});
+        // item.addActor(new St.Label({ text:'Coming soon', style_class: "sm-label"}));
+        // this.menu.addMenuItem(item);
+        for(let col in this.color_names[elt]) {
+            let color = this.color_names[elt][col];
+            let item = new PopupMenu.PopupMenuItem(color, {reactive: false});
+            this["_" + color] = new St.Label({ style_class: "sm-label"});
+            item.addActor(this["_" + color]);
+            item.addActor(new St.Label({ text: '%', style_class: "sm-label"}));
+            this.menu.addMenuItem(item);
+        }
+        this.menu.connect(
+            'open-state-changed',
+            Lang.bind(this,
+                      function (menu, isOpen) {
+                          if(isOpen) {
+                              this.update_menu(this.elt);
+                              this.menu_timeout = Mainloop.timeout_add_seconds(
+                                  1,
+                                  Lang.bind(this, function () {
+                                                this.update_menu(this.elt);
+                                                return true;
+                                            }));
+                          } else {
+                              Mainloop.source_remove(this.menu_timeout);
+                          }
+                      })
+        );
+    },
+    update_menu: function (elt) {
+        let list = this.list();
+        let total = this.total();
+        if(total == 0) {
+            for(let i in list) {
+                total += list[i];
+            }
+        }
+        for(let col in this.color_names[elt]) {
+            let color = this.color_names[elt][col];
+            let val = total == 0 ? 0 : Math.round((100 * list[col] / total));
+            this["_" + color].set_text(val.toString());
+        }
     }
 };
 
@@ -432,6 +473,9 @@ Net.prototype = {
     },
     list: function() {
         return this.usage;
+    },
+    total: function() {
+        return 0;
     }
 };
 Net.instance = new Net();
@@ -490,6 +534,9 @@ Disk.prototype = {
     },
     list: function() {
         return this.usage;
+    },
+    total: function() {
+        return 0;
     }
 };
 Disk.instance = new Disk();

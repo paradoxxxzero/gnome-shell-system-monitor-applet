@@ -35,7 +35,7 @@
       <summary>Choose the display style.</summary>
     </key>
     <key name="swap-display" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Display swap</summary>
       <description>Set to false to remove swap display in status bar</description>
     </key>
@@ -83,7 +83,7 @@
       <summary>Choose the display style.</summary>
     </key>
     <key name="net-display" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Display net</summary>
       <description>Set to false to remove net display in status bar</description>
     </key>

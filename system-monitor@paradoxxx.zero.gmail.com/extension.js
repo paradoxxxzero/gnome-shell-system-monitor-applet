@@ -34,6 +34,7 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
+const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
 function Chart() {
     this._init.apply(this, arguments);
@@ -102,42 +103,41 @@ ElementBase.prototype = {
     _init: function(elt) {
         this.elt = elt;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'lol');
-        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
         this.colors = [];
         this.background = new Clutter.Color();
-        this.background.from_string(this._schema.get_string('background'));
+        this.background.from_string(Schema.get_string('background'));
         for(let color in this.color_names[elt]) {
             let clutterColor = new Clutter.Color();
-            clutterColor.from_string(this._schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
+            clutterColor.from_string(Schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
             this.colors.push(clutterColor);
         }
 
         let elt_color = function() {
             this.colors = [];
             this.background = new Clutter.Color();
-            this.background.from_string(this._schema.get_string('background'));
+            this.background.from_string(Schema.get_string('background'));
             for(let color in this.color_names[elt]) {
                 let clutterColor = new Clutter.Color();
-                clutterColor.from_string(this._schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
+                clutterColor.from_string(Schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
                 this.colors.push(clutterColor);
             }
             this.chart.actor.queue_repaint();
             return true;
         };
-        this.chart = new Chart(this._schema.get_int(elt + '-graph-width'), this.icon_size, this);
-        this._schema.connect('changed::background', Lang.bind(this, elt_color));
+        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
+        Schema.connect('changed::background', Lang.bind(this, elt_color));
         for(let col in this.color_names[elt]) {
-            this._schema.connect('changed::' + elt + '-' + this.color_names[elt][col] + '-color', Lang.bind(this, elt_color));
+            Schema.connect('changed::' + elt + '-' + this.color_names[elt][col] + '-color', Lang.bind(this, elt_color));
         }
 
         this.box = new St.BoxLayout();
         this.actor.set_child(this.box);
-        this.actor.visible = this._schema.get_boolean(elt + "-display");
-        this._schema.connect(
+        this.actor.visible = Schema.get_boolean(elt + "-display");
+        Schema.connect(
             'changed::' + elt + '-display',
             Lang.bind(this,
                       function () {
-                          this.actor.visible = this._schema.get_boolean(this.elt + "-display");
+                          this.actor.visible = Schema.get_boolean(this.elt + "-display");
                       })
         );
 
@@ -145,7 +145,7 @@ ElementBase.prototype = {
             return (a > 0) ? a : 1000;
         };
 
-        this.interval = l_limit(this._schema.get_int(elt + "-refresh-time"));
+        this.interval = l_limit(Schema.get_int(elt + "-refresh-time"));
         this.timeout = Mainloop.timeout_add(
             this.interval,
             Lang.bind(this, function () {
@@ -155,12 +155,12 @@ ElementBase.prototype = {
                           return true;
                       })
         );
-        this._schema.connect(
+        Schema.connect(
             'changed::' + elt + '-refresh-time',
             Lang.bind(this,
                       function () {
                           Mainloop.source_remove(this.timeout);
-                          this.interval = Math.abs(this._schema.get_int(elt + "-refresh-time"));
+                          this.interval = Math.abs(Schema.get_int(elt + "-refresh-time"));
                           this.timeout = Mainloop.timeout_add(
                               this.interval,
                               Lang.bind(this, function () {
@@ -172,11 +172,11 @@ ElementBase.prototype = {
                           );
                       })
         );
-        this._schema.connect(
+        Schema.connect(
             'changed::' + elt + '-graph-width',
             Lang.bind(this,
                       function () {
-                          this.chart.width = this._schema.get_int(elt + "-graph-width");
+                          this.chart.width = Schema.get_int(elt + "-graph-width");
                           this.chart.actor.set_width(this.chart.width);
                           this.chart.actor.queue_repaint();
                       })
@@ -184,10 +184,10 @@ ElementBase.prototype = {
 
         this.label = new St.Label({ text: _(elt), style_class: "sm-status-label"});
         let change_text = function() {
-            this.label.visible = this._schema.get_boolean(elt + '-show-text');
+            this.label.visible = Schema.get_boolean(elt + '-show-text');
         };
         Lang.bind(this, change_text)();
-        this._schema.connect('changed::' + elt + '-show-text', Lang.bind(this, change_text));
+        Schema.connect('changed::' + elt + '-show-text', Lang.bind(this, change_text));
 
         this.box.add_actor(this.label);
         this.text_box = new St.BoxLayout();
@@ -195,12 +195,12 @@ ElementBase.prototype = {
         this.box.add_actor(this.text_box);
         this.box.add_actor(this.chart.actor);
         let change_style = function() {
-            let style = this._schema.get_string(elt + '-style');
+            let style = Schema.get_string(elt + '-style');
             this.text_box.visible = style == 'digit' || style == 'both';
             this.chart.actor.visible = style == 'graph' || style == 'both';
         };
         Lang.bind(this, change_style)();
-        this._schema.connect('changed::' + elt + '-style', Lang.bind(this, change_style));
+        Schema.connect('changed::' + elt + '-style', Lang.bind(this, change_style));
 
         let item = new PopupMenu.PopupMenuItem(_(elt), {reactive: false});
         item.addActor(new St.Label({ text:'Coming soon', style_class: "sm-label"}));
@@ -267,6 +267,7 @@ Cpu.prototype = {
 };
 Cpu.instance = new Cpu();
 
+
 function Mem() {
     this._init.apply(this, arguments);
 }
@@ -329,6 +330,7 @@ Mem.prototype = {
 };
 Mem.instance = new Mem();
 
+
 function Swap() {
     this._init.apply(this, arguments);
 }
@@ -381,6 +383,7 @@ Swap.prototype = {
 };
 Swap.instance = new Swap();
 
+
 function Net() {
     this._init.apply(this, arguments);
 }
@@ -432,6 +435,7 @@ Net.prototype = {
     }
 };
 Net.instance = new Net();
+
 
 function Disk() {
     this._init.apply(this, arguments);
@@ -547,8 +551,14 @@ Icon.prototype = {
     icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
     _init: function() {
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
-        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
+        this.actor.visible = Schema.get_boolean("icon-display");
+        Schema.connect(
+            'changed::icon-display',
+            Lang.bind(this,
+                      function () {
+                          this.actor.visible = Schema.get_boolean("icon-display");
+                          }));
         let item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
 
         this.cpu = new St.Label({ style_class: "sm-value"});
@@ -650,7 +660,12 @@ Icon.prototype = {
 };
 Icon.instance = new Icon();
 
+
 function main() {
+    let panel = Main.panel._rightBox;
+    if(Schema.get_boolean("center-display")) {
+        panel = Main.panel._centerBox;
+    }
     let elts = {
         disk: Disk.instance,
         net: Net.instance,
@@ -660,389 +675,15 @@ function main() {
     };
     Main.__sm = {};
     for (let elt in elts) {
-        Main.panel._rightBox.insert_actor(elts[elt].actor, 1);
-        Main.panel._rightBox.child_set(elts[elt].actor, { y_fill : true } );
+        panel.insert_actor(elts[elt].actor, 1);
+        panel.child_set(elts[elt].actor, { y_fill : true } );
         Main.panel._menus.addMenu(elts[elt].menu);
         elts[elt].actor.remove_style_class_name("panel-button");
         elts[elt].actor.add_style_class_name("sm-panel-button");
         Main.__sm[elt] = elts[elt];
     }
     let icon = Icon.instance;
-    Main.panel._rightBox.insert_actor(icon.actor, 1);
-    Main.panel._rightBox.child_set(icon.actor);
+    panel.insert_actor(icon.actor, 1);
+    panel.child_set(icon.actor);
     Main.panel._menus.addMenu(icon.menu);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// DEAD CODE - For copy pasta purpose
-if (false) {
-    //init menu
-    let section = new PopupMenu.PopupMenuSection("Usages");
-    this.menu.addMenuItem(section);
-
-    let item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-    item.addActor(Pie.instance.actor, {span: -1, expand: true});
-    this.menu.addMenuItem(item);
-
-
-    item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
-
-    this.elements.cpu.menu.value = new St.Label({ style_class: "sm-value"});
-    item.addActor(new St.Label({ style_class: "sm-void"}));
-    item.addActor(new St.Label({ style_class: "sm-void"}));
-    item.addActor(this.elements.cpu.menu.value);
-    item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-    section.addMenuItem(item);
-
-    item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
-    this.elements.memory.menu.used = new St.Label({ style_class: "sm-value"});
-    this.elements.memory.menu.total = new St.Label({ style_class: "sm-value"});
-
-    item.addActor(this.elements.memory.menu.used);
-    item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-    item.addActor(this.elements.memory.menu.total);
-    item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
-    section.addMenuItem(item);
-
-    item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
-    this.elements.swap.menu.used = new St.Label({ style_class: "sm-value"});
-    this.elements.swap.menu.total = new St.Label({ style_class: "sm-value"});
-
-    item.addActor(this.elements.swap.menu.used);
-    item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-    item.addActor(this.elements.swap.menu.total);
-    item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
-    section.addMenuItem(item);
-
-    item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
-
-    this.elements.net.menu.down = new St.Label({ style_class: "sm-value"});
-    item.addActor(this.elements.net.menu.down);
-    item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
-    this.elements.net.menu.up = new St.Label({ style_class: "sm-value"});
-    item.addActor(this.elements.net.menu.up);
-    item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-    section.addMenuItem(item);
-
-    item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
-
-    this.elements.disk.menu.read = new St.Label({ style_class: "sm-value"});
-    item.addActor(this.elements.disk.menu.read);
-    item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
-    this.elements.disk.menu.write = new St.Label({ style_class: "sm-value"});
-    item.addActor(this.elements.disk.menu.write);
-    item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
-    section.addMenuItem(item);
-
-    this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-    item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
-    item.connect('activate', Open_Window);
-    this.menu.addMenuItem(item);
-
-    item = new PopupMenu.PopupMenuItem(_("Preferences..."));
-    item.connect('activate', Open_Preference);
-    this.menu.addMenuItem(item);
-
-    // init_status
-    let box = new St.BoxLayout();
-    this._icon_ = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: this.icon_size, icon_name:'utilities-system-monitor'});
-    this.elements.memory.panel.value = new St.Label({ style_class: "sm-status-value"});
-    this.elements.swap.panel.value = new St.Label({ style_class: "sm-status-value"});
-    this.elements.cpu.panel.value = new St.Label({ style_class: "sm-status-value"});
-    this.elements.net.panel.down = new St.Label({ style_class: "sm-big-status-value"});
-    this.elements.net.panel.up = new St.Label({ style_class: "sm-big-status-value"});
-    this.elements.disk.panel.read = new St.Label({ style_class: "sm-big-status-value"});
-    this.elements.disk.panel.write = new St.Label({ style_class: "sm-big-status-value"});
-
-    for (let element in this.elements) {
-        let elt = element;
-
-        this.elements[elt].background = new Clutter.Color();
-        this.elements[elt].background.from_string(this._schema.get_string('background'));
-        for(let color in this.colors[elt]) {
-            let clutterColor = new Clutter.Color();
-            clutterColor.from_string(this._schema.get_string(elt + '-' + this.colors[elt][color] + '-color'));
-            this.elements[elt].colors.push(clutterColor);
-        }
-
-        let elt_color = function() {
-            this.elements[elt].colors = [];
-            this.elements[elt].background = new Clutter.Color();
-            this.elements[elt].background.from_string(this._schema.get_string('background'));
-            for(let color in this.colors[elt]) {
-                let clutterColor = new Clutter.Color();
-                clutterColor.from_string(this._schema.get_string(elt + '-' + this.colors[elt][color] + '-color'));
-                this.elements[elt].colors.push(clutterColor);
-            }
-            this.elements[elt].chart.actor.queue_repaint();
-            return true;
-        };
-        this.elements[elt].chart = new Chart(this._schema.get_int(elt + '-graph-width'), this.icon_size, this.elements[elt]);
-        this._schema.connect('changed::background', Lang.bind(this, elt_color));
-        for(let col in this.colors[elt]) {
-            this._schema.connect('changed::' + elt + '-' + this.colors[elt][col] + '-color', Lang.bind(this, elt_color));
-        }
-    }
-
-    box.add_actor(this._icon_);
-
-    let text_disp = function(text, schema) {
-        let apply = function() {
-            text.visible = this._schema.get_boolean(schema);
-        };
-        Lang.bind(this, apply)();
-        this._schema.connect('changed::' + schema, Lang.bind(this, apply));
-    };
-
-    let disp_style = function(digits, chart, schema) {
-        let apply = function() {
-            let d_digit = false, d_chart = false;
-            let style = this._schema.get_string(schema);
-            if (style == 'digit' || style == 'both') d_digit = true;
-            if (style == 'graph' || style == 'both') d_chart = true;
-            for (let i = 0;i < digits.length;i++) {
-                digits[i].visible = d_digit;
-            }
-            chart.visible = d_chart;
-        };
-        Lang.bind(this, apply)();
-        this._schema.connect('changed::' + schema, Lang.bind(this, apply));
-    };
-
-    let text, digits = [], digit;
-    this.elements.cpu.panel.box = new St.BoxLayout();
-    text = new St.Label({ text: _('cpu'), style_class: "sm-status-label"});
-    Lang.bind(this, text_disp)(text, 'cpu-show-text');
-    this.elements.cpu.panel.box.add_actor(text);
-    this.elements.cpu.panel.box.add_actor(this.elements.cpu.panel.value);
-    digits.push(this.elements.cpu.panel.value);
-    digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-    this.elements.cpu.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.cpu.panel.box.add_actor(this.elements.cpu.chart.actor);
-    Lang.bind(this, disp_style)(digits, this.elements.cpu.chart.actor, 'cpu-style');
-    box.add_actor(this.elements.cpu.panel.box);
-
-    digits = [];
-    this.elements.memory.panel.box = new St.BoxLayout();
-    text = new St.Label({ text: _('mem'), style_class: "sm-status-label"});
-    Lang.bind(this, text_disp)(text, 'memory-show-text');
-    this.elements.memory.panel.box.add_actor(text);
-    this.elements.memory.panel.box.add_actor(this.elements.memory.panel.value);
-    digits.push(this.elements.memory.panel.value);
-    digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-    this.elements.memory.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.memory.panel.box.add_actor(this.elements.memory.chart.actor);
-    Lang.bind(this, disp_style)(digits, this.elements.memory.chart.actor, 'memory-style');
-    box.add_actor(this.elements.memory.panel.box);
-
-    digits = [];
-    this.elements.swap.panel.box = new St.BoxLayout();
-    text = new St.Label({ text: _('swap'), style_class: "sm-status-label"});
-    Lang.bind(this, text_disp)(text, 'swap-show-text');
-    this.elements.swap.panel.box.add_actor(text);
-    this.elements.swap.panel.box.add_actor(this.elements.swap.panel.value);
-    digits.push(this.elements.swap.panel.value);
-    digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-    this.elements.swap.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.swap.panel.box.add_actor(this.elements.swap.chart.actor);
-    Lang.bind(this, disp_style)(digits, this.elements.swap.chart.actor, 'swap-style');
-    box.add_actor(this.elements.swap.panel.box);
-
-    digits = [];
-    this.elements.net.panel.box = new St.BoxLayout();
-    text = new St.Label({ text: _('net'), style_class: "sm-status-label"});
-    Lang.bind(this, text_disp)(text, 'net-show-text');
-    this.elements.net.panel.box.add_actor(text);
-
-    digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'});
-    this.elements.net.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.net.panel.box.add_actor(this.elements.net.panel.down);
-    digits.push(this.elements.net.panel.down);
-    digit = new St.Label({ text: 'kB/s', style_class: "sm-unit-label"});
-    this.elements.net.panel.box.add_actor(digit);
-    digits.push(digit);
-    digit = new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'});
-    this.elements.net.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.net.panel.box.add_actor(this.elements.net.panel.up);
-    digits.push(this.elements.net.panel.up);
-    digit = new St.Label({ text: 'kB/s', style_class: "sm-unit-label"});
-    this.elements.net.panel.box.add_actor(digit);
-    digits.push(digit);
-
-    this.elements.net.panel.box.add_actor(this.elements.net.chart.actor);
-    Lang.bind(this, disp_style)(digits, this.elements.net.chart.actor, 'net-style');
-    box.add_actor(this.elements.net.panel.box);
-
-    digits = [];
-    this.elements.disk.panel.box = new St.BoxLayout();
-    text = new St.Label({ text: _('disk'), style_class: "sm-status-label"});
-    Lang.bind(this, text_disp)(text, 'disk-show-text');
-    this.elements.disk.panel.box.add_actor(text);
-    digit = new St.Label({ text: 'R', style_class: "sm-status-label"});
-    this.elements.disk.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.disk.panel.box.add_actor(this.elements.disk.panel.read);
-    digits.push(this.elements.disk.panel.read);
-    digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-    this.elements.disk.panel.box.add_actor(digit);
-    digits.push(digit);
-    digit = new St.Label({ text: 'W', style_class: "sm-status-label"});
-    this.elements.disk.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.disk.panel.box.add_actor(this.elements.disk.panel.write);
-    digits.push(this.elements.disk.panel.write);
-    digit = new St.Label({ text: '%', style_class: "sm-perc-label"});
-    this.elements.disk.panel.box.add_actor(digit);
-    digits.push(digit);
-    this.elements.disk.panel.box.add_actor(this.elements.disk.chart.actor);
-    Lang.bind(this, disp_style)(digits, this.elements.disk.chart.actor, 'disk-style');
-    box.add_actor(this.elements.disk.panel.box);
-
-    this.actor.set_child(box);
-    // main
-    Panel.__system_monitor = this;
-    PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor');
-    this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
-
-    this._init_status();
-    //this._init_menu();
-
-    this._icon_.visible = this._schema.get_boolean("icon-display");
-    this._schema.connect(
-        'changed::icon-display',
-        Lang.bind(this,
-                  function () {
-                      this._icon_.visible = this._schema.get_boolean("icon-display");
-                  }));
-
-    let l_limit = function(a) {
-        return (a > 0) ? a : 1000;
-    };
-
-    for (let element in this.elements) {
-        let elt = element;
-        this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
-        this._schema.connect(
-            'changed::' + element + '-display',
-            Lang.bind(this,
-                      function () {
-                          this.elements[elt].panel.box.visible = this._schema.get_boolean(elt + "-display");
-                      })
-        );
-        this.elements[elt].update();
-        this.elements[elt].interval = l_limit(this._schema.get_int(elt + "-refresh-time"));
-        this.elements[elt].timeout = Mainloop.timeout_add(
-            this.elements[elt].interval,
-            Lang.bind(this, function () {
-                          if(this.elements[elt].panel.box.visible) {
-                              this.elements[elt].update();
-                          }
-                          return true;
-                      })
-        );
-        this._schema.connect(
-            'changed::' + elt + '-refresh-time',
-            Lang.bind(this,
-                      function () {
-                          Mainloop.source_remove(this.elements[elt].timeout);
-                          this.elements[elt].interval = Math.abs(this._schema.get_int(elt + "-refresh-time"));
-                          this.elements[elt].timeout = Mainloop.timeout_add(
-                              this.elements[elt].interval,
-                              Lang.bind(this, function () {
-                                            if(this.elements[elt].panel.box.visible) {
-                                                this.elements[elt].update();
-                                            }
-                                            return true;
-                                        })
-                          );
-                      })
-        );
-        this._schema.connect(
-            'changed::' + elt + '-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.elements[elt].chart.width = this._schema.get_int(elt + "-graph-width");
-                          this.elements[elt].chart.actor.set_width(this.elements[elt].chart.width);
-                          this.elements[elt].chart.actor.queue_repaint();
-                      })
-        );
-    }
-        this.menu.connect('open-state-changed',
-                          Lang.bind(this,
-                                    function (menu, isOpen) {
-                                        if(isOpen) {
-                                            for (let elt in this.elements) {
-                                                this.elements[elt].update_menu();
-                                            }
-                                            this.menu_timeout = Mainloop.timeout_add_seconds(
-                                                1,
-                                                Lang.bind(this, function () {
-                                                              for (let elt in this.elements) {
-                                                                  this.elements[elt].update_menu();
-                                                              }
-                                                              Pie.instance.actor.queue_repaint();
-                                                              return true;
-                                                          }));
-                                        } else {
-                                             Mainloop.source_remove(this.menu_timeout);
-                                        }
-                                    }));
-        if(this._schema.get_boolean("center-display")) {
-            Main.panel._centerBox.add(this.actor);
-        }
-};

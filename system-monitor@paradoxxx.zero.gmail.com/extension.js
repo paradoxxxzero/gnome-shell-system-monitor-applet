@@ -224,9 +224,6 @@ Cpu.prototype = {
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
     },
-    update_menu: function () {
-        this.menu.value.set_text(this.percent().toString());
-    },
     update: function () {
         this.refresh();
         this.value.set_text(this.percent().toString());
@@ -282,10 +279,6 @@ Mem.prototype = {
         this.text_box.add_actor(this.value);
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update_menu: function () {
-        this.menu.used.set_text(this.mem[0].toString());
-        this.menu.total.set_text(this.mem_total.toString());
     },
     update: function () {
         this.refresh();
@@ -349,10 +342,6 @@ Swap.prototype = {
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
     },
-    update_menu: function () {
-        this.menu.used.set_text(this.swap.toString());
-        this.menu.total.set_text(this.swap_total.toString());
-    },
     update: function () {
         this.refresh();
         this.value.set_text(this.percent().toString());
@@ -413,10 +402,6 @@ Net.prototype = {
         this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
         this.update();
     },
-    update_menu: function () {
-        this.menu.down.set_text(this.usage[0] + " kB/s");
-        this.menu.up.set_text(this.usage[1] + " kB/s");
-    },
     update: function () {
         this.refresh();
         this.down.set_text(this.usage[0].toString());
@@ -468,11 +453,6 @@ Disk.prototype = {
         this.text_box.add_actor(this.write);
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update_menu: function () {
-        let percents = this.percent();
-        this.menu.read.set_text(percents[0] + " %");
-        this.menu.write.set_text(percents[1] + " %");
     },
     update: function () {
         this.refresh();
@@ -635,6 +615,37 @@ Icon.prototype = {
                          Util.spawn(["system-monitor-applet-config"]);
                      });
         this.menu.addMenuItem(item);
+
+        this.menu.connect(
+            'open-state-changed',
+            Lang.bind(this,
+                      function (menu, isOpen) {
+                          if(isOpen) {
+                              this.update();
+                              Pie.instance.actor.queue_repaint();
+                              this.menu_timeout = Mainloop.timeout_add_seconds(
+                                  1,
+                                  Lang.bind(this, function () {
+                                                this.update();
+                                                Pie.instance.actor.queue_repaint();
+                                                return true;
+                                            }));
+                          } else {
+                              Mainloop.source_remove(this.menu_timeout);
+                          }
+                      })
+        );
+    },
+    update: function () {
+        this.cpu.set_text(Cpu.instance.percent().toString());
+        this.mem_used.set_text(Mem.instance.mem[0].toString());
+        this.mem_total.set_text(Mem.instance.mem_total.toString());
+        this.swap_used.set_text(Swap.instance.swap.toString());
+        this.swap_total.set_text(Swap.instance.swap_total.toString());
+        this.down.set_text(Net.instance.usage[0] + " kB/s");
+        this.up.set_text(Net.instance.usage[1] + " kB/s");
+        this.read.set_text(Disk.instance.percent()[0] + " %");
+        this.write.set_text(Disk.instance.percent()[1] + " %");
     }
 };
 Icon.instance = new Icon();

@@ -567,6 +567,24 @@ Pie.prototype = {
 Pie.instance = new Pie(200, 200);
 
 
+function Icon() {
+    this._init.apply(this, arguments);
+}
+
+Icon.prototype = {
+    __proto__: PanelMenu.SystemStatusButton.prototype,
+    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
+    _init: function() {
+        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
+        this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+
+        let item = new PopupMenu.PopupMenuItem('Icon', {reactive: false});
+        item.addActor(new St.Label({ text:'Coming soon', style_class: "sm-label"}));
+        this.menu.addMenuItem(item);
+    }
+};
+Icon.instance = new Icon();
+
 function main() {
     let elts = {
         disk: Disk.instance,
@@ -584,7 +602,7 @@ function main() {
         elts[elt].actor.add_style_class_name("sm-panel-button");
         Main.__sm[elt] = elts[elt];
     }
-    let icon = new PanelMenu.SystemStatusButton('utilities-system-monitor', _('System monitor'));
+    let icon = Icon.instance;
     Main.panel._rightBox.insert_actor(icon.actor, 1);
     Main.panel._rightBox.child_set(icon.actor);
     Main.panel._menus.addMenu(icon.menu);

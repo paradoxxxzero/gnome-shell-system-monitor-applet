@@ -35,15 +35,6 @@ const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
-function Open_Window() {
-    Util.spawn(["gnome-system-monitor"]);
-}
-
-function Open_Preference() {
-    Util.spawn(["system-monitor-applet-config"]);
-}
-
-
 function Chart() {
     this._init.apply(this, arguments);
 }
@@ -578,8 +569,71 @@ Icon.prototype = {
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
         this._schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
-        let item = new PopupMenu.PopupMenuItem('Icon', {reactive: false});
-        item.addActor(new St.Label({ text:'Coming soon', style_class: "sm-label"}));
+        let item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+
+        this.cpu = new St.Label({ style_class: "sm-value"});
+        item.addActor(new St.Label({ style_class: "sm-void"}));
+        item.addActor(new St.Label({ style_class: "sm-void"}));
+        item.addActor(this.cpu);
+        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
+        this.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
+        this.mem_used = new St.Label({ style_class: "sm-value"});
+        this.mem_total = new St.Label({ style_class: "sm-value"});
+
+        item.addActor(this.mem_used);
+        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
+        item.addActor(this.mem_total);
+        item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
+        this.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
+        this.swap_used = new St.Label({ style_class: "sm-value"});
+        this.swap_total = new St.Label({ style_class: "sm-value"});
+
+        item.addActor(this.swap_used);
+        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
+        item.addActor(this.swap_total);
+        item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
+        this.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
+
+        this.down = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.down);
+        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
+        this.up = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.up);
+        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
+        this.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
+
+        this.read = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.read);
+        item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
+        this.write = new St.Label({ style_class: "sm-value"});
+        item.addActor(this.write);
+        item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
+        this.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+        item.addActor(Pie.instance.actor, {span: -1, expand: true});
+        this.menu.addMenuItem(item);
+
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+        item.connect('activate', function () {
+                         Util.spawn(["gnome-system-monitor"]);
+                     });
+        this.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_("Preferences..."));
+        item.connect('activate', function () {
+                         Util.spawn(["system-monitor-applet-config"]);
+                     });
         this.menu.addMenuItem(item);
     }
 };

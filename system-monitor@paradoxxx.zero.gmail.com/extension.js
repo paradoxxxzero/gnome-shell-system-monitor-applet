@@ -104,7 +104,7 @@ ElementBase.prototype = {
     vals: {},
     _init: function(elt) {
         this.elt = elt;
-        PanelMenu.SystemStatusButton.prototype._init.call(this, 'lol');
+        PanelMenu.SystemStatusButton.prototype._init.call(this, '');
         this.colors = [];
         this.background = new Clutter.Color();
         this.background.from_string(Schema.get_string('background'));
@@ -209,12 +209,12 @@ ElementBase.prototype = {
             let i = col;
             let color = this.color_names[elt][i];
             let item = new PopupMenu.PopupMenuItem(color, {reactive: false});
-            this["_" + color] = new St.Label({ style_class: "sm-label"});
-            item.addActor(this["_" + color]);
             this["_" + color + "_bar"] = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
             this["_" + color + "_bar"].set_width(120);
-            this["_" + color + "_bar"].set_height(25);
+            this["_" + color + "_bar"].set_height(20);
             item.addActor(this["_" + color + "_bar"]);
+            this["_" + color] = new St.Label({ style_class: "sm-status-value"});
+            item.addActor(this["_" + color]);
             item.addActor(new St.Label({ text: '%', style_class: "sm-label"}));
             this.menu.addMenuItem(item);
             this["_" + color + "_bar"].connect(
@@ -223,11 +223,8 @@ ElementBase.prototype = {
                               if(this.vals[color]) {
                                   let cr = this["_" + color + "_bar"].get_context();
                                   Clutter.cairo_set_source_color(cr, this.colors[i]);
-                                  cr.setLineWidth(10);
-                                  cr.moveTo(0, 15);
-                                  cr.lineTo(this.vals[color], 15);
-                                  cr.closePath();
-                                  cr.stroke();
+                                  cr.rectangle(0, 4, this.vals[color], 12);
+                                  cr.fill();
                               }
                           }));
         }
@@ -577,7 +574,6 @@ Pie.prototype = {
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-        let back_color = new Clutter.Color();
         let xc = width/2;
         let yc = height/2;
         let r = Math.min(xc, yc) - 10;
@@ -737,6 +733,7 @@ function main() {
         memory: Mem.instance,
         cpu: Cpu.instance
     };
+    //Debug
     Main.__sm = {};
     for (let elt in elts) {
         panel.insert_actor(elts[elt].actor, 1);

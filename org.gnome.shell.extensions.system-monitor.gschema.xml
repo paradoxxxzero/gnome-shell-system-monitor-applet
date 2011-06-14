@@ -31,11 +31,11 @@
       <description>Set to true to show 'mem' before memory display</description>
     </key>
     <key name="memory-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
-      <default>'digit'</default>
+      <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
     <key name="swap-display" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Display swap</summary>
       <description>Set to false to remove swap display in status bar</description>
     </key>
@@ -55,7 +55,7 @@
       <description>Set to true to show 'swap' before swap display</description>
     </key>
     <key name="swap-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
-      <default>'digit'</default>
+      <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
     <key name="cpu-display" type="b">
@@ -79,11 +79,11 @@
       <description>Set to true to show 'cpu' before cpu display</description>
     </key>
     <key name="cpu-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
-      <default>'digit'</default>
+      <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
     <key name="net-display" type="b">
-      <default>false</default>
+      <default>true</default>
       <summary>Display net</summary>
       <description>Set to false to remove net display in status bar</description>
     </key>
@@ -103,7 +103,7 @@
       <description>Set to true to show 'net' before net display</description>
     </key>
     <key name="net-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
-      <default>'digit'</default>
+      <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
     <key name="disk-display" type="b">
@@ -127,7 +127,7 @@
       <description>Set to true to show 'disk' before disk io display</description>
     </key>
     <key name="disk-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
-      <default>'digit'</default>
+      <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
     <key name="center-display" type="b">
@@ -152,7 +152,7 @@
       <summary>Color of download speed in the chart</summary>
     </key>
     <key name="net-up-color" type="s">
-      <default>'#edd4ff'</default>
+      <default>'#fb74fb'</default>
       <summary>Color of upload speed in the chart</summary>
     </key>
     <key name="cpu-user-color" type="s">
@@ -172,7 +172,7 @@
       <summary>Color of iowait in the chart</summary>
     </key>
     <key name="cpu-other-color" type="s">
-      <default>'#003d2f'</default>
+      <default>'#001d26'</default>
       <summary>Color of other cpu in the chart</summary>
     </key>
     <key name="swap-used-color" type="s">

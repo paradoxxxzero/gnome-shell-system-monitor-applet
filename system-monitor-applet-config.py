@@ -35,9 +35,6 @@ import gettext
 from gettext import gettext as _
 gettext.textdomain('system-monitor-applet')
 
-def up_first(string):
-    return string[0].upper() + string[1:]
-
 
 def color_to_hex(color):
     return "#%02x%02x%02x%02x" % (
@@ -49,17 +46,15 @@ def color_to_hex(color):
 
 def hex_to_color(hexstr):
     return Gdk.RGBA(
-        int(hexstr[1:3], 16) / 255,
-        int(hexstr[3:5], 16) / 255,
-        int(hexstr[5:7], 16) / 255,
-        int(hexstr[7:9], 16) / 255 \
-            if len(hexstr) == 9 \
-            else 1) if (len(hexstr) != 4 & len(hexstr) != 5) \
-            else Gdk.RGBA(
-            int(hexstr[1], 16) / 15,
-            int(hexstr[2], 16) / 15,
-            int(hexstr[3], 16) / 15,
-            int(hexstr[4], 16) / 15 if len(hexstr) == 5 else 1)
+        int(hexstr[1:3], 16) / 255.,
+        int(hexstr[3:5], 16) / 255.,
+        int(hexstr[5:7], 16) / 255.,
+        int(hexstr[7:9], 16) / 255. if len(hexstr) == 9 else 1) \
+        if (len(hexstr) != 4 & len(hexstr) != 5) else Gdk.RGBA(
+        int(hexstr[1], 16) / 15.,
+        int(hexstr[2], 16) / 15.,
+        int(hexstr[3], 16) / 15.,
+        int(hexstr[4], 16) / 15. if len(hexstr) == 5 else 1)
 
 
 class ColorSelect:
@@ -70,6 +65,7 @@ class ColorSelect:
         self.actor.add(self.label)
         self.actor.add(self.picker)
         self.picker.set_use_alpha(True)
+
     def set_value(self, value):
         self.picker.set_rgba(hex_to_color(value))
 
@@ -82,9 +78,11 @@ class IntSelect:
         self.actor.add(self.label)
         self.actor.add(self.spin)
         self.spin.set_numeric(True)
+
     def set_args(self, minv, maxv, incre, page):
         self.spin.set_range(minv, maxv)
         self.spin.set_increments(incre, page)
+
     def set_value(self, value):
         self.spin.set_value(value)
 
@@ -96,11 +94,14 @@ class Select:
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
         self.actor.add(self.selector)
+
     def set_value(self, value):
         self.selector.set_active(value)
+
     def add(self, items):
         for item in items:
             self.selector.append_text(item)
+
 
 def set_boolean(check, schema, name):
     schema.set_boolean(name, check.get_active())
@@ -165,7 +166,7 @@ class SettingFrame:
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
-            item = ColorSelect(_(up_first(sections[1])))
+            item = ColorSelect(_(sections[1].capitalize()))
             item.set_value(self.schema.get_string(key))
             self.hbox2.pack_end(item.actor, True, False, 0)
             item.picker.connect('color-set', set_color, self.schema, key)
@@ -185,7 +186,7 @@ class App:
         self.settings = {}
         for setting in self.setting_items:
             self.settings[setting] = SettingFrame(
-                _(up_first(setting)), self.schema)
+                _(setting.capitalize()), self.schema)
 
         self.main_vbox = Gtk.VBox(spacing=10)
         self.main_vbox.set_border_width(10)

@@ -101,6 +101,7 @@ ElementBase.prototype = {
         net: ['down', 'up'],
         disk: ['read', 'write']
     },
+    vals: {},
     _init: function(elt) {
         this.elt = elt;
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'lol');
@@ -204,16 +205,31 @@ ElementBase.prototype = {
         Schema.connect('changed::' + elt + '-style', Lang.bind(this, change_style));
 
         // Menu
-        // let item = new PopupMenu.PopupMenuItem(_(elt), {reactive: false});
-        // item.addActor(new St.Label({ text:'Coming soon', style_class: "sm-label"}));
-        // this.menu.addMenuItem(item);
         for(let col in this.color_names[elt]) {
-            let color = this.color_names[elt][col];
+            let i = col;
+            let color = this.color_names[elt][i];
             let item = new PopupMenu.PopupMenuItem(color, {reactive: false});
             this["_" + color] = new St.Label({ style_class: "sm-label"});
             item.addActor(this["_" + color]);
+            this["_" + color + "_bar"] = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
+            this["_" + color + "_bar"].set_width(120);
+            this["_" + color + "_bar"].set_height(25);
+            item.addActor(this["_" + color + "_bar"]);
             item.addActor(new St.Label({ text: '%', style_class: "sm-label"}));
             this.menu.addMenuItem(item);
+            this["_" + color + "_bar"].connect(
+                'repaint',
+                Lang.bind(this, function () {
+                              if(this.vals[color]) {
+                                  let cr = this["_" + color + "_bar"].get_context();
+                                  Clutter.cairo_set_source_color(cr, this.colors[i]);
+                                  cr.setLineWidth(10);
+                                  cr.moveTo(0, 15);
+                                  cr.lineTo(this.vals[color], 15);
+                                  cr.closePath();
+                                  cr.stroke();
+                              }
+                          }));
         }
         this.menu.connect(
             'open-state-changed',
@@ -245,6 +261,8 @@ ElementBase.prototype = {
             let color = this.color_names[elt][col];
             let val = total == 0 ? 0 : Math.round((100 * list[col] / total));
             this["_" + color].set_text(val.toString());
+            this.vals[color] = val;
+            this["_" + color + "_bar"].queue_repaint();
         }
     }
 };
@@ -559,7 +577,6 @@ Pie.prototype = {
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-        Panel.cr = cr;
         let back_color = new Clutter.Color();
         let xc = width/2;
         let yc = height/2;

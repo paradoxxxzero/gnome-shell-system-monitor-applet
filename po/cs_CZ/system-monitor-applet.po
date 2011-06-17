@@ -134,3 +134,6 @@ msgstr "Možnosti..."
 msgid "System Monitor..."
 msgstr "System Monitor..."
 
+msgid "System monitor"
+msgstr "System monitor"
+

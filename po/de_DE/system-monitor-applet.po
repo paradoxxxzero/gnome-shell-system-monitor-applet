@@ -133,3 +133,6 @@ msgstr "Einstellungen..."
 
 msgid "System monitor"
 msgstr "System Monitor"
+
+msgid "System Monitor..."
+msgstr "System Monitor..."

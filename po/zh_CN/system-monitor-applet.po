@@ -136,3 +136,6 @@ msgstr "首选项..."
 msgid "System Monitor..."
 msgstr "系统监视器..."
 
+msgid "System monitor"
+msgstr "系统监视器"
+

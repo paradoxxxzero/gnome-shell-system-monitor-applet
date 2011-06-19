@@ -88,7 +88,7 @@ Chart.prototype = {
 };
 
 function ElementBase() {
-    this._init.apply(this, arguments);
+    throw new TypeError('Trying to instantiate abstrace class ElementBase');
 }
 
 ElementBase.prototype = {

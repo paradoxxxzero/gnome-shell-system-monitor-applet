@@ -627,7 +627,9 @@ Icon.prototype = {
         this.cpu = new St.Label({ style_class: "sm-value"});
         item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(new St.Label({ style_class: "sm-void"}));
+        item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(this.cpu);
+        item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
         this.menu.addMenuItem(item);
 
@@ -636,9 +638,11 @@ Icon.prototype = {
         this.mem_total = new St.Label({ style_class: "sm-value"});
 
         item.addActor(this.mem_used);
+        item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.mem_total);
-        item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
+        item.addActor(new St.Label({ style_class: "sm-void"}));
+        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
         this.menu.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
@@ -646,18 +650,22 @@ Icon.prototype = {
         this.swap_total = new St.Label({ style_class: "sm-value"});
 
         item.addActor(this.swap_used);
+        item.addActor(new St.Label({ style_class: "sm-void"}));
         item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
         item.addActor(this.swap_total);
-        item.addActor(new St.Label({ text: "MB", style_class: "sm-label"}));
+        item.addActor(new St.Label({ style_class: "sm-void"}));
+        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
         this.menu.addMenuItem(item);
 
         item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
 
         this.down = new St.Label({ style_class: "sm-value"});
         item.addActor(this.down);
+        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
         this.up = new St.Label({ style_class: "sm-value"});
         item.addActor(this.up);
+        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
         item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
         this.menu.addMenuItem(item);
 
@@ -665,9 +673,11 @@ Icon.prototype = {
 
         this.read = new St.Label({ style_class: "sm-value"});
         item.addActor(this.read);
+        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
         item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
         this.write = new St.Label({ style_class: "sm-value"});
         item.addActor(this.write);
+        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
         item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
         this.menu.addMenuItem(item);
 
@@ -710,15 +720,20 @@ Icon.prototype = {
         );
     },
     update: function () {
+        Cpu.instance.update();
+        Mem.instance.update();
+        Swap.instance.update();
+        Net.instance.update();
+        Disk.instance.update();
         this.cpu.set_text(Cpu.instance.percent().toString());
         this.mem_used.set_text(Mem.instance.mem[0].toString());
         this.mem_total.set_text(Mem.instance.mem_total.toString());
         this.swap_used.set_text(Swap.instance.swap.toString());
         this.swap_total.set_text(Swap.instance.swap_total.toString());
-        this.down.set_text(Net.instance.usage[0] + " kB/s");
-        this.up.set_text(Net.instance.usage[1] + " kB/s");
-        this.read.set_text(Disk.instance.percent()[0] + " %");
-        this.write.set_text(Disk.instance.percent()[1] + " %");
+        this.down.set_text(Net.instance.usage[0].toString());
+        this.up.set_text(Net.instance.usage[1].toString());
+        this.read.set_text(Disk.instance.percent()[0].toString());
+        this.write.set_text(Disk.instance.percent()[1].toString());
     }
 };
 Icon.instance = new Icon();

@@ -473,8 +473,11 @@ Net.prototype = {
         let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
         for(let i = 3; i < net_lines.length - 1 ; i++) {
             let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
-            accum[0] += parseInt(net_params[2]);
-            accum[1] += parseInt(net_params[10]);
+            let ifc = net_params[1];
+            if(ifc.indexOf("eth") >= 0 || ifc.indexOf("wlan") >= 0) {
+                accum[0] += parseInt(net_params[2]);
+                accum[1] += parseInt(net_params[10]);
+            }
         }
         time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;

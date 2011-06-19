@@ -184,7 +184,7 @@ ElementBase.prototype = {
                       })
         );
 
-        this.label = new St.Label({ text: _(elt), style_class: "sm-status-label"});
+        this.label = new St.Label({ text: elt == "memory" ? "mem" : _(elt), style_class: "sm-status-label"});
         let change_text = function() {
             this.label.visible = Schema.get_boolean(elt + '-show-text');
         };

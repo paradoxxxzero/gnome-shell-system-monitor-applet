@@ -36,6 +36,8 @@ const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+var Background = new Clutter.Color();
+Background.from_string(Schema.get_string('background'));
 
 function Chart() {
     this._init.apply(this, arguments);
@@ -69,7 +71,7 @@ Chart.prototype = {
         let cr = this.actor.get_context();
         let max = Math.max.apply(this, this.data[this.data.length - 1]);
         max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
-        Clutter.cairo_set_source_color(cr, this.parent.background);
+        Clutter.cairo_set_source_color(cr, Background);
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.parent.colors.length - 1;i >= 0;i--) {
@@ -84,6 +86,10 @@ Chart.prototype = {
         }
     }
 };
+
+function update_color(name) {
+    this.from_string(Schema.get_string(name));
+}
 
 function ElementBase() {
     throw new TypeError('Trying to instantiate abstrace class ElementBase');
@@ -102,33 +108,18 @@ ElementBase.prototype = {
     vals: {},
     _init: function(elt) {
         this.elt = elt;
-        PanelMenu.SystemStatusButton.prototype._init.call(this, '');
+        PanelMenu.SystemStatusButton.prototype._init.call(this, '', '');
+        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
         this.colors = [];
-        this.background = new Clutter.Color();
-        this.background.from_string(Schema.get_string('background'));
         for(let color in this.color_names[elt]) {
             let clutterColor = new Clutter.Color();
-            clutterColor.from_string(Schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
+            let name = elt + '-' + this.color_names[elt][color] + '-color';
+            clutterColor.from_string(Schema.get_string(name));
+            Schema.connect('changed::' + name, Lang.bind(clutterColor, update_color), name);
+            Schema.connect('changed::' + name, Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
             this.colors.push(clutterColor);
         }
-
-        let elt_color = function() {
-            this.colors = [];
-            this.background = new Clutter.Color();
-            this.background.from_string(Schema.get_string('background'));
-            for(let color in this.color_names[elt]) {
-                let clutterColor = new Clutter.Color();
-                clutterColor.from_string(Schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
-                this.colors.push(clutterColor);
-            }
-            this.chart.actor.queue_repaint();
-            return true;
-        };
-        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
-        Schema.connect('changed::background', Lang.bind(this, elt_color));
-        for(let col in this.color_names[elt]) {
-            Schema.connect('changed::' + elt + '-' + this.color_names[elt][col] + '-color', Lang.bind(this, elt_color));
-        }
+        Schema.connect('changed::background', Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
 
         this.box = new St.BoxLayout();
         this.actor.set_child(this.box);
@@ -742,6 +733,7 @@ function main() {
     if(Schema.get_boolean("center-display")) {
         panel = Main.panel._centerBox;
     }
+    Schema.connect('changed::background', Lang.bind(Background, update_color), 'background');
     let elts = {
         disk: Disk.instance,
         net: Net.instance,

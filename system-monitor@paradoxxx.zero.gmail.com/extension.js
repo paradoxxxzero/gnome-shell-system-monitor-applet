@@ -42,13 +42,11 @@ function Chart() {
 }
 
 Chart.prototype = {
-    _init: function() {
+    _init: function(width, height, parent) {
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
-        this.width = arguments[0];
-        this.height = arguments[1];
-        this.parent = arguments[2];
-        this.actor.set_width(this.width);
-        this.actor.set_height(this.height);
+        this.parent = parent;
+        this.actor.set_width(this.width=width);
+        this.actor.set_height(this.height=height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.data = [];
         for (let i = 0;i < this.parent.colors.length;i++) {
@@ -69,14 +67,14 @@ Chart.prototype = {
 
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-        let max = Math.max.apply(this,this.data[this.data.length - 1]);
+        let max = Math.max.apply(this, this.data[this.data.length - 1]);
         max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
         Clutter.cairo_set_source_color(cr, this.parent.background);
         cr.rectangle(0, 0, width, height);
         cr.fill();
-        for (let i = this.parent.colors.length - 1 ; i >= 0 ; i--) {
+        for (let i = this.parent.colors.length - 1;i >= 0;i--) {
             cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1 ; j >= 0 ; j--) {
+            for (let j = this.data[i].length - 1;j >= 0;j--) {
                 cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
             }
             cr.lineTo(width - (this.data[i].length - 1), height);

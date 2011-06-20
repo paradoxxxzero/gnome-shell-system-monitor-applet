@@ -109,17 +109,21 @@ ElementBase.prototype = {
     _init: function(elt) {
         this.elt = elt;
         PanelMenu.SystemStatusButton.prototype._init.call(this, '', '');
-        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
         this.colors = [];
         for(let color in this.color_names[elt]) {
             let clutterColor = new Clutter.Color();
             let name = elt + '-' + this.color_names[elt][color] + '-color';
             clutterColor.from_string(Schema.get_string(name));
             Schema.connect('changed::' + name, Lang.bind(clutterColor, update_color), name);
-            Schema.connect('changed::' + name, Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
+            Schema.connect('changed::' + name,
+                           Lang.bind(this
+                                     , function() {
+                                         this.actor.queue_repaint();
+                                     }));
             this.colors.push(clutterColor);
         }
         Schema.connect('changed::background', Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
+        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
 
         this.box = new St.BoxLayout();
         this.actor.set_child(this.box);

@@ -87,8 +87,8 @@ Chart.prototype = {
     }
 };
 
-function update_color(name) {
-    this.from_string(Schema.get_string(name));
+function update_color() {
+    this.from_string(Schema.get_string(arguments[1]));
 }
 
 function ElementBase() {
@@ -114,16 +114,20 @@ ElementBase.prototype = {
             let clutterColor = new Clutter.Color();
             let name = elt + '-' + this.color_names[elt][color] + '-color';
             clutterColor.from_string(Schema.get_string(name));
-            Schema.connect('changed::' + name, Lang.bind(clutterColor, update_color), name);
+            Schema.connect('changed::' + name, Lang.bind(clutterColor, update_color));
             Schema.connect('changed::' + name,
-                           Lang.bind(this
-                                     , function() {
-                                         this.actor.queue_repaint();
+                           Lang.bind(this,
+                                     function() {
+                                         this.chart.actor.queue_repaint();
                                      }));
             this.colors.push(clutterColor);
         }
-        Schema.connect('changed::background', Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
         this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
+        Schema.connect('changed::background',
+                       Lang.bind(this,
+                                 function() {
+                                     this.chart.actor.queue_repaint();
+                                 }));
 
         this.box = new St.BoxLayout();
         this.actor.set_child(this.box);
@@ -737,7 +741,7 @@ function main() {
     if(Schema.get_boolean("center-display")) {
         panel = Main.panel._centerBox;
     }
-    Schema.connect('changed::background', Lang.bind(Background, update_color), 'background');
+    Schema.connect('changed::background', Lang.bind(Background, update_color));
     let elts = {
         disk: Disk.instance,
         net: Net.instance,

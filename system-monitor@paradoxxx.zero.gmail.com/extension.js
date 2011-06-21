@@ -122,8 +122,8 @@ ElementBase.prototype = {
                                      }));
             this.colors.push(clutterColor);
         }
-        Schema.connect('changed::background', Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
         this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
+        Schema.connect('changed::background', Lang.bind(this.chart.actor, this.chart.actor.queue_repaint));
 
         this.box = new St.BoxLayout();
         this.actor.set_child(this.box);

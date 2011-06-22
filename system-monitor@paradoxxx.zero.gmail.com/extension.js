@@ -96,6 +96,24 @@ Chart.prototype = {
     }
 };
 
+function TipBin() {
+    this._init.apply(this, arguments);
+}
+
+TipBin.prototype = {
+    _init: function(name, tooltipText) {
+        this.actor = new St.Bin({ style_class: 'panel-button',
+                                  reactive: false,
+                                  can_focus: false,
+                                  x_fill: true,
+                                  y_fill: false,
+                                  track_hover: true });
+        this.actor._delegate = this;
+        this.actor.has_tooltip = true;
+        this.actor.tooltip_text = tooltipText;
+    }//The 'name' is for compatibility with SystemStatusButton
+};
+
 function update_color(schema, key) {
     this.from_string(Schema.get_string(key));
 }
@@ -116,8 +134,7 @@ function ElementBase() {
 }
 
 ElementBase.prototype = {
-    __proto__: PanelMenu.SystemStatusButton.prototype,
-    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
+    __proto__: TipBin.prototype,
     elt: '',
     color_name: [],
     text_items: [],
@@ -126,9 +143,9 @@ ElementBase.prototype = {
     tip_txt: '',
     tip_vals: [],
     _init: function() {
-        PanelMenu.SystemStatusButton.prototype._init.call(this, '',
-                                                          String.prototype.format.apply(this.tip_txt,
-                                                                                        this.tip_vals));
+        TipBin.prototype._init.call(this, '',
+                                    String.prototype.format.apply(this.tip_txt,
+                                                                  this.tip_vals));
         this.colors = [];
         for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
@@ -142,7 +159,7 @@ ElementBase.prototype = {
                                      }));
             this.colors.push(clutterColor);
         }
-        this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), this.icon_size, this);
+        this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), icon_size, this);
         Schema.connect('changed::background',
                        Lang.bind(this,
                                  function() {
@@ -195,7 +212,6 @@ ElementBase.prototype = {
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
         for (let item in this.menu_items)
             this.menu_item.addActor(this.menu_items[item]);
-        this.menu.connect('open-state-changed', this.closeMenu);
     },
     tip_format: function(unit) {
         typeof(unit) == 'undefined' && (unit = '%%');
@@ -209,16 +225,9 @@ ElementBase.prototype = {
         this.refresh();
         this._apply();
         this.chart.actor.queue_repaint();
-        this.actor.set_tooltip_text(String.prototype.format.apply(this.tip_txt, this.tip_vals));
+        this.actor.tooltip_text = String.prototype.format.apply(this.tip_txt, this.tip_vals);
         return true;
     },
-    _onButtonPress: function() {},
-    closeMenu: function(menu, open) {
-        if (open) {
-            menu.close();
-            menu.isOpen = true;
-        }
-    }
 };
 
 
@@ -236,7 +245,7 @@ Cpu.prototype = {
                  new St.Label({ style_class: "sm-void"}),
                  new St.Label({ style_class: "sm-value"}),
                  new St.Label({ style_class: "sm-void"}),
-                 new St.Label({ text:'%', style_class: "sm-label"})],
+                 new St.Label({ text: '%', style_class: "sm-label"})],
     _init: function() {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
@@ -570,7 +579,6 @@ function Icon() {
 
 Icon.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
-    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
     _init: function() {
         PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
 
@@ -647,7 +655,7 @@ function main() {
     for (let elt in elts) {
         panel.insert_actor(elts[elt].actor, 1);
         panel.child_set(elts[elt].actor, { y_fill : true } );
-        Main.panel._menus.addMenu(elts[elt].menu);
+        //Main.panel._menus.addMenu(elts[elt].menu);
         elts[elt].actor.remove_style_class_name("panel-button");
         elts[elt].actor.add_style_class_name("sm-panel-button");
         Main.__sm[elt] = elts[elt];

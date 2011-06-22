@@ -56,7 +56,6 @@ Chart.prototype = {
         }
     },
     _draw: function() {
-        if (!this.actor.visible) return;
         let data_a = this.parent.list();
         if (data_a.length != this.parent.colors.length) return;
         let accdata = [];
@@ -66,6 +65,7 @@ Chart.prototype = {
             if (this.data[l].length > this.width)
                 this.data[l].shift();
         }
+        if (!this.actor.visible) return;
 
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
@@ -84,11 +84,14 @@ Chart.prototype = {
             Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
             cr.fill();
         }
+    },
+    _resize: function() {
+        
     }
 };
 
-function update_color() {
-    this.from_string(Schema.get_string(arguments[1]));
+function update_color(schema, key) {
+    this.from_string(Schema.get_string(key));
 }
 
 function ElementBase() {
@@ -98,21 +101,15 @@ function ElementBase() {
 ElementBase.prototype = {
     __proto__: PanelMenu.SystemStatusButton.prototype,
     icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
-    color_names: {
-        cpu: ['user', 'system', 'nice', 'iowait', 'other'],
-        memory: ['program', 'buffer', 'cache'],
-        swap: ['used'],
-        net: ['down', 'up'],
-        disk: ['read', 'write']
-    },
+    elt: '',
+    color_name: [],
     vals: {},
-    _init: function(elt) {
-        this.elt = elt;
+    _init: function() {
         PanelMenu.SystemStatusButton.prototype._init.call(this, '', '');
         this.colors = [];
-        for(let color in this.color_names[elt]) {
+        for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
-            let name = elt + '-' + this.color_names[elt][color] + '-color';
+            let name = this.elt + '-' + this.color_name[color] + '-color';
             clutterColor.from_string(Schema.get_string(name));
             Schema.connect('changed::' + name, Lang.bind(clutterColor, update_color));
             Schema.connect('changed::' + name,
@@ -122,7 +119,7 @@ ElementBase.prototype = {
                                      }));
             this.colors.push(clutterColor);
         }
-        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
+        this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), this.icon_size, this);
         Schema.connect('changed::background',
                        Lang.bind(this,
                                  function() {
@@ -131,9 +128,9 @@ ElementBase.prototype = {
 
         this.box = new St.BoxLayout();
         this.actor.set_child(this.box);
-        this.actor.visible = Schema.get_boolean(elt + "-display");
+        this.actor.visible = Schema.get_boolean(this.elt + "-display");
         Schema.connect(
-            'changed::' + elt + '-display',
+            'changed::' + this.elt + '-display',
             Lang.bind(this,
                       function () {
                           this.actor.visible = Schema.get_boolean(this.elt + "-display");
@@ -144,7 +141,7 @@ ElementBase.prototype = {
             return (a > 0) ? a : 1000;
         };
 
-        this.interval = l_limit(Schema.get_int(elt + "-refresh-time"));
+        this.interval = l_limit(Schema.get_int(this.elt + "-refresh-time"));
         this.timeout = Mainloop.timeout_add(
             this.interval,
             Lang.bind(this, function () {
@@ -155,11 +152,11 @@ ElementBase.prototype = {
                       })
         );
         Schema.connect(
-            'changed::' + elt + '-refresh-time',
+            'changed::' + this.elt + '-refresh-time',
             Lang.bind(this,
                       function () {
                           Mainloop.source_remove(this.timeout);
-                          this.interval = Math.abs(Schema.get_int(elt + "-refresh-time"));
+                          this.interval = Math.abs(Schema.get_int(this.elt + "-refresh-time"));
                           this.timeout = Mainloop.timeout_add(
                               this.interval,
                               Lang.bind(this, function () {
@@ -172,21 +169,21 @@ ElementBase.prototype = {
                       })
         );
         Schema.connect(
-            'changed::' + elt + '-graph-width',
+            'changed::' + this.elt + '-graph-width',
             Lang.bind(this,
                       function () {
-                          this.chart.width = Schema.get_int(elt + "-graph-width");
+                          this.chart.width = Schema.get_int(this.elt + "-graph-width");
                           this.chart.actor.set_width(this.chart.width);
                           this.chart.actor.queue_repaint();
                       })
         );
 
-        this.label = new St.Label({ text: elt == "memory" ? "mem" : _(elt), style_class: "sm-status-label"});
+        this.label = new St.Label({ text: this.elt == "memory" ? "mem" : _(this.elt), style_class: "sm-status-label"});
         let change_text = function() {
-            this.label.visible = Schema.get_boolean(elt + '-show-text');
+            this.label.visible = Schema.get_boolean(this.elt + '-show-text');
         };
         Lang.bind(this, change_text)();
-        Schema.connect('changed::' + elt + '-show-text', Lang.bind(this, change_text));
+        Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
         this.box.add_actor(this.label);
         this.text_box = new St.BoxLayout();
@@ -194,56 +191,14 @@ ElementBase.prototype = {
         this.box.add_actor(this.text_box);
         this.box.add_actor(this.chart.actor);
         let change_style = function() {
-            let style = Schema.get_string(elt + '-style');
+            let style = Schema.get_string(this.elt + '-style');
             this.text_box.visible = style == 'digit' || style == 'both';
             this.chart.actor.visible = style == 'graph' || style == 'both';
         };
         Lang.bind(this, change_style)();
-        Schema.connect('changed::' + elt + '-style', Lang.bind(this, change_style));
-
-        // Menu
-        for(let col in this.color_names[elt]) {
-            let i = col;
-            let color = this.color_names[elt][i];
-            let item = new PopupMenu.PopupMenuItem(color, {reactive: false});
-            this["_" + color + "_bar"] = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
-            this["_" + color + "_bar"].set_width(120);
-            this["_" + color + "_bar"].set_height(20);
-            item.addActor(this["_" + color + "_bar"]);
-            this["_" + color] = new St.Label({ style_class: "sm-status-value"});
-            item.addActor(this["_" + color]);
-            item.addActor(new St.Label({ text: '%', style_class: "sm-label"}));
-            this.menu.addMenuItem(item);
-            this["_" + color + "_bar"].connect(
-                'repaint',
-                Lang.bind(this, function () {
-                              if(this.vals[color]) {
-                                  let cr = this["_" + color + "_bar"].get_context();
-                                  Clutter.cairo_set_source_color(cr, this.colors[i]);
-                                  cr.rectangle(0, 4, this.vals[color], 12);
-                                  cr.fill();
-                              }
-                          }));
-        }
-        this.menu.connect(
-            'open-state-changed',
-            Lang.bind(this,
-                      function (menu, isOpen) {
-                          if(isOpen) {
-                              this.update_menu(this.elt);
-                              this.menu_timeout = Mainloop.timeout_add_seconds(
-                                  1,
-                                  Lang.bind(this, function () {
-                                                this.update_menu(this.elt);
-                                                return true;
-                                            }));
-                          } else {
-                              Mainloop.source_remove(this.menu_timeout);
-                          }
-                      })
-        );
+        Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
     },
-    update_menu: function (elt) {
+    update_menu: function () {
         let list = this.list();
         let total = this.total();
         if(total == 0) {
@@ -251,8 +206,8 @@ ElementBase.prototype = {
                 total += list[i];
             }
         }
-        for(let col in this.color_names[elt]) {
-            let color = this.color_names[elt][col];
+        for(let col in this.color_name) {
+            let color = this.color_name[col];
             let val = total == 0 ? 0 : Math.round((100 * list[col] / total));
             this["_" + color].set_text(val.toString());
             this.vals[color] = val;
@@ -267,11 +222,13 @@ function Cpu() {
 }
 Cpu.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'cpu',
+    color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     _init: function() {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        ElementBase.prototype._init.call(this, "cpu");
+        ElementBase.prototype._init.call(this);
         this.value = new St.Label({ style_class: "sm-status-value"});
         this.text_box.add_actor(this.value);
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
@@ -327,8 +284,11 @@ function Mem() {
 
 Mem.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'memory',
+    color_name: ['program', 'buffer', 'cache'],
+
     _init: function() {
-        ElementBase.prototype._init.call(this, "memory");
+        ElementBase.prototype._init.call(this);
         this.value = new St.Label({ style_class: "sm-status-value"});
         this.text_box.add_actor(this.value);
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
@@ -390,8 +350,11 @@ function Swap() {
 
 Swap.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'swap',
+    color_name: ['used'],
+
     _init: function() {
-        ElementBase.prototype._init.call(this, "swap");
+        ElementBase.prototype._init.call(this);
         this.value = new St.Label({ style_class: "sm-status-value"});
         this.text_box.add_actor(this.value);
         this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
@@ -443,11 +406,14 @@ function Net() {
 
 Net.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'net',
+    color_name: ['down', 'up'],
+
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        ElementBase.prototype._init.call(this, "net");
+        ElementBase.prototype._init.call(this);
         this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
         this.down = new St.Label({ style_class: "sm-status-value"});
         this.text_box.add_actor(this.down);
@@ -502,11 +468,14 @@ function Disk() {
 
 Disk.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'disk',
+    color_name: ['read', 'write'],
+
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        ElementBase.prototype._init.call(this, "disk");
+        ElementBase.prototype._init.call(this);
         this.text_box.add_actor(new St.Label({ text: 'R', style_class: "sm-status-label"}));
         this.read = new St.Label({ style_class: "sm-status-value"});
         this.text_box.add_actor(this.read);
@@ -543,7 +512,7 @@ Disk.prototype = {
             }
         }
         this.last_time = time;
-    },//I don't think this is the best way to gather statistics
+    },
     percent: function() {
         return [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
     },

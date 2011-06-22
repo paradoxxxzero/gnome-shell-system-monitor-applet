@@ -294,7 +294,7 @@ Mem.prototype = {
         this.update();
     },
     refresh: function() {
-        this.vals = [0,0,0];
+        this.mem = [0,0,0];
         this.mem_total = 0;
         let mem_free = 0;
         let meminfo_lines = Shell.get_file_contents_utf8_sync('/proc/meminfo').split("\n");
@@ -308,24 +308,25 @@ Mem.prototype = {
                 mem_free = Math.round(line[1] / 1024);
                 break;
             case "Buffers:":
-                this.vals[1] = Math.round(line[1] / 1024);
+                this.mem[1] = Math.round(line[1] / 1024);
                 break;
             case "Cached:":
-                this.vals[2] = Math.round(line[1] / 1024);
+                this.mem[2] = Math.round(line[1] / 1024);
                 break;
             }
         }
-        this.vals[0] = this.mem_total - this.vals[1] - this.vals[2] - mem_free;
+        this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
     },
     _apply: function() {
         if (this.mem_total == 0) {
-            this.tip_vals = [0, 0, 0];
+            this.vals = this.tip_vals = [0, 0, 0];
         } else {
             for (let i = 0;i < 3;i++)
-                this.tip_vals[i] = Math.round(this.vals[i] / this.mem_total * 100);
+                this.vals[i] = this.mem[i] / this.mem_total;
+                this.tip_vals[i] = Math.round(this.vals[i] * 100);
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.vals[0].toString();
+        this.menu_items[0].text = this.mem[0].toString();
         this.menu_items[3].text = this.mem_total.toString();
     },
 };
@@ -340,18 +341,18 @@ Swap.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'swap',
     color_name: ['used'],
-
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "/", style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "M", style_class: "sm-label"})]
     _init: function() {
+        this.tip_format();
         ElementBase.prototype._init.call(this);
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.swap = 0;
@@ -371,19 +372,17 @@ Swap.prototype = {
         }
         this.swap = this.swap_total - swap_free;
     },
-    percent: function() {
+    _apply: function() {
         if (this.swap_total == 0) {
-            return 0;
+            this.vals = this.tip_vals = [0];
         } else {
-            return Math.round(this.swap / this.swap_total * 100);
+            this.vals[0] = this.swap / this.swap_total;
+            this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.swap.toString();
+        this.menu_items[3].text = this.swap_total.toString();
     },
-    list: function() {
-        return [this.swap / this.swap_total];
-    },
-    total: function() {
-        return Math.round(this.swap_total / 1024);
-    }
 };
 Swap.instance = new Swap();
 

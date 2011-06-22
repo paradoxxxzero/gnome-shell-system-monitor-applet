@@ -194,8 +194,16 @@ ElementBase.prototype = {
         for (let item in menu_items)
             this.menu_item.addActor(item);
     },
+    tip_format: function(unit) {
+        typeof(unit) == 'undefined' && (unit = '%%');
+        for (let i = 0;i < this.color_name.length;i++) {
+            i == 0 || (this.tip_txt += '\n');
+            this.tip_txt +=_(this.color_name[i] + '\t') + '%d\t' + unit;
+        }
+    },
     update: function() {
         this.refresh();
+        this._apply();
         this.chart.actor.queue_repaint();
         this.tooltip_text = String.prototype.format.apply(this.tip_txt, tip_vals);
         return true;
@@ -217,17 +225,14 @@ Cpu.prototype = {
                  new St.Label({ style_class: "sm-void"}),
                  new St.Label({ style_class: "sm-value"}),
                  new St.Label({ style_class: "sm-void"});
-                 new St.Label({ text:'%', style_class: "sm-label"}),],
+                 new St.Label({ text:'%', style_class: "sm-label"})],
     tip_vals: [0,0,0,0,0],
     _init: function() {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
         this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
-        for (let i = 0;i < this.color_name.length;i++) {
-            i == 0 || (tip_txt += '\n');
-            tip_txt +=_(this.color_name[i] + '\t') + '%d\t%%';
-        }
+        this.tip_format();
         ElementBase.prototype._init.call(this);
         this.update();
     },
@@ -250,6 +255,8 @@ Cpu.prototype = {
                 this.last[i] = accum[i];
             this.last_total = total_t;
         }
+    },
+    _apply: function() {
         let percent = Math.round((1 - this.usage[3]) * 100);
         this.text_items[0].text = this.menu_items[3] = percent.toString();
         let other = 1;
@@ -272,21 +279,22 @@ Mem.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'memory',
     color_name: ['program', 'buffer', 'cache'],
-
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "/", style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "M", style_class: "sm-label"})]
+    tip_vals: [0,0,0],
     _init: function() {
+        this.tip_format();
         ElementBase.prototype._init.call(this);
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
     },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
-    },
     refresh: function() {
-        this.mem = [0,0,0];
+        this.vals = [0,0,0];
         this.mem_total = 0;
         let mem_free = 0;
         let meminfo_lines = Shell.get_file_contents_utf8_sync('/proc/meminfo').split("\n");
@@ -300,32 +308,26 @@ Mem.prototype = {
                 mem_free = Math.round(line[1] / 1024);
                 break;
             case "Buffers:":
-                this.mem[1] = Math.round(line[1] / 1024);
+                this.vals[1] = Math.round(line[1] / 1024);
                 break;
             case "Cached:":
-                this.mem[2] = Math.round(line[1] / 1024);
+                this.vals[2] = Math.round(line[1] / 1024);
                 break;
             }
         }
-        this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
+        this.vals[0] = this.mem_total - this.vals[1] - this.vals[2] - mem_free;
     },
-    percent: function() {
+    _apply: function() {
         if (this.mem_total == 0) {
-            return 0;
+            this.tip_vals = [0, 0, 0];
         } else {
-            return Math.round(this.mem[0] / this.mem_total * 100);
+            for (let i = 0;i < 3;i++)
+                this.tip_vals[i] = Math.round(this.vals[i] / this.mem_total * 100);
         }
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.vals[0].toString();
+        this.menu_items[3].text = this.mem_total.toString();
     },
-    list: function() {
-        let mem = [];
-        for (let i = 0;i < this.mem.length;i++) {
-            mem[i] = this.mem[i] / this.mem_total;
-        }
-        return mem;
-    },
-    total: function() {
-        return Math.round(this.mem_total / 1024);
-    }
 };
 Mem.instance = new Mem();
 

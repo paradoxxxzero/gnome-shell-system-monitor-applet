@@ -207,7 +207,7 @@ ElementBase.prototype = {
         this.chart.actor.queue_repaint();
         this.tooltip_text = String.prototype.format.apply(this.tip_txt, tip_vals);
         return true;
-    },
+    }
 };
 
 
@@ -266,7 +266,7 @@ Cpu.prototype = {
         this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
         for (let i = 0;i < 5;i++)
             this.tip_vals[i] = Math.round(this.vals[i]);
-    },
+    }
 };
 Cpu.instance = new Cpu();
 
@@ -329,7 +329,7 @@ Mem.prototype = {
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.mem[0].toString();
         this.menu_items[3].text = this.mem_total.toString();
-    },
+    }
 };
 Mem.instance = new Mem();
 
@@ -384,7 +384,7 @@ Swap.prototype = {
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.swap.toString();
         this.menu_items[3].text = this.swap_total.toString();
-    },
+    }
 };
 Swap.instance = new Swap();
 
@@ -398,12 +398,12 @@ Net.prototype = {
     elt: 'net',
     color_name: ['down', 'up'],
     text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                               icon_size: 2 * this.icon_size / 3, icon_name:'go-down'})
-                 new St.Label({ style_class: "sm-status-value"})
-                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})
+                               icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
                  new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                               icon_size: 2 * this.icon_size / 3, icon_name:'go-up'})
-                 new St.Label({ style_class: "sm-status-value"})
+                               icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}),
+                 new St.Label({ style_class: "sm-status-value"}),
                  new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})],
     menu_items: [new St.Label({ style_class: "sm-value"}),
                  new St.Label({ text:'k', style_class: "sm-label"}),
@@ -444,8 +444,8 @@ Net.prototype = {
     },
     _apply: function() {
         this.tip_vals = this.vals = this.usage;
-        this.menu_items[0].text = this.text_items[1].text = this.vals.toString();
-        this.menu_items[3].text = this.text_items[4].text = this.vals.toString();
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals.toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals.toString();
     }
 };
 Net.instance = new Net();
@@ -459,28 +459,26 @@ Disk.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'disk',
     color_name: ['read', 'write'],
-
+    text_items: [new St.Label({ text: 'R', style_class: "sm-status-label"}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"}),
+                 new St.Label({ text: 'W', style_class: "sm-status-label"}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'%', style_class: "sm-label"}),
+                 new St.Label({ text:'R', style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'%', style_class: "sm-label"}),
+                 new St.Label({ text:'W', style_class: "sm-label"})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
+        this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.text_box.add_actor(new St.Label({ text: 'R', style_class: "sm-status-label"}));
-        this.read = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.read);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
-        this.text_box.add_actor(new St.Label({ text: 'W', style_class: "sm-status-label"}));
-        this.write = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.write);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        let percents = this.percent();
-        this.read.set_text(percents[0].toString());
-        this.write.set_text(percents[1].toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -502,14 +500,11 @@ Disk.prototype = {
         }
         this.last_time = time;
     },
-    percent: function() {
-        return [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
-    },
-    list: function() {
-        return this.usage;
-    },
-    total: function() {
-        return 0;
+    _apply: function() {
+        this.vals = this.usage;
+        this.tip_vals = [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals.toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals.toString();
     }
 };
 Disk.instance = new Disk();
@@ -577,66 +572,13 @@ Icon.prototype = {
                       function () {
                           this.actor.visible = Schema.get_boolean("icon-display");
                           }));
-        let item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+        this.menu.addMenuItem(Cpu.instance.menu_item);
+        this.menu.addMenuItem(Mem.instance.menu_item);
+        this.menu.addMenuItem(Swap.instance.menu_item);
+        this.menu.addMenuItem(Net.instance.menu_item);
+        this.menu.addMenuItem(Disk.instance.menu_item);
 
-        this.cpu = new St.Label({ style_class: "sm-value"});
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(this.cpu);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
-        this.mem_used = new St.Label({ style_class: "sm-value"});
-        this.mem_total = new St.Label({ style_class: "sm-value"});
-
-        item.addActor(this.mem_used);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this.mem_total);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
-        this.swap_used = new St.Label({ style_class: "sm-value"});
-        this.swap_total = new St.Label({ style_class: "sm-value"});
-
-        item.addActor(this.swap_used);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this.swap_total);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
-
-        this.down = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.down);
-        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
-        this.up = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.up);
-        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
-
-        this.read = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.read);
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
-        this.write = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.write);
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+/*        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
         item.addActor(Pie.instance.actor, {span: -1, expand: true});
         this.menu.addMenuItem(item);
 
@@ -672,23 +614,7 @@ Icon.prototype = {
                               Mainloop.source_remove(this.menu_timeout);
                           }
                       })
-        );
-    },
-    update: function () {
-        Cpu.instance.update();
-        Mem.instance.update();
-        Swap.instance.update();
-        Net.instance.update();
-        Disk.instance.update();
-        this.cpu.set_text(Cpu.instance.percent().toString());
-        this.mem_used.set_text(Mem.instance.mem[0].toString());
-        this.mem_total.set_text(Mem.instance.mem_total.toString());
-        this.swap_used.set_text(Swap.instance.swap.toString());
-        this.swap_total.set_text(Swap.instance.swap_total.toString());
-        this.down.set_text(Net.instance.usage[0].toString());
-        this.up.set_text(Net.instance.usage[1].toString());
-        this.read.set_text(Disk.instance.percent()[0].toString());
-        this.write.set_text(Disk.instance.percent()[1].toString());
+        );*/
     }
 };
 Icon.instance = new Icon();

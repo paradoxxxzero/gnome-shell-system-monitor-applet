@@ -38,6 +38,7 @@ const _ = Gettext.gettext;
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 var Background = new Clutter.Color();
 Background.from_string(Schema.get_string('background'));
+var icon_size = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 
 function Chart() {
     this._init.apply(this, arguments);
@@ -122,8 +123,12 @@ ElementBase.prototype = {
     text_items: [],
     menu_items: [],
     vals: [],
+    tip_txt: '',
+    tip_vals: [],
     _init: function() {
-        PanelMenu.SystemStatusButton.prototype._init.call(this, '', '');
+        PanelMenu.SystemStatusButton.prototype._init.call(this, '',
+                                                          String.prototype.format.apply(this.tip_txt,
+                                                                                        this.tip_vals));
         this.colors = [];
         for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
@@ -188,12 +193,32 @@ ElementBase.prototype = {
         this.box.add_actor(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
+        for (let item in this.menu_items)
+            this.menu_item.addActor(this.menu_items[item]);
+        this.menu.connect('open-state-changed', this.closeMenu);
+    },
+    tip_format: function(unit) {
+        typeof(unit) == 'undefined' && (unit = '%%');
+        for (let i = 0;i < this.color_name.length;i++) {
+            i == 0 || (this.tip_txt += '\n');
+            this.tip_txt +=_(this.color_name[i] + '\t') + '%d\t' + unit;
+            this.tip_vals[i] = 0;
+        }
     },
     update: function() {
         this.refresh();
-        
+        this._apply();
+        this.chart.actor.queue_repaint();
+        this.actor.set_tooltip_text(String.prototype.format.apply(this.tip_txt, this.tip_vals));
         return true;
     },
+    _onButtonPress: function() {},
+    closeMenu: function(menu, open) {
+        if (open) {
+            menu.close();
+            menu.isOpen = true;
+        }
+    }
 };
 
 
@@ -206,48 +231,50 @@ Cpu.prototype = {
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     text_items: [new St.Label({ style_class: "sm-status-value"}),
                  new St.Label({ text: '%', style_class: "sm-perc-label"})],
-    menu_items: [],
+    menu_items: [new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text:'%', style_class: "sm-label"})],
     _init: function() {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
+        this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
         ElementBase.prototype._init.call(this);
         this.update();
     },
     refresh: function() {
         let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
-        let accum = [0,0,0,0,0];
+        let accum = [];
         let total_t = 0;
         for (let i = 1;i <= 5;i++) {
             accum[i - 1] = parseInt(cpu_params[i]);
         }
         for (let i = 1;i < cpu_params.length;i++) {
             let tmp = parseInt(cpu_params[i]);
-            if (tmp > 0) total_t += tmp;
+            tmp > 0 && (total_t += tmp);
         }
         let total = total_t - this.last_total;
         if (total > 0) {
-            for (let i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++)
                 this.usage[i] = (accum[i] - this.last[i]) / total;
-            }
-            for (let i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++)
                 this.last[i] = accum[i];
-            }
             this.last_total = total_t;
         }
     },
-    percent: function() {
-        return Math.round((1 - this.usage[3]) * 100);
-    },
-    list: function() {
-        let free = 1;
-        for (let i = 0;i < this.usage.length;i++) {
-            free -= this.usage[i];
-        }
-        return [this.usage[0], this.usage[1], this.usage[2], this.usage[4], free];
-    },
-    total: function() {
-        return 1;
+    _apply: function() {
+        let percent = Math.round((1 - this.usage[3]) * 100);
+        this.text_items[0].text = this.menu_items[3].text = percent.toString();
+        let other = 1;
+        for (let i = 0;i < this.usage.length;i++)
+            other -= this.usage[i];
+        this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
+        for (let i = 0;i < 5;i++)
+            this.tip_vals[i] = Math.round(this.vals[i] * 100);
     }
 };
 Cpu.instance = new Cpu();
@@ -261,18 +288,19 @@ Mem.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'memory',
     color_name: ['program', 'buffer', 'cache'],
-
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "/", style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
+        this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.mem = [0,0,0];
@@ -298,22 +326,18 @@ Mem.prototype = {
         }
         this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
     },
-    percent: function() {
+    _apply: function() {
         if (this.mem_total == 0) {
-            return 0;
+            this.vals = this.tip_vals = [0, 0, 0];
         } else {
-            return Math.round(this.mem[0] / this.mem_total * 100);
+            for (let i = 0;i < 3;i++) {
+                this.vals[i] = this.mem[i] / this.mem_total;
+                this.tip_vals[i] = Math.round(this.vals[i] * 100);
+            }
         }
-    },
-    list: function() {
-        let mem = [];
-        for (let i = 0;i < this.mem.length;i++) {
-            mem[i] = this.mem[i] / this.mem_total;
-        }
-        return mem;
-    },
-    total: function() {
-        return Math.round(this.mem_total / 1024);
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.mem[0].toString();
+        this.menu_items[3].text = this.mem_total.toString();
     }
 };
 Mem.instance = new Mem();
@@ -327,18 +351,19 @@ Swap.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'swap',
     color_name: ['used'],
-
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "/", style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
+        this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.swap = 0;
@@ -358,18 +383,16 @@ Swap.prototype = {
         }
         this.swap = this.swap_total - swap_free;
     },
-    percent: function() {
+    _apply: function() {
         if (this.swap_total == 0) {
-            return 0;
+            this.vals = this.tip_vals = [0];
         } else {
-            return Math.round(this.swap / this.swap_total * 100);
+            this.vals[0] = this.swap / this.swap_total;
+            this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
-    },
-    list: function() {
-        return [this.swap / this.swap_total];
-    },
-    total: function() {
-        return Math.round(this.swap_total / 1024);
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.swap.toString();
+        this.menu_items[3].text = this.swap_total.toString();
     }
 };
 Swap.instance = new Swap();
@@ -383,27 +406,28 @@ Net.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'net',
     color_name: ['down', 'up'],
-
+    text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 2 * icon_size / 3, icon_name:'go-down'}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 2 * icon_size / 3, icon_name:'go-up'}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'k', style_class: "sm-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'k', style_class: "sm-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
+        this.tip_format('kB/s');
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
-        this.down = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.down);
-        this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
-        this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
-        this.up = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.up);
-        this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.down.set_text(this.usage[0].toString());
-        this.up.set_text(this.usage[1].toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -427,11 +451,10 @@ Net.prototype = {
         }
         this.last_time = time;
     },
-    list: function() {
-        return this.usage;
-    },
-    total: function() {
-        return 0;
+    _apply: function() {
+        this.tip_vals = this.vals = this.usage;
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     }
 };
 Net.instance = new Net();
@@ -445,28 +468,26 @@ Disk.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'disk',
     color_name: ['read', 'write'],
-
+    text_items: [new St.Label({ text: 'R', style_class: "sm-status-label"}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"}),
+                 new St.Label({ text: 'W', style_class: "sm-status-label"}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'%', style_class: "sm-label"}),
+                 new St.Label({ text:'R', style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'%', style_class: "sm-label"}),
+                 new St.Label({ text:'W', style_class: "sm-label"})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
+        this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.text_box.add_actor(new St.Label({ text: 'R', style_class: "sm-status-label"}));
-        this.read = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.read);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
-        this.text_box.add_actor(new St.Label({ text: 'W', style_class: "sm-status-label"}));
-        this.write = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.write);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        let percents = this.percent();
-        this.read.set_text(percents[0].toString());
-        this.write.set_text(percents[1].toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -488,14 +509,11 @@ Disk.prototype = {
         }
         this.last_time = time;
     },
-    percent: function() {
-        return [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
-    },
-    list: function() {
-        return this.usage;
-    },
-    total: function() {
-        return 0;
+    _apply: function() {
+        this.vals = this.usage;
+        this.tip_vals = [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     }
 };
 Disk.instance = new Disk();
@@ -563,72 +581,19 @@ Icon.prototype = {
                       function () {
                           this.actor.visible = Schema.get_boolean("icon-display");
                           }));
-        let item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+        this.menu.addMenuItem(Cpu.instance.menu_item);
+        this.menu.addMenuItem(Mem.instance.menu_item);
+        this.menu.addMenuItem(Swap.instance.menu_item);
+        this.menu.addMenuItem(Net.instance.menu_item);
+        this.menu.addMenuItem(Disk.instance.menu_item);
 
-        this.cpu = new St.Label({ style_class: "sm-value"});
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(this.cpu);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
-        this.mem_used = new St.Label({ style_class: "sm-value"});
-        this.mem_total = new St.Label({ style_class: "sm-value"});
-
-        item.addActor(this.mem_used);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this.mem_total);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
-        this.swap_used = new St.Label({ style_class: "sm-value"});
-        this.swap_total = new St.Label({ style_class: "sm-value"});
-
-        item.addActor(this.swap_used);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this.swap_total);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
-
-        this.down = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.down);
-        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
-        this.up = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.up);
-        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
-
-        this.read = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.read);
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
-        this.write = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.write);
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+/*        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
         item.addActor(Pie.instance.actor, {span: -1, expand: true});
-        this.menu.addMenuItem(item);
+        this.menu.addMenuItem(item); */
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+        let item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
         item.connect('activate', function () {
                          Util.spawn(["gnome-system-monitor"]);
                      });
@@ -640,7 +605,7 @@ Icon.prototype = {
                      });
         this.menu.addMenuItem(item);
 
-        this.menu.connect(
+/*        this.menu.connect(
             'open-state-changed',
             Lang.bind(this,
                       function (menu, isOpen) {
@@ -658,23 +623,7 @@ Icon.prototype = {
                               Mainloop.source_remove(this.menu_timeout);
                           }
                       })
-        );
-    },
-    update: function () {
-        Cpu.instance.update();
-        Mem.instance.update();
-        Swap.instance.update();
-        Net.instance.update();
-        Disk.instance.update();
-        this.cpu.set_text(Cpu.instance.percent().toString());
-        this.mem_used.set_text(Mem.instance.mem[0].toString());
-        this.mem_total.set_text(Mem.instance.mem_total.toString());
-        this.swap_used.set_text(Swap.instance.swap.toString());
-        this.swap_total.set_text(Swap.instance.swap_total.toString());
-        this.down.set_text(Net.instance.usage[0].toString());
-        this.up.set_text(Net.instance.usage[1].toString());
-        this.read.set_text(Disk.instance.percent()[0].toString());
-        this.write.set_text(Disk.instance.percent()[1].toString());
+        );*/
     }
 };
 Icon.instance = new Icon();

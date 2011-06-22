@@ -114,7 +114,6 @@ msgstr "数字"
 msgid "both"
 msgstr "同时"
 
-
 msgid "cpu"
 msgstr "处理器"
 
@@ -139,3 +138,41 @@ msgstr "系统监视器..."
 msgid "System monitor"
 msgstr "系统监视器"
 
+msgid "user\t"
+msgstr "用户\t\t"
+
+msgid "system\t"
+msgstr "系统\t\t"
+
+msgid "other\t"
+msgstr "其他\t\t"
+
+msgid "nice\t"
+msgstr "优先级\t"
+
+msgid "iowait\t"
+msgstr "IO等待\t"
+
+msgid "program\t"
+msgstr "程序\t"
+
+msgid "cache\t"
+msgstr "缓存\t"
+
+msgid "buffer\t"
+msgstr "缓冲\t"
+
+msgid "used\t"
+msgstr "已用\t"
+
+msgid "up\t"
+msgstr "上传\t"
+
+msgid "down\t"
+msgstr "下载\t"
+
+msgid "write\t"
+msgstr "写入\t"
+
+msgid "read\t"
+msgstr "读取\t"

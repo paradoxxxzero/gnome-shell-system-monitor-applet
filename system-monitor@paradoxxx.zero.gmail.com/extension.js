@@ -231,8 +231,8 @@ Cpu.prototype = {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
         this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
         ElementBase.prototype._init.call(this);
         this.update();
     },
@@ -290,6 +290,7 @@ Mem.prototype = {
     tip_vals: [0,0,0],
     _init: function() {
         this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         ElementBase.prototype._init.call(this);
         this.update();
     },
@@ -351,6 +352,7 @@ Swap.prototype = {
                  new St.Label({ text: "M", style_class: "sm-label"})]
     _init: function() {
         this.tip_format();
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         ElementBase.prototype._init.call(this);
         this.update();
     },
@@ -395,27 +397,28 @@ Net.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'net',
     color_name: ['down', 'up'],
-
+    text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 2 * this.icon_size / 3, icon_name:'go-down'})
+                 new St.Label({ style_class: "sm-status-value"})
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 2 * this.icon_size / 3, icon_name:'go-up'})
+                 new St.Label({ style_class: "sm-status-value"})
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'k', style_class: "sm-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'k', style_class: "sm-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
+        this.tip_format('kB/s');
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
-        this.down = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.down);
-        this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
-        this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
-        this.up = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.up);
-        this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.down.set_text(this.usage[0].toString());
-        this.up.set_text(this.usage[1].toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -439,11 +442,10 @@ Net.prototype = {
         }
         this.last_time = time;
     },
-    list: function() {
-        return this.usage;
-    },
-    total: function() {
-        return 0;
+    _apply: function() {
+        this.tip_vals = this.vals = this.usage;
+        this.menu_items[0].text = this.text_items[1].text = this.vals.toString();
+        this.menu_items[3].text = this.text_items[4].text = this.vals.toString();
     }
 };
 Net.instance = new Net();

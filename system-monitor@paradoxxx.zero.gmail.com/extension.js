@@ -170,7 +170,7 @@ ElementBase.prototype = {
         );
         Schema.connect(
             'changed::' + this.elt + '-graph-width',
-            Lang.bind(this.chart, this.chart.resize})
+            Lang.bind(this.chart, this.chart.resize)
         );
 
         this.label = new St.Label({ text: this.elt == "memory" ? "mem" : _(this.elt),
@@ -182,8 +182,8 @@ ElementBase.prototype = {
         this.text_box = new St.BoxLayout();
 
         this.box.add_actor(this.text_box);
-        for (let item in text_items) {
-            this.text_box.add_actor(item);
+        for (let item in this.text_items) {
+            this.text_box.add_actor(this.text_items[item]);
         }
         this.box.add_actor(this.chart.actor);
         change_style.call(this);
@@ -213,11 +213,6 @@ Cpu.prototype = {
         this.usage = [0,0,0,1,0];
         ElementBase.prototype._init.call(this);
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");

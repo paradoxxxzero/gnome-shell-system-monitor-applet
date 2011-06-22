@@ -138,19 +138,19 @@ msgid "System monitor"
 msgstr "System monitor"
 
 msgid "user\t"
-msgstr "user\t\t"
+msgstr "Uživatel\t"
 
 msgid "system\t"
-msgstr "system\t"
+msgstr "Systém\t"
 
 msgid "other\t"
-msgstr "other\t"
+msgstr "Jiný\t\t"
 
 msgid "nice\t"
-msgstr "nice\t\t"
+msgstr "Dobrý\t"
 
 msgid "iowait\t"
-msgstr "iowait\t"
+msgstr "nizký\t"
 
 msgid "program\t"
 msgstr "program\t"
@@ -162,16 +162,16 @@ msgid "buffer\t"
 msgstr "buffer\t"
 
 msgid "used\t"
-msgstr "used\t"
+msgstr "Zabráno\t"
 
 msgid "up\t"
-msgstr "up\t"
+msgstr "Odchozí\t"
 
 msgid "down\t"
-msgstr "down\t"
+msgstr "Příchozí\t"
 
 msgid "write\t"
-msgstr "write\t"
+msgstr "Zápis\t"
 
 msgid "read\t"
-msgstr "read\t\t"
+msgstr "Čtení\t"

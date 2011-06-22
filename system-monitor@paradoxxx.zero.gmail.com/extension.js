@@ -122,8 +122,12 @@ ElementBase.prototype = {
     text_items: [],
     menu_items: [],
     vals: [],
+    tip_txt: '',
+    tip_vals: [],
     _init: function() {
-        PanelMenu.SystemStatusButton.prototype._init.call(this, '', '');
+        PanelMenu.SystemStatusButton.prototype._init.call(this, '',
+                                                          String.prototype.format.apply(this.tip_txt,
+                                                                                        tip_vals));
         this.colors = [];
         for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
@@ -170,7 +174,7 @@ ElementBase.prototype = {
         );
         Schema.connect(
             'changed::' + this.elt + '-graph-width',
-            Lang.bind(this.chart, this.chart.resize})
+            Lang.bind(this.chart, this.chart.resize)
         );
 
         this.label = new St.Label({ text: this.elt == "memory" ? "mem" : _(this.elt),
@@ -182,16 +186,18 @@ ElementBase.prototype = {
         this.text_box = new St.BoxLayout();
 
         this.box.add_actor(this.text_box);
-        for (let item in text_items) {
+        for (let item in text_items)
             this.text_box.add_actor(item);
-        }
         this.box.add_actor(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
+        for (let item in menu_items)
+            this.menu_item.addActor(item);
     },
     update: function() {
         this.refresh();
-        
+        this.chart.actor.queue_repaint();
+        this.tooltip_text = String.prototype.format.apply(this.tip_txt, tip_vals);
         return true;
     },
 };
@@ -206,54 +212,54 @@ Cpu.prototype = {
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     text_items: [new St.Label({ style_class: "sm-status-value"}),
                  new St.Label({ text: '%', style_class: "sm-perc-label"})],
-    menu_items: [],
+    menu_items: [new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"});
+                 new St.Label({ text:'%', style_class: "sm-label"}),],
+    tip_vals: [0,0,0,0,0],
     _init: function() {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+        for (let i = 0;i < this.color_name.length;i++) {
+            i == 0 || (tip_txt += '\n');
+            tip_txt +=_(this.color_name[i] + '\t') + '%d\t%%';
+        }
         ElementBase.prototype._init.call(this);
         this.update();
     },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
-    },
     refresh: function() {
         let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
-        let accum = [0,0,0,0,0];
+        let accum = [];
         let total_t = 0;
         for (let i = 1;i <= 5;i++) {
             accum[i - 1] = parseInt(cpu_params[i]);
         }
         for (let i = 1;i < cpu_params.length;i++) {
             let tmp = parseInt(cpu_params[i]);
-            if (tmp > 0) total_t += tmp;
+            tmp > 0 && (total_t += tmp);
         }
         let total = total_t - this.last_total;
         if (total > 0) {
-            for (let i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++)
                 this.usage[i] = (accum[i] - this.last[i]) / total;
-            }
-            for (let i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++)
                 this.last[i] = accum[i];
-            }
             this.last_total = total_t;
         }
-    },
-    percent: function() {
-        return Math.round((1 - this.usage[3]) * 100);
-    },
-    list: function() {
-        let free = 1;
+        let percent = Math.round((1 - this.usage[3]) * 100);
+        this.text_items[0].text = this.menu_items[3] = percent.toString();
+        let other = 1;
         for (let i = 0;i < this.usage.length;i++) {
-            free -= this.usage[i];
+            other -= this.usage[i];
         }
-        return [this.usage[0], this.usage[1], this.usage[2], this.usage[4], free];
+        this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
+        for (let i = 0;i < 5;i++)
+            this.tip_vals[i] = Math.round(this.vals[i]);
     },
-    total: function() {
-        return 1;
-    }
 };
 Cpu.instance = new Cpu();
 

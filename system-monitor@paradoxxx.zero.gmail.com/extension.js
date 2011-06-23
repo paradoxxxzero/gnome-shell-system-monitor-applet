@@ -582,26 +582,26 @@ function main() {
         panel = Main.panel._centerBox;
     Schema.connect('changed::background', Lang.bind(Background, update_color));
     //Debug
-    Main.__sm = {};
-    Main.__sm.tray = new PanelMenu.SystemStatusButton('');
+    Main.__sm = {
+        tray: new PanelMenu.SystemStatusButton(''),
+        icon: new Icon(),
+        elts: {
+            cpu: new Cpu(),
+            memory: new Mem(),
+            swap: new Swap(),
+            net: new Net(),
+            disk: new Disk()
+        }
+    };
     let tray = Main.__sm.tray;
     panel.insert_actor(tray.actor, 1);
     panel.child_set(tray.actor, { y_fill : true } );
     let box = new St.BoxLayout();
     tray.actor.add_actor(box);
-    Main.__sm.icon = new Icon();
     box.add_actor(Main.__sm.icon.actor);
-    let elts = {
-        cpu: new Cpu(),
-        memory: new Mem(),
-        swap: new Swap(),
-        net: new Net(),
-        disk: new Disk()
-    };
-    for (let elt in elts) {
-        box.add_actor(elts[elt].actor);
-        tray.menu.addMenuItem(elts[elt].menu_item);
-        Main.__sm[elt] = elts[elt];
+    for (let elt in Main.__sm.elts) {
+        box.add_actor(Main.__sm.elts[elt].actor);
+        tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
     }
     tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 

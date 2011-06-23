@@ -36,7 +36,7 @@ const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
 let start = GLib.get_monotonic_time();
-print('system-monitor-applet: start @ ' + start);
+global.log('system-monitor-applet: start @ ' + start);
 
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 var Background = new Clutter.Color();
@@ -625,9 +625,9 @@ function main() {
 
     Main.panel._menus.addMenu(tray.menu);
     let finish = GLib.get_monotonic_time();
-    print('system-monitor-applet: finish @ ' + finish);
-    print('system-monitor-applet: use ' + (finish - start));
+    global.log('system-monitor-applet: finish @ ' + finish);
     global.log('system-monitor-applet: use ' + (finish - start));
+    log('system-monitor-applet: use ' + (finish - start));
 }
 
 /*item = new PopupMenu.PopupBaseMenuItem({reactive: false});

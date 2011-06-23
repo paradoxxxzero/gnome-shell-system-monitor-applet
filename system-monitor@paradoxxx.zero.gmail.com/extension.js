@@ -46,7 +46,7 @@ function Chart() {
 
 Chart.prototype = {
     _init: function(width, height, parent) {
-        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
+        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
         this.parent = parent;
         this.actor.set_width(this.width=width);
         this.actor.set_height(this.height=height);
@@ -103,12 +103,12 @@ function TipBin() {
 
 TipBin.prototype = {
     _init: function(name, tooltipText) {
-        this.actor = new St.Bin({ style_class: 'panel-button',
+        this.actor = new St.Bin({ style_class: 'sm-panel-button',
                                   reactive: false,
                                   can_focus: false,
                                   x_fill: true,
                                   y_fill: false,
-                                  track_hover: true });
+                                  track_hover: false });
         this.actor._delegate = this;
         this.actor.has_tooltip = true;
         this.actor.tooltip_text = tooltipText;
@@ -180,7 +180,7 @@ ElementBase.prototype = {
 
         this.interval = l_limit(Schema.get_int(this.elt + "-refresh-time"));
         this.timeout = Mainloop.timeout_add(this.interval,
-                                            Lang.bind(this,this.update));
+                                            Lang.bind(this, this.update));
         Schema.connect(
             'changed::' + this.elt + '-refresh-time',
             Lang.bind(this,
@@ -579,9 +579,12 @@ function Icon() {
 }
 
 Icon.prototype = {
-    __proto__: PanelMenu.SystemStatusButton.prototype,
     _init: function() {
-        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
+        this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
+                                   icon_type: St.IconType.SYMBOLIC,
+                                   style_class: 'system-status-icon',
+                                   has_tooltip: true,
+                                   tooltip_text: _('System monitor')});
 
         this.actor.visible = Schema.get_boolean("icon-display");
         Schema.connect(
@@ -589,50 +592,7 @@ Icon.prototype = {
             Lang.bind(this,
                       function () {
                           this.actor.visible = Schema.get_boolean("icon-display");
-                          }));
-        this.menu.addMenuItem(Cpu.instance.menu_item);
-        this.menu.addMenuItem(Mem.instance.menu_item);
-        this.menu.addMenuItem(Swap.instance.menu_item);
-        this.menu.addMenuItem(Net.instance.menu_item);
-        this.menu.addMenuItem(Disk.instance.menu_item);
-
-/*        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        item.addActor(Pie.instance.actor, {span: -1, expand: true});
-        this.menu.addMenuItem(item); */
-
-        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-        let item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
-        item.connect('activate', function () {
-                         Util.spawn(["gnome-system-monitor"]);
-                     });
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Preferences..."));
-        item.connect('activate', function () {
-                         Util.spawn(["system-monitor-applet-config"]);
-                     });
-        this.menu.addMenuItem(item);
-
-/*        this.menu.connect(
-            'open-state-changed',
-            Lang.bind(this,
-                      function (menu, isOpen) {
-                          if(isOpen) {
-                              this.update();
-                              Pie.instance.actor.queue_repaint();
-                              this.menu_timeout = Mainloop.timeout_add_seconds(
-                                  1,
-                                  Lang.bind(this, function () {
-                                                this.update();
-                                                Pie.instance.actor.queue_repaint();
-                                                return true;
-                                            }));
-                          } else {
-                              Mainloop.source_remove(this.menu_timeout);
-                          }
-                      })
-        );*/
+                      }));
     }
 };
 Icon.instance = new Icon();
@@ -640,29 +600,67 @@ Icon.instance = new Icon();
 
 function main() {
     let panel = Main.panel._rightBox;
-    if(Schema.get_boolean("center-display")) {
+    if(Schema.get_boolean("center-display"))
         panel = Main.panel._centerBox;
-    }
     Schema.connect('changed::background', Lang.bind(Background, update_color));
     let elts = {
-        disk: Disk.instance,
-        net: Net.instance,
-        swap: Swap.instance,
+        cpu: Cpu.instance,
         memory: Mem.instance,
-        cpu: Cpu.instance
+        swap: Swap.instance,
+        net: Net.instance,
+        disk: Disk.instance
     };
     //Debug
     Main.__sm = {};
+    Main.__sm.tray = new PanelMenu.SystemStatusButton('');
+    let tray = Main.__sm.tray;
+    panel.insert_actor(tray.actor, 1);
+    panel.child_set(tray.actor, { y_fill : true } );
+    let box = new St.BoxLayout();
+    tray.actor.add_actor(box);
+    Main.__sm.icon = Icon.instance;
+    box.add_actor(Icon.instance.actor);
     for (let elt in elts) {
-        panel.insert_actor(elts[elt].actor, 1);
-        panel.child_set(elts[elt].actor, { y_fill : true } );
-        //Main.panel._menus.addMenu(elts[elt].menu);
-        elts[elt].actor.remove_style_class_name("panel-button");
-        elts[elt].actor.add_style_class_name("sm-panel-button");
+        box.add_actor(elts[elt].actor);
+        tray.menu.addMenuItem(elts[elt].menu_item);
         Main.__sm[elt] = elts[elt];
     }
-    let icon = Icon.instance;
-    panel.insert_actor(icon.actor, 1);
-    panel.child_set(icon.actor);
-    Main.panel._menus.addMenu(icon.menu);
+    tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+    let item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+    item.connect('activate', function () {
+        Util.spawn(["gnome-system-monitor"]);
+    });
+    tray.menu.addMenuItem(item);
+
+    item = new PopupMenu.PopupMenuItem(_("Preferences..."));
+    item.connect('activate', function () {
+        Util.spawn(["system-monitor-applet-config"]);
+    });
+    tray.menu.addMenuItem(item);
+
+    Main.panel._menus.addMenu(tray.menu);
 }
+
+/*item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+item.addActor(Pie.instance.actor, {span: -1, expand: true});
+this.menu.addMenuItem(item);
+this.menu.connect(
+    'open-state-changed',
+    Lang.bind(this,
+              function (menu, isOpen) {
+                  if(isOpen) {
+                      this.update();
+                      Pie.instance.actor.queue_repaint();
+                      this.menu_timeout = Mainloop.timeout_add_seconds(
+                          1,
+                          Lang.bind(this, function () {
+                              this.update();
+                              Pie.instance.actor.queue_repaint();
+                              return true;
+                          }));
+                  } else {
+                      Mainloop.source_remove(this.menu_timeout);
+                  }
+              })
+);*/

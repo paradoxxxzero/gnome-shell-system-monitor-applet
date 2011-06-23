@@ -35,6 +35,9 @@ const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
+let start = GLib.get_monotonic_time();
+global.log('system-monitor-applet: start @ ' + start);
+
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 var Background = new Clutter.Color();
 Background.from_string(Schema.get_string('background'));
@@ -506,7 +509,7 @@ Disk.prototype = {
 };
 
 
-function Pie() {
+/*function Pie() {
     this._init.apply(this, arguments);
 }
 
@@ -548,7 +551,7 @@ Pie.prototype = {
         }
     }
 };
-Pie.instance = new Pie(200, 200);
+Pie.instance = new Pie(200, 200);*/
 
 
 function Icon() {
@@ -578,13 +581,6 @@ function main() {
     if(Schema.get_boolean("center-display"))
         panel = Main.panel._centerBox;
     Schema.connect('changed::background', Lang.bind(Background, update_color));
-    let elts = {
-        cpu: new Cpu(),
-        memory: new Mem(),
-        swap: new Swap(),
-        net: new Net(),
-        disk: new Disk()
-    };
     //Debug
     Main.__sm = {};
     Main.__sm.tray = new PanelMenu.SystemStatusButton('');
@@ -595,6 +591,13 @@ function main() {
     tray.actor.add_actor(box);
     Main.__sm.icon = new Icon();
     box.add_actor(Main.__sm.icon.actor);
+    let elts = {
+        cpu: new Cpu(),
+        memory: new Mem(),
+        swap: new Swap(),
+        net: new Net(),
+        disk: new Disk()
+    };
     for (let elt in elts) {
         box.add_actor(elts[elt].actor);
         tray.menu.addMenuItem(elts[elt].menu_item);
@@ -615,6 +618,10 @@ function main() {
     tray.menu.addMenuItem(item);
 
     Main.panel._menus.addMenu(tray.menu);
+    let finish = GLib.get_monotonic_time();
+    global.log('system-monitor-applet: finish @ ' + finish);
+    global.log('system-monitor-applet: use ' + (finish - start));
+    log('system-monitor-applet: use ' + (finish - start));
 }
 
 /*item = new PopupMenu.PopupBaseMenuItem({reactive: false});

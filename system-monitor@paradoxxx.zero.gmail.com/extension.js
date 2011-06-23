@@ -87,12 +87,13 @@ Chart.prototype = {
         }
     },
     resize: function(schema, key) {
+        let old_width = this.width;
         this.width = Schema.get_int(key);
+        if (old_width == this.width) return;
         this.actor.set_width(this.width);
-        for (let i = 0;i < this.parent.colors.length;i++) {
-            this.data[i] = [];
-        }
-        this.actor.queue_repaint();
+        if (this.width < this.data[0].length)
+            for (let i = 0;i < this.parent.colors.length;i++)
+                this.data[i] = [];
     }
 };
 

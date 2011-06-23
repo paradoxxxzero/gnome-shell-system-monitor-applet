@@ -627,6 +627,7 @@ function main() {
     let finish = GLib.get_monotonic_time();
     print('system-monitor-applet: finish @ ' + finish);
     print('system-monitor-applet: use ' + (finish - start));
+    global.log('system-monitor-applet: use ' + (finish - start));
 }
 
 /*item = new PopupMenu.PopupBaseMenuItem({reactive: false});

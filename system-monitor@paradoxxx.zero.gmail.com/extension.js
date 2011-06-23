@@ -35,6 +35,9 @@ const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
+let start = GLib.get_monotonic_time();
+print('system-monitor-applet: start @ ' + start);
+
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 var Background = new Clutter.Color();
 Background.from_string(Schema.get_string('background'));
@@ -511,7 +514,7 @@ Disk.prototype = {
 };
 
 
-function Pie() {
+/*function Pie() {
     this._init.apply(this, arguments);
 }
 
@@ -553,7 +556,7 @@ Pie.prototype = {
         }
     }
 };
-Pie.instance = new Pie(200, 200);
+Pie.instance = new Pie(200, 200);*/
 
 
 function Icon() {
@@ -580,8 +583,6 @@ Icon.prototype = {
 
 
 function main() {
-    let start = GLib.get_monotonic_time();
-    print('system-monitor-applet: start @ ' + start);
     let panel = Main.panel._rightBox;
     if(Schema.get_boolean("center-display"))
         panel = Main.panel._centerBox;

@@ -140,40 +140,40 @@ msgid "System monitor"
 msgstr "پایشگر سیستم"
 
 msgid "user\t"
-msgstr "user\t\t"
+msgstr "کاربر\t"
 
 msgid "system\t"
-msgstr "system\t"
+msgstr "سیستم\t"
 
 msgid "other\t"
-msgstr "other\t"
+msgstr "دیگر\t"
 
 msgid "nice\t"
-msgstr "nice\t\t"
+msgstr "نایس\t"
 
 msgid "iowait\t"
 msgstr "iowait\t"
 
 msgid "program\t"
-msgstr "program\t"
+msgstr "برنامه\t\t"
 
 msgid "cache\t"
-msgstr "cache\t"
+msgstr "حافظه‌نهان\t"
 
 msgid "buffer\t"
-msgstr "buffer\t"
+msgstr "بافر\t\t\t"
 
 msgid "used\t"
-msgstr "used\t"
+msgstr "استفاده شده\t"
 
 msgid "up\t"
-msgstr "up\t"
+msgstr "آپلود\t"
 
 msgid "down\t"
-msgstr "down\t"
+msgstr "دانلود\t"
 
 msgid "write\t"
-msgstr "write\t"
+msgstr "نوشتن\t"
 
 msgid "read\t"
-msgstr "read\t\t"
+msgstr "خواندن\t"

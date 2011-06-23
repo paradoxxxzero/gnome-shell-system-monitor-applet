@@ -56,7 +56,7 @@ Chart.prototype = {
             this.data[i] = [];
         }
     },
-    _draw: function() {
+    update: function() {
         let data_a = this.parent.vals;
         if (data_a.length != this.parent.colors.length) return;
         let accdata = [];
@@ -67,7 +67,9 @@ Chart.prototype = {
                 this.data[l].shift();
         }
         if (!this.actor.visible) return;
-
+        this.actor.queue_repaint();
+    },
+    _draw: function() {
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
         let max = Math.max.apply(this, this.data[this.data.length - 1]);
@@ -225,7 +227,7 @@ ElementBase.prototype = {
     update: function() {
         this.refresh();
         this._apply();
-        this.chart.actor.queue_repaint();
+        this.chart.update();
         this.actor.tooltip_text = String.prototype.format.apply(this.tip_txt, this.tip_vals);
         return true;
     },

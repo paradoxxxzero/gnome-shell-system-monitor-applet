@@ -99,24 +99,6 @@ Chart.prototype = {
     }
 };
 
-function TipBin() {
-    this._init.apply(this, arguments);
-}
-
-TipBin.prototype = {
-    _init: function(name, tooltipText) {
-        this.actor = new St.Bin({ style_class: 'sm-panel-button',
-                                  reactive: false,
-                                  can_focus: false,
-                                  x_fill: true,
-                                  y_fill: false,
-                                  track_hover: false });
-        this.actor._delegate = this;
-        this.actor.has_tooltip = true;
-        this.actor.tooltip_text = tooltipText;
-    }//The 'name' is for compatibility with SystemStatusButton
-};
-
 function update_color(schema, key) {
     this.from_string(Schema.get_string(key));
 }
@@ -137,7 +119,6 @@ function ElementBase() {
 }
 
 ElementBase.prototype = {
-    __proto__: TipBin.prototype,
     elt: '',
     color_name: [],
     text_items: [],
@@ -146,9 +127,14 @@ ElementBase.prototype = {
     tip_txt: '',
     tip_vals: [],
     _init: function() {
-        TipBin.prototype._init.call(this, '',
-                                    String.prototype.format.apply(this.tip_txt,
-                                                                  this.tip_vals));
+        this.actor = new St.Bin({ style_class: 'sm-panel-button',
+                                  reactive: false,
+                                  x_fill: true,
+                                  y_fill: false,
+                                  has_tooltip: true,
+                                  tooltip_text: String.prototype.format.apply(this.tip_txt,
+                                                                              this.tip_vals) });
+        this.actor._delegate = this;
         this.colors = [];
         for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
@@ -207,9 +193,8 @@ ElementBase.prototype = {
         this.text_box = new St.BoxLayout();
 
         this.box.add_actor(this.text_box);
-        for (let item in this.text_items) {
+        for (let item in this.text_items)
             this.text_box.add_actor(this.text_items[item]);
-        }
         this.box.add_actor(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
@@ -289,7 +274,6 @@ Cpu.prototype = {
             this.tip_vals[i] = Math.round(this.vals[i] * 100);
     }
 };
-Cpu.instance = new Cpu();
 
 
 function Mem() {
@@ -352,7 +336,6 @@ Mem.prototype = {
         this.menu_items[3].text = this.mem_total.toString();
     }
 };
-Mem.instance = new Mem();
 
 
 function Swap() {
@@ -407,7 +390,6 @@ Swap.prototype = {
         this.menu_items[3].text = this.swap_total.toString();
     }
 };
-Swap.instance = new Swap();
 
 
 function Net() {
@@ -469,7 +451,6 @@ Net.prototype = {
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     }
 };
-Net.instance = new Net();
 
 
 function Disk() {
@@ -528,7 +509,6 @@ Disk.prototype = {
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     }
 };
-Disk.instance = new Disk();
 
 
 function Pie() {
@@ -597,7 +577,6 @@ Icon.prototype = {
                       }));
     }
 };
-Icon.instance = new Icon();
 
 
 function main() {
@@ -606,11 +585,11 @@ function main() {
         panel = Main.panel._centerBox;
     Schema.connect('changed::background', Lang.bind(Background, update_color));
     let elts = {
-        cpu: Cpu.instance,
-        memory: Mem.instance,
-        swap: Swap.instance,
-        net: Net.instance,
-        disk: Disk.instance
+        cpu: new Cpu(),
+        memory: new Mem(),
+        swap: new Swap(),
+        net: new Net(),
+        disk: new Disk()
     };
     //Debug
     Main.__sm = {};
@@ -620,8 +599,8 @@ function main() {
     panel.child_set(tray.actor, { y_fill : true } );
     let box = new St.BoxLayout();
     tray.actor.add_actor(box);
-    Main.__sm.icon = Icon.instance;
-    box.add_actor(Icon.instance.actor);
+    Main.__sm.icon = new Icon();
+    box.add_actor(Main.__sm.icon.actor);
     for (let elt in elts) {
         box.add_actor(elts[elt].actor);
         tray.menu.addMenuItem(elts[elt].menu_item);

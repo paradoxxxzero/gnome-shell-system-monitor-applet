@@ -52,9 +52,8 @@ Chart.prototype = {
         this.actor.set_height(this.height=height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.data = [];
-        for (let i = 0;i < this.parent.colors.length;i++) {
+        for (let i = 0;i < this.parent.colors.length;i++)
             this.data[i] = [];
-        }
     },
     update: function() {
         let data_a = this.parent.vals;
@@ -79,9 +78,8 @@ Chart.prototype = {
         cr.fill();
         for (let i = this.parent.colors.length - 1;i >= 0;i--) {
             cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1;j >= 0;j--) {
+            for (let j = this.data[i].length - 1;j >= 0;j--)
                 cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
-            }
             cr.lineTo(width - (this.data[i].length - 1), height);
             cr.closePath();
             Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
@@ -163,8 +161,7 @@ ElementBase.prototype = {
             Lang.bind(this,
                       function(schema, key) {
                           this.actor.visible = Schema.get_boolean(key);
-                      })
-        );
+                      }));
 
         this.interval = l_limit(Schema.get_int(this.elt + "-refresh-time"));
         this.timeout = Mainloop.timeout_add(this.interval,
@@ -177,12 +174,9 @@ ElementBase.prototype = {
                           this.interval = l_limit(Schema.get_int(key));
                           this.timeout = Mainloop.timeout_add(this.interval,
                                                               Lang.bind(this, this.update));
-                      })
-        );
-        Schema.connect(
-            'changed::' + this.elt + '-graph-width',
-            Lang.bind(this.chart, this.chart.resize)
-        );
+                      }));
+        Schema.connect('changed::' + this.elt + '-graph-width',
+                       Lang.bind(this.chart, this.chart.resize));
 
         this.label = new St.Label({ text: this.elt == "memory" ? "mem" : _(this.elt),
                                     style_class: "sm-status-label"});
@@ -247,9 +241,8 @@ Cpu.prototype = {
         let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
         let accum = [];
         let total_t = 0;
-        for (let i = 1;i <= 5;i++) {
+        for (let i = 1;i <= 5;i++)
             accum[i - 1] = parseInt(cpu_params[i]);
-        }
         for (let i = 1;i < cpu_params.length;i++) {
             let tmp = parseInt(cpu_params[i]);
             tmp > 0 && (total_t += tmp);
@@ -324,7 +317,7 @@ Mem.prototype = {
     },
     _apply: function() {
         if (this.mem_total == 0) {
-            this.vals = this.tip_vals = [0, 0, 0];
+            this.vals = this.tip_vals = [0,0,0];
         } else {
             for (let i = 0;i < 3;i++) {
                 this.vals[i] = this.mem[i] / this.mem_total;
@@ -401,19 +394,23 @@ Net.prototype = {
     elt: 'net',
     color_name: ['down', 'up'],
     text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                               icon_size: 2 * icon_size / 3, icon_name:'go-down'}),
+                               icon_size: 2 * icon_size / 3,
+                               icon_name:'go-down'}),
                  new St.Label({ style_class: "sm-status-value"}),
                  new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
                  new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                               icon_size: 2 * icon_size / 3, icon_name:'go-up'}),
+                               icon_size: 2 * icon_size / 3,
+                               icon_name:'go-up'}),
                  new St.Label({ style_class: "sm-status-value"}),
                  new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})],
     menu_items: [new St.Label({ style_class: "sm-value"}),
                  new St.Label({ text:'k', style_class: "sm-label"}),
-                 new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 16, icon_name:'go-down'}),
                  new St.Label({ style_class: "sm-value"}),
                  new St.Label({ text:'k', style_class: "sm-label"}),
-                 new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'})],
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 16, icon_name:'go-up'})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
@@ -437,12 +434,11 @@ Net.prototype = {
         }
         time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
-        if (delta > 0) {
+        if (delta > 0)
             for (let i = 0;i < 2;i++) {
                 this.usage[i] = Math.round((accum[i] - this.last[i]) / delta);
                 this.last[i] = accum[i];
             }
-        }
         this.last_time = time;
     },
     _apply: function() {
@@ -494,12 +490,11 @@ Disk.prototype = {
         }
         time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
-        if (delta > 0) {
+        if (delta > 0)
             for (let i = 0;i < 2;i++) {
                 this.usage[i] = (accum[i] - this.last[i]) / delta;
                 this.last[i] = accum[i];
             }
-        }
         this.last_time = time;
     },
     _apply: function() {
@@ -567,7 +562,6 @@ Icon.prototype = {
                                    style_class: 'system-status-icon',
                                    has_tooltip: true,
                                    tooltip_text: _('System monitor')});
-
         this.actor.visible = Schema.get_boolean("icon-display");
         Schema.connect(
             'changed::icon-display',

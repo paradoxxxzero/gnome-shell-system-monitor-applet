@@ -47,4 +47,4 @@ done
 
 mkdir -p "${prefix}/${usr_dir}/share/glib-2.0/schemas"
 cp -v org.gnome.shell.extensions.system-monitor.gschema.xml "${prefix}/${usr_dir}/share/glib-2.0/schemas"
-[[ -z $nopost ]] && post "${prefix}/${usr_dir}/share/glib-2.0/schemas"
+[[ -z $nopost ]] && post "${prefix}/${usr_dir}/share/glib-2.0/schemas" || true

@@ -96,7 +96,7 @@ Chart.prototype = {
         this.actor.set_width(this.width);
         if (this.width < this.data[0].length)
             for (let i = 0;i < this.parent.colors.length;i++)
-                this.data[i] = [];
+                this.data[i] = this.data[i].slice(-this.width);
     }
 };
 

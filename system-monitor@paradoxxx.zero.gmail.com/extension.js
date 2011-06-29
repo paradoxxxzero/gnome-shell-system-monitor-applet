@@ -583,7 +583,7 @@ function main() {
     Schema.connect('changed::background', Lang.bind(Background, update_color));
     //Debug
     Main.__sm = {
-        tray: new PanelMenu.SystemStatusButton(''),
+        tray: new PanelMenu.Button(0.5),
         icon: new Icon(),
         elts: {
             cpu: new Cpu(),

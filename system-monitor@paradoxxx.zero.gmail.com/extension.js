@@ -594,6 +594,8 @@ function main() {
         }
     };
     let tray = Main.__sm.tray;
+    tray.actor.remove_style_class_name('panel-button');
+    tray.actor.add_style_class_name('sm-panel-button');
     panel.insert_actor(tray.actor, 1);
     panel.child_set(tray.actor, { y_fill : true } );
     let box = new St.BoxLayout();

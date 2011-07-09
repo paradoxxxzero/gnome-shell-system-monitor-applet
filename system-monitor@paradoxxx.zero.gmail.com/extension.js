@@ -430,7 +430,7 @@ Net.prototype = {
         for(let i = 3; i < net_lines.length - 1 ; i++) {
             let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
             let ifc = net_params[1];
-            if(ifc.indexOf("eth") >= 0 || ifc.indexOf("wlan") >= 0) {
+            if(ifc.indexOf("br") < 0 && ifc.indexOf("lo") < 0) {
                 accum[0] += parseInt(net_params[2]);
                 accum[1] += parseInt(net_params[10]);
             }

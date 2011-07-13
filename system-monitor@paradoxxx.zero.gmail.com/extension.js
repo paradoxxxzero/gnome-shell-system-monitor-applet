@@ -742,6 +742,9 @@ Icon.instance = new Icon();
 function main() {
     let panel = Main.panel._rightBox;
     if(Schema.get_boolean("center-display")) {
+        let dateMenu = Main.panel._dateMenu;
+        Main.panel._centerBox.remove_actor(dateMenu.actor);
+        Main.panel._rightBox.insert_actor(dateMenu.actor, 0);
         panel = Main.panel._centerBox;
     }
     let elts = {
@@ -754,7 +757,7 @@ function main() {
     //Debug
     Main.__sm = {};
     for (let elt in elts) {
-        panel.insert_actor(elts[elt].actor, 1);
+        panel.insert_actor(elts[elt].actor, 0);
         panel.child_set(elts[elt].actor, { y_fill : true } );
         Main.panel._menus.addMenu(elts[elt].menu);
         elts[elt].actor.remove_style_class_name("panel-button");
@@ -762,7 +765,7 @@ function main() {
         Main.__sm[elt] = elts[elt];
     }
     let icon = Icon.instance;
-    panel.insert_actor(icon.actor, 1);
+    panel.insert_actor(icon.actor, 0);
     panel.child_set(icon.actor);
     Main.panel._menus.addMenu(icon.menu);
 }

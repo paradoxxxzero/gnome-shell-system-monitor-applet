@@ -744,7 +744,7 @@ function main() {
     if(Schema.get_boolean("center-display")) {
         let dateMenu = Main.panel._dateMenu;
         Main.panel._centerBox.remove_actor(dateMenu.actor);
-        Main.panel._rightBox.insert_actor(dateMenu.actor, 0);
+        Main.panel._rightBox.insert_actor(dateMenu.actor, -1);
         panel = Main.panel._centerBox;
     }
     let elts = {

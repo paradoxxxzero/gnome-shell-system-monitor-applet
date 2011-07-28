@@ -374,14 +374,10 @@ Mem.prototype = {
         }
     },
     list: function() {
-        let mem = [];
-        for (let i = 0;i < this.mem.length;i++) {
-            mem[i] = this.mem[i] / this.mem_total;
-        }
-        return mem;
+        return this.mem;
     },
     total: function() {
-        return Math.round(this.mem_total / 1024);
+        return this.mem_total;
     }
 };
 Mem.instance = new Mem();

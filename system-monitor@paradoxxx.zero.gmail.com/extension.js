@@ -427,10 +427,10 @@ Swap.prototype = {
         }
     },
     list: function() {
-        return [this.swap / this.swap_total];
+        return [this.swap];
     },
     total: function() {
-        return Math.round(this.swap_total / 1024);
+        return this.swap_total;
     }
 };
 Swap.instance = new Swap();

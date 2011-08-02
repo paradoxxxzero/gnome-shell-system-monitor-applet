@@ -115,27 +115,104 @@ function change_style() {
     this.chart.actor.visible = style == 'graph' || style == 'both';
 }
 
+function TipBox() {
+    this._init.apply(this, arguments);
+}
+
+TipBox.prototype = {
+    _init: function() {
+        this.actor = new St.BoxLayout({ reactive: true });
+        this.actor._delegate = this;
+        this.tipbox = new St.BoxLayout({ style_class: 'tooltip-box',
+                                         vertical: true });
+        Main.chrome.addActor(this.tipbox, { visibleInOverview: true,
+                                            affectsStruts: false });
+        this.tipbox.hide();
+        this.in_to = this.out_to = 0;
+        this.actor.connect('enter-event', Lang.bind(this, this.on_enter));
+        this.actor.connect('leave-event', Lang.bind(this, this.on_leave));
+    },
+    show_tip: function() {
+        this.shift_tip();
+        this.layout_tip();
+        this.tipbox.show();
+        this.tipbox.raise_top();
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+    },
+    hide_tip: function() {
+        this.tipbox.hide();
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+    },
+    layout_tip: function() {},
+    shift_tip: function() {
+        let node = this.actor.get_theme_node();
+        let contentbox = node.get_content_box(this.actor.get_allocation_box());
+        let allocation = Shell.util_get_transformed_allocation(this.actor);
+
+        // probably need to change for 3.1/3.2
+        let primary = global.get_primary_monitor();
+        let [x, y] = [allocation.x1 + contentbox.x1,
+                      allocation.y1 + contentbox.y1];
+        let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
+                        allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
+        let [xm, ym] = [allocation.x1 + contentbox.x2,
+                        allocation.y1 + contentbox.y2];
+        let [width, height] = this.actor.get_size();
+        let tipx = Math.floor(Math.min(cx - width / 2,
+                                       primary.x + primary.width - width));
+        let tipy = Math.floor(ym);
+        this.tipbox.set_position(tipx, tipy);
+    },
+    on_enter: function() {
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
+        if (!this.in_to)
+            this.in_to = Mainloop.timeout_add(500, Lang.bind(this,
+                                                        this.show_tip));
+    },
+    on_leave: function() {
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+        if (!this.out_to)
+            this.out_to = Mainloop.timeout_add(500, Lang.bind(this,
+                                                              this.hide_tip));
+    }
+}
+
 function ElementBase() {
     throw new TypeError('Trying to instantiate abstrace class ElementBase');
 }
 
 ElementBase.prototype = {
+    __proto__: TipBox.prototype,
+
     elt: '',
     color_name: [],
     text_items: [],
     menu_items: [],
-    vals: [],
-    tip_txt: '',
-    tip_vals: [],
     _init: function() {
-        this.actor = new St.Bin({ style_class: 'sm-panel-button',
-                                  reactive: false,
-                                  x_fill: true,
-                                  y_fill: false,
-                                  has_tooltip: true,
-                                  tooltip_text: String.prototype.format.apply(this.tip_txt,
-                                                                              this.tip_vals) });
-        this.actor._delegate = this;
+        TipBox.prototype._init.apply(this, arguments);
+
+        this.vals = [];
+        this.tip_names = [];
+        this.tip_labels = [];
+        this.tip_units = [];
+        this.tip_vals = [];
+
         this.colors = [];
         for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
@@ -149,6 +226,7 @@ ElementBase.prototype = {
                                      }));
             this.colors.push(clutterColor);
         }
+
         this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), icon_size, this);
         Schema.connect('changed::background',
                        Lang.bind(this,
@@ -156,8 +234,6 @@ ElementBase.prototype = {
                                      this.chart.actor.queue_repaint();
                                  }));
 
-        this.box = new St.BoxLayout();
-        this.actor.set_child(this.box);
         this.actor.visible = Schema.get_boolean(this.elt + "-display");
         Schema.connect(
             'changed::' + this.elt + '-display',
@@ -186,31 +262,49 @@ ElementBase.prototype = {
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
-        this.box.add_actor(this.label);
+        this.actor.add_actor(this.label);
         this.text_box = new St.BoxLayout();
 
-        this.box.add_actor(this.text_box);
+        this.actor.add_actor(this.text_box);
         for (let item in this.text_items)
             this.text_box.add_actor(this.text_items[item]);
-        this.box.add_actor(this.chart.actor);
+        this.actor.add_actor(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
         for (let item in this.menu_items)
             this.menu_item.addActor(this.menu_items[item]);
     },
     tip_format: function(unit) {
-        typeof(unit) == 'undefined' && (unit = '%%');
+        typeof(unit) == 'undefined' && (unit = '%');
         for (let i = 0;i < this.color_name.length;i++) {
-            i == 0 || (this.tip_txt += '\n');
-            this.tip_txt +=_(this.color_name[i] + '\t') + '%d\t' + unit;
+            let tipline = new St.BoxLayout();
+            this.tipbox.add_actor(tipline);
+            this.tip_names[i] = new St.Label({ text: _(this.color_name[i]) });
+            tipline.add_actor(this.tip_names[i]);
+            this.tip_labels[i] = new St.Label();
+            tipline.add_actor(this.tip_labels[i]);
+            this.tip_units[i] = new St.Label({ text: unit });
+            tipline.add_actor(this.tip_units[i]);
             this.tip_vals[i] = 0;
+        }
+    },
+    layout_tip: function() {
+        let columns = [this.tip_names, this.tip_labels, this.tip_units];
+        for (let i in columns) {
+            let widths = [];
+            for (let j in columns[i])
+                widths.push(columns[i][j].get_preferred_width(-1)[1]);
+            let width = Math.max.apply(Math, widths);
+            for (let j in columns[i])
+                columns[i][j].set_width(width);
         }
     },
     update: function() {
         this.refresh();
         this._apply();
         this.chart.update();
-        this.actor.tooltip_text = String.prototype.format.apply(this.tip_txt, this.tip_vals);
+        for (let i = 0;i < this.tip_vals.length;i++)
+            this.tip_labels[i].text = this.tip_vals[i].toString();
         return true;
     },
 };
@@ -235,9 +329,9 @@ Cpu.prototype = {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        this.tip_format();
         this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
         ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
     },
     refresh: function() {
@@ -289,9 +383,9 @@ Mem.prototype = {
                  new St.Label({ style_class: "sm-void"}),
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
-        this.tip_format();
         this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
     },
     refresh: function() {
@@ -351,9 +445,9 @@ Swap.prototype = {
                  new St.Label({ style_class: "sm-void"}),
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
-        this.tip_format();
         this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
     },
     refresh: function() {
@@ -418,9 +512,9 @@ Net.prototype = {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        this.tip_format('kB/s');
         this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         ElementBase.prototype._init.call(this);
+        this.tip_format('kB/s');
         this.update();
     },
     refresh: function() {
@@ -476,9 +570,9 @@ Disk.prototype = {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        this.tip_format();
         this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
     },
     refresh: function() {

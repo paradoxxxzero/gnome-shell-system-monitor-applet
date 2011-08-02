@@ -704,7 +704,8 @@ function main() {
 
     let item = new PopupMenu.PopupBaseMenuItem({reactive: false});
     item.addActor(Main.__sm.pie.actor, {span: -1, expand: true});
-    tray.menu.addMenuItem(item);
+    // Waiting for disk stats
+    // tray.menu.addMenuItem(item);
     let menu_timeout;
     tray.menu.connect(
         'open-state-changed',

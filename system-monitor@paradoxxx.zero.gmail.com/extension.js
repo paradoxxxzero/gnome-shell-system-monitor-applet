@@ -604,7 +604,7 @@ Disk.prototype = {
 };
 
 
-/*function Pie() {
+function Pie() {
     this._init.apply(this, arguments);
 }
 
@@ -632,21 +632,17 @@ Pie.prototype = {
             return new_angle;
         }
         cr.setLineWidth(10);
-        let things = [Cpu, Mem, Swap];
-        for (let thing in things) {
-            r -= 15;
-            let elt = things[thing].instance;
-            let angle = -pi / 2;
-            for (let i = 0 ; i < elt.colors.length ; i++) {
-                Clutter.cairo_set_source_color(cr, elt.colors[i]);
-                // Abs is for float errors
-                angle = arc(r, Math.abs(elt.list()[i]), elt.total(), angle);
-                cr.stroke();
-            }
-        }
+        // r -= 15;
+        let angle = -pi / 2;
+        let clutterColor = new Clutter.Color();
+        clutterColor.from_string("#222222");
+        Clutter.cairo_set_source_color(cr, clutterColor);
+
+        angle = arc(r, 90, 100, angle);
+        cr.stroke();
     }
 };
-Pie.instance = new Pie(200, 200);*/
+
 
 
 function Icon() {
@@ -684,6 +680,7 @@ function main() {
     Main.__sm = {
         tray: new PanelMenu.Button(0.5),
         icon: new Icon(),
+        pie: new Pie(200, 200),
         elts: {
             cpu: new Cpu(),
             memory: new Mem(),
@@ -706,7 +703,29 @@ function main() {
     }
     tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-    let item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+    let item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+    item.addActor(Main.__sm.pie.actor, {span: -1, expand: true});
+    // Waiting for disk stats
+    // tray.menu.addMenuItem(item);
+    let menu_timeout;
+    tray.menu.connect(
+        'open-state-changed',
+        function (menu, isOpen) {
+            if(isOpen) {
+                Main.__sm.pie.actor.queue_repaint();
+                menu_timeout = Mainloop.timeout_add_seconds(
+                    1,
+                    function () {
+                        Main.__sm.pie.actor.queue_repaint();
+                        return true;
+                    });
+            } else {
+                Mainloop.source_remove(menu_timeout);
+            }
+        }
+    );
+
+    item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
         Util.spawn(["gnome-system-monitor"]);
     });
@@ -724,26 +743,3 @@ function main() {
     global.log('system-monitor-applet: use ' + (finish - start));
     log('system-monitor-applet: use ' + (finish - start));
 }
-
-/*item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-item.addActor(Pie.instance.actor, {span: -1, expand: true});
-this.menu.addMenuItem(item);
-this.menu.connect(
-    'open-state-changed',
-    Lang.bind(this,
-              function (menu, isOpen) {
-                  if(isOpen) {
-                      this.update();
-                      Pie.instance.actor.queue_repaint();
-                      this.menu_timeout = Mainloop.timeout_add_seconds(
-                          1,
-                          Lang.bind(this, function () {
-                              this.update();
-                              Pie.instance.actor.queue_repaint();
-                              return true;
-                          }));
-                  } else {
-                      Mainloop.source_remove(this.menu_timeout);
-                  }
-              })
-);*/

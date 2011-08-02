@@ -123,7 +123,7 @@ TipBox.prototype = {
     _init: function() {
         this.actor = new St.BoxLayout({ reactive: true });
         this.actor._delegate = this;
-        this.tipbox = new St.BoxLayout({ style_class: 'tooltip-box',
+        this.tipbox = new St.BoxLayout({ style_class: 'sm-tooltip-box',
                                          vertical: true });
         Main.chrome.addActor(this.tipbox, { visibleInOverview: true,
                                             affectsStruts: false });
@@ -672,8 +672,12 @@ Icon.prototype = {
 
 function main() {
     let panel = Main.panel._rightBox;
-    if(Schema.get_boolean("center-display"))
+    if (Schema.get_boolean("center-display")) {
+        let dateMenu = Main.panel._dateMenu;
+        Main.panel._centerBox.remove_actor(dateMenu.actor);
+        Main.panel._rightBox.insert_actor(dateMenu.actor, 0);
         panel = Main.panel._centerBox;
+    }
     Schema.connect('changed::background', Lang.bind(Background, update_color));
     //Debug
     Main.__sm = {

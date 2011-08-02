@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-06 10:56+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Michael Pusterhofer <pusterhofer@student.tugraz.at>\n"
+"PO-Revision-Date: 2011-08-01 03:33+0200\n"
+"Last-Translator: Guillaume Ayoub <guillaume.ayoub@kozea.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -18,51 +18,51 @@ msgstr ""
 
 #: system-monitor-applet-config.py:128
 msgid "Display"
-msgstr "Anzeigen"
+msgstr "Affichage"
 
 #: system-monitor-applet-config.py:133
 msgid "Refresh Time"
-msgstr "Wiederholfrequenz"
+msgstr "Rafraîchissement"
 
 #: system-monitor-applet-config.py:139
 msgid "Graph Width"
-msgstr "Diagrammbreite"
+msgstr "Largeur du graphe"
 
 #: system-monitor-applet-config.py:145
 msgid "Show Text"
-msgstr "Zeige Text"
+msgstr "Montrer le texte"
 
 #: system-monitor-applet-config.py:150
 msgid "Display Style"
-msgstr "Anzeigestil"
+msgstr "Type d’affichage"
 
 #: system-monitor-applet-config.py:169
 msgid "System Monitor Applet Configurator"
-msgstr "System Monitor Applet Konfigurator"
+msgstr "Configuration de l’applet moniteur système"
 
 #: system-monitor-applet-config.py:186
 msgid "Display Icon"
-msgstr "Zeige Icon"
+msgstr "Afficher l’icône"
 
 #: system-monitor-applet-config.py:192
 msgid "Display in the Middle"
-msgstr "Anzeige zentrieren"
+msgstr "Afficher au milieu"
 
 #: system-monitor-applet-config.py:198
 msgid "Background Color"
-msgstr "Hintergrundfarbe"
+msgstr "Couleur de fond"
 
 msgid "Cpu"
 msgstr "CPU"
 
 msgid "User"
-msgstr "Benutzer"
+msgstr "Utilisateur"
 
 msgid "System"
-msgstr "System"
+msgstr "Système"
 
 msgid "Other"
-msgstr "Andere"
+msgstr "Autre"
 
 msgid "Nice"
 msgstr "Nice"
@@ -71,109 +71,67 @@ msgid "Iowait"
 msgstr "IOwait"
 
 msgid "Memory"
-msgstr "Speicher"
+msgstr "Mémoire"
 
 msgid "Program"
-msgstr "Programm"
+msgstr "Programme"
 
 msgid "Cache"
-msgstr "Zwischenspeicher"
+msgstr "Cache"
 
 msgid "Buffer"
-msgstr "Pufferspeicher"
+msgstr "Tampon"
 
 msgid "Swap"
-msgstr "Auslagerungsdateien"
+msgstr "Swap"
 
 msgid "Used"
-msgstr "Verwendet"
+msgstr "Utilisé"
 
 msgid "Net"
-msgstr "Netzwerk"
+msgstr "Réseau"
 
 msgid "Up"
-msgstr "Hinauf"
+msgstr "Montant"
 
 msgid "Down"
-msgstr "Herunter"
+msgstr "Descendant"
 
 msgid "Disk"
-msgstr "Festplatte"
+msgstr "Disque"
 
 msgid "Write"
-msgstr "Schreiben"
+msgstr "Écriture"
 
 msgid "Read"
-msgstr "Lesen"
+msgstr "Lecture"
 
 msgid "graph"
-msgstr "Diagramm"
+msgstr "Graphe"
 
 msgid "digit"
-msgstr "Zahl"
+msgstr "Chiffre"
 
 msgid "both"
-msgstr "Beides"
+msgstr "Les deux"
 
 msgid "cpu"
 msgstr "CPU"
 
 msgid "mem"
-msgstr "Speicher"
+msgstr "Mém."
 
 msgid "swap"
-msgstr "Zwischenspeicher"
+msgstr "Swap"
 
 msgid "net"
-msgstr "Netzwerk"
+msgstr "Réseau"
 
 msgid "disk"
-msgstr "Festplatte"
+msgstr "Disque"
 
 msgid "Preferences..."
-msgstr "Einstellungen..."
+msgstr "Préférences…"
 
 msgid "System monitor"
-msgstr "System Monitor"
-
-msgid "System Monitor..."
-msgstr "System Monitor..."
-
-msgid "user\t"
-msgstr "benutzer\t"
-
-msgid "system\t"
-msgstr "system\t"
-
-msgid "other\t"
-msgstr "Andere\t"
-
-msgid "nice\t"
-msgstr "nice\t\t"
-
-msgid "iowait\t"
-msgstr "iowait\t"
-
-msgid "program\t"
-msgstr "programm\t\t\t"
-
-msgid "cache\t"
-msgstr "zwischenspeicher\t"
-
-msgid "buffer\t"
-msgstr "pufferspeicher\t"
-
-msgid "used\t"
-msgstr "verwendet\t"
-
-msgid "up\t"
-msgstr "hinauf\t"
-
-msgid "down\t"
-msgstr "herunter\t"
-
-msgid "write\t"
-msgstr "schreiben\t"
-
-msgid "read\t"
-msgstr "lesen\t\t"
+msgstr "Moniteur système"

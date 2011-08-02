@@ -167,7 +167,7 @@ TipBox.prototype = {
                         allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
         let [xm, ym] = [allocation.x1 + contentbox.x2,
                         allocation.y1 + contentbox.y2];
-        let [width, height] = this.actor.get_size();
+        let [width, height] = this.tipbox.get_size();
         let tipx = Math.floor(Math.min(cx - width / 2,
                                        primary.x + primary.width - width));
         let tipy = Math.floor(ym);

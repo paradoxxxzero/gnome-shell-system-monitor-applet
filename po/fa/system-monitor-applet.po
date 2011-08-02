@@ -139,41 +139,41 @@ msgstr "پایشگر سیستم..."
 msgid "System monitor"
 msgstr "پایشگر سیستم"
 
-msgid "user\t"
-msgstr "کاربر\t"
+msgid "user"
+msgstr "کاربر"
 
-msgid "system\t"
-msgstr "سیستم\t"
+msgid "system"
+msgstr "سیستم"
 
-msgid "other\t"
-msgstr "دیگر\t"
+msgid "other"
+msgstr "دیگر"
 
-msgid "nice\t"
-msgstr "نایس\t"
+msgid "nice"
+msgstr "نایس"
 
-msgid "iowait\t"
-msgstr "iowait\t"
+msgid "iowait"
+msgstr "iowait"
 
-msgid "program\t"
-msgstr "برنامه\t\t"
+msgid "program"
+msgstr "برنامه"
 
-msgid "cache\t"
-msgstr "حافظه‌نهان\t"
+msgid "cache"
+msgstr "حافظه‌نهان"
 
-msgid "buffer\t"
-msgstr "بافر\t\t\t"
+msgid "buffer"
+msgstr "بافر"
 
-msgid "used\t"
-msgstr "استفاده شده\t"
+msgid "used"
+msgstr "استفاده شده"
 
-msgid "up\t"
-msgstr "آپلود\t"
+msgid "up"
+msgstr "آپلود"
 
-msgid "down\t"
-msgstr "دانلود\t"
+msgid "down"
+msgstr "دانلود"
 
-msgid "write\t"
-msgstr "نوشتن\t"
+msgid "write"
+msgstr "نوشتن"
 
-msgid "read\t"
-msgstr "خواندن\t"
+msgid "read"
+msgstr "خواندن"

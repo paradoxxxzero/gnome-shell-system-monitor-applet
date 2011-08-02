@@ -137,41 +137,41 @@ msgstr "System Monitor..."
 msgid "System monitor"
 msgstr "System monitor"
 
-msgid "user\t"
-msgstr "Uživatel\t"
+msgid "user"
+msgstr "Uživatel"
 
-msgid "system\t"
-msgstr "Systém\t"
+msgid "system"
+msgstr "Systém"
 
-msgid "other\t"
-msgstr "Jiný\t\t"
+msgid "other"
+msgstr "Jiný"
 
-msgid "nice\t"
-msgstr "Dobrý\t"
+msgid "nice"
+msgstr "Dobrý"
 
-msgid "iowait\t"
-msgstr "nizký\t"
+msgid "iowait"
+msgstr "nizký"
 
-msgid "program\t"
-msgstr "program\t"
+msgid "program"
+msgstr "program"
 
-msgid "cache\t"
-msgstr "cache\t"
+msgid "cache"
+msgstr "cache"
 
-msgid "buffer\t"
-msgstr "buffer\t"
+msgid "buffer"
+msgstr "buffer"
 
-msgid "used\t"
-msgstr "Zabráno\t"
+msgid "used"
+msgstr "Zabráno"
 
-msgid "up\t"
-msgstr "Odchozí\t"
+msgid "up"
+msgstr "Odchozí"
 
-msgid "down\t"
-msgstr "Příchozí\t"
+msgid "down"
+msgstr "Příchozí"
 
-msgid "write\t"
-msgstr "Zápis\t"
+msgid "write"
+msgstr "Zápis"
 
-msgid "read\t"
-msgstr "Čtení\t"
+msgid "read"
+msgstr "Čtení"

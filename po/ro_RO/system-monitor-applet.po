@@ -133,3 +133,41 @@ msgstr "Preferințe..."
 msgid "System Monitor..."
 msgstr "Monitor Sistem..."
 
+msgid "user"
+msgstr "utilizator"
+
+msgid "system"
+msgstr "sistem"
+
+msgid "other"
+msgstr "altele"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "aplicații"
+
+msgid "cache"
+msgstr "cache"
+
+msgid "buffer"
+msgstr "buffer"
+
+msgid "used"
+msgstr "folosit"
+
+msgid "up"
+msgstr "incărcare"
+
+msgid "down"
+msgstr "descărcare"
+
+msgid "write"
+msgstr "scriere"
+
+msgid "read"
+msgstr "citire"

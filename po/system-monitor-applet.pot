@@ -137,41 +137,41 @@ msgstr ""
 msgid "System monitor"
 msgstr ""
 
-msgid "user\t"
-msgstr "user\t\t"
+msgid "user"
+msgstr ""
 
-msgid "system\t"
-msgstr "system\t"
+msgid "system"
+msgstr ""
 
-msgid "other\t"
-msgstr "other\t"
+msgid "other"
+msgstr ""
 
-msgid "nice\t"
-msgstr "nice\t\t"
+msgid "nice"
+msgstr ""
 
-msgid "iowait\t"
-msgstr "iowait\t"
+msgid "iowait"
+msgstr ""
 
-msgid "program\t"
-msgstr "program\t"
+msgid "program"
+msgstr ""
 
-msgid "cache\t"
-msgstr "cache\t"
+msgid "cache"
+msgstr ""
 
-msgid "buffer\t"
-msgstr "buffer\t"
+msgid "buffer"
+msgstr ""
 
-msgid "used\t"
-msgstr "used\t"
+msgid "used"
+msgstr ""
 
-msgid "up\t"
-msgstr "up\t"
+msgid "up"
+msgstr ""
 
-msgid "down\t"
-msgstr "down\t"
+msgid "down"
+msgstr ""
 
-msgid "write\t"
-msgstr "write\t"
+msgid "write"
+msgstr ""
 
-msgid "read\t"
-msgstr "read\t\t"
+msgid "read"
+msgstr ""

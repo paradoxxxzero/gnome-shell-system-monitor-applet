@@ -138,41 +138,41 @@ msgstr "系统监视器..."
 msgid "System monitor"
 msgstr "系统监视器"
 
-msgid "user\t"
-msgstr "用户\t\t"
+msgid "user"
+msgstr "用户"
 
-msgid "system\t"
-msgstr "系统\t\t"
+msgid "system"
+msgstr "系统"
 
-msgid "other\t"
-msgstr "其他\t\t"
+msgid "other"
+msgstr "其他"
 
-msgid "nice\t"
-msgstr "优先级\t"
+msgid "nice"
+msgstr "优先级"
 
-msgid "iowait\t"
-msgstr "IO等待\t"
+msgid "iowait"
+msgstr "IO等待"
 
-msgid "program\t"
-msgstr "程序\t"
+msgid "program"
+msgstr "程序"
 
-msgid "cache\t"
-msgstr "缓存\t"
+msgid "cache"
+msgstr "缓存"
 
-msgid "buffer\t"
-msgstr "缓冲\t"
+msgid "buffer"
+msgstr "缓冲"
 
-msgid "used\t"
-msgstr "已用\t"
+msgid "used"
+msgstr "已用"
 
-msgid "up\t"
-msgstr "上传\t"
+msgid "up"
+msgstr "上传"
 
-msgid "down\t"
-msgstr "下载\t"
+msgid "down"
+msgstr "下载"
 
-msgid "write\t"
-msgstr "写入\t"
+msgid "write"
+msgstr "写入"
 
-msgid "read\t"
-msgstr "读取\t"
+msgid "read"
+msgstr "读取"

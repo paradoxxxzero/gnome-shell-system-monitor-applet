@@ -133,6 +133,47 @@ msgstr "دیسک"
 msgid "Preferences..."
 msgstr "ترجیحات..."
 
-msgid "System Monitor"
+msgid "System Monitor..."
 msgstr "پایشگر سیستم..."
 
+msgid "System monitor"
+msgstr "پایشگر سیستم"
+
+msgid "user"
+msgstr "کاربر"
+
+msgid "system"
+msgstr "سیستم"
+
+msgid "other"
+msgstr "دیگر"
+
+msgid "nice"
+msgstr "نایس"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "برنامه"
+
+msgid "cache"
+msgstr "حافظه‌نهان"
+
+msgid "buffer"
+msgstr "بافر"
+
+msgid "used"
+msgstr "استفاده شده"
+
+msgid "up"
+msgstr "آپلود"
+
+msgid "down"
+msgstr "دانلود"
+
+msgid "write"
+msgstr "نوشتن"
+
+msgid "read"
+msgstr "خواندن"

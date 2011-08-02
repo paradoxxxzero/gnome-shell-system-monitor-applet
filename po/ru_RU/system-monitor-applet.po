@@ -141,3 +141,42 @@ msgstr "Настройка..."
 
 msgid "System monitor"
 msgstr "Системный монитор"
+
+msgid "user"
+msgstr "пользователь"
+
+msgid "system"
+msgstr "Система"
+
+msgid "other"
+msgstr "прочие"
+
+msgid "nice"
+msgstr "приоритет"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "процессы"
+
+msgid "cache"
+msgstr "Кэш"
+
+msgid "buffer"
+msgstr "Буфер записи"
+
+msgid "used"
+msgstr "Используется"
+
+msgid "up"
+msgstr "передача"
+
+msgid "down"
+msgstr "приём"
+
+msgid "write"
+msgstr "Запись"
+
+msgid "read"
+msgstr "Чтение"

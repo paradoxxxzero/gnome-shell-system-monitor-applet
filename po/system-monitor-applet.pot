@@ -133,3 +133,45 @@ msgstr ""
 
 msgid "System Monitor..."
 msgstr ""
+
+msgid "System monitor"
+msgstr ""
+
+msgid "user"
+msgstr ""
+
+msgid "system"
+msgstr ""
+
+msgid "other"
+msgstr ""
+
+msgid "nice"
+msgstr ""
+
+msgid "iowait"
+msgstr ""
+
+msgid "program"
+msgstr ""
+
+msgid "cache"
+msgstr ""
+
+msgid "buffer"
+msgstr ""
+
+msgid "used"
+msgstr ""
+
+msgid "up"
+msgstr ""
+
+msgid "down"
+msgstr ""
+
+msgid "write"
+msgstr ""
+
+msgid "read"
+msgstr ""

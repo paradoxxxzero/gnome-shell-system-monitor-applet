@@ -133,3 +133,44 @@ msgstr "Preferencias..."
 msgid "System Monitor..."
 msgstr "Monitor de sistema..."
 
+msgid "System monitor"
+msgstr "Monitor de sistema"
+
+msgid "user"
+msgstr "usuario"
+
+msgid "system"
+msgstr "sistema"
+
+msgid "other"
+msgstr "otro"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "programa"
+
+msgid "cache"
+msgstr "cache"
+
+msgid "buffer"
+msgstr "buffer"
+
+msgid "used"
+msgstr "usado"
+
+msgid "up"
+msgstr "arriba"
+
+msgid "down"
+msgstr "abajo"
+
+msgid "write"
+msgstr "escribir"
+
+msgid "read"
+msgstr "leer"

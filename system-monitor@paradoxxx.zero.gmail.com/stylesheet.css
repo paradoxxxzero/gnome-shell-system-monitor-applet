@@ -47,3 +47,12 @@
 .sm-panel-button {
     padding: 0 2px;
 }
+
+.sm-tooltip-box {
+    font-size: 10px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: rgba(10,10,10,0.7);
+    border-radius: 5px;
+    padding: 3px;
+}

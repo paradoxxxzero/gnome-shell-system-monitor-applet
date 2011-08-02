@@ -134,3 +134,44 @@ msgstr "Možnosti..."
 msgid "System Monitor..."
 msgstr "System Monitor..."
 
+msgid "System monitor"
+msgstr "System monitor"
+
+msgid "user"
+msgstr "Uživatel"
+
+msgid "system"
+msgstr "Systém"
+
+msgid "other"
+msgstr "Jiný"
+
+msgid "nice"
+msgstr "Dobrý"
+
+msgid "iowait"
+msgstr "nizký"
+
+msgid "program"
+msgstr "program"
+
+msgid "cache"
+msgstr "cache"
+
+msgid "buffer"
+msgstr "buffer"
+
+msgid "used"
+msgstr "Zabráno"
+
+msgid "up"
+msgstr "Odchozí"
+
+msgid "down"
+msgstr "Příchozí"
+
+msgid "write"
+msgstr "Zápis"
+
+msgid "read"
+msgstr "Čtení"

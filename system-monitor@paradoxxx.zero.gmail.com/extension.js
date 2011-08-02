@@ -35,29 +35,31 @@ const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
+let start = GLib.get_monotonic_time();
+global.log('system-monitor-applet: start @ ' + start);
+
 const Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+var Background = new Clutter.Color();
+Background.from_string(Schema.get_string('background'));
+var icon_size = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 
 function Chart() {
     this._init.apply(this, arguments);
 }
 
 Chart.prototype = {
-    _init: function() {
-        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: true});
-        this.width = arguments[0];
-        this.height = arguments[1];
-        this.parent = arguments[2];
-        this.actor.set_width(this.width);
-        this.actor.set_height(this.height);
+    _init: function(width, height, parent) {
+        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
+        this.parent = parent;
+        this.actor.set_width(this.width=width);
+        this.actor.set_height(this.height=height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.data = [];
-        for (let i = 0;i < this.parent.colors.length;i++) {
+        for (let i = 0;i < this.parent.colors.length;i++)
             this.data[i] = [];
-        }
     },
-    _draw: function() {
-        if (!this.actor.visible) return;
-        let data_a = this.parent.list();
+    update: function() {
+        let data_a = this.parent.vals;
         if (data_a.length != this.parent.colors.length) return;
         let accdata = [];
         for (let l = 0 ; l < data_a.length ; l++) {
@@ -66,202 +68,245 @@ Chart.prototype = {
             if (this.data[l].length > this.width)
                 this.data[l].shift();
         }
-
+        if (!this.actor.visible) return;
+        this.actor.queue_repaint();
+    },
+    _draw: function() {
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-        let max = Math.max.apply(this,this.data[this.data.length - 1]);
+        let max = Math.max.apply(this, this.data[this.data.length - 1]);
         max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
-        Clutter.cairo_set_source_color(cr, this.parent.background);
+        Clutter.cairo_set_source_color(cr, Background);
         cr.rectangle(0, 0, width, height);
         cr.fill();
-        for (let i = this.parent.colors.length - 1 ; i >= 0 ; i--) {
+        for (let i = this.parent.colors.length - 1;i >= 0;i--) {
             cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1 ; j >= 0 ; j--) {
+            for (let j = this.data[i].length - 1;j >= 0;j--)
                 cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
-            }
             cr.lineTo(width - (this.data[i].length - 1), height);
             cr.closePath();
             Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
             cr.fill();
         }
+    },
+    resize: function(schema, key) {
+        let old_width = this.width;
+        this.width = Schema.get_int(key);
+        if (old_width == this.width) return;
+        this.actor.set_width(this.width);
+        if (this.width < this.data[0].length)
+            for (let i = 0;i < this.parent.colors.length;i++)
+                this.data[i] = this.data[i].slice(-this.width);
     }
 };
 
-function ElementBase() {
+function update_color(schema, key) {
+    this.from_string(Schema.get_string(key));
+}
+function l_limit(t) {
+    return (t > 0) ? t : 1000;
+}
+function change_text() {
+    this.label.visible = Schema.get_boolean(this.elt + '-show-text');
+}
+function change_style() {
+    let style = Schema.get_string(this.elt + '-style');
+    this.text_box.visible = style == 'digit' || style == 'both';
+    this.chart.actor.visible = style == 'graph' || style == 'both';
+}
+
+function TipBox() {
     this._init.apply(this, arguments);
 }
 
-ElementBase.prototype = {
-    __proto__: PanelMenu.SystemStatusButton.prototype,
-    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
-    color_names: {
-        cpu: ['user', 'system', 'nice', 'iowait', 'other'],
-        memory: ['program', 'buffer', 'cache'],
-        swap: ['used'],
-        net: ['down', 'up'],
-        disk: ['read', 'write']
+TipBox.prototype = {
+    _init: function() {
+        this.actor = new St.BoxLayout({ reactive: true });
+        this.actor._delegate = this;
+        this.tipbox = new St.BoxLayout({ style_class: 'sm-tooltip-box',
+                                         vertical: true });
+        Main.chrome.addActor(this.tipbox, { visibleInOverview: true,
+                                            affectsStruts: false });
+        this.tipbox.hide();
+        this.in_to = this.out_to = 0;
+        this.actor.connect('enter-event', Lang.bind(this, this.on_enter));
+        this.actor.connect('leave-event', Lang.bind(this, this.on_leave));
     },
-    vals: {},
-    _init: function(elt) {
-        this.elt = elt;
-        PanelMenu.SystemStatusButton.prototype._init.call(this, '');
+    show_tip: function() {
+        this.shift_tip();
+        this.layout_tip();
+        this.tipbox.show();
+        this.tipbox.raise_top();
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+    },
+    hide_tip: function() {
+        this.tipbox.hide();
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+    },
+    layout_tip: function() {},
+    shift_tip: function() {
+        let node = this.actor.get_theme_node();
+        let contentbox = node.get_content_box(this.actor.get_allocation_box());
+        let allocation = Shell.util_get_transformed_allocation(this.actor);
+
+        // probably need to change for 3.1/3.2
+        let primary = global.get_primary_monitor();
+        let [x, y] = [allocation.x1 + contentbox.x1,
+                      allocation.y1 + contentbox.y1];
+        let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
+                        allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
+        let [xm, ym] = [allocation.x1 + contentbox.x2,
+                        allocation.y1 + contentbox.y2];
+        let [width, height] = this.tipbox.get_size();
+        let tipx = Math.floor(Math.min(cx - width / 2,
+                                       primary.x + primary.width - width));
+        let tipy = Math.floor(ym);
+        this.tipbox.set_position(tipx, tipy);
+    },
+    on_enter: function() {
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
+        if (!this.in_to)
+            this.in_to = Mainloop.timeout_add(500, Lang.bind(this,
+                                                        this.show_tip));
+    },
+    on_leave: function() {
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+        if (!this.out_to)
+            this.out_to = Mainloop.timeout_add(500, Lang.bind(this,
+                                                              this.hide_tip));
+    }
+}
+
+function ElementBase() {
+    throw new TypeError('Trying to instantiate abstrace class ElementBase');
+}
+
+ElementBase.prototype = {
+    __proto__: TipBox.prototype,
+
+    elt: '',
+    color_name: [],
+    text_items: [],
+    menu_items: [],
+    _init: function() {
+        TipBox.prototype._init.apply(this, arguments);
+
+        this.vals = [];
+        this.tip_names = [];
+        this.tip_labels = [];
+        this.tip_units = [];
+        this.tip_vals = [];
+
         this.colors = [];
-        this.background = new Clutter.Color();
-        this.background.from_string(Schema.get_string('background'));
-        for(let color in this.color_names[elt]) {
+        for(let color in this.color_name) {
             let clutterColor = new Clutter.Color();
-            clutterColor.from_string(Schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
+            let name = this.elt + '-' + this.color_name[color] + '-color';
+            clutterColor.from_string(Schema.get_string(name));
+            Schema.connect('changed::' + name, Lang.bind(clutterColor, update_color));
+            Schema.connect('changed::' + name,
+                           Lang.bind(this,
+                                     function() {
+                                         this.chart.actor.queue_repaint();
+                                     }));
             this.colors.push(clutterColor);
         }
 
-        let elt_color = function() {
-            this.colors = [];
-            this.background = new Clutter.Color();
-            this.background.from_string(Schema.get_string('background'));
-            for(let color in this.color_names[elt]) {
-                let clutterColor = new Clutter.Color();
-                clutterColor.from_string(Schema.get_string(elt + '-' + this.color_names[elt][color] + '-color'));
-                this.colors.push(clutterColor);
-            }
-            this.chart.actor.queue_repaint();
-            return true;
-        };
-        this.chart = new Chart(Schema.get_int(elt + '-graph-width'), this.icon_size, this);
-        Schema.connect('changed::background', Lang.bind(this, elt_color));
-        for(let col in this.color_names[elt]) {
-            Schema.connect('changed::' + elt + '-' + this.color_names[elt][col] + '-color', Lang.bind(this, elt_color));
-        }
+        this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), icon_size, this);
+        Schema.connect('changed::background',
+                       Lang.bind(this,
+                                 function() {
+                                     this.chart.actor.queue_repaint();
+                                 }));
 
-        this.box = new St.BoxLayout();
-        this.actor.set_child(this.box);
-        this.actor.visible = Schema.get_boolean(elt + "-display");
+        this.actor.visible = Schema.get_boolean(this.elt + "-display");
         Schema.connect(
-            'changed::' + elt + '-display',
+            'changed::' + this.elt + '-display',
             Lang.bind(this,
-                      function () {
-                          this.actor.visible = Schema.get_boolean(this.elt + "-display");
-                      })
-        );
+                      function(schema, key) {
+                          this.actor.visible = Schema.get_boolean(key);
+                      }));
 
-        let l_limit = function(a) {
-            return (a > 0) ? a : 1000;
-        };
-
-        this.interval = l_limit(Schema.get_int(elt + "-refresh-time"));
-        this.timeout = Mainloop.timeout_add(
-            this.interval,
-            Lang.bind(this, function () {
-                          if(this.actor.visible) {
-                              this.update();
-                          }
-                          return true;
-                      })
-        );
+        this.interval = l_limit(Schema.get_int(this.elt + "-refresh-time"));
+        this.timeout = Mainloop.timeout_add(this.interval,
+                                            Lang.bind(this, this.update));
         Schema.connect(
-            'changed::' + elt + '-refresh-time',
+            'changed::' + this.elt + '-refresh-time',
             Lang.bind(this,
-                      function () {
+                      function(schema, key) {
                           Mainloop.source_remove(this.timeout);
-                          this.interval = Math.abs(Schema.get_int(elt + "-refresh-time"));
-                          this.timeout = Mainloop.timeout_add(
-                              this.interval,
-                              Lang.bind(this, function () {
-                                            if(this.actor.visible) {
-                                                this.update();
-                                            }
-                                            return true;
-                                        })
-                          );
-                      })
-        );
-        Schema.connect(
-            'changed::' + elt + '-graph-width',
-            Lang.bind(this,
-                      function () {
-                          this.chart.width = Schema.get_int(elt + "-graph-width");
-                          this.chart.actor.set_width(this.chart.width);
-                          this.chart.actor.queue_repaint();
-                      })
-        );
+                          this.interval = l_limit(Schema.get_int(key));
+                          this.timeout = Mainloop.timeout_add(this.interval,
+                                                              Lang.bind(this, this.update));
+                      }));
+        Schema.connect('changed::' + this.elt + '-graph-width',
+                       Lang.bind(this.chart, this.chart.resize));
 
-        this.label = new St.Label({ text: elt == "memory" ? "mem" : _(elt), style_class: "sm-status-label"});
-        let change_text = function() {
-            this.label.visible = Schema.get_boolean(elt + '-show-text');
-        };
-        Lang.bind(this, change_text)();
-        Schema.connect('changed::' + elt + '-show-text', Lang.bind(this, change_text));
+        this.label = new St.Label({ text: this.elt == "memory" ? "mem" : _(this.elt),
+                                    style_class: "sm-status-label"});
+        change_text.call(this);
+        Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
-        this.box.add_actor(this.label);
+        this.actor.add_actor(this.label);
         this.text_box = new St.BoxLayout();
 
-        this.box.add_actor(this.text_box);
-        this.box.add_actor(this.chart.actor);
-        let change_style = function() {
-            let style = Schema.get_string(elt + '-style');
-            this.text_box.visible = style == 'digit' || style == 'both';
-            this.chart.actor.visible = style == 'graph' || style == 'both';
-        };
-        Lang.bind(this, change_style)();
-        Schema.connect('changed::' + elt + '-style', Lang.bind(this, change_style));
-
-        // Menu
-        for(let col in this.color_names[elt]) {
-            let i = col;
-            let color = this.color_names[elt][i];
-            let item = new PopupMenu.PopupMenuItem(color, {reactive: false});
-            this["_" + color + "_bar"] = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
-            this["_" + color + "_bar"].set_width(120);
-            this["_" + color + "_bar"].set_height(20);
-            item.addActor(this["_" + color + "_bar"]);
-            this["_" + color] = new St.Label({ style_class: "sm-status-value"});
-            item.addActor(this["_" + color]);
-            item.addActor(new St.Label({ text: '%', style_class: "sm-label"}));
-            this.menu.addMenuItem(item);
-            this["_" + color + "_bar"].connect(
-                'repaint',
-                Lang.bind(this, function () {
-                              if(this.vals[color]) {
-                                  let cr = this["_" + color + "_bar"].get_context();
-                                  Clutter.cairo_set_source_color(cr, this.colors[i]);
-                                  cr.rectangle(0, 4, this.vals[color], 12);
-                                  cr.fill();
-                              }
-                          }));
-        }
-        this.menu.connect(
-            'open-state-changed',
-            Lang.bind(this,
-                      function (menu, isOpen) {
-                          if(isOpen) {
-                              this.update_menu(this.elt);
-                              this.menu_timeout = Mainloop.timeout_add_seconds(
-                                  1,
-                                  Lang.bind(this, function () {
-                                                this.update_menu(this.elt);
-                                                return true;
-                                            }));
-                          } else {
-                              Mainloop.source_remove(this.menu_timeout);
-                          }
-                      })
-        );
+        this.actor.add_actor(this.text_box);
+        for (let item in this.text_items)
+            this.text_box.add_actor(this.text_items[item]);
+        this.actor.add_actor(this.chart.actor);
+        change_style.call(this);
+        Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
+        for (let item in this.menu_items)
+            this.menu_item.addActor(this.menu_items[item]);
     },
-    update_menu: function (elt) {
-        let list = this.list();
-        let total = this.total();
-        if(total == 0) {
-            for(let i in list) {
-                total += list[i];
-            }
+    tip_format: function(unit) {
+        typeof(unit) == 'undefined' && (unit = '%');
+        for (let i = 0;i < this.color_name.length;i++) {
+            let tipline = new St.BoxLayout();
+            this.tipbox.add_actor(tipline);
+            this.tip_names[i] = new St.Label({ text: _(this.color_name[i]) });
+            tipline.add_actor(this.tip_names[i]);
+            this.tip_labels[i] = new St.Label();
+            tipline.add_actor(this.tip_labels[i]);
+            this.tip_units[i] = new St.Label({ text: unit });
+            tipline.add_actor(this.tip_units[i]);
+            this.tip_vals[i] = 0;
         }
-        for(let col in this.color_names[elt]) {
-            let color = this.color_names[elt][col];
-            let val = total == 0 ? 0 : Math.round((100 * list[col] / total));
-            this["_" + color].set_text(val.toString());
-            this.vals[color] = val;
-            this["_" + color + "_bar"].queue_repaint();
+    },
+    layout_tip: function() {
+        let columns = [this.tip_names, this.tip_labels, this.tip_units];
+        for (let i in columns) {
+            let widths = [];
+            for (let j in columns[i])
+                widths.push(columns[i][j].get_preferred_width(-1)[1]);
+            let width = Math.max.apply(Math, widths);
+            for (let j in columns[i])
+                columns[i][j].set_width(width);
         }
-    }
+    },
+    update: function() {
+        this.refresh();
+        this._apply();
+        this.chart.update();
+        for (let i = 0;i < this.tip_vals.length;i++)
+            this.tip_labels[i].text = this.tip_vals[i].toString();
+        return true;
+    },
 };
 
 
@@ -270,58 +315,55 @@ function Cpu() {
 }
 Cpu.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'cpu',
+    color_name: ['user', 'system', 'nice', 'iowait', 'other'],
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: '%', style_class: "sm-label"})],
     _init: function() {
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        ElementBase.prototype._init.call(this, "cpu");
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
-        let accum = [0,0,0,0,0];
+        let accum = [];
         let total_t = 0;
-        for (let i = 1;i <= 5;i++) {
+        for (let i = 1;i <= 5;i++)
             accum[i - 1] = parseInt(cpu_params[i]);
-        }
         for (let i = 1;i < cpu_params.length;i++) {
             let tmp = parseInt(cpu_params[i]);
-            if (tmp > 0) total_t += tmp;
+            tmp > 0 && (total_t += tmp);
         }
         let total = total_t - this.last_total;
         if (total > 0) {
-            for (let i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++)
                 this.usage[i] = (accum[i] - this.last[i]) / total;
-            }
-            for (let i = 0;i < 5;i++) {
+            for (let i = 0;i < 5;i++)
                 this.last[i] = accum[i];
-            }
             this.last_total = total_t;
         }
     },
-    percent: function() {
-        return Math.round((1 - this.usage[3]) * 100);
-    },
-    list: function() {
-        let free = 1;
-        for (let i = 0;i < this.usage.length;i++) {
-            free -= this.usage[i];
-        }
-        return [this.usage[0], this.usage[1], this.usage[2], this.usage[4], free];
-    },
-    total: function() {
-        return 1;
+    _apply: function() {
+        let percent = Math.round((1 - this.usage[3]) * 100);
+        this.text_items[0].text = this.menu_items[3].text = percent.toString();
+        let other = 1;
+        for (let i = 0;i < this.usage.length;i++)
+            other -= this.usage[i];
+        this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
+        for (let i = 0;i < 5;i++)
+            this.tip_vals[i] = Math.round(this.vals[i] * 100);
     }
 };
-Cpu.instance = new Cpu();
 
 
 function Mem() {
@@ -330,17 +372,21 @@ function Mem() {
 
 Mem.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'memory',
+    color_name: ['program', 'buffer', 'cache'],
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "/", style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
-        ElementBase.prototype._init.call(this, "memory");
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.mem = [0,0,0];
@@ -366,21 +412,20 @@ Mem.prototype = {
         }
         this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
     },
-    percent: function() {
+    _apply: function() {
         if (this.mem_total == 0) {
-            return 0;
+            this.vals = this.tip_vals = [0,0,0];
         } else {
-            return Math.round(this.mem[0] / this.mem_total * 100);
+            for (let i = 0;i < 3;i++) {
+                this.vals[i] = this.mem[i] / this.mem_total;
+                this.tip_vals[i] = Math.round(this.vals[i] * 100);
+            }
         }
-    },
-    list: function() {
-        return this.mem;
-    },
-    total: function() {
-        return this.mem_total;
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.mem[0].toString();
+        this.menu_items[3].text = this.mem_total.toString();
     }
 };
-Mem.instance = new Mem();
 
 
 function Swap() {
@@ -389,17 +434,21 @@ function Swap() {
 
 Swap.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'swap',
+    color_name: ['used'],
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "/", style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
-        ElementBase.prototype._init.call(this, "swap");
-        this.value = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.value);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.value.set_text(this.percent().toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         this.swap = 0;
@@ -419,21 +468,18 @@ Swap.prototype = {
         }
         this.swap = this.swap_total - swap_free;
     },
-    percent: function() {
+    _apply: function() {
         if (this.swap_total == 0) {
-            return 0;
+            this.vals = this.tip_vals = [0];
         } else {
-            return Math.round(this.swap / this.swap_total * 100);
+            this.vals[0] = this.swap / this.swap_total;
+            this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
-    },
-    list: function() {
-        return [this.swap];
-    },
-    total: function() {
-        return this.swap_total;
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.swap.toString();
+        this.menu_items[3].text = this.swap_total.toString();
     }
 };
-Swap.instance = new Swap();
 
 
 function Net() {
@@ -442,26 +488,34 @@ function Net() {
 
 Net.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'net',
+    color_name: ['down', 'up'],
+    text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 2 * icon_size / 3,
+                               icon_name:'go-down'}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 2 * icon_size / 3,
+                               icon_name:'go-up'}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'k', style_class: "sm-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 16, icon_name:'go-down'}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'k', style_class: "sm-label"}),
+                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                               icon_size: 16, icon_name:'go-up'})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        ElementBase.prototype._init.call(this, "net");
-        this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-down'}));
-        this.down = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.down);
-        this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
-        this.text_box.add_actor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 2 * this.icon_size / 3, icon_name:'go-up'}));
-        this.up = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.up);
-        this.text_box.add_actor(new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}));
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format('kB/s');
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        this.down.set_text(this.usage[0].toString());
-        this.up.set_text(this.usage[1].toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -477,22 +531,19 @@ Net.prototype = {
         }
         time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
-        if (delta > 0) {
+        if (delta > 0)
             for (let i = 0;i < 2;i++) {
                 this.usage[i] = Math.round((accum[i] - this.last[i]) / delta);
                 this.last[i] = accum[i];
             }
-        }
         this.last_time = time;
     },
-    list: function() {
-        return this.usage;
-    },
-    total: function() {
-        return 0;
+    _apply: function() {
+        this.tip_vals = this.vals = this.usage;
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     }
 };
-Net.instance = new Net();
 
 
 function Disk() {
@@ -501,27 +552,28 @@ function Disk() {
 
 Disk.prototype = {
     __proto__: ElementBase.prototype,
+    elt: 'disk',
+    color_name: ['read', 'write'],
+    text_items: [new St.Label({ text: 'R', style_class: "sm-status-label"}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"}),
+                 new St.Label({ text: 'W', style_class: "sm-status-label"}),
+                 new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: '%', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'%', style_class: "sm-label"}),
+                 new St.Label({ text:'R', style_class: "sm-label"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ text:'%', style_class: "sm-label"}),
+                 new St.Label({ text:'W', style_class: "sm-label"})],
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        ElementBase.prototype._init.call(this, "disk");
-        this.text_box.add_actor(new St.Label({ text: 'R', style_class: "sm-status-label"}));
-        this.read = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.read);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
-        this.text_box.add_actor(new St.Label({ text: 'W', style_class: "sm-status-label"}));
-        this.write = new St.Label({ style_class: "sm-status-value"});
-        this.text_box.add_actor(this.write);
-        this.text_box.add_actor(new St.Label({ text: '%', style_class: "sm-perc-label"}));
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format();
         this.update();
-    },
-    update: function () {
-        this.refresh();
-        let percents = this.percent();
-        this.read.set_text(percents[0].toString());
-        this.write.set_text(percents[1].toString());
-        this.chart.actor.queue_repaint();
     },
     refresh: function() {
         let accum = [0,0];
@@ -535,28 +587,23 @@ Disk.prototype = {
         }
         time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
-        if (delta > 0) {
+        if (delta > 0)
             for (let i = 0;i < 2;i++) {
                 this.usage[i] = (accum[i] - this.last[i]) / delta;
                 this.last[i] = accum[i];
             }
-        }
         this.last_time = time;
-    },//I don't think this is the best way to gather statistics
-    percent: function() {
-        return [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
     },
-    list: function() {
-        return this.usage;
-    },
-    total: function() {
-        return 0;
+    _apply: function() {
+        this.vals = this.usage;
+        this.tip_vals = [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     }
 };
-Disk.instance = new Disk();
 
 
-function Pie() {
+/*function Pie() {
     this._init.apply(this, arguments);
 }
 
@@ -598,7 +645,7 @@ Pie.prototype = {
         }
     }
 };
-Pie.instance = new Pie(200, 200);
+Pie.instance = new Pie(200, 200);*/
 
 
 function Icon() {
@@ -606,162 +653,96 @@ function Icon() {
 }
 
 Icon.prototype = {
-    __proto__: PanelMenu.SystemStatusButton.prototype,
-    icon_size: Math.round(Panel.PANEL_ICON_SIZE * 4 / 5),
     _init: function() {
-        PanelMenu.SystemStatusButton.prototype._init.call(this, 'utilities-system-monitor', _('System monitor'));
-
+        this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
+                                   icon_type: St.IconType.SYMBOLIC,
+                                   style_class: 'system-status-icon',
+                                   has_tooltip: true,
+                                   tooltip_text: _('System monitor')});
         this.actor.visible = Schema.get_boolean("icon-display");
         Schema.connect(
             'changed::icon-display',
             Lang.bind(this,
                       function () {
                           this.actor.visible = Schema.get_boolean("icon-display");
-                          }));
-        let item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
-
-        this.cpu = new St.Label({ style_class: "sm-value"});
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(this.cpu);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
-        this.mem_used = new St.Label({ style_class: "sm-value"});
-        this.mem_total = new St.Label({ style_class: "sm-value"});
-
-        item.addActor(this.mem_used);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this.mem_total);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
-        this.swap_used = new St.Label({ style_class: "sm-value"});
-        this.swap_total = new St.Label({ style_class: "sm-value"});
-
-        item.addActor(this.swap_used);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "/", style_class: "sm-label"}));
-        item.addActor(this.swap_total);
-        item.addActor(new St.Label({ style_class: "sm-void"}));
-        item.addActor(new St.Label({ text: "M", style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
-
-        this.down = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.down);
-        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-down'}));
-        this.up = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.up);
-        item.addActor(new St.Label({ text:'k', style_class: "sm-label"}));
-        item.addActor(new St.Icon({ icon_type: St.IconType.SYMBOLIC, icon_size: 16, icon_name:'go-up'}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
-
-        this.read = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.read);
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.addActor(new St.Label({ text:'R', style_class: "sm-label"}));
-        this.write = new St.Label({ style_class: "sm-value"});
-        item.addActor(this.write);
-        item.addActor(new St.Label({ text:'%', style_class: "sm-label"}));
-        item.addActor(new St.Label({ text:'W', style_class: "sm-label"}));
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        item.addActor(Pie.instance.actor, {span: -1, expand: true});
-        this.menu.addMenuItem(item);
-
-        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-        item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
-        item.connect('activate', function () {
-                         Util.spawn(["gnome-system-monitor"]);
-                     });
-        this.menu.addMenuItem(item);
-
-        item = new PopupMenu.PopupMenuItem(_("Preferences..."));
-        item.connect('activate', function () {
-                         Util.spawn(["system-monitor-applet-config"]);
-                     });
-        this.menu.addMenuItem(item);
-
-        this.menu.connect(
-            'open-state-changed',
-            Lang.bind(this,
-                      function (menu, isOpen) {
-                          if(isOpen) {
-                              this.update();
-                              Pie.instance.actor.queue_repaint();
-                              this.menu_timeout = Mainloop.timeout_add_seconds(
-                                  1,
-                                  Lang.bind(this, function () {
-                                                this.update();
-                                                Pie.instance.actor.queue_repaint();
-                                                return true;
-                                            }));
-                          } else {
-                              Mainloop.source_remove(this.menu_timeout);
-                          }
-                      })
-        );
-    },
-    update: function () {
-        Cpu.instance.update();
-        Mem.instance.update();
-        Swap.instance.update();
-        Net.instance.update();
-        Disk.instance.update();
-        this.cpu.set_text(Cpu.instance.percent().toString());
-        this.mem_used.set_text(Mem.instance.mem[0].toString());
-        this.mem_total.set_text(Mem.instance.mem_total.toString());
-        this.swap_used.set_text(Swap.instance.swap.toString());
-        this.swap_total.set_text(Swap.instance.swap_total.toString());
-        this.down.set_text(Net.instance.usage[0].toString());
-        this.up.set_text(Net.instance.usage[1].toString());
-        this.read.set_text(Disk.instance.percent()[0].toString());
-        this.write.set_text(Disk.instance.percent()[1].toString());
+                      }));
     }
 };
-Icon.instance = new Icon();
 
 
 function main() {
     let panel = Main.panel._rightBox;
-    if(Schema.get_boolean("center-display")) {
+    if (Schema.get_boolean("center-display")) {
         let dateMenu = Main.panel._dateMenu;
         Main.panel._centerBox.remove_actor(dateMenu.actor);
-        Main.panel._rightBox.insert_actor(dateMenu.actor, 0);
+        Main.panel._rightBox.insert_actor(dateMenu.actor, -1);
         panel = Main.panel._centerBox;
     }
-    let elts = {
-        disk: Disk.instance,
-        net: Net.instance,
-        swap: Swap.instance,
-        memory: Mem.instance,
-        cpu: Cpu.instance
-    };
+    Schema.connect('changed::background', Lang.bind(Background, update_color));
     //Debug
-    Main.__sm = {};
-    for (let elt in elts) {
-        panel.insert_actor(elts[elt].actor, 0);
-        panel.child_set(elts[elt].actor, { y_fill : true } );
-        Main.panel._menus.addMenu(elts[elt].menu);
-        elts[elt].actor.remove_style_class_name("panel-button");
-        elts[elt].actor.add_style_class_name("sm-panel-button");
-        Main.__sm[elt] = elts[elt];
+    Main.__sm = {
+        tray: new PanelMenu.Button(0.5),
+        icon: new Icon(),
+        elts: {
+            cpu: new Cpu(),
+            memory: new Mem(),
+            swap: new Swap(),
+            net: new Net(),
+            disk: new Disk()
+        }
+    };
+    let tray = Main.__sm.tray;
+    tray.actor.remove_style_class_name('panel-button');
+    tray.actor.add_style_class_name('sm-panel-button');
+    panel.insert_actor(tray.actor, 1);
+    panel.child_set(tray.actor, { y_fill : true } );
+    let box = new St.BoxLayout();
+    tray.actor.add_actor(box);
+    box.add_actor(Main.__sm.icon.actor);
+    for (let elt in Main.__sm.elts) {
+        box.add_actor(Main.__sm.elts[elt].actor);
+        tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
     }
-    let icon = Icon.instance;
-    panel.insert_actor(icon.actor, 0);
-    panel.child_set(icon.actor);
-    Main.panel._menus.addMenu(icon.menu);
+    tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+    let item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+    item.connect('activate', function () {
+        Util.spawn(["gnome-system-monitor"]);
+    });
+    tray.menu.addMenuItem(item);
+
+    item = new PopupMenu.PopupMenuItem(_("Preferences..."));
+    item.connect('activate', function () {
+        Util.spawn(["system-monitor-applet-config"]);
+    });
+    tray.menu.addMenuItem(item);
+
+    Main.panel._menus.addMenu(tray.menu);
+    let finish = GLib.get_monotonic_time();
+    global.log('system-monitor-applet: finish @ ' + finish);
+    global.log('system-monitor-applet: use ' + (finish - start));
+    log('system-monitor-applet: use ' + (finish - start));
 }
+
+/*item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+item.addActor(Pie.instance.actor, {span: -1, expand: true});
+this.menu.addMenuItem(item);
+this.menu.connect(
+    'open-state-changed',
+    Lang.bind(this,
+              function (menu, isOpen) {
+                  if(isOpen) {
+                      this.update();
+                      Pie.instance.actor.queue_repaint();
+                      this.menu_timeout = Mainloop.timeout_add_seconds(
+                          1,
+                          Lang.bind(this, function () {
+                              this.update();
+                              Pie.instance.actor.queue_repaint();
+                              return true;
+                          }));
+                  } else {
+                      Mainloop.source_remove(this.menu_timeout);
+                  }
+              })
+);*/

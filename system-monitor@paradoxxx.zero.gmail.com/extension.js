@@ -306,6 +306,7 @@ ElementBase.prototype = {
         this.chart.update();
         for (let i = 0;i < this.tip_vals.length;i++)
             this.tip_labels[i].text = this.tip_vals[i].toString();
+        this.layout_tip();
         return true;
     },
 };

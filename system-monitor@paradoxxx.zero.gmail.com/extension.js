@@ -591,10 +591,11 @@ Pie.prototype = {
         this.actor.set_height(this.height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.gtop = new GTop.glibtop_fsusage;
-        this.colors = ["#f48a8a", "#a5d79f", "#e1da84", "#a2bbff", "#e2b0ff", "#bacdf8", "#d5d5d5"];
+        // FIXME Handle colors correctly
+        this.colors = ["memory-buffer", "cpu-nice", "disk-write", "net-up", "swap-used"];
         for(color in this.colors) {
             let clutterColor = new Clutter.Color();
-            clutterColor.from_string(this.colors[color]);
+            clutterColor.from_string(Schema.get_string(this.colors[color] + "-color"));
             this.colors[color] = clutterColor;
         }
     },
@@ -604,7 +605,7 @@ Pie.prototype = {
         let cr = this.actor.get_context();
         let xc = width/2;
         let yc = height/2;
-        let r = Math.min(xc, yc) - 10;
+        let rc = Math.min(xc, yc);
         let pi = Math.PI;
         function arc(r, value, max, angle) {
             if(max == 0) return angle;
@@ -612,24 +613,33 @@ Pie.prototype = {
             cr.arc(xc, yc, r, angle, new_angle);
             return new_angle;
         }
-        cr.setLineWidth(10);
-
         // Can't get mountlist :
         // GTop.glibtop_get_mountlist
         // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-        // Hardcoding for now :
-
-        let mounts = ["/", "/home", "/boot"];
-        for (mount in mounts) {
-            GTop.glibtop_get_fsusage(this.gtop, mounts[mount]);
-            r -= 15;
-            Clutter.cairo_set_source_color(cr, this.colors[mount]);
-            arc(r, this.gtop.bfree, this.gtop.blocks, -pi/2);
-            cr.moveTo(0, 20 + 15 * mount);
-            cr.showText(mounts[mount]);
-            cr.stroke();
+        // Getting it with mtab
+        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+        let mounts = [];
+        for(let mount_line in mount_lines) {
+            let mount = mount_lines[mount_line].split(" ");
+            if(mount[0].indexOf("/dev/") == 0 && mounts.indexOf(mount[1]) < 0) {
+                mounts.push(mount[1]);
+            }
         }
 
+        let thickness = (2 * rc) / (3 * mounts.length);
+        let fontsize = 14;
+        let r = rc - (thickness / 2);
+        cr.setLineWidth(thickness);
+        cr.setFontSize(fontsize);
+        for (let mount in mounts) {
+            GTop.glibtop_get_fsusage(this.gtop, mounts[mount]);
+            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            arc(r, this.gtop.bfree, this.gtop.blocks, -pi/2);
+            cr.moveTo(0, thickness + 2 * fontsize * mount);
+            cr.showText(mounts[mount]);
+            cr.stroke();
+            r -= (3 * thickness) / 2;
+        }
     }
 };
 
@@ -670,7 +680,7 @@ function main() {
     Main.__sm = {
         tray: new PanelMenu.Button(0.5),
         icon: new Icon(),
-        pie: new Pie(200, 200),
+        pie: new Pie(300, 300),
         elts: {
             cpu: new Cpu(),
             memory: new Mem(),

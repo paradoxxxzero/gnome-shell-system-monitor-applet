@@ -386,31 +386,31 @@ Mem.prototype = {
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
-        this.gtop_mem = new GTop.glibtop_mem;
+        this.gtop = new GTop.glibtop_mem;
+        this.mem = [0, 0, 0];
         ElementBase.prototype._init.call(this);
         this.tip_format();
         this.update();
     },
     refresh: function() {
-        this.mem = [0,0,0];
-        GTop.glibtop_get_mem(this.gtop_mem);
-        this.mem[0] = this.gtop_mem.user;
-        this.mem[1] = this.gtop_mem.buffer;
-        this.mem[2] = this.gtop_mem.cached;
-        this.mem_total = this.gtop_mem.total;
+        GTop.glibtop_get_mem(this.gtop);
+        this.mem[0] = this.gtop.user;
+        this.mem[1] = this.gtop.buffer;
+        this.mem[2] = this.gtop.cached;
+        this.total = this.gtop.total;
     },
     _apply: function() {
-        if (this.mem_total == 0) {
+        if (this.total == 0) {
             this.vals = this.tip_vals = [0,0,0];
         } else {
             for (let i = 0;i < 3;i++) {
-                this.vals[i] = this.mem[i] / this.mem_total;
+                this.vals[i] = this.mem[i] / this.total;
                 this.tip_vals[i] = Math.round(this.vals[i] * 100);
             }
         }
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.mem[0].toString();
-        this.menu_items[3].text = this.mem_total.toString();
+        this.menu_items[3].text = this.total.toString();
     }
 };
 
@@ -433,38 +433,26 @@ Swap.prototype = {
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
+        this.gtop = new GTop.glibtop_swap;
         ElementBase.prototype._init.call(this);
         this.tip_format();
         this.update();
     },
     refresh: function() {
-        this.swap = 0;
-        this.swap_total = 0;
-        let swap_free = 0;
-        let meminfo_lines = Shell.get_file_contents_utf8_sync('/proc/meminfo').split("\n");
-        for(let i = 0 ; i < meminfo_lines.length ; i++) {
-            let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
-            switch(line[0]) {
-            case "SwapTotal:":
-                this.swap_total = Math.round(line[1] / 1024);
-                break;
-            case "SwapFree:":
-                swap_free = Math.round(line[1] / 1024);
-                break;
-            }
-        }
-        this.swap = this.swap_total - swap_free;
+        GTop.glibtop_get_swap(this.gtop);
+        this.swap = this.gtop.used;
+        this.total = this.gtop.total;
     },
     _apply: function() {
-        if (this.swap_total == 0) {
+        if (this.total == 0) {
             this.vals = this.tip_vals = [0];
         } else {
-            this.vals[0] = this.swap / this.swap_total;
+            this.vals[0] = this.swap / this.total;
             this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.swap.toString();
-        this.menu_items[3].text = this.swap_total.toString();
+        this.menu_items[3].text = this.total.toString();
     }
 };
 

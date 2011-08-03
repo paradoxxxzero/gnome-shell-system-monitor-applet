@@ -394,10 +394,10 @@ Mem.prototype = {
     },
     refresh: function() {
         GTop.glibtop_get_mem(this.gtop);
-        this.mem[0] = this.gtop.user;
-        this.mem[1] = this.gtop.buffer;
-        this.mem[2] = this.gtop.cached;
-        this.total = this.gtop.total;
+        this.mem[0] = Math.round(this.gtop.user / 1024 / 1024);
+        this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024);
+        this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024);
+        this.total = Math.round(this.gtop.total / 1024 / 1024);
     },
     _apply: function() {
         if (this.total == 0) {
@@ -440,8 +440,8 @@ Swap.prototype = {
     },
     refresh: function() {
         GTop.glibtop_get_swap(this.gtop);
-        this.swap = this.gtop.used;
-        this.total = this.gtop.total;
+        this.swap = Math.round(this.gtop.used / 1024 / 1024);
+        this.total = Math.round(this.gtop.total / 1024 / 1024);
     },
     _apply: function() {
         if (this.total == 0) {
@@ -590,6 +590,13 @@ Pie.prototype = {
         this.actor.set_width(this.width);
         this.actor.set_height(this.height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
+        this.gtop = new GTop.glibtop_fsusage;
+        this.colors = ["#f48a8a", "#a5d79f", "#e1da84", "#a2bbff", "#e2b0ff", "#bacdf8", "#d5d5d5"];
+        for(color in this.colors) {
+            let clutterColor = new Clutter.Color();
+            clutterColor.from_string(this.colors[color]);
+            this.colors[color] = clutterColor;
+        }
     },
     _draw: function() {
         if (!this.actor.visible) return;
@@ -606,14 +613,23 @@ Pie.prototype = {
             return new_angle;
         }
         cr.setLineWidth(10);
-        // r -= 15;
-        let angle = -pi / 2;
-        let clutterColor = new Clutter.Color();
-        clutterColor.from_string("#222222");
-        Clutter.cairo_set_source_color(cr, clutterColor);
 
-        angle = arc(r, 90, 100, angle);
-        cr.stroke();
+        // Can't get mountlist :
+        // GTop.glibtop_get_mountlist
+        // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
+        // Hardcoding for now :
+
+        let mounts = ["/", "/home", "/boot"];
+        for (mount in mounts) {
+            GTop.glibtop_get_fsusage(this.gtop, mounts[mount]);
+            r -= 15;
+            Clutter.cairo_set_source_color(cr, this.colors[mount]);
+            arc(r, this.gtop.bfree, this.gtop.blocks, -pi/2);
+            cr.moveTo(0, 20 + 15 * mount);
+            cr.showText(mounts[mount]);
+            cr.stroke();
+        }
+
     }
 };
 
@@ -679,8 +695,7 @@ function main() {
 
     let item = new PopupMenu.PopupBaseMenuItem({reactive: false});
     item.addActor(Main.__sm.pie.actor, {span: -1, expand: true});
-    // Waiting for disk stats
-    // tray.menu.addMenuItem(item);
+    tray.menu.addMenuItem(item);
     let menu_timeout;
     tray.menu.connect(
         'open-state-changed',

@@ -18,21 +18,22 @@
 
 // Author: Florian Mounier aka paradoxxxzero
 
-const Gio = imports.gi.Gio;
-const Shell = imports.gi.Shell;
-const GLib = imports.gi.GLib;
-const Lang = imports.lang;
-const St = imports.gi.St;
 const Clutter = imports.gi.Clutter;
+const GLib = imports.gi.GLib;
+const GTop = imports.gi.GTop;
+const Gio = imports.gi.Gio;
+const Lang = imports.lang;
+const Shell = imports.gi.Shell;
+const St = imports.gi.St;
 
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
+const Gettext = imports.gettext.domain('system-monitor-applet');
 const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
-const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
 
 let start = GLib.get_monotonic_time();
@@ -384,33 +385,18 @@ Mem.prototype = {
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
+        this.gtop_mem = new GTop.glibtop_mem;
         ElementBase.prototype._init.call(this);
         this.tip_format();
         this.update();
     },
     refresh: function() {
         this.mem = [0,0,0];
-        this.mem_total = 0;
-        let mem_free = 0;
-        let meminfo_lines = Shell.get_file_contents_utf8_sync('/proc/meminfo').split("\n");
-        for(let i = 0 ; i < meminfo_lines.length ; i++) {
-            let line = meminfo_lines[i].replace(/ +/g, " ").split(" ");
-            switch(line[0]) {
-            case "MemTotal:":
-                this.mem_total = Math.round(line[1] / 1024);
-                break;
-            case "MemFree:":
-                mem_free = Math.round(line[1] / 1024);
-                break;
-            case "Buffers:":
-                this.mem[1] = Math.round(line[1] / 1024);
-                break;
-            case "Cached:":
-                this.mem[2] = Math.round(line[1] / 1024);
-                break;
-            }
-        }
-        this.mem[0] = this.mem_total - this.mem[1] - this.mem[2] - mem_free;
+        GTop.glibtop_get_mem(this.gtop_mem);
+        this.mem[0] = this.gtop_mem.user;
+        this.mem[1] = this.gtop_mem.buffer;
+        this.mem[2] = this.gtop_mem.cached;
+        this.mem_total = this.gtop_mem.total;
     },
     _apply: function() {
         if (this.mem_total == 0) {

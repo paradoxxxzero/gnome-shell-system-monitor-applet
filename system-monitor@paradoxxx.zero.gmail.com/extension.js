@@ -592,10 +592,10 @@ Pie.prototype = {
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.gtop = new GTop.glibtop_fsusage;
         // FIXME Handle colors correctly
-        this.colors = ["memory-buffer", "cpu-nice", "disk-write", "net-up", "swap-used"];
+        this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
         for(color in this.colors) {
             let clutterColor = new Clutter.Color();
-            clutterColor.from_string(Schema.get_string(this.colors[color] + "-color"));
+            clutterColor.from_string(this.colors[color]);
             this.colors[color] = clutterColor;
         }
     },

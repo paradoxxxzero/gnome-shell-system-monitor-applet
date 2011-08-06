@@ -116,6 +116,81 @@ function change_style() {
     this.chart.actor.visible = style == 'graph' || style == 'both';
 }
 
+function TipItem() {
+    this._init.apply(this, arguments);
+}
+
+TipItem.prototype = {
+    __proto__: PopupMenu.PopupBaseMenuItem.prototype,
+
+    _init: function() {
+        PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
+        this.actor.remove_style_class_name('popup-menu-item');
+        this.actor.add_style_class_name('sm-tooltip-item');
+    }
+}
+
+function TipMenu() {
+    this._init.apply(this, arguments);
+}
+
+TipMenu.prototype = {
+    __proto__: PopupMenu.PopupMenuBase.prototype,
+
+    _init: function(sourceActor) {
+        PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'tooltip-box');
+        this.actor = new Shell.GenericContainer();
+        this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
+        this.actor.connect('get-preferred-height', Lang.bind(this, this._boxGetPreferredHeight));
+        this.actor.connect('allocate', Lang.bind(this, this._boxAllocate));
+        this.actor.add_actor(this.box);
+    },
+    _boxGetPreferredWidth: function (actor, forHeight, alloc) {
+        let columnWidths = this.getColumnWidths();
+        this.setColumnWidths(columnWidths);
+
+        [alloc.min_size, alloc.natural_size] = this.box.get_preferred_width(forHeight);
+    },
+    _boxGetPreferredHeight: function (actor, forWidth, alloc) {
+        [alloc.min_size, alloc.natural_size] = this.box.get_preferred_height(forWidth);
+    },
+    _boxAllocate: function (actor, box, flags) {
+        this.box.allocate(box, flags);
+    },
+    _shift: function() {
+        let node = this.sourceActor.get_theme_node();
+        let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
+        let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
+        let primary = global.get_primary_monitor();
+        let [x, y] = [allocation.x1 + contentbox.x1,
+                      allocation.y1 + contentbox.y1];
+        let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
+                        allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
+        let [xm, ym] = [allocation.x1 + contentbox.x2,
+                        allocation.y1 + contentbox.y2];
+        let [width, height] = this.actor.get_size();
+        let tipx = Math.floor(Math.min(cx - width / 2,
+                                       primary.x + primary.width - width));
+        let tipy = Math.floor(ym);
+        this.actor.set_position(tipx, tipy);
+    },
+    open: function(animate) {
+        if (this.isOpen)
+            return;
+
+        this.isOpen = true;
+        this.actor.show();
+        this._shift();
+        this.actor.raise_top();
+        this.emit('open-state-changed', true);
+    },
+    close: function(animate) {
+        this.isOpen = false;
+        this.actor.hide();
+        this.emit('open-state-changed', false);
+    }
+}
+
 function TipBox() {
     this._init.apply(this, arguments);
 }
@@ -124,27 +199,23 @@ TipBox.prototype = {
     _init: function() {
         this.actor = new St.BoxLayout({ reactive: true });
         this.actor._delegate = this;
-        this.tipbox = new St.BoxLayout({ style_class: 'sm-tooltip-box',
-                                         vertical: true });
-        Main.chrome.addActor(this.tipbox, { visibleInOverview: true,
-                                            affectsStruts: false });
-        this.tipbox.hide();
+        this.tipmenu = new TipMenu(this.actor);
+        Main.chrome.addActor(this.tipmenu.actor, { visibleInOverview: true,
+                                             affectsStruts: false });
+        this.tipmenu.close();
         this.in_to = this.out_to = 0;
         this.actor.connect('enter-event', Lang.bind(this, this.on_enter));
         this.actor.connect('leave-event', Lang.bind(this, this.on_leave));
     },
     show_tip: function() {
-        this.shift_tip();
-        this.layout_tip();
-        this.tipbox.show();
-        this.tipbox.raise_top();
+        this.tipmenu.open();
         if (this.in_to) {
             Mainloop.source_remove(this.in_to);
             this.in_to = 0;
         }
     },
     hide_tip: function() {
-        this.tipbox.hide();
+        this.tipmenu.close();
         if (this.out_to) {
             Mainloop.source_remove(this.out_to);
             this.out_to = 0;
@@ -153,26 +224,6 @@ TipBox.prototype = {
             Mainloop.source_remove(this.in_to);
             this.in_to = 0;
         }
-    },
-    layout_tip: function() {},
-    shift_tip: function() {
-        let node = this.actor.get_theme_node();
-        let contentbox = node.get_content_box(this.actor.get_allocation_box());
-        let allocation = Shell.util_get_transformed_allocation(this.actor);
-
-        // probably need to change for 3.1/3.2
-        let primary = global.get_primary_monitor();
-        let [x, y] = [allocation.x1 + contentbox.x1,
-                      allocation.y1 + contentbox.y1];
-        let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
-                        allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
-        let [xm, ym] = [allocation.x1 + contentbox.x2,
-                        allocation.y1 + contentbox.y2];
-        let [width, height] = this.tipbox.get_size();
-        let tipx = Math.floor(Math.min(cx - width / 2,
-                                       primary.x + primary.width - width));
-        let tipy = Math.floor(ym);
-        this.tipbox.set_position(tipx, tipy);
     },
     on_enter: function() {
         if (this.out_to) {
@@ -209,9 +260,7 @@ ElementBase.prototype = {
         TipBox.prototype._init.apply(this, arguments);
 
         this.vals = [];
-        this.tip_names = [];
         this.tip_labels = [];
-        this.tip_units = [];
         this.tip_vals = [];
 
         this.colors = [];
@@ -278,26 +327,13 @@ ElementBase.prototype = {
     tip_format: function(unit) {
         typeof(unit) == 'undefined' && (unit = '%');
         for (let i = 0;i < this.color_name.length;i++) {
-            let tipline = new St.BoxLayout();
-            this.tipbox.add_actor(tipline);
-            this.tip_names[i] = new St.Label({ text: _(this.color_name[i]) });
-            tipline.add_actor(this.tip_names[i]);
+            let tipline = new TipItem();
+            this.tipmenu.addMenuItem(tipline);
+            tipline.addActor(new St.Label({ text: _(this.color_name[i]) }));
             this.tip_labels[i] = new St.Label();
-            tipline.add_actor(this.tip_labels[i]);
-            this.tip_units[i] = new St.Label({ text: unit });
-            tipline.add_actor(this.tip_units[i]);
+            tipline.addActor(this.tip_labels[i]);
+            tipline.addActor(new St.Label({ text: unit }));
             this.tip_vals[i] = 0;
-        }
-    },
-    layout_tip: function() {
-        let columns = [this.tip_names, this.tip_labels, this.tip_units];
-        for (let i in columns) {
-            let widths = [];
-            for (let j in columns[i])
-                widths.push(columns[i][j].get_preferred_width(-1)[1]);
-            let width = Math.max.apply(Math, widths);
-            for (let j in columns[i])
-                columns[i][j].set_width(width);
         }
     },
     update: function() {
@@ -306,7 +342,6 @@ ElementBase.prototype = {
         this.chart.update();
         for (let i = 0;i < this.tip_vals.length;i++)
             this.tip_labels[i].text = this.tip_vals[i].toString();
-        this.layout_tip();
         return true;
     },
 };
@@ -590,7 +625,7 @@ Pie.prototype = {
         this.actor.set_width(this.width);
         this.actor.set_height(this.height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
-        this.gtop = new GTop.glibtop_fsusage;
+        this.gtop = new GTop.glibtop_fsusage();
         // FIXME Handle colors correctly
         this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
         for(color in this.colors) {
@@ -603,8 +638,8 @@ Pie.prototype = {
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-        let xc = width/2;
-        let yc = height/2;
+        let xc = width / 2;
+        let yc = height / 2;
         let rc = Math.min(xc, yc);
         let pi = Math.PI;
         function arc(r, value, max, angle) {

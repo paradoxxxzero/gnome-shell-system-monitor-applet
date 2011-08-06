@@ -56,3 +56,8 @@
     border-radius: 5px;
     padding: 3px;
 }
+
+.sm-tooltip-item {
+    padding: 0px;
+    spacing: 5px;
+}

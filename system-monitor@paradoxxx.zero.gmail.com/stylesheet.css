@@ -49,15 +49,15 @@
 }
 
 .sm-tooltip-box {
-    font-size: 10px;
+    font-size: 0.85em;
     font-weight: bold;
-    color: #ffffff;
-    background-color: rgba(10,10,10,0.7);
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(10, 10, 10, 0.7);
     border-radius: 5px;
     padding: 3px;
 }
 
 .sm-tooltip-item {
     padding: 0px;
-    spacing: 5px;
+    spacing: 10px;
 }

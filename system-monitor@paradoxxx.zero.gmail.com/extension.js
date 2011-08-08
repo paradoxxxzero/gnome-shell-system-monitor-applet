@@ -138,7 +138,7 @@ TipMenu.prototype = {
     __proto__: PopupMenu.PopupMenuBase.prototype,
 
     _init: function(sourceActor) {
-        PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'tooltip-box');
+        PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
         this.actor = new Shell.GenericContainer();
         this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
         this.actor.connect('get-preferred-height', Lang.bind(this, this._boxGetPreferredHeight));

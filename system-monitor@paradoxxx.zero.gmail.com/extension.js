@@ -669,7 +669,7 @@ Pie.prototype = {
         for (let mount in mounts) {
             GTop.glibtop_get_fsusage(this.gtop, mounts[mount]);
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
-            arc(r, this.gtop.bfree, this.gtop.blocks, -pi/2);
+            arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi/2);
             cr.moveTo(0, thickness + 2 * fontsize * mount);
             cr.showText(mounts[mount]);
             cr.stroke();

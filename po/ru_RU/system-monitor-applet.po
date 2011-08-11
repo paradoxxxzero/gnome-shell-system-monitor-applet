@@ -97,12 +97,6 @@ msgstr "Передача"
 msgid "Down"
 msgstr "Приём"
 
-msgid "up"
-msgstr "передача"
-
-msgid "down"
-msgstr "приём"
-
 msgid "Disk"
 msgstr "Диск"
 

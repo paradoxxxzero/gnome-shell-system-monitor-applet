@@ -613,6 +613,40 @@ Disk.prototype = {
 };
 
 
+function Thermal() {
+    this._init.apply(this, arguments);
+}
+Thermal.prototype = {
+    __proto__: ElementBase.prototype,
+    elt: 'thermal',
+    color_name: ['tz0'],
+    text_items: [new St.Label({ style_class: "sm-status-value"}),
+                 new St.Label({ text: 'C', style_class: "sm-unit-label"})],
+    menu_items: [new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: 'C', style_class: "sm-label"})],
+    _init: function() {
+        this.temperature = -273.15;
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format('C');
+        this.update();
+    },
+    refresh: function() {
+        let t_str = Shell.get_file_contents_utf8_sync('/sys/class/thermal/thermal_zone0/temp').split("\n")[0];
+        this.temperature = parseInt(t_str)/1000.0;
+    },
+    _apply: function() {
+        this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
+        this.vals = [this.temperature];
+        this.tip_vals[0] = Math.round(this.vals[0]);
+    }
+};
+
+
 function Pie() {
     this._init.apply(this, arguments);
 }
@@ -721,7 +755,8 @@ function main() {
             memory: new Mem(),
             swap: new Swap(),
             net: new Net(),
-            disk: new Disk()
+            disk: new Disk(),
+            thermal: new Thermal()
         }
     };
     let tray = Main.__sm.tray;

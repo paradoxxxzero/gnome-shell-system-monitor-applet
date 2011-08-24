@@ -130,6 +130,30 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="thermal-display" type="b">
+      <default>true</default>
+      <summary>Display thermal</summary>
+      <description>Set to false to remove thermal display in status bar</description>
+    </key>
+    <key name="thermal-refresh-time" type="i">
+      <default>5000</default>
+      <summary>thermal refresh time</summary>
+      <description>Time in ms between 2 refresh of thermal</description>
+    </key>
+    <key name="thermal-graph-width" type="i">
+      <default>100</default>
+      <summary>thermal graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="thermal-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'thermal'</summary>
+      <description>Set to true to show 'thermal' before thermal display</description>
+    </key>
+    <key name="thermal-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'both'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="center-display" type="b">
       <default>false</default>
       <summary>Display informations next to the clock</summary>
@@ -186,6 +210,10 @@
     <key name="disk-write-color" type="s">
       <default>'#ff6700'</default>
       <summary>Color of disk writing speed in the chart</summary>
+    </key>
+    <key name="thermal-tz0-color" type="s">
+      <default>'#f2002e'</default>
+      <summary>Color of user thermal in the chart</summary>
     </key>
     <key name="background" type="s">
       <default>'#ffffff16'</default>

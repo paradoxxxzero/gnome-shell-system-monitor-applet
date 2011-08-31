@@ -363,6 +363,7 @@ Cpu.prototype = {
                  new St.Label({ style_class: "sm-void"}),
                  new St.Label({ text: '%', style_class: "sm-label"})],
     _init: function() {
+        this.gtop = new GTop.glibtop_cpu;
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
@@ -372,23 +373,17 @@ Cpu.prototype = {
         this.update();
     },
     refresh: function() {
-        let cpu_params = Shell.get_file_contents_utf8_sync('/proc/stat').split("\n")[0].replace(/ +/g, " ").split(" ");
-        let accum = [];
-        let total_t = 0;
-        for (let i = 1;i <= 5;i++)
-            accum[i - 1] = parseInt(cpu_params[i]);
-        for (let i = 1;i < cpu_params.length;i++) {
-            let tmp = parseInt(cpu_params[i]);
-            tmp > 0 && (total_t += tmp);
-        }
-        let total = total_t - this.last_total;
-        if (total > 0) {
-            for (let i = 0;i < 5;i++)
-                this.usage[i] = (accum[i] - this.last[i]) / total;
-            for (let i = 0;i < 5;i++)
-                this.last[i] = accum[i];
-            this.last_total = total_t;
-        }
+        GTop.glibtop_get_cpu(this.gtop);
+        this.usage[0] = this.gtop.user / this.gtop.total;
+        this.usage[1] = this.gtop.sys / this.gtop.total;
+        this.usage[2] = this.gtop.nice / this.gtop.total;
+        this.usage[3] = this.gtop.iowait / this.gtop.total;
+        this.usage[4] = 0; //FIXME
+
+        for (let i = 0;i < 5;i++)
+            this.last[i] = this.usage[i];
+
+        this.last_total = this.gtop.total;
     },
     _apply: function() {
         let percent = Math.round((1 - this.usage[3]) * 100);

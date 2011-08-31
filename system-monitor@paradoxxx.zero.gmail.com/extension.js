@@ -262,6 +262,7 @@ ElementBase.prototype = {
         this.vals = [];
         this.tip_labels = [];
         this.tip_vals = [];
+        this.tip_unit_labels = [];
 
         this.colors = [];
         for(let color in this.color_name) {
@@ -332,8 +333,14 @@ ElementBase.prototype = {
             tipline.addActor(new St.Label({ text: _(this.color_name[i]) }));
             this.tip_labels[i] = new St.Label();
             tipline.addActor(this.tip_labels[i]);
-            tipline.addActor(new St.Label({ text: unit }));
+            this.tip_unit_labels[i] = new St.Label({ text: unit });
+            tipline.addActor(this.tip_unit_labels[i]);
             this.tip_vals[i] = 0;
+        }
+    },
+    set_tip_unit: function(unit) {
+        for (let i = 0;i < this.tip_unit_labels.length;i++) {
+            this.tip_unit_labels[i].text = unit;
         }
     },
     update: function() {
@@ -518,6 +525,7 @@ Net.prototype = {
                  new St.Label({ text:'k', style_class: "sm-label"}),
                  new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                icon_size: 16, icon_name:'go-up'})],
+    speed_in_bits: false,
     _init: function() {
         this.last = [0,0];
         this.usage = [0,0];
@@ -525,7 +533,34 @@ Net.prototype = {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         ElementBase.prototype._init.call(this);
         this.tip_format('kB/s');
+        this.update_units();
+        Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
         this.update();
+    },
+    update_units: function() {
+        let previous_setting = this.speed_in_bits;
+        this.speed_in_bits = Schema.get_boolean(this.elt + '-speed-in-bits');
+        if (this.speed_in_bits) {
+            this.set_tip_unit('kbps');
+            this.text_items[2].text = 'kbps';
+            this.text_items[5].text = 'kbps';
+            if (!previous_setting) {
+                this.last[0] *= 8;
+                this.last[1] *= 8;
+                this.usage[0] *= 8;
+                this.usage[1] *= 8;
+            }
+        } else {
+            this.set_tip_unit('kB/s');
+            this.text_items[2].text = 'kB/s';
+            this.text_items[5].text = 'kB/s';
+            if (previous_setting) {
+                this.last[0] /= 8;
+                this.last[1] /= 8;
+                this.usage[0] /= 8;
+                this.usage[1] /= 8;
+            }
+        }
     },
     refresh: function() {
         let accum = [0,0];
@@ -535,8 +570,13 @@ Net.prototype = {
             let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
             let ifc = net_params[1];
             if(ifc.indexOf("br") < 0 && ifc.indexOf("lo") < 0) {
-                accum[0] += parseInt(net_params[2]);
-                accum[1] += parseInt(net_params[10]);
+                if (this.speed_in_bits) {
+                    accum[0] += parseInt(net_params[2]) * 8;
+                    accum[1] += parseInt(net_params[10]) * 8;
+                } else {
+                    accum[0] += parseInt(net_params[2]);
+                    accum[1] += parseInt(net_params[10]);
+                }
             }
         }
         time = GLib.get_monotonic_time() / 1000;

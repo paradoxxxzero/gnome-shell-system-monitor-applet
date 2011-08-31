@@ -106,6 +106,10 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="net-speed-in-bits" type="b">
+      <default>false</default>
+      <summary>Show network speed in bits/sec</summary>
+    </key>
     <key name="disk-display" type="b">
       <default>false</default>
       <summary>Display disk io speed</summary>

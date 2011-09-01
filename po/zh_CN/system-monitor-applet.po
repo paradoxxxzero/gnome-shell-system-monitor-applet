@@ -176,3 +176,9 @@ msgstr "写入"
 
 msgid "read"
 msgstr "读取"
+
+msgid "Thermal"
+msgstr "温度"
+
+msgid "thermal"
+msgstr "温度"

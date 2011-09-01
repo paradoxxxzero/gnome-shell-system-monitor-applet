@@ -128,7 +128,7 @@ TipItem.prototype = {
         this.actor.remove_style_class_name('popup-menu-item');
         this.actor.add_style_class_name('sm-tooltip-item');
     }
-}
+};
 
 function TipMenu() {
     this._init.apply(this, arguments);
@@ -189,7 +189,7 @@ TipMenu.prototype = {
         this.actor.hide();
         this.emit('open-state-changed', false);
     }
-}
+};
 
 function TipBox() {
     this._init.apply(this, arguments);
@@ -243,7 +243,7 @@ TipBox.prototype = {
             this.out_to = Mainloop.timeout_add(500, Lang.bind(this,
                                                               this.hide_tip));
     }
-}
+};
 
 function ElementBase() {
     throw new TypeError('Trying to instantiate abstrace class ElementBase');
@@ -326,13 +326,20 @@ ElementBase.prototype = {
     },
     tip_format: function(unit) {
         typeof(unit) == 'undefined' && (unit = '%');
+        if(typeof(unit) == 'string') {
+            let all_unit = unit;
+            unit = [];
+            for (let i = 0;i < this.color_name.length;i++) {
+                unit.push(all_unit);
+            }
+        }
         for (let i = 0;i < this.color_name.length;i++) {
             let tipline = new TipItem();
             this.tipmenu.addMenuItem(tipline);
             tipline.addActor(new St.Label({ text: _(this.color_name[i]) }));
             this.tip_labels[i] = new St.Label();
             tipline.addActor(this.tip_labels[i]);
-            tipline.addActor(new St.Label({ text: unit }));
+            tipline.addActor(new St.Label({ text: unit[i] }));
             this.tip_vals[i] = 0;
         }
     },
@@ -363,7 +370,7 @@ Cpu.prototype = {
                  new St.Label({ style_class: "sm-void"}),
                  new St.Label({ text: '%', style_class: "sm-label"})],
     _init: function() {
-        this.gtop = new GTop.glibtop_cpu;
+        this.gtop = new GTop.glibtop_cpu();
         this.last = [0,0,0,0,0];
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
@@ -416,7 +423,7 @@ Mem.prototype = {
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
-        this.gtop = new GTop.glibtop_mem;
+        this.gtop = new GTop.glibtop_mem();
         this.mem = [0, 0, 0];
         ElementBase.prototype._init.call(this);
         this.tip_format();
@@ -463,7 +470,7 @@ Swap.prototype = {
                  new St.Label({ text: "M", style_class: "sm-label"})],
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
-        this.gtop = new GTop.glibtop_swap;
+        this.gtop = new GTop.glibtop_swap();
         ElementBase.prototype._init.call(this);
         this.tip_format();
         this.update();
@@ -494,7 +501,7 @@ function Net() {
 Net.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'net',
-    color_name: ['down', 'up'],
+    color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
     text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                icon_size: 2 * icon_size / 3,
                                icon_name:'go-down'}),
@@ -514,30 +521,42 @@ Net.prototype = {
                  new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                icon_size: 16, icon_name:'go-up'})],
     _init: function() {
-        this.last = [0,0];
-        this.usage = [0,0];
+        this.ifs = [];
+        // Can't get netlist:
+        // GTop.glibtop_get_netlist
+        // Error: No symbol 'glibtop_get_netlist' in namespace 'GTop'
+        let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
+        for(let i = 3; i < net_lines.length - 1 ; i++) {
+            let ifc = net_lines[i].replace(/[ :]+/g, " ").split(" ")[1];
+            if(ifc.indexOf("br") < 0 && ifc.indexOf("lo") < 0) {
+                this.ifs.push(ifc);
+            }
+        }
+        this.gtop = new GTop.glibtop_netload();
+        this.last = [0, 0, 0, 0, 0];
+        this.usage = [0, 0, 0, 0, 0];
         this.last_time = 0;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.tip_format('kB/s');
+        this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
         this.update();
     },
     refresh: function() {
-        let accum = [0,0];
-        let time = 0;
-        let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
-        for(let i = 3; i < net_lines.length - 1 ; i++) {
-            let net_params = net_lines[i].replace(/ +/g, " ").split(" ");
-            let ifc = net_params[1];
-            if(ifc.indexOf("br") < 0 && ifc.indexOf("lo") < 0) {
-                accum[0] += parseInt(net_params[2]);
-                accum[1] += parseInt(net_params[10]);
-            }
+        let accum = [0, 0, 0, 0, 0];
+
+        for (let ifn in this.ifs) {
+            GTop.glibtop_get_netload(this.gtop, this.ifs[ifn]);
+            accum[0] += this.gtop.bytes_in;
+            accum[1] += this.gtop.errors_in;
+            accum[2] += this.gtop.bytes_out;
+            accum[3] += this.gtop.errors_out;
+            accum[4] += this.gtop.collisions;
         }
-        time = GLib.get_monotonic_time() / 1000;
+
+        let time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
         if (delta > 0)
-            for (let i = 0;i < 2;i++) {
+            for (let i = 0;i < 5;i++) {
                 this.usage[i] = Math.round((accum[i] - this.last[i]) / delta);
                 this.last[i] = accum[i];
             }
@@ -546,7 +565,7 @@ Net.prototype = {
     _apply: function() {
         this.tip_vals = this.vals = this.usage;
         this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
     }
 };
 
@@ -572,25 +591,36 @@ Disk.prototype = {
                  new St.Label({ text:'%', style_class: "sm-label"}),
                  new St.Label({ text:'W', style_class: "sm-label"})],
     _init: function() {
+        // Can't get mountlist:
+        // GTop.glibtop_get_mountlist
+        // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
+        // Getting it with mtab
+        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+        this.mounts = [];
+        for(let mount_line in mount_lines) {
+            let mount = mount_lines[mount_line].split(" ");
+            if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+                this.mounts.push(mount[1]);
+            }
+        }
+        this.gtop = new GTop.glibtop_fsusage();
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         ElementBase.prototype._init.call(this);
-        this.tip_format();
+        this.tip_format('kB/s');
         this.update();
     },
     refresh: function() {
-        let accum = [0,0];
-        let time = 0;
-        let disk_lines = Shell.get_file_contents_utf8_sync('/proc/diskstats').split("\n");
-        for(let i = 0;i < disk_lines.length - 1;i++) {
-            let disk_params = disk_lines[i].replace(/ +/g, " ").replace(/^ /,"").split(" ");
-            if (/[0-9]$/.test(disk_params[2])) continue;
-            accum[0] += parseInt(disk_params[6]);
-            accum[1] += parseInt(disk_params[10]);
+        let accum = [0, 0];
+
+        for(let mount in this.mounts) {
+            GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
+            accum[0] += this.gtop.read;
+            accum[1] += this.gtop.write;
         }
-        time = GLib.get_monotonic_time() / 1000;
+        let time = GLib.get_monotonic_time() / 1000;
         let delta = time - this.last_time;
         if (delta > 0)
             for (let i = 0;i < 2;i++) {
@@ -628,6 +658,18 @@ Pie.prototype = {
             clutterColor.from_string(this.colors[color]);
             this.colors[color] = clutterColor;
         }
+        // Can't get mountlist:
+        // GTop.glibtop_get_mountlist
+        // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
+        // Getting it with mtab
+        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+        this.mounts = [];
+        for(let mount_line in mount_lines) {
+            let mount = mount_lines[mount_line].split(" ");
+            if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+                this.mounts.push(mount[1]);
+            }
+        }
     },
     _draw: function() {
         if (!this.actor.visible) return;
@@ -643,30 +685,18 @@ Pie.prototype = {
             cr.arc(xc, yc, r, angle, new_angle);
             return new_angle;
         }
-        // Can't get mountlist :
-        // GTop.glibtop_get_mountlist
-        // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-        // Getting it with mtab
-        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
-        let mounts = [];
-        for(let mount_line in mount_lines) {
-            let mount = mount_lines[mount_line].split(" ");
-            if(mount[0].indexOf("/dev/") == 0 && mounts.indexOf(mount[1]) < 0) {
-                mounts.push(mount[1]);
-            }
-        }
 
-        let thickness = (2 * rc) / (3 * mounts.length);
+        let thickness = (2 * rc) / (3 * this.mounts.length);
         let fontsize = 14;
         let r = rc - (thickness / 2);
         cr.setLineWidth(thickness);
         cr.setFontSize(fontsize);
-        for (let mount in mounts) {
-            GTop.glibtop_get_fsusage(this.gtop, mounts[mount]);
+        for (let mount in this.mounts) {
+            GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi/2);
             cr.moveTo(0, thickness + 2 * fontsize * mount);
-            cr.showText(mounts[mount]);
+            cr.showText(this.mounts[mount]);
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
@@ -723,7 +753,7 @@ function main() {
     tray.actor.remove_style_class_name('panel-button');
     tray.actor.add_style_class_name('sm-panel-button');
     panel.insert_actor(tray.actor, 1);
-    panel.child_set(tray.actor, { y_fill : true } );
+    panel.child_set(tray.actor, { y_fill: true } );
     let box = new St.BoxLayout();
     tray.actor.add_actor(box);
     box.add_actor(Main.__sm.icon.actor);

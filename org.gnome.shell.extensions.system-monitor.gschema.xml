@@ -155,6 +155,18 @@
       <default>'#fb74fb'</default>
       <summary>Color of upload speed in the chart</summary>
     </key>
+    <key name="net-downerrors-color" type="s">
+      <default>'#ff6e00'</default>
+      <summary>Color of download errors</summary>
+    </key>
+    <key name="net-uperrors-color" type="s">
+      <default>'#e0006e'</default>
+      <summary>Color of upload errors</summary>
+    </key>
+    <key name="net-collisions-color" type="s">
+      <default>'#ff0000'</default>
+      <summary>Color of collisions</summary>
+    </key>
     <key name="cpu-user-color" type="s">
       <default>'#0072b3'</default>
       <summary>Color of user cpu in the chart</summary>

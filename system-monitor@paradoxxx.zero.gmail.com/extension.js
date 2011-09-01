@@ -343,7 +343,7 @@ ElementBase.prototype = {
         for (let i = 0;i < this.tip_vals.length;i++)
             this.tip_labels[i].text = this.tip_vals[i].toString();
         return true;
-    },
+    }
 };
 
 
@@ -353,7 +353,7 @@ function Cpu() {
 Cpu.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'cpu',
-    color_name: ['user', 'system', 'nice', 'iowait', 'other'],
+    color_name: ['user', 'nice', 'system', 'iowait', 'other'],
     text_items: [new St.Label({ style_class: "sm-status-value"}),
                  new St.Label({ text: '%', style_class: "sm-perc-label"})],
     menu_items: [new St.Label({ style_class: "sm-void"}),
@@ -375,10 +375,10 @@ Cpu.prototype = {
     refresh: function() {
         GTop.glibtop_get_cpu(this.gtop);
         this.usage[0] = this.gtop.user / this.gtop.total;
-        this.usage[1] = this.gtop.sys / this.gtop.total;
-        this.usage[2] = this.gtop.nice / this.gtop.total;
-        this.usage[3] = this.gtop.iowait / this.gtop.total;
-        this.usage[4] = 0; //FIXME
+        this.usage[1] = this.gtop.nice / this.gtop.total;
+        this.usage[2] = this.gtop.sys / this.gtop.total;
+        this.usage[3] = this.gtop.idle / this.gtop.total;
+        this.usage[4] = this.gtop.iowait / this.gtop.total;
 
         for (let i = 0;i < 5;i++)
             this.last[i] = this.usage[i];

@@ -106,6 +106,10 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="net-speed-in-bits" type="b">
+      <default>false</default>
+      <summary>Show network speed in bits/sec</summary>
+    </key>
     <key name="disk-display" type="b">
       <default>false</default>
       <summary>Display disk io speed</summary>
@@ -135,6 +139,11 @@
       <summary>Display informations next to the clock</summary>
       <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
     </key>
+    <key name="move-clock" type="b">
+      <default>true</default>
+      <summary>Move the clock to the right when center-display is true</summary>
+      <description>True: Move the clock to the right, False: Keep it in center</description>
+    </key>
     <key name="memory-program-color" type="s">
       <default>'#00b35b'</default>
       <summary>Color of program memory in the chart</summary>
@@ -154,6 +163,18 @@
     <key name="net-up-color" type="s">
       <default>'#fb74fb'</default>
       <summary>Color of upload speed in the chart</summary>
+    </key>
+    <key name="net-downerrors-color" type="s">
+      <default>'#ff6e00'</default>
+      <summary>Color of download errors</summary>
+    </key>
+    <key name="net-uperrors-color" type="s">
+      <default>'#e0006e'</default>
+      <summary>Color of upload errors</summary>
+    </key>
+    <key name="net-collisions-color" type="s">
+      <default>'#ff0000'</default>
+      <summary>Color of collisions</summary>
     </key>
     <key name="cpu-user-color" type="s">
       <default>'#0072b3'</default>

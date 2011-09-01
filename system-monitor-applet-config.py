@@ -130,10 +130,12 @@ class SettingFrame:
         self.hbox0 = Gtk.HBox(spacing=20)
         self.hbox1 = Gtk.HBox(spacing=20)
         self.hbox2 = Gtk.HBox(spacing=20)
+        self.hbox3 = Gtk.HBox(spacing=20)
         self.frame.add(self.vbox)
         self.vbox.pack_start(self.hbox0, True, False, 0)
         self.vbox.pack_start(self.hbox1, True, False, 0)
         self.vbox.pack_start(self.hbox2, True, False, 0)
+        self.vbox.pack_start(self.hbox3, True, False, 0)
 
     def add(self, key):
         sections = key.split('-')
@@ -165,6 +167,11 @@ class SettingFrame:
             item.set_value(self.schema.get_enum(key))
             self.hbox1.add(item.actor)
             item.selector.connect('changed', set_enum, self.schema, key)
+        elif sections[1] == 'speed':
+            item = Gtk.CheckButton(label=_('Show network speed in bits'))
+            item.set_active(self.schema.get_boolean(key))
+            self.hbox3.add(item)
+            item.connect('toggled', set_boolean, self.schema, key)
         elif len(sections) == 3 and sections[2] == 'color':
             item = ColorSelect(_(sections[1].capitalize()))
             item.set_value(self.schema.get_string(key))
@@ -203,6 +210,12 @@ class App:
                 item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'center-display':
                 item = Gtk.CheckButton(label=_('Display in the Middle'))
+                item.set_active(self.schema.get_boolean(key))
+                self.items.append(item)
+                self.hbox1.add(item)
+                item.connect('toggled', set_boolean, self.schema, key)
+            elif key == 'move-clock':
+                item = Gtk.CheckButton(label=_('Move the clock'))
                 item.set_active(self.schema.get_boolean(key))
                 self.items.append(item)
                 self.hbox1.add(item)

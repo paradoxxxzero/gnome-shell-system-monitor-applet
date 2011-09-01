@@ -730,9 +730,11 @@ Icon.prototype = {
 function main() {
     let panel = Main.panel._rightBox;
     if (Schema.get_boolean("center-display")) {
-        let dateMenu = Main.panel._dateMenu;
-        Main.panel._centerBox.remove_actor(dateMenu.actor);
-        Main.panel._rightBox.insert_actor(dateMenu.actor, -1);
+        if (Schema.get_boolean("move-clock")) {
+            let dateMenu = Main.panel._dateMenu;
+            Main.panel._centerBox.remove_actor(dateMenu.actor);
+            Main.panel._rightBox.insert_actor(dateMenu.actor, -1);
+        }
         panel = Main.panel._centerBox;
     }
     Schema.connect('changed::background', Lang.bind(Background, update_color));

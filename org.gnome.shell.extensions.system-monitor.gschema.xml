@@ -135,6 +135,11 @@
       <summary>Display informations next to the clock</summary>
       <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
     </key>
+    <key name="move-clock" type="b">
+      <default>true</default>
+      <summary>Move the clock to the right when center-display is true</summary>
+      <description>True: Move the clock to the right, False: Keep it in center</description>
+    </key>
     <key name="memory-program-color" type="s">
       <default>'#00b35b'</default>
       <summary>Color of program memory in the chart</summary>

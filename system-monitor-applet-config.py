@@ -207,6 +207,12 @@ class App:
                 self.items.append(item)
                 self.hbox1.add(item)
                 item.connect('toggled', set_boolean, self.schema, key)
+            elif key == 'move-clock':
+                item = Gtk.CheckButton(label=_('Move the clock'))
+                item.set_active(self.schema.get_boolean(key))
+                self.items.append(item)
+                self.hbox1.add(item)
+                item.connect('toggled', set_boolean, self.schema, key)
             elif key == 'background':
                 item = ColorSelect(_('Background Color'))
                 item.set_value(self.schema.get_string(key))

@@ -59,7 +59,7 @@ var init = function (metadata) {
 
     Chart = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Chart.prototype = {
         _init: function(width, height, parent) {

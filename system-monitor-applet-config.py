@@ -31,6 +31,7 @@ an alternative of dconf-editor
 
 from gi.repository import Gtk, Gio, Gdk
 
+import os.path
 import gettext
 from gettext import gettext as _
 gettext.textdomain('system-monitor-applet')
@@ -56,6 +57,23 @@ def hex_to_color(hexstr):
         int(hexstr[3], 16) / 15.,
         int(hexstr[4], 16) / 15. if len(hexstr) == 5 else 1)
 
+def check_sensors():
+    sensor_list = []
+    sensor_list.append('/sys/class/hwmon/hwmon0/temp1_input')
+    sensor_list.append('/sys/devices/virtual/thermal/thermal_zone0/temp')
+    sensor_list.append('/sys/bus/acpi/drivers/ATK0110/ATK0110:00/hwmon/hwmon0/temp1_input')
+    sensor_list.append('/sys/devices/platform/coretemp.0/temp1_input')
+    sensor_list.append('/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp')
+    sensor_list.append('/proc/acpi/thermal_zone/THM0/temperature')
+    sensor_list.append('/proc/acpi/thermal_zone/THRM/temperature')
+    sensor_list.append('/proc/acpi/thermal_zone/THR0/temperature')
+    sensor_list.append('/proc/acpi/thermal_zone/TZ0/temperature')
+    
+    sensor_list2 = []
+    for sfile in sensor_list:
+        if os.path.exists(sfile):
+            sensor_list2.append(sfile)
+    return sensor_list2
 
 class ColorSelect:
     def __init__(self, name):
@@ -119,6 +137,8 @@ def set_enum(combo, schema, name):
 def set_color(color, schema, name):
     schema.set_string(name, color_to_hex(color.get_rgba()))
 
+def set_string(combo, schema, name, _slist):
+    schema.set_string(name,  _slist[combo.get_active()])
 
 class SettingFrame:
     def __init__(self, name, schema):
@@ -177,6 +197,17 @@ class SettingFrame:
             item.set_value(self.schema.get_string(key))
             self.hbox2.pack_end(item.actor, True, False, 0)
             item.picker.connect('color-set', set_color, self.schema, key)
+        elif sections[1] == 'sensor':
+            _slist = check_sensors()
+            
+            item = Select(_('Sensor'))
+            item.add(_(_slist))
+            try:
+                item.set_value(_slist.index(self.schema.get_string(key)))
+            except ValueError:
+                item.set_value(0)
+            self.hbox3.add(item.actor)
+            item.selector.connect('changed', set_string, self.schema, key,_slist)
 
 
 class App:

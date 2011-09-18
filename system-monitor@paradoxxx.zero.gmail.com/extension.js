@@ -382,6 +382,8 @@ var init = function (metadata) {
         _init: function() {
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
+            this.current = [0,0,0,0,0];
+            this.total_cores = this.get_cores()
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
@@ -391,19 +393,24 @@ var init = function (metadata) {
         },
         refresh: function() {
             GTop.glibtop_get_cpu(this.gtop);
-            this.usage[0] = this.gtop.user / this.gtop.total;
-            this.usage[1] = this.gtop.nice / this.gtop.total;
-            this.usage[2] = this.gtop.sys / this.gtop.total;
-            this.usage[3] = this.gtop.idle / this.gtop.total;
-            this.usage[4] = this.gtop.iowait / this.gtop.total;
-
-            for (let i = 0;i < 5;i++)
-                this.last[i] = this.usage[i];
-
-            this.last_total = this.gtop.total;
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.nice;
+            this.current[2] = this.gtop.sys;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+            
+            let delta = (this.gtop.total - this.last_total)/(100*this.total_cores) ;
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                
+                this.last_total = this.gtop.total;
+            }
         },
         _apply: function() {
-            let percent = Math.round((1 - this.usage[3]) * 100);
+            let percent = Math.round(((100*this.total_cores)-this.usage[3])/this.total_cores);
             this.text_items[0].text = this.menu_items[3].text = percent.toString();
             let other = 1;
             for (let i = 0;i < this.usage.length;i++)
@@ -411,6 +418,17 @@ var init = function (metadata) {
             this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
             for (let i = 0;i < 5;i++)
                 this.tip_vals[i] = Math.round(this.vals[i] * 100);
+        },
+
+        get_cores: function(){
+            let cores = 0;
+            GTop.glibtop_get_cpu(this.gtop);
+            let gtop_total = this.gtop.xcpu_total
+            for (let i = 0; i < gtop_total.length;i++){
+                if (gtop_total[i] > 0)
+                    cores++;
+            }
+            return cores;
         }
     };
 
@@ -699,8 +717,11 @@ var init = function (metadata) {
             this.update();
         },
         refresh: function() {
-            let t_str = Shell.get_file_contents_utf8_sync('/sys/class/thermal/thermal_zone0/temp').split("\n")[0];
-            this.temperature = parseInt(t_str)/1000.0;
+            let sfile = '/sys/class/thermal/thermal_zone0/temp';
+            if(GLib.file_test(sfile,1<<4)){
+                let t_str = Shell.get_file_contents_utf8_sync(sfile).split("\n")[0];
+                this.temperature = parseInt(t_str)/1000.0;
+            }
         },
         _apply: function() {
             this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();

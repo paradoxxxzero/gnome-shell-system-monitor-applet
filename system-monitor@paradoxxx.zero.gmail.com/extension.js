@@ -381,36 +381,67 @@ var init = function (metadata) {
                      new St.Label({ text: '%', style_class: "sm-label"})],
         _init: function() {
             this.gtop = new GTop.glibtop_cpu();
+            //GTop.glibtop_get_cpu(this.gtop)
             this.last = [0,0,0,0,0];
+            this.current = [0,0,0,0,0];
             this.last_total = 0;
-            this.usage = [0,0,0,1,0];
+            this.total_cores = this.get_cores()
+            //global.logError("cores: " + this.total_cores);
+            this.usage = [0,0,0,0,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
             ElementBase.prototype._init.call(this);
             this.tip_format();
+           
             this.update();
+            
         },
         refresh: function() {
+            //let time = GLib.get_monotonic_time()/1000;
             GTop.glibtop_get_cpu(this.gtop);
-            this.usage[0] = this.gtop.user / this.gtop.total;
-            this.usage[1] = this.gtop.nice / this.gtop.total;
-            this.usage[2] = this.gtop.sys / this.gtop.total;
-            this.usage[3] = this.gtop.idle / this.gtop.total;
-            this.usage[4] = this.gtop.iowait / this.gtop.total;
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.nice;
+            this.current[2] = this.gtop.sys;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+            
+            
+            
+            
+            let delta = (this.gtop.total - this.last_total)/(100*this.total_cores) ;
+            //global.logError("delta: " + delta);
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                
+                this.last_total = this.gtop.total;
+            }
+            //this.last_time = time;
 
-            for (let i = 0;i < 5;i++)
-                this.last[i] = this.usage[i];
+            
 
-            this.last_total = this.gtop.total;
         },
         _apply: function() {
-            let percent = Math.round((1 - this.usage[3]) * 100);
+            let percent = Math.round(((100*this.total_cores)-this.usage[3])/this.total_cores);
             this.text_items[0].text = this.menu_items[3].text = percent.toString();
             let other = 1;
             for (let i = 0;i < this.usage.length;i++)
                 other -= this.usage[i];
             this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
             for (let i = 0;i < 5;i++)
-                this.tip_vals[i] = Math.round(this.vals[i] * 100);
+                this.tip_vals[i] = Math.round(this.vals[i] );
+        },
+
+        get_cores: function(){
+            let cores = 0;
+            GTop.glibtop_get_cpu(this.gtop);
+            gtop_total = this.gtop.xcpu_total
+            for (let i = 0; i < gtop_total.length;i++){
+                if (gtop_total[i] > 0)
+                    cores++;
+            }
+            return cores;            
         }
     };
 

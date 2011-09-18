@@ -135,11 +135,7 @@
       <summary>Choose the display style.</summary>
     </key>
     <key name="thermal-display" type="b">
-<<<<<<< HEAD
       <default>false</default>
-=======
-      <default>true</default>
->>>>>>> thermal2
       <summary>Display thermal</summary>
       <description>Set to false to remove thermal display in status bar</description>
     </key>
@@ -158,19 +154,14 @@
       <summary>Display 'thermal'</summary>
       <description>Set to true to show 'thermal' before thermal display</description>
     </key>
-<<<<<<< HEAD
     <key name="thermal-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
-=======
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="thermal-sensor-file" type="s">
       <default>'/sys/class/hwmon/hwmon0/temp1_input'</default>
       <summary>Sensor File</summary>
       <description>Location of the sensor file for cpu temp</description>
-    </key>
-    <key name="thermal-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
-      <default>'both'</default>
->>>>>>> thermal2
-      <summary>Choose the display style.</summary>
     </key>
     <key name="center-display" type="b">
       <default>false</default>

@@ -433,6 +433,7 @@ var init = function (metadata) {
     };
 
 
+
     Mem = function () {
         this._init.apply(this, arguments);
     }
@@ -692,8 +693,8 @@ var init = function (metadata) {
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
         }
     };
-
-    Thermal = function () {
+    
+    Thermal = function() {
         this._init.apply(this, arguments);
     }
 
@@ -714,14 +715,21 @@ var init = function (metadata) {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
             ElementBase.prototype._init.call(this);
             this.tip_format('C');
+
             this.update();
         },
         refresh: function() {
-            let sfile = '/sys/class/thermal/thermal_zone0/temp';
+            let sfile = Schema.get_string(this.elt + '-sensor-file');
             if(GLib.file_test(sfile,1<<4)){
+                //global.logError("reading sensor");
                 let t_str = Shell.get_file_contents_utf8_sync(sfile).split("\n")[0];
                 this.temperature = parseInt(t_str)/1000.0;
-            }
+            }            
+            else 
+                global.logError("error reading: " + sfile);
+           
+         
+
         },
         _apply: function() {
             this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();

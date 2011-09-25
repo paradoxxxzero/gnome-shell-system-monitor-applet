@@ -421,14 +421,16 @@ var init = function (metadata) {
         },
 
         get_cores: function(){
-            let cores = 0;
-            GTop.glibtop_get_cpu(this.gtop);
-            let gtop_total = this.gtop.xcpu_total
-            for (let i = 0; i < gtop_total.length;i++){
-                if (gtop_total[i] > 0)
-                    cores++;
-            }
-            return cores;
+            // Getting xcpu_total makes gjs 1.29.18 segfault
+            // let cores = 0;
+            // GTop.glibtop_get_cpu(this.gtop);
+            // let gtop_total = this.gtop.xcpu_total
+            // for (let i = 0; i < gtop_total.length;i++){
+            //     if (gtop_total[i] > 0)
+            //         cores++;
+            // }
+            // return cores;
+            return 1;
         }
     };
 

@@ -135,7 +135,7 @@ var init = function (metadata) {
     TipMenu.prototype = {
         __proto__: PopupMenu.PopupMenuBase.prototype,
 
-        _init: function(sourceActor) {
+        _init: function(sourceActor){
             PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
             this.actor = new Shell.GenericContainer();
             this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
@@ -382,6 +382,8 @@ var init = function (metadata) {
         _init: function() {
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
+            this.current = [0,0,0,0,0];
+            this.total_cores = this.get_cores()
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
@@ -391,19 +393,24 @@ var init = function (metadata) {
         },
         refresh: function() {
             GTop.glibtop_get_cpu(this.gtop);
-            this.usage[0] = this.gtop.user / this.gtop.total;
-            this.usage[1] = this.gtop.nice / this.gtop.total;
-            this.usage[2] = this.gtop.sys / this.gtop.total;
-            this.usage[3] = this.gtop.idle / this.gtop.total;
-            this.usage[4] = this.gtop.iowait / this.gtop.total;
-
-            for (let i = 0;i < 5;i++)
-                this.last[i] = this.usage[i];
-
-            this.last_total = this.gtop.total;
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.nice;
+            this.current[2] = this.gtop.sys;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+            
+            let delta = (this.gtop.total - this.last_total)/(100*this.total_cores) ;
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                
+                this.last_total = this.gtop.total;
+            }
         },
         _apply: function() {
-            let percent = Math.round((1 - this.usage[3]) * 100);
+            let percent = Math.round(((100*this.total_cores)-this.usage[3])/this.total_cores);
             this.text_items[0].text = this.menu_items[3].text = percent.toString();
             let other = 1;
             for (let i = 0;i < this.usage.length;i++)
@@ -411,8 +418,20 @@ var init = function (metadata) {
             this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
             for (let i = 0;i < 5;i++)
                 this.tip_vals[i] = Math.round(this.vals[i] * 100);
+        },
+
+        get_cores: function(){
+            let cores = 0;
+            GTop.glibtop_get_cpu(this.gtop);
+            let gtop_total = this.gtop.xcpu_total
+            for (let i = 0; i < gtop_total.length;i++){
+                if (gtop_total[i] > 0)
+                    cores++;
+            }
+            return cores;
         }
     };
+
 
 
     Mem = function () {
@@ -552,6 +571,7 @@ var init = function (metadata) {
             this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
+            
             this.update();
         },
         update_units: function() {
@@ -618,15 +638,15 @@ var init = function (metadata) {
         color_name: ['read', 'write'],
         text_items: [new St.Label({ text: 'R', style_class: "sm-status-label"}),
                      new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"}),
+                     new St.Label({ text: 'MB/s', style_class: "sm-perc-label"}),
                      new St.Label({ text: 'W', style_class: "sm-status-label"}),
                      new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"})],
+                     new St.Label({ text: 'MB/s', style_class: "sm-perc-label"})],
         menu_items: [new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'%', style_class: "sm-label"}),
+                     new St.Label({ text:'MB/s', style_class: "sm-label"}),
                      new St.Label({ text:'R', style_class: "sm-label"}),
                      new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'%', style_class: "sm-label"}),
+                     new St.Label({ text:'MB/s', style_class: "sm-label"}),
                      new St.Label({ text:'W', style_class: "sm-label"})],
         _init: function() {
             // Can't get mountlist:
@@ -643,8 +663,11 @@ var init = function (metadata) {
             }
             this.gtop = new GTop.glibtop_fsusage();
             this.last = [0,0];
+            
             this.usage = [0,0];
             this.last_time = 0;
+            GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
+            this.block_size = this.gtop.block_size/1024/1024/8;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
             ElementBase.prototype._init.call(this);
             this.tip_format('kB/s');
@@ -659,23 +682,30 @@ var init = function (metadata) {
                 accum[1] += this.gtop.write;
             }
             let time = GLib.get_monotonic_time() / 1000;
-            let delta = time - this.last_time;
+            let delta = (time - this.last_time) / 1000;
+            //global.logError(delta);
             if (delta > 0)
                 for (let i = 0;i < 2;i++) {
-                    this.usage[i] = (accum[i] - this.last[i]) / delta;
+                    this.usage[i] =(this.block_size* (accum[i] - this.last[i]) / delta) ;
                     this.last[i] = accum[i];
                 }
             this.last_time = time;
         },
         _apply: function() {
             this.vals = this.usage;
-            this.tip_vals = [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
+            for (let i = 0;i < 2;i++) {    
+                    if (this.usage[i] < 10)
+                        this.usage[i] = this.usage[i].toFixed(1);
+                    else
+                        this.usage[i] = Math.round(this.usage[i]);
+            }
+            this.tip_vals = [this.usage[0] , this.usage[1] ];
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
         }
     };
-
-    Thermal = function () {
+    
+    Thermal = function() {
         this._init.apply(this, arguments);
     }
 
@@ -696,11 +726,21 @@ var init = function (metadata) {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
             ElementBase.prototype._init.call(this);
             this.tip_format('C');
+            Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
             this.update();
         },
         refresh: function() {
-            let t_str = Shell.get_file_contents_utf8_sync('/sys/class/thermal/thermal_zone0/temp').split("\n")[0];
-            this.temperature = parseInt(t_str)/1000.0;
+            let sfile = Schema.get_string(this.elt + '-sensor-file');
+            if(GLib.file_test(sfile,1<<4)){
+                //global.logError("reading sensor");
+                let t_str = Shell.get_file_contents_utf8_sync(sfile).split("\n")[0];
+                this.temperature = parseInt(t_str)/1000.0;
+            }            
+            else 
+                global.logError("error reading: " + sfile);
+           
+         
+
         },
         _apply: function() {
             this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();

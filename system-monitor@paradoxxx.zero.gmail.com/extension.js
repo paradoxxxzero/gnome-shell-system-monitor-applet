@@ -135,7 +135,7 @@ var init = function (metadata) {
     TipMenu.prototype = {
         __proto__: PopupMenu.PopupMenuBase.prototype,
 
-        _init: function(sourceActor) {
+        _init: function(sourceActor){
             PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
             this.actor = new Shell.GenericContainer();
             this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
@@ -571,6 +571,7 @@ var init = function (metadata) {
             this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
+            
             this.update();
         },
         update_units: function() {
@@ -637,15 +638,15 @@ var init = function (metadata) {
         color_name: ['read', 'write'],
         text_items: [new St.Label({ text: 'R', style_class: "sm-status-label"}),
                      new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"}),
+                     new St.Label({ text: 'MB/s', style_class: "sm-perc-label"}),
                      new St.Label({ text: 'W', style_class: "sm-status-label"}),
                      new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"})],
+                     new St.Label({ text: 'MB/s', style_class: "sm-perc-label"})],
         menu_items: [new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'%', style_class: "sm-label"}),
+                     new St.Label({ text:'MB/s', style_class: "sm-label"}),
                      new St.Label({ text:'R', style_class: "sm-label"}),
                      new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'%', style_class: "sm-label"}),
+                     new St.Label({ text:'MB/s', style_class: "sm-label"}),
                      new St.Label({ text:'W', style_class: "sm-label"})],
         _init: function() {
             // Can't get mountlist:
@@ -662,8 +663,11 @@ var init = function (metadata) {
             }
             this.gtop = new GTop.glibtop_fsusage();
             this.last = [0,0];
+            
             this.usage = [0,0];
             this.last_time = 0;
+            GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
+            this.block_size = this.gtop.block_size/1024/1024/8;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
             ElementBase.prototype._init.call(this);
             this.tip_format('kB/s');
@@ -678,17 +682,24 @@ var init = function (metadata) {
                 accum[1] += this.gtop.write;
             }
             let time = GLib.get_monotonic_time() / 1000;
-            let delta = time - this.last_time;
+            let delta = (time - this.last_time) / 1000;
+            //global.logError(delta);
             if (delta > 0)
                 for (let i = 0;i < 2;i++) {
-                    this.usage[i] = (accum[i] - this.last[i]) / delta;
+                    this.usage[i] =(this.block_size* (accum[i] - this.last[i]) / delta) ;
                     this.last[i] = accum[i];
                 }
             this.last_time = time;
         },
         _apply: function() {
             this.vals = this.usage;
-            this.tip_vals = [Math.round(this.usage[0] * 100), Math.round(this.usage[1] * 100)];
+            for (let i = 0;i < 2;i++) {    
+                    if (this.usage[i] < 10)
+                        this.usage[i] = this.usage[i].toFixed(1);
+                    else
+                        this.usage[i] = Math.round(this.usage[i]);
+            }
+            this.tip_vals = [this.usage[0] , this.usage[1] ];
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
         }
@@ -715,7 +726,7 @@ var init = function (metadata) {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
             ElementBase.prototype._init.call(this);
             this.tip_format('C');
-
+            Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
             this.update();
         },
         refresh: function() {

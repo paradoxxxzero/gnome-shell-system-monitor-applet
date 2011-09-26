@@ -557,7 +557,7 @@ var init = function (metadata) {
             // Error: No symbol 'glibtop_get_netlist' in namespace 'GTop'
             let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             for(let i = 3; i < net_lines.length - 1 ; i++) {
-                let ifc = net_lines[i].replace(/[ :]+/g, " ").split(" ")[1];
+                let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
                 if(ifc.indexOf("br") < 0 && ifc.indexOf("lo") < 0) {
                     this.ifs.push(ifc);
                 }
@@ -683,7 +683,7 @@ var init = function (metadata) {
             }
             let time = GLib.get_monotonic_time() / 1000;
             let delta = (time - this.last_time) / 1000;
-            //global.logError(delta);
+            
             if (delta > 0)
                 for (let i = 0;i < 2;i++) {
                     this.usage[i] =(this.block_size* (accum[i] - this.last[i]) / delta) ;

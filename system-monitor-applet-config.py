@@ -199,7 +199,8 @@ class SettingFrame:
             item.picker.connect('color-set', set_color, self.schema, key)
         elif sections[1] == 'sensor':
             _slist = check_sensors()
-            
+            if (len(_slist) == 1):
+				self.schema.set_string(key, _slist[0])
             item = Select(_('Sensor'))
             item.add(_(_slist))
             try:

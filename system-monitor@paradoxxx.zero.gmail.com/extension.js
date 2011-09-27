@@ -802,6 +802,8 @@ var init = function (metadata) {
             }
 
             let thickness = (2 * rc) / (3 * this.mounts.length);
+            global.logError(thickness);
+            global.logError(yc);
             let fontsize = 14;
             let r = rc - (thickness / 2);
             cr.setLineWidth(thickness);
@@ -810,7 +812,7 @@ var init = function (metadata) {
                 GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
                 Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
                 arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi/2);
-                cr.moveTo(0, thickness + 2 * fontsize * mount);
+                cr.moveTo(0, yc - r + thickness / 2);
                 cr.showText(this.mounts[mount]);
                 cr.stroke();
                 r -= (3 * thickness) / 2;

@@ -907,16 +907,20 @@ var enable = function () {
             }
         }
     );
+    
+    let _appSys = Shell.AppSystem.get_default();
+    let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
+    let _gsmPrefs = _appSys.lookup_app('system-monitor-applet-config.desktop');
 
     item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
-        Util.spawn(["gnome-system-monitor"]);
+        _gsmApp.activate();
     });
     tray.menu.addMenuItem(item);
 
     item = new PopupMenu.PopupMenuItem(_("Preferences..."));
     item.connect('activate', function () {
-        Util.spawn(["system-monitor-applet-config"]);
+        _gsmPrefs.activate();
     });
     tray.menu.addMenuItem(item);
 

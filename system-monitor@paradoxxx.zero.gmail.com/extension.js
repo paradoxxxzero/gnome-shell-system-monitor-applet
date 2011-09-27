@@ -800,8 +800,6 @@ var init = function (metadata) {
             }
 
             let thickness = (2 * rc) / (3 * this.mounts.length);
-            global.logError(thickness);
-            global.logError(yc);
             let fontsize = 14;
             let r = rc - (thickness / 2);
             cr.setLineWidth(thickness);

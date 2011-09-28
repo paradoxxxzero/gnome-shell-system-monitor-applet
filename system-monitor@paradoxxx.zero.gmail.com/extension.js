@@ -68,6 +68,7 @@ var init = function (metadata) {
             this.actor.set_width(this.width=width);
             this.actor.set_height(this.height=height);
             this.actor.connect('repaint', Lang.bind(this, this._draw));
+            this.max_history = 1;
             this.data = [];
             for (let i = 0;i < this.parent.colors.length;i++)
                 this.data[i] = [];
@@ -89,7 +90,8 @@ var init = function (metadata) {
             let [width, height] = this.actor.get_surface_size();
             let cr = this.actor.get_context();
             let max = Math.max.apply(this, this.data[this.data.length - 1]);
-            max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
+            max = Math.max(this.max_history, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
+            this.max_history = max;
             Clutter.cairo_set_source_color(cr, Background);
             cr.rectangle(0, 0, width, height);
             cr.fill();
@@ -808,7 +810,7 @@ var init = function (metadata) {
                 GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
                 Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
                 arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi/2);
-                cr.moveTo(0, thickness + 2 * fontsize * mount);
+                cr.moveTo(0, yc - r + thickness / 2);
                 cr.showText(this.mounts[mount]);
                 cr.stroke();
                 r -= (3 * thickness) / 2;
@@ -907,16 +909,20 @@ var enable = function () {
             }
         }
     );
+    
+    let _appSys = Shell.AppSystem.get_default();
+    let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
+    let _gsmPrefs = _appSys.lookup_app('system-monitor-applet-config.desktop');
 
     item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
-        Util.spawn(["gnome-system-monitor"]);
+        _gsmApp.activate();
     });
     tray.menu.addMenuItem(item);
 
     item = new PopupMenu.PopupMenuItem(_("Preferences..."));
     item.connect('activate', function () {
-        Util.spawn(["system-monitor-applet-config"]);
+        _gsmPrefs.activate();
     });
     tray.menu.addMenuItem(item);
 

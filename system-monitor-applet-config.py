@@ -202,7 +202,7 @@ class SettingFrame:
             if (len(_slist) == 1):
                 self.schema.set_string(key, _slist[0])
             item = Select(_('Sensor'))
-            item.add(_(_slist))
+            item.add(_slist)
             try:
                 item.set_value(_slist.index(self.schema.get_string(key)))
             except ValueError:

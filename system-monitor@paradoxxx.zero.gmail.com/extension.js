@@ -696,7 +696,7 @@ var init = function (metadata) {
             this.last_time = time;
         },
         _apply: function() {
-            this.vals = this.usage;
+            this.vals = this.usage.slice();
             for (let i = 0;i < 2;i++) {    
                     if (this.usage[i] < 10)
                         this.usage[i] = this.usage[i].toFixed(1);

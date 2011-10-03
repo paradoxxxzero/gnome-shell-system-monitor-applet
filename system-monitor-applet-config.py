@@ -28,8 +28,12 @@ Tool for editing system-monitor-applet preference as
 an alternative of dconf-editor
 
 """
-
-from gi.repository import Gtk, Gio, Gdk
+from sys import exit
+try:
+    from gi.repository import Gtk, Gio, Gdk
+except ImportError:
+    print "Missing Dependencies, please install Python Gobject bindings from your distribution."
+    exit()
 
 import os.path
 import gettext

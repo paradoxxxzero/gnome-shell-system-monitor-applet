@@ -32,7 +32,7 @@ from sys import exit
 try:
     from gi.repository import Gtk, Gio, Gdk
 except ImportError:
-    print "Missing Dependencies, please install Python Gobject bindings from your distribution."
+    print("Missing Dependencies, please install Python Gobject bindings from your distribution.")
     exit()
 
 import os.path

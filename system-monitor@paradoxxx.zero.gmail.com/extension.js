@@ -201,8 +201,7 @@ var init = function (metadata) {
             this.actor = new St.BoxLayout({ reactive: true });
             this.actor._delegate = this;
             this.tipmenu = new TipMenu(this.actor);
-            // Main.chrome.addActor(this.tipmenu.actor, { visibleInOverview: true,
-            // affectsStruts: false });
+            // Main.chrome.addActor(this.tipmenu.actor, { affectsStruts: false });
             this.tipmenu.close();
             this.in_to = this.out_to = 0;
             // This crash the shell right now

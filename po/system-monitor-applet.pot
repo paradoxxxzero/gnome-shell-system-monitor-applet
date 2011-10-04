@@ -175,3 +175,9 @@ msgstr ""
 
 msgid "read"
 msgstr ""
+
+msgid "Thermal"
+msgstr ""
+
+msgid "thermal"
+msgstr ""

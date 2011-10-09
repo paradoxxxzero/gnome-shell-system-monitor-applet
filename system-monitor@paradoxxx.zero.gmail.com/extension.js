@@ -26,7 +26,8 @@ const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
-const Main = imports.ui.main;const Panel = imports.ui.panel;
+const Main = imports.ui.main;
+const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
@@ -694,7 +695,7 @@ var init = function (metadata) {
             this.last_time = time;
         },
         _apply: function() {
-            this.vals = this.usage;
+            this.vals = this.usage.slice();
             for (let i = 0;i < 2;i++) {    
                     if (this.usage[i] < 10)
                         this.usage[i] = this.usage[i].toFixed(1);

@@ -34,7 +34,7 @@ Then install the schema:
 To install the configurator (you need python and py3gobject):
     sudo cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.py /usr/local/bin/system-monitor-applet-config
 
-To use the thermal sensors you will need a working lm-sensors installation.
+To use the thermal sensors you will need a working lm-sensors installation. If the 'sensors' command doesn't provide any output, then run 'sensors-detect'.
 
 To install locale you need gettext:
     sudo msgfmt ~/git_project/gnome-shell-system-monitor-applet/po/YOUR_LANGUAGE/system-monitor-applet.po -o /usr/share/locale/YOUR_LANGUAGE/LC_MESSAGES/system-monitor-applet.mo

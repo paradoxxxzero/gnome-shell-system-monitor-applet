@@ -2,6 +2,7 @@
 Name=System Monitor Preference
 Name[zh_CN]=面板系统监视器选项
 Name[fr_FR]=Préférences de system-monitor-applet
+Name[pt_PT]=Editor de preferências do system-monitor-applet
 GenericName=Preference Editor for system-monitor-applet
 Exec=system-monitor-applet-config
 Terminal=false

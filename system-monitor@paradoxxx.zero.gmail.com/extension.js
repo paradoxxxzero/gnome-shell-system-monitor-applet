@@ -734,7 +734,13 @@ var init = function (metadata) {
         },
         refresh: function() {
             let sfile = Schema.get_string(this.elt + '-sensor-file');
-            if(GLib.file_test(sfile,1<<4)){
+            let scommand = Schema.get_string(this.elt + '-sensor-custom');
+            if (scommand){
+                let t_str = GLib.spawn_command_line_sync(scommand);
+                if (t_str[0])
+                    this.temperature = parseInt(t_str[1])
+            }
+            else if(GLib.file_test(sfile,1<<4)){
                 //global.logError("reading sensor");
                 let t_str = Shell.get_file_contents_utf8_sync(sfile).split("\n")[0];
                 this.temperature = parseInt(t_str)/1000.0;

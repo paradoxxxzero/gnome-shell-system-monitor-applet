@@ -163,6 +163,11 @@
       <summary>Sensor File</summary>
       <description>Location of the sensor file for cpu temp</description>
     </key>
+    <key name="thermal-sensor-custom" type="s">
+      <default>''</default>
+      <summary>Sensor Command</summary>
+      <description>Custom command to get temperature</description>
+    </key>
     <key name="center-display" type="b">
       <default>false</default>
       <summary>Display informations next to the clock</summary>

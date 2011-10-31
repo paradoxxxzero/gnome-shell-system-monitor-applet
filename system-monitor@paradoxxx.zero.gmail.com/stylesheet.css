@@ -27,7 +27,8 @@
 }
 
 .sm-big-status-value {
-    min-width: 32px;
+    /*min-width: 32px;*/
+    min-width: 3.5em;
     text-align: right;
 }
 

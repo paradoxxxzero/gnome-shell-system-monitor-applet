@@ -350,6 +350,7 @@ ElementBase.prototype = {
 function Cpu() {
     this._init.apply(this, arguments);
 }
+
 Cpu.prototype = {
     __proto__: ElementBase.prototype,
     elt: 'cpu',
@@ -399,6 +400,48 @@ Cpu.prototype = {
         this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
         for (let i = 0;i < 5;i++)
             this.tip_vals[i] = Math.round(this.vals[i] * 100);
+    }
+};
+
+function Freq() {
+    this._init.apply(this, arguments);
+}
+
+Freq.prototype = {
+    __proto__: ElementBase.prototype,
+    elt: 'freq',
+    color_name: ['freq'],
+    text_items: [new St.Label({ style_class: "sm-big-status-value"}),
+                 new St.Label({ text: 'mHz', style_class: "sm-perc-label"})],
+    menu_items: [new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ style_class: "sm-value"}),
+                 new St.Label({ style_class: "sm-void"}),
+                 new St.Label({ text: 'mHz', style_class: "sm-label"})],
+    _init: function() {
+        this.freq = 0;
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
+        ElementBase.prototype._init.call(this);
+        this.tip_format('mHz');
+        this.update();
+    },
+    refresh: function() {
+        let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
+        for(let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            if(line.search(/cpu mhz/i) < 0)
+                continue;
+                
+            this.freq = parseInt(line.substring(line.indexOf(':') + 2));
+            break;
+        }
+    },
+    _apply: function() {
+        let value = this.freq.toString();
+        this.text_items[0].text = value + ' ';
+        this.tip_vals[0] = value;
+        this.menu_items[3].text = value;
     }
 };
 
@@ -718,6 +761,7 @@ function main() {
         pie: new Pie(300, 300),
         elts: {
             cpu: new Cpu(),
+            freq: new Freq(),
             memory: new Mem(),
             swap: new Swap(),
             net: new Net(),

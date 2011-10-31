@@ -372,7 +372,7 @@ var init = function (metadata) {
     Cpu.prototype = {
         __proto__: ElementBase.prototype,
         elt: 'cpu',
-        color_name: ['user', 'nice', 'system', 'iowait', 'other'],
+        color_name: ['user', 'system', 'nice', 'iowait', 'other'],
         text_items: [new St.Label({ style_class: "sm-status-value"}),
                      new St.Label({ text: '%', style_class: "sm-perc-label"})],
         menu_items: [new St.Label({ style_class: "sm-void"}),

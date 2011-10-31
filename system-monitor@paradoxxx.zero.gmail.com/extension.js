@@ -36,7 +36,7 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
-let ElementBase, Cpu, Mem, Swap, Net, Disk, Thermal, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
+let ElementBase, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
 let Schema, Background, IconSize;
 
 var init = function (metadata) {
@@ -119,7 +119,7 @@ var init = function (metadata) {
 
     TipItem = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     TipItem.prototype = {
         __proto__: PopupMenu.PopupBaseMenuItem.prototype,
@@ -133,7 +133,7 @@ var init = function (metadata) {
 
     TipMenu = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     TipMenu.prototype = {
         __proto__: PopupMenu.PopupMenuBase.prototype,
@@ -194,7 +194,7 @@ var init = function (metadata) {
 
     TipBox = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     TipBox.prototype = {
         _init: function() {
@@ -249,7 +249,7 @@ var init = function (metadata) {
 
     ElementBase = function () {
         throw new TypeError('Trying to instantiate abstract class ElementBase');
-    }
+    };
 
     ElementBase.prototype = {
         __proto__: TipBox.prototype,
@@ -369,7 +369,8 @@ var init = function (metadata) {
 
     Cpu = function () {
         this._init.apply(this, arguments);
-    }
+    };
+
     Cpu.prototype = {
         __proto__: ElementBase.prototype,
         elt: 'cpu',
@@ -386,7 +387,7 @@ var init = function (metadata) {
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
             this.current = [0,0,0,0,0];
-            this.total_cores = this.get_cores()
+            this.total_cores = this.get_cores();
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
@@ -439,7 +440,7 @@ var init = function (metadata) {
 
     Mem = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Mem.prototype = {
         __proto__: ElementBase.prototype,
@@ -486,7 +487,7 @@ var init = function (metadata) {
 
     Swap = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Swap.prototype = {
         __proto__: ElementBase.prototype,
@@ -528,7 +529,7 @@ var init = function (metadata) {
 
     Net = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Net.prototype = {
         __proto__: ElementBase.prototype,
@@ -636,7 +637,7 @@ var init = function (metadata) {
 
     Disk = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Disk.prototype = {
         __proto__: ElementBase.prototype,
@@ -713,7 +714,7 @@ var init = function (metadata) {
     
     Thermal = function() {
         this._init.apply(this, arguments);
-    }
+    };
 
     Thermal.prototype = {
         __proto__: ElementBase.prototype,
@@ -761,9 +762,51 @@ var init = function (metadata) {
         }
     };
 
+    Freq = function () {
+        this._init.apply(this, arguments);
+    };
+
+    Freq.prototype = {
+        __proto__: ElementBase.prototype,
+        elt: 'freq',
+        color_name: ['freq'],
+        text_items: [new St.Label({ style_class: "sm-big-status-value"}),
+                     new St.Label({ text: 'mHz', style_class: "sm-perc-label"})],
+        menu_items: [new St.Label({ style_class: "sm-void"}),
+                     new St.Label({ style_class: "sm-void"}),
+                     new St.Label({ style_class: "sm-void"}),
+                     new St.Label({ style_class: "sm-value"}),
+                     new St.Label({ style_class: "sm-void"}),
+                     new St.Label({ text: 'mHz', style_class: "sm-label"})],
+        _init: function() {
+            this.freq = 0;
+            this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
+            ElementBase.prototype._init.call(this);
+            this.tip_format('mHz');
+            this.update();
+        },
+        refresh: function() {
+            let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
+            for(let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                if(line.search(/cpu mhz/i) < 0)
+                    continue;
+                
+                this.freq = parseInt(line.substring(line.indexOf(':') + 2));
+                break;
+            }
+        },
+        _apply: function() {
+            let value = this.freq.toString();
+            this.text_items[0].text = value + ' ';
+            this.tip_vals[0] = value;
+            this.menu_items[3].text = value;
+        }
+    };
+
     Pie = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Pie.prototype = {
         _init: function() {
@@ -828,7 +871,7 @@ var init = function (metadata) {
 
     Icon = function () {
         this._init.apply(this, arguments);
-    }
+    };
 
     Icon.prototype = {
         _init: function() {
@@ -871,6 +914,7 @@ var enable = function () {
         pie: new Pie(300, 300),
         elts: {
             cpu: new Cpu(),
+            freq: new Freq(),
             memory: new Mem(),
             swap: new Swap(),
             net: new Net(),

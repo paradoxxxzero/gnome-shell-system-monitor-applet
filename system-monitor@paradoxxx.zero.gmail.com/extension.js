@@ -561,7 +561,10 @@ var init = function (metadata) {
             let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             for(let i = 3; i < net_lines.length - 1 ; i++) {
                 let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
-                if(ifc.indexOf("br") < 0 && ifc.indexOf("lo") < 0) {
+                if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
+                   .replace(/\s/g, "") == "up" && 
+                   ifc.indexOf("br") < 0 && 
+                   ifc.indexOf("lo") < 0) {
                     this.ifs.push(ifc);
                 }
             }

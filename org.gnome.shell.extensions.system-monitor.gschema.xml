@@ -82,6 +82,30 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="freq-display" type="b">
+      <default>false</default>
+      <summary>Display freq</summary>
+      <description>Set to false to remove freq display in status bar</description>
+    </key>
+    <key name="freq-refresh-time" type="i">
+      <default>1500</default>
+      <summary>Cpu frequency refresh time</summary>
+      <description>Time in ms between 2 refresh of cpu</description>
+    </key>
+    <key name="freq-graph-width" type="i">
+      <default>100</default>
+      <summary>Cpu frequency graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="freq-show-text" type="b">
+      <default>false</default>
+      <summary>Display freq'</summary>
+      <description>Set to true to show 'freq' before cpu frequency display</description>
+    </key>
+    <key name="freq-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="net-display" type="b">
       <default>true</default>
       <summary>Display net</summary>
@@ -224,6 +248,10 @@
     <key name="cpu-other-color" type="s">
       <default>'#001d26'</default>
       <summary>Color of other cpu in the chart</summary>
+    </key>
+    <key name="freq-freq-color" type="s">
+      <default>'#001d26'</default>
+      <summary>Color of freq in the chart</summary>
     </key>
     <key name="swap-used-color" type="s">
       <default>'#8b00c3'</default>

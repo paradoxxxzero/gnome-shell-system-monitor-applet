@@ -224,7 +224,7 @@ class SettingFrame:
 
 class App:
     opt = {}
-    setting_items = ('cpu', 'memory', 'swap', 'net', 'disk', 'thermal')
+    setting_items = ('cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'freq')
 
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')

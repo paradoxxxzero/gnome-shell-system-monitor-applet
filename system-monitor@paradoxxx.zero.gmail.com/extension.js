@@ -243,7 +243,20 @@ var init = function (metadata) {
             if (!this.out_to)
                 this.out_to = Mainloop.timeout_add(500, Lang.bind(this,
                                                                   this.hide_tip));
-        }
+        },
+        destroy: function() {
+            if (this.in_to) {
+                Mainloop.source_remove(this.in_to);
+                this.in_to = 0;
+            }
+
+            if (this.out_to) {
+                Mainloop.source_remove(this.out_to);
+                this.out_to = 0;
+            }
+
+            this.actor.destroy();
+        },
     };
 
     ElementBase = function () {
@@ -362,6 +375,10 @@ var init = function (metadata) {
             for (let i = 0;i < this.tip_vals.length;i++)
                 this.tip_labels[i].text = this.tip_vals[i].toString();
             return true;
+        },
+        destroy: function() {
+            TipBox.prototype.destroy.call(this);
+            Mainloop.source_remove(this.timeout);
         }
     };
 
@@ -979,6 +996,10 @@ var enable = function () {
 };
 
 var disable = function () {
-    // TODO: DISABLE PROPERLY
+    for (let eltName in Main.__sm.elts) {
+        Main.__sm.elts[eltName].destroy();
+    }
+    Main.__sm.tray.actor.destroy();
+    Main.__sm = null;
     log("System monitor applet disable");
 };

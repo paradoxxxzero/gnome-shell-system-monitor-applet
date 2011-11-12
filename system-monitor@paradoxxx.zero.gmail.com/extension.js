@@ -334,11 +334,13 @@ var init = function (metadata) {
             this.text_box = new St.BoxLayout();
 
             this.actor.add_actor(this.text_box);
+            this.text_items = this.create_text_items();
             for (let item in this.text_items)
                 this.text_box.add_actor(this.text_items[item]);
             this.actor.add_actor(this.chart.actor);
             change_style.call(this);
             Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
+            this.menu_items = this.create_menu_items();
             for (let item in this.menu_items)
                 this.menu_item.addActor(this.menu_items[item]);
         },
@@ -391,14 +393,7 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'cpu',
         color_name: ['user', 'system', 'nice', 'iowait', 'other'],
-        text_items: [new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"})],
-        menu_items: [new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: '%', style_class: "sm-label"})],
+
         _init: function() {
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
@@ -451,6 +446,19 @@ var init = function (metadata) {
             // }
             // return cores;
             return 1;
+        },
+        create_text_items: function() {
+            return [new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: '%', style_class: "sm-perc-label"})];
+
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: '%', style_class: "sm-label"})];
         }
     };
 
@@ -464,14 +472,6 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'memory',
         color_name: ['program', 'buffer', 'cache'],
-        text_items: [new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"})],
-        menu_items: [new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: "/", style_class: "sm-label"}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: "M", style_class: "sm-label"})],
         _init: function() {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
             this.gtop = new GTop.glibtop_mem();
@@ -499,6 +499,18 @@ var init = function (metadata) {
             this.text_items[0].text = this.tip_vals[0].toString();
             this.menu_items[0].text = this.mem[0].toString();
             this.menu_items[3].text = this.total.toString();
+        },
+        create_text_items: function() {
+            return [new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: "/", style_class: "sm-label"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: "M", style_class: "sm-label"})];
         }
     };
 
@@ -511,14 +523,6 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'swap',
         color_name: ['used'],
-        text_items: [new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: '%', style_class: "sm-perc-label"})],
-        menu_items: [new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: "/", style_class: "sm-label"}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: "M", style_class: "sm-label"})],
         _init: function() {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
             this.gtop = new GTop.glibtop_swap();
@@ -541,6 +545,19 @@ var init = function (metadata) {
             this.text_items[0].text = this.tip_vals[0].toString();
             this.menu_items[0].text = this.swap.toString();
             this.menu_items[3].text = this.total.toString();
+        },
+
+        create_text_items: function() {
+            return [new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: "/", style_class: "sm-label"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: "M", style_class: "sm-label"})];
         }
     };
 
@@ -553,24 +570,6 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'net',
         color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
-        text_items: [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                                   icon_size: 2 * IconSize / 3,
-                                   icon_name:'go-down'}),
-                     new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
-                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                                   icon_size: 2 * IconSize / 3,
-                                   icon_name:'go-up'}),
-                     new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})],
-        menu_items: [new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'k', style_class: "sm-label"}),
-                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                                   icon_size: 16, icon_name:'go-down'}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'k', style_class: "sm-label"}),
-                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                                   icon_size: 16, icon_name:'go-up'})],
         speed_in_bits: false,
         _init: function() {
             this.ifs = [];
@@ -649,6 +648,28 @@ var init = function (metadata) {
             this.tip_vals = this.vals = this.usage;
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
+        },
+        create_text_items: function() {
+            return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                                  icon_size: 2 * IconSize / 3,
+                                  icon_name:'go-down'}),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
+                    new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                                  icon_size: 2 * IconSize / 3,
+                                  icon_name:'go-up'}),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ text:'k', style_class: "sm-label"}),
+                    new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                                  icon_size: 16, icon_name:'go-down'}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ text:'k', style_class: "sm-label"}),
+                    new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                                  icon_size: 16, icon_name:'go-up'})];
         }
     };
 
@@ -661,18 +682,6 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'disk',
         color_name: ['read', 'write'],
-        text_items: [new St.Label({ text: 'R', style_class: "sm-status-label"}),
-                     new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: 'MB/s', style_class: "sm-perc-label"}),
-                     new St.Label({ text: 'W', style_class: "sm-status-label"}),
-                     new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: 'MB/s', style_class: "sm-perc-label"})],
-        menu_items: [new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'MB/s', style_class: "sm-label"}),
-                     new St.Label({ text:'R', style_class: "sm-label"}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ text:'MB/s', style_class: "sm-label"}),
-                     new St.Label({ text:'W', style_class: "sm-label"})],
         _init: function() {
             // Can't get mountlist:
             // GTop.glibtop_get_mountlist
@@ -727,6 +736,22 @@ var init = function (metadata) {
             this.tip_vals = [this.usage[0] , this.usage[1] ];
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
+        },
+        create_text_items: function() {
+            return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'MB/s', style_class: "sm-perc-label"}),
+                    new St.Label({ text: 'W', style_class: "sm-status-label"}),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'MB/s', style_class: "sm-perc-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ text:'MB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'R', style_class: "sm-label"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ text:'MB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'W', style_class: "sm-label"})];
         }
     };
     
@@ -738,14 +763,6 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'thermal',
         color_name: ['tz0'],
-        text_items: [new St.Label({ style_class: "sm-status-value"}),
-                     new St.Label({ text: 'C', style_class: "sm-unit-label"})],
-        menu_items: [new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: 'C', style_class: "sm-label"})],
         _init: function() {
             this.temperature = -273.15;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
@@ -771,6 +788,18 @@ var init = function (metadata) {
             this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
             this.vals = [this.temperature];
             this.tip_vals[0] = Math.round(this.vals[0]);
+        },
+        create_text_items: function() {
+            return [new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'C', style_class: "sm-unit-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: 'C', style_class: "sm-label"})];
         }
     };
 
@@ -782,14 +811,6 @@ var init = function (metadata) {
         __proto__: ElementBase.prototype,
         elt: 'freq',
         color_name: ['freq'],
-        text_items: [new St.Label({ style_class: "sm-big-status-value"}),
-                     new St.Label({ text: 'mHz', style_class: "sm-perc-label"})],
-        menu_items: [new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ style_class: "sm-value"}),
-                     new St.Label({ style_class: "sm-void"}),
-                     new St.Label({ text: 'mHz', style_class: "sm-label"})],
         _init: function() {
             this.freq = 0;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
@@ -813,6 +834,19 @@ var init = function (metadata) {
             this.text_items[0].text = value + ' ';
             this.tip_vals[0] = value;
             this.menu_items[3].text = value;
+        },
+        create_text_items: function() {
+            return [new St.Label({ style_class: "sm-big-status-value"}),
+                    new St.Label({ text: 'mHz', style_class: "sm-perc-label"})];
+
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: 'mHz', style_class: "sm-label"})];
         }
     };
 

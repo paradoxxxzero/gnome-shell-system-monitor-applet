@@ -398,8 +398,8 @@ var init = function (metadata) {
         refresh: function() {
             GTop.glibtop_get_cpu(this.gtop);
             this.current[0] = this.gtop.user;
-            this.current[1] = this.gtop.nice;
-            this.current[2] = this.gtop.sys;
+            this.current[1] = this.gtop.sys;
+            this.current[2] = this.gtop.nice;
             this.current[3] = this.gtop.idle;
             this.current[4] = this.gtop.iowait;
             

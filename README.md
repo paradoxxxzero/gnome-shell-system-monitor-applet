@@ -30,7 +30,7 @@ Then:
     mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
-    cp ~/git_projects/gnome-shell-system-monitor-applet/gnome-shell-system-monitor-config.desktop ~/.local/share/applications/
+    cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.desktop ~/.local/share/applications/
 
 Then install the schema:
 

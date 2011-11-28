@@ -244,7 +244,20 @@ var init = function (metadata) {
             if (!this.out_to)
                 this.out_to = Mainloop.timeout_add(500, Lang.bind(this,
                                                                   this.hide_tip));
-        }
+        },
+        destroy: function() {
+            if (this.in_to) {
+                Mainloop.source_remove(this.in_to);
+                this.in_to = 0;
+            }
+
+            if (this.out_to) {
+                Mainloop.source_remove(this.out_to);
+                this.out_to = 0;
+            }
+
+            this.actor.destroy();
+        },
     };
 
     ElementBase = function () {
@@ -363,6 +376,10 @@ var init = function (metadata) {
             for (let i = 0;i < this.tip_vals.length;i++)
                 this.tip_labels[i].text = this.tip_vals[i].toString();
             return true;
+        },
+        destroy: function() {
+            TipBox.prototype.destroy.call(this);
+            Mainloop.source_remove(this.timeout);
         }
     };
 
@@ -374,7 +391,7 @@ var init = function (metadata) {
     Cpu.prototype = {
         __proto__: ElementBase.prototype,
         elt: 'cpu',
-        color_name: ['user', 'nice', 'system', 'iowait', 'other'],
+        color_name: ['user', 'system', 'nice', 'iowait', 'other'],
         text_items: [new St.Label({ style_class: "sm-status-value"}),
                      new St.Label({ text: '%', style_class: "sm-perc-label"})],
         menu_items: [new St.Label({ style_class: "sm-void"}),
@@ -425,14 +442,16 @@ var init = function (metadata) {
         },
 
         get_cores: function(){
-            let cores = 0;
-            GTop.glibtop_get_cpu(this.gtop);
-            let gtop_total = this.gtop.xcpu_total
-            for (let i = 0; i < gtop_total.length;i++){
-                if (gtop_total[i] > 0)
-                    cores++;
-            }
-            return cores;
+            // Getting xcpu_total makes gjs 1.29.18 segfault
+            // let cores = 0;
+            // GTop.glibtop_get_cpu(this.gtop);
+            // let gtop_total = this.gtop.xcpu_total
+            // for (let i = 0; i < gtop_total.length;i++){
+            //     if (gtop_total[i] > 0)
+            //         cores++;
+            // }
+            // return cores;
+            return 1;
         }
     };
 
@@ -984,6 +1003,10 @@ var enable = function () {
 };
 
 var disable = function () {
-    // TODO: DISABLE PROPERLY
+    for (let eltName in Main.__sm.elts) {
+        Main.__sm.elts[eltName].destroy();
+    }
+    Main.__sm.tray.actor.destroy();
+    Main.__sm = null;
     log("System monitor applet disable");
 };

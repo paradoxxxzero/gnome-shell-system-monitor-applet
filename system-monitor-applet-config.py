@@ -67,22 +67,23 @@ def check_sensors():
     inputs = ['temp1_input','temp2_input']
     sensor_path = '/sys/class/hwmon/'
     sensor_list = []
-    string_list = []
-    for j in range(5):
-        for sfile in inputs:
-            test = sensor_path + 'hwmon' + str(j) + '/' + sfile
-            if not os.path.isfile(test):
-                test = sensor_path + 'hwmon' + str(j) + '/device/' + sfile
-                if not os.path.isfile(test):
-                    continue
-            
-            sensor = os.path.split(test)
-            infile = open(sensor[0] + '/name', "r")
-            label = infile.readline().split('\n')[0] + ' - ' + sensor[1]
-            string_list.append(label)
-            sensor_list.append(test)
-            infile.close()
-    return sensor_list, string_list
+    sensor_list.append('/sys/class/hwmon/hwmon0/temp1_input')
+    sensor_list.append('/sys/devices/virtual/thermal/thermal_zone0/temp')
+    sensor_list.append('/sys/bus/acpi/drivers/ATK0110/'
+                       'ATK0110:00/hwmon/hwmon0/temp1_input')
+    sensor_list.append('/sys/devices/platform/coretemp.0/temp1_input')
+    sensor_list.append('/sys/bus/acpi/devices/LNXTHERM\:00/thermal_zone/temp')
+    sensor_list.append('/proc/acpi/thermal_zone/THM0/temperature')
+    sensor_list.append('/proc/acpi/thermal_zone/THRM/temperature')
+    sensor_list.append('/proc/acpi/thermal_zone/THR0/temperature')
+    sensor_list.append('/proc/acpi/thermal_zone/TZ0/temperature')
+
+    sensor_list2 = []
+    for sfile in sensor_list:
+        if os.path.exists(sfile):
+            sensor_list2.append(sfile)
+    return sensor_list2
+
 
 
 class ColorSelect:
@@ -163,10 +164,6 @@ def set_color(color, schema, name):
 def set_string(combo, schema, name, _slist):
     schema.set_string(name,  _slist[combo.get_active()])
 
-def set_text(text, schema, name):
-    schema.set_string(name, text.get_text());
-
-
 class SettingFrame:
     def __init__(self, name, schema):
         self.schema = schema
@@ -243,7 +240,9 @@ class SettingFrame:
             item = TextBox(_('Custom Command'))
             item.set_value(self.schema.get_string(key))
             self.hbox3.add(item.actor)
-            item.text.connect('changed', set_text, self.schema, key)
+            item.selector.connect('changed', set_string,
+                                  self.schema, key, _slist)
+
 
 
 class App:

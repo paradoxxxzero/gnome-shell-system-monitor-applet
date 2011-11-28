@@ -25,6 +25,8 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
+const NMClient = imports.gi.NMClient;
+const NetworkManager = imports.gi.NetworkManager;
 
 const Main = imports.ui.main;const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
@@ -573,18 +575,20 @@ var init = function (metadata) {
         speed_in_bits: false,
         _init: function() {
             this.ifs = [];
-            // Can't get netlist:
-            // GTop.glibtop_get_netlist
-            // Error: No symbol 'glibtop_get_netlist' in namespace 'GTop'
-            let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
-            for(let i = 3; i < net_lines.length - 1 ; i++) {
-                let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
-                if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
-                   .replace(/\s/g, "") == "up" && 
-                   ifc.indexOf("br") < 0 && 
-                   ifc.indexOf("lo") < 0) {
-                    this.ifs.push(ifc);
-                }
+            this.client = NMClient.Client.new();
+            this.update_iface_list();
+            
+            if(!this.ifs){
+            	let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
+            	for(let i = 3; i < net_lines.length - 1 ; i++) {
+                	let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
+                	if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
+                   	.replace(/\s/g, "") == "up" && 
+                   	ifc.indexOf("br") < 0 && 
+                   	ifc.indexOf("lo") < 0) {
+                    		this.ifs.push(ifc);
+                	}
+            	}
             }
             this.gtop = new GTop.glibtop_netload();
             this.last = [0, 0, 0, 0, 0];
@@ -595,7 +599,8 @@ var init = function (metadata) {
             this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
-            
+            this.client.connect('device-added', Lang.bind(this, this.update_iface_list)); 
+            this.client.connect('device-removed', Lang.bind(this, this.update_iface_list));
             this.update();
         },
         update_units: function() {
@@ -621,6 +626,14 @@ var init = function (metadata) {
                     this.usage[0] /= 8;
                     this.usage[1] /= 8;
                 }
+            }
+        },     
+        update_iface_list: function(){
+            let iface_list = this.client.get_devices();
+            for(let j = 0; j < iface_list.length; j++){
+                if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
+                      this.ifs.push(iface_list[j].get_iface());           
+                }                
             }
         },
         refresh: function() {

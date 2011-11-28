@@ -38,7 +38,6 @@ except ImportError:
 
 import os.path
 import gettext
-import subprocess
 from gettext import gettext as _
 gettext.textdomain('system-monitor-applet')
 
@@ -85,18 +84,7 @@ def check_sensors():
             infile.close()
     return sensor_list, string_list
 
-def check_command(scommand):
-    try:
-        test = subprocess.check_output(scommand,shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError:
-        return False
-    try:
-        float(test)
-    except ValueError:
-        return False
-    return True
-    
-    
+
 class ColorSelect:
     def __init__(self, name):
         self.label = Gtk.Label(name + ":")
@@ -145,7 +133,6 @@ class TextBox:
     def __init__(self, name):
         self.label = Gtk.Label(name + ":")
         self.text = Gtk.Entry()
-        self.text.set_icon_from_stock(Gtk.EntryIconPosition.SECONDARY, Gtk.STOCK_APPLY)
         self.actor = Gtk.HBox()
         self.actor.add(self.label)
         self.actor.add(self.text)
@@ -153,14 +140,7 @@ class TextBox:
     def set_value(self, value):
         self.text.set_text(value)
 
-class Dialog:
-    def on_error(self):
-        ed = Gtk.MessageDialog(None, 
-        Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.ERROR, 
-        Gtk.ButtonsType.CLOSE, "Command did not return a valid temperature."
-                            " Please try again.")
-        ed.run()
-        ed.destroy()
+    
 
 
 def set_boolean(check, schema, name):
@@ -184,11 +164,7 @@ def set_string(combo, schema, name, _slist):
     schema.set_string(name,  _slist[combo.get_active()])
 
 def set_text(text, schema, name):
-    if check_command(text.get_text()):
-        schema.set_string(name, text.get_text());
-    else:
-        dialog = Dialog()
-        dialog.on_error()
+    schema.set_string(name, text.get_text());
 
 
 class SettingFrame:
@@ -267,7 +243,7 @@ class SettingFrame:
             item = TextBox(_('Custom Command'))
             item.set_value(self.schema.get_string(key))
             self.hbox3.add(item.actor)
-            item.text.connect('activate', set_text, self.schema, key)
+            item.text.connect('changed', set_text, self.schema, key)
 
 
 class App:

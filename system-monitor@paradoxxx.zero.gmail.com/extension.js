@@ -599,8 +599,12 @@ var init = function (metadata) {
             this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
-            this.client.connect('device-added', Lang.bind(this, this.update_iface_list)); 
-            this.client.connect('device-removed', Lang.bind(this, this.update_iface_list));
+            
+            let iface_list = this.client.get_devices();
+            this.NMsigID = []
+            for(let j = 0; j < iface_list.length; j++){
+            	this.NMsigID[j] = iface_list[j].connect('state-changed' , Lang.bind(this, this.update_iface_list));
+            }
             this.update();
         },
         update_units: function() {

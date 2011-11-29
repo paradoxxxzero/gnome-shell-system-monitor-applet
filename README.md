@@ -19,7 +19,7 @@ Dependencies:
     
     python3
     python3-gobject
-    libgtop and gir bindings (gir1.2-gtop-2.0 on Ubuntu)
+    libgtop and gir bindings (gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 on Ubuntu)
 
 Install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc)
 Then:

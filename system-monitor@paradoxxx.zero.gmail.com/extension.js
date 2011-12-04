@@ -633,11 +633,16 @@ var init = function (metadata) {
             }
         },     
         update_iface_list: function(){
-            let iface_list = this.client.get_devices();
-            for(let j = 0; j < iface_list.length; j++){
-                if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
-                      this.ifs.push(iface_list[j].get_iface());           
-                }                
+            try {            
+                let iface_list = this.client.get_devices();
+                for(let j = 0; j < iface_list.length; j++){
+                    if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
+                       this.ifs.push(iface_list[j].get_iface());           
+                    }             
+                }
+            }
+            catch(e) {
+                global.logError("Please install Network Manager Gobject Introspection Bindings");
             }
         },
         refresh: function() {

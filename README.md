@@ -7,11 +7,15 @@
 
 
 ### Install:
-#### On archlinux:
+#### Archlinux:
 
-I've created a package in aur: https://aur.archlinux.org/packages.php?ID=49250
-
+[AUR package](https://aur.archlinux.org/packages.php?ID=49250)
 You can install it with: yaourt or packer -S gnome-shell-system-monitor-applet-git
+[See also](https://wiki.archlinux.org/index.php/GNOME#Show_system_monitor)
+
+#### Ubuntu:
+
+[See here for the Webupd8 ppa](http://www.webupd8.org/2011/10/gnome-shell-system-monitor-extension.html)
 
 #### Everywhere else for now:
 
@@ -46,20 +50,16 @@ To install locale you need gettext:
 
     sudo msgfmt ~/git_project/gnome-shell-system-monitor-applet/po/YOUR_LANGUAGE/system-monitor-applet.po -o /usr/share/locale/YOUR_LANGUAGE/LC_MESSAGES/system-monitor-applet.mo
 
-If we do not have the translation of your language and you want to translate by yourself, please edit po/system-monitor-applet.po (or the translation you want to modify) and send it to us at:
-
-[paradoxxxzero](mailto://paradoxxx.zero@gmail.com)
-
-or
-
-[yuyichao](mailto://yyc1992@gmail.com)
-
 And restart gnome-shell (Alt + F2 -> r) or reboot.
+
+If we do not have the translation of your language and you want to translate by yourself, please make a fork add your po/YOUR_LANG/system-monitor-applet.po file and make a pull request.
+
 
 ### Authors:
 [paradoxxxzero](https://github.com/paradoxxxzero)
-
 [yuyichao](https://github.com/yuyichao)
+[darkxst](https://github.com/darkxst)
+And [many contributors](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/contributors)
 
 ### License:
 

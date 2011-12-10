@@ -638,7 +638,8 @@ var init = function (metadata) {
             }
         },     
         update_iface_list: function(){
-            try {            
+            try {
+                this.ifs = []
                 let iface_list = this.client.get_devices();
                 for(let j = 0; j < iface_list.length; j++){
                     if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){

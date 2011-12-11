@@ -578,7 +578,7 @@ var init = function (metadata) {
             this.client = NMClient.Client.new();
             this.update_iface_list();
             
-            if(!this.ifs){
+            if(!this.ifs.length){
             	let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             	for(let i = 3; i < net_lines.length - 1 ; i++) {
                 	let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];

@@ -578,7 +578,7 @@ var init = function (metadata) {
             this.client = NMClient.Client.new();
             this.update_iface_list();
             
-            if(!this.ifs){
+            if(!this.ifs.length){
             	let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             	for(let i = 3; i < net_lines.length - 1 ; i++) {
                 	let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
@@ -638,7 +638,8 @@ var init = function (metadata) {
             }
         },     
         update_iface_list: function(){
-            try {            
+            try {
+                this.ifs = []
                 let iface_list = this.client.get_devices();
                 for(let j = 0; j < iface_list.length; j++){
                     if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){

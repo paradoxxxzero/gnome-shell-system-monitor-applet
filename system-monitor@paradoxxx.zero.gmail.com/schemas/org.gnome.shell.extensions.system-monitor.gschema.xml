@@ -1,0 +1,282 @@
+<schemalist gettext-domain="gnome-shell-extensions">
+  <enum id="org.gnome.shell.extensions.system-monitor.display-style">
+    <value value="0" nick="digit"/>
+    <value value="1" nick="graph"/>
+    <value value="2" nick="both"/>
+  </enum>
+  <schema id="org.gnome.shell.extensions.system-monitor" path="/org/gnome/shell/extensions/system-monitor/">
+    <key name="icon-display" type="b">
+      <default>true</default>
+      <summary>Display system monitor icon</summary>
+      <description>Set to true to display system monitor icon in status bar.(NOTICE: The icon will be shown when none of the others is shown.)</description>
+    </key>
+    <key name="memory-display" type="b">
+      <default>true</default>
+      <summary>Display memory</summary>
+      <description>Set to false to remove memory display in status bar</description>
+    </key>
+    <key name="memory-refresh-time" type="i">
+      <default>5000</default>
+      <summary>Memory refresh time</summary>
+      <description>Time in ms between 2 refresh of memory</description>
+    </key>
+    <key name="memory-graph-width" type="i">
+      <default>100</default>
+      <summary>Memory graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="memory-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'mem'</summary>
+      <description>Set to true to show 'mem' before memory display</description>
+    </key>
+    <key name="memory-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="swap-display" type="b">
+      <default>false</default>
+      <summary>Display swap</summary>
+      <description>Set to false to remove swap display in status bar</description>
+    </key>
+    <key name="swap-refresh-time" type="i">
+      <default>5000</default>
+      <summary>Swap refresh time</summary>
+      <description>Time in ms between 2 refresh of swap</description>
+    </key>
+    <key name="swap-graph-width" type="i">
+      <default>100</default>
+      <summary>Swap graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="swap-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'swap'</summary>
+      <description>Set to true to show 'swap' before swap display</description>
+    </key>
+    <key name="swap-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="cpu-display" type="b">
+      <default>true</default>
+      <summary>Display cpu</summary>
+      <description>Set to false to remove cpu display in status bar</description>
+    </key>
+    <key name="cpu-refresh-time" type="i">
+      <default>1500</default>
+      <summary>Cpu refresh time</summary>
+      <description>Time in ms between 2 refresh of cpu</description>
+    </key>
+    <key name="cpu-graph-width" type="i">
+      <default>100</default>
+      <summary>Cpu graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="cpu-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'cpu'</summary>
+      <description>Set to true to show 'cpu' before cpu display</description>
+    </key>
+    <key name="cpu-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="freq-display" type="b">
+      <default>false</default>
+      <summary>Display freq</summary>
+      <description>Set to false to remove freq display in status bar</description>
+    </key>
+    <key name="freq-refresh-time" type="i">
+      <default>1500</default>
+      <summary>Cpu frequency refresh time</summary>
+      <description>Time in ms between 2 refresh of cpu</description>
+    </key>
+    <key name="freq-graph-width" type="i">
+      <default>100</default>
+      <summary>Cpu frequency graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="freq-show-text" type="b">
+      <default>false</default>
+      <summary>Display freq'</summary>
+      <description>Set to true to show 'freq' before cpu frequency display</description>
+    </key>
+    <key name="freq-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="net-display" type="b">
+      <default>true</default>
+      <summary>Display net</summary>
+      <description>Set to false to remove net display in status bar</description>
+    </key>
+    <key name="net-refresh-time" type="i">
+      <default>1000</default>
+      <summary>Net refresh time</summary>
+      <description>Time in ms between 2 refresh of net</description>
+    </key>
+    <key name="net-graph-width" type="i">
+      <default>100</default>
+      <summary>Net graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="net-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'net'</summary>
+      <description>Set to true to show 'net' before net display</description>
+    </key>
+    <key name="net-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="net-speed-in-bits" type="b">
+      <default>false</default>
+      <summary>Show network speed in bits/sec</summary>
+    </key>
+    <key name="disk-display" type="b">
+      <default>false</default>
+      <summary>Display disk io speed</summary>
+      <description>Set to false to remove disk display in status bar</description>
+    </key>
+    <key name="disk-refresh-time" type="i">
+      <default>2000</default>
+      <summary>Disk IO refresh time</summary>
+      <description>Time in ms between 2 refresh of Disk IO</description>
+    </key>
+    <key name="disk-graph-width" type="i">
+      <default>100</default>
+      <summary>Disk IO graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="disk-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'disk'</summary>
+      <description>Set to true to show 'disk' before disk io display</description>
+    </key>
+    <key name="disk-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="thermal-display" type="b">
+      <default>false</default>
+      <summary>Display thermal</summary>
+      <description>Set to false to remove thermal display in status bar</description>
+    </key>
+    <key name="thermal-refresh-time" type="i">
+      <default>5000</default>
+      <summary>thermal refresh time</summary>
+      <description>Time in ms between 2 refresh of thermal</description>
+    </key>
+    <key name="thermal-graph-width" type="i">
+      <default>100</default>
+      <summary>thermal graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="thermal-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'thermal'</summary>
+      <description>Set to true to show 'thermal' before thermal display</description>
+    </key>
+    <key name="thermal-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="thermal-sensor-file" type="s">
+      <default>'/sys/devices/virtual/thermal/thermal_zone0/temp'</default>
+      <summary>Sensor File</summary>
+      <description>Location of the sensor file for cpu temp</description>
+    </key>
+    <key name="thermal-sensor-custom" type="s">
+      <default>''</default>
+      <summary>Sensor Command</summary>
+      <description>Custom command to get temperature</description>
+    </key>
+    <key name="center-display" type="b">
+      <default>false</default>
+      <summary>Display informations next to the clock</summary>
+      <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
+    </key>
+    <key name="move-clock" type="b">
+      <default>true</default>
+      <summary>Move the clock to the right when center-display is true</summary>
+      <description>True: Move the clock to the right, False: Keep it in center</description>
+    </key>
+    <key name="memory-program-color" type="s">
+      <default>'#00b35b'</default>
+      <summary>Color of program memory in the chart</summary>
+    </key>
+    <key name="memory-buffer-color" type="s">
+      <default>'#00ff82'</default>
+      <summary>Color of buffer memory in the chart</summary>
+    </key>
+    <key name="memory-cache-color" type="s">
+      <default>'#aaf5d0'</default>
+      <summary>Color of cache memory in the chart</summary>
+    </key>
+    <key name="net-down-color" type="s">
+      <default>'#fce94f'</default>
+      <summary>Color of download speed in the chart</summary>
+    </key>
+    <key name="net-up-color" type="s">
+      <default>'#fb74fb'</default>
+      <summary>Color of upload speed in the chart</summary>
+    </key>
+    <key name="net-downerrors-color" type="s">
+      <default>'#ff6e00'</default>
+      <summary>Color of download errors</summary>
+    </key>
+    <key name="net-uperrors-color" type="s">
+      <default>'#e0006e'</default>
+      <summary>Color of upload errors</summary>
+    </key>
+    <key name="net-collisions-color" type="s">
+      <default>'#ff0000'</default>
+      <summary>Color of collisions</summary>
+    </key>
+    <key name="cpu-user-color" type="s">
+      <default>'#0072b3'</default>
+      <summary>Color of user cpu in the chart</summary>
+    </key>
+    <key name="cpu-system-color" type="s">
+      <default>'#0092e6'</default>
+      <summary>Color of system cpu in the chart</summary>
+    </key>
+    <key name="cpu-nice-color" type="s">
+      <default>'#00a3ff'</default>
+      <summary>Color of nice cpu in the chart</summary>
+    </key>
+    <key name="cpu-iowait-color" type="s">
+      <default>'#002f3d'</default>
+      <summary>Color of iowait in the chart</summary>
+    </key>
+    <key name="cpu-other-color" type="s">
+      <default>'#001d26'</default>
+      <summary>Color of other cpu in the chart</summary>
+    </key>
+    <key name="freq-freq-color" type="s">
+      <default>'#001d26'</default>
+      <summary>Color of freq in the chart</summary>
+    </key>
+    <key name="swap-used-color" type="s">
+      <default>'#8b00c3'</default>
+      <summary>Color of used swap in the chart</summary>
+    </key>
+    <key name="disk-read-color" type="s">
+      <default>'#c65000'</default>
+      <summary>Color of disk reading speed in the chart</summary>
+    </key>
+    <key name="disk-write-color" type="s">
+      <default>'#ff6700'</default>
+      <summary>Color of disk writing speed in the chart</summary>
+    </key>
+    <key name="thermal-tz0-color" type="s">
+      <default>'#f2002e'</default>
+      <summary>Color of user thermal in the chart</summary>
+    </key>
+    <key name="background" type="s">
+      <default>'#ffffff16'</default>
+      <summary>Color of background</summary>
+    </key>
+  </schema>
+</schemalist>

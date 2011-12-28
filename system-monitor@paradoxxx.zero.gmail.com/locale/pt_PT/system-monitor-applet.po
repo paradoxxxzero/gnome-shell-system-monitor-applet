@@ -1,0 +1,204 @@
+# Portuguese translation for the system-monitor-applet.
+# Copyright (C) 2011
+# This file is distributed under the same license as the PACKAGE package.
+# Emanuel Angelo <emanuel.angelo@gmail.com>, 2011.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-06 10:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Emanuel Angelo <emanuel.angelo@gmail.com>\n"
+"Language-Team: pt_PT <LL@li.org>\n"
+"Language: Portuguese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: system-monitor-applet-config.py:128
+msgid "Display"
+msgstr "Apresentar"
+
+#: system-monitor-applet-config.py:133
+msgid "Refresh Time"
+msgstr "Tempo de refrescamento"
+
+#: system-monitor-applet-config.py:139
+msgid "Graph Width"
+msgstr "Largura do gráfico"
+
+#: system-monitor-applet-config.py:145
+msgid "Show Text"
+msgstr "Mostrar identificador"
+
+#: system-monitor-applet-config.py:150
+msgid "Display Style"
+msgstr "Estilo de apresentação"
+
+#: system-monitor-applet-config.py:169
+msgid "System Monitor Applet Configurator"
+msgstr "Configurador do System Monitor Applet"
+
+#: system-monitor-applet-config.py:186
+msgid "Display Icon"
+msgstr "Mostrar ícone"
+
+#: system-monitor-applet-config.py:192
+msgid "Display in the Middle"
+msgstr "Posicionar no centro"
+
+#: system-monitor-applet-config.py:198
+msgid "Background Color"
+msgstr "Cor de fundo"
+
+msgid "Cpu"
+msgstr "Processador (CPU)"
+
+msgid "User"
+msgstr "Utilizador"
+
+msgid "System"
+msgstr "Sistema"
+
+msgid "Other"
+msgstr "Outro"
+
+msgid "Nice"
+msgstr "Nice"
+
+msgid "Iowait"
+msgstr "IOwait"
+
+msgid "Memory"
+msgstr "Memória (RAM)"
+
+msgid "Program"
+msgstr "Programas"
+
+msgid "Cache"
+msgstr "Reserva (cache)"
+
+msgid "Buffer"
+msgstr "Tampão (buffer)"
+
+msgid "Swap"
+msgstr "Memória virtual (swap)"
+
+msgid "Used"
+msgstr "Em utilização"
+
+msgid "Net"
+msgstr "Rede"
+
+msgid "Uperrors"
+msgstr "Erros ao enviar"
+
+msgid "Up"
+msgstr "Enviados"
+
+msgid "Downerrors"
+msgstr "Erros ao receber"
+
+msgid "Down"
+msgstr "Recebidos"
+
+msgid "Collisions"
+msgstr "Colisões"
+
+msgid "Show network speed in bits"
+msgstr "Apresentar velocidade em bits por segundo"
+
+msgid "Disk"
+msgstr "Disco"
+
+msgid "Write"
+msgstr "Escrita"
+
+msgid "Read"
+msgstr "Leitura"
+
+msgid "graph"
+msgstr "gráfico"
+
+msgid "digit"
+msgstr "valor"
+
+msgid "both"
+msgstr "ambos"
+
+msgid "cpu"
+msgstr "cpu"
+
+msgid "mem"
+msgstr "mem"
+
+msgid "swap"
+msgstr "swap"
+
+msgid "net"
+msgstr "rede"
+
+msgid "disk"
+msgstr "disco"
+
+msgid "Preferences..."
+msgstr "Preferências..."
+
+msgid "System Monitor..."
+msgstr "Monitor do Sistema..."
+
+msgid "System monitor"
+msgstr "Monitor do sistema"
+
+msgid "user"
+msgstr "utilizador"
+
+msgid "system"
+msgstr "sistema"
+
+msgid "other"
+msgstr "outro"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "programa"
+
+msgid "cache"
+msgstr "cache"
+
+msgid "buffer"
+msgstr "buffer"
+
+msgid "used"
+msgstr "usado"
+
+msgid "up"
+msgstr "enviado"
+
+msgid "down"
+msgstr "recebido"
+
+msgid "write"
+msgstr "escrita"
+
+msgid "read"
+msgstr "leitura"
+
+msgid "Move the clock"
+msgstr "Deslocar o relógio"
+
+msgid "Thermal"
+msgstr "Temperatura"
+
+msgid "thermal"
+msgstr "temp"
+
+msgid "Sensor"
+msgstr "Sensor"
+

@@ -1,0 +1,176 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Carlos A. Gonzalez <betology@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#: system-monitor-applet-config.py:128
+msgid "Display"
+msgstr "Pantalla"
+
+#: system-monitor-applet-config.py:133
+msgid "Refresh Time"
+msgstr "Intervalo de actualización"
+
+#: system-monitor-applet-config.py:139
+msgid "Graph Width"
+msgstr "Ancho de la gráfica"
+
+#: system-monitor-applet-config.py:145
+msgid "Show Text"
+msgstr "Mostrar texto"
+
+#: system-monitor-applet-config.py:150
+msgid "Display Style"
+msgstr "Estilo de despliegue"
+
+#: system-monitor-applet-config.py:169
+msgid "System Monitor Applet Configurator"
+msgstr "Configurador del applet de monitor de systema"
+
+#: system-monitor-applet-config.py:186
+msgid "Display Icon"
+msgstr "Mostrar icono"
+
+#: system-monitor-applet-config.py:192
+msgid "Display in the Middle"
+msgstr "Mostrar en medio"
+
+#: system-monitor-applet-config.py:198
+msgid "Background Color"
+msgstr "Color de fondo"
+
+msgid "Cpu"
+msgstr ""
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "System"
+msgstr "Sistema"
+
+msgid "Other"
+msgstr "Otro"
+
+msgid "Nice"
+msgstr ""
+
+msgid "Iowait"
+msgstr ""
+
+msgid "Memory"
+msgstr "Memoria"
+
+msgid "Program"
+msgstr "Programa"
+
+msgid "Cache"
+msgstr ""
+
+msgid "Buffer"
+msgstr ""
+
+msgid "Swap"
+msgstr ""
+
+msgid "Used"
+msgstr "Usado"
+
+msgid "Net"
+msgstr ""
+
+msgid "Up"
+msgstr "Arriba"
+
+msgid "Down"
+msgstr "Abajo"
+
+msgid "Disk"
+msgstr "Disco"
+
+msgid "Write"
+msgstr "Escribir"
+
+msgid "Read"
+msgstr "Leer"
+
+msgid "graph"
+msgstr "Gráfica"
+
+msgid "digit"
+msgstr ""
+
+msgid "both"
+msgstr "Ambos"
+
+msgid "cpu"
+msgstr ""
+
+msgid "mem"
+msgstr ""
+
+msgid "swap"
+msgstr ""
+
+msgid "net"
+msgstr ""
+
+msgid "disk"
+msgstr "disco"
+
+msgid "Preferences..."
+msgstr "Preferencias..."
+
+msgid "System Monitor..."
+msgstr "Monitor de sistema..."
+
+msgid "System monitor"
+msgstr "Monitor de sistema"
+
+msgid "user"
+msgstr "usuario"
+
+msgid "system"
+msgstr "sistema"
+
+msgid "other"
+msgstr "otro"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "programa"
+
+msgid "cache"
+msgstr "cache"
+
+msgid "buffer"
+msgstr "buffer"
+
+msgid "used"
+msgstr "usado"
+
+msgid "up"
+msgstr "arriba"
+
+msgid "down"
+msgstr "abajo"
+
+msgid "write"
+msgstr "escribir"
+
+msgid "read"
+msgstr "leer"

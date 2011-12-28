@@ -1,0 +1,178 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.99\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-06 10:56+0800\n"
+"PO-Revision-Date: 2011-06-06 11:23+ZONE\n"
+"Last-Translator: Yichao Yu <yyc1992@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: Chinese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: system-monitor-applet-config.py:128
+msgid "Display"
+msgstr "显示"
+
+#: system-monitor-applet-config.py:133
+msgid "Refresh Time"
+msgstr "刷新时间"
+
+#: system-monitor-applet-config.py:139
+msgid "Graph Width"
+msgstr "图形宽度"
+
+#: system-monitor-applet-config.py:145
+msgid "Show Text"
+msgstr "显示文字"
+
+#: system-monitor-applet-config.py:150
+msgid "Display Style"
+msgstr "显示风格"
+
+#: system-monitor-applet-config.py:169
+msgid "System Monitor Applet Configurator"
+msgstr "面板系统监视器配置"
+
+#: system-monitor-applet-config.py:186
+msgid "Display Icon"
+msgstr "显示图标"
+
+#: system-monitor-applet-config.py:192
+msgid "Display in the Middle"
+msgstr "居中显示"
+
+#: system-monitor-applet-config.py:198
+msgid "Background Color"
+msgstr "背景色"
+
+msgid "Cpu"
+msgstr "处理器"
+
+msgid "User"
+msgstr "用户"
+
+msgid "System"
+msgstr "系统"
+
+msgid "Other"
+msgstr "其他"
+
+msgid "Nice"
+msgstr "优先级"
+
+msgid "Iowait"
+msgstr "IO等待"
+
+msgid "Memory"
+msgstr "内存"
+
+msgid "Program"
+msgstr "程序"
+
+msgid "Cache"
+msgstr "缓存"
+
+msgid "Buffer"
+msgstr "缓冲"
+
+msgid "Swap"
+msgstr "交换分区"
+
+msgid "Used"
+msgstr "已用"
+
+msgid "Net"
+msgstr "网络"
+
+msgid "Up"
+msgstr "上传"
+
+msgid "Down"
+msgstr "下载"
+
+msgid "Disk"
+msgstr "硬盘"
+
+msgid "Write"
+msgstr "写入"
+
+msgid "Read"
+msgstr "读取"
+
+msgid "graph"
+msgstr "图形"
+
+msgid "digit"
+msgstr "数字"
+
+msgid "both"
+msgstr "同时"
+
+msgid "cpu"
+msgstr "处理器"
+
+msgid "mem"
+msgstr "内存"
+
+msgid "swap"
+msgstr "交换"
+
+msgid "net"
+msgstr "网络"
+
+msgid "disk"
+msgstr "硬盘"
+
+msgid "Preferences..."
+msgstr "首选项..."
+
+msgid "System Monitor..."
+msgstr "系统监视器..."
+
+msgid "System monitor"
+msgstr "系统监视器"
+
+msgid "user"
+msgstr "用户"
+
+msgid "system"
+msgstr "系统"
+
+msgid "other"
+msgstr "其他"
+
+msgid "nice"
+msgstr "优先级"
+
+msgid "iowait"
+msgstr "IO等待"
+
+msgid "program"
+msgstr "程序"
+
+msgid "cache"
+msgstr "缓存"
+
+msgid "buffer"
+msgstr "缓冲"
+
+msgid "used"
+msgstr "已用"
+
+msgid "up"
+msgstr "上传"
+
+msgid "down"
+msgstr "下载"
+
+msgid "write"
+msgstr "写入"
+
+msgid "read"
+msgstr "读取"

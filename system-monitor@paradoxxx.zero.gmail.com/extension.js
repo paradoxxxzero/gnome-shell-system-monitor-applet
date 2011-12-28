@@ -54,11 +54,7 @@ var init = function (metadata) {
     }
 
     log("System monitor applet init from " + metadata.path);
-    
-    let me = imports.ui.extensionSystem.extensions[metadata.uuid];
-    me.convenience.initTranslations(metadata);
-    Schema = me.convenience.getSettings(metadata, 'system-monitor');
-    
+    Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));
     IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);

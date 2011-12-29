@@ -1062,10 +1062,11 @@ var enable = function () {
 };
 
 var disable = function () {
+    Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-    Main.__sm.tray.actor.destroy();
+    Main.__sm.tray.destroy();
     Main.__sm = null;
     log("System monitor applet disable");
 };

@@ -1,0 +1,179 @@
+# Italian Translation.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# edmond <edmondweblog@gmail.com>, 2011.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-10-21 11:30+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: edmond <edmondweblog@gmail.com>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: system-monitor-applet-config.py:128
+msgid "Display"
+msgstr "Schermo"
+
+#: system-monitor-applet-config.py:133
+msgid "Refresh Time"
+msgstr "Tempo di Refresh"
+
+#: system-monitor-applet-config.py:139
+msgid "Graph Width"
+msgstr "Larghezza del Grafico"
+
+#: system-monitor-applet-config.py:145
+msgid "Show Text"
+msgstr "Mostra Testo"
+
+#: system-monitor-applet-config.py:150
+msgid "Display Style"
+msgstr "Stile di Visualizzazione"
+
+#: system-monitor-applet-config.py:169
+msgid "System Monitor Applet Configurator"
+msgstr "Applet di configurazione per Monitor di Sistema"
+
+#: system-monitor-applet-config.py:186
+msgid "Display Icon"
+msgstr "Visualizza icona"
+
+#: system-monitor-applet-config.py:192
+msgid "Display in the Middle"
+msgstr "Visualizza al centro"
+
+#: system-monitor-applet-config.py:198
+msgid "Background Color"
+msgstr "Colore di fondo"
+
+msgid "Cpu"
+msgstr "CPU"
+
+msgid "User"
+msgstr "Utente"
+
+msgid "System"
+msgstr "Sistema"
+
+msgid "Other"
+msgstr "Altro"
+
+msgid "Nice"
+msgstr ""
+
+msgid "Iowait"
+msgstr ""
+
+msgid "Memory"
+msgstr "Memoria"
+
+msgid "Program"
+msgstr "Programma"
+
+msgid "Cache"
+msgstr ""
+
+msgid "Buffer"
+msgstr ""
+
+msgid "Swap"
+msgstr ""
+
+msgid "Used"
+msgstr "Usato"
+
+msgid "Net"
+msgstr "Rete"
+
+msgid "Up"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Disk"
+msgstr "Disco"
+
+msgid "Write"
+msgstr "Scrittura"
+
+msgid "Read"
+msgstr "Lettura"
+
+msgid "graph"
+msgstr "Grafico"
+
+msgid "digit"
+msgstr "Cifre"
+
+msgid "both"
+msgstr "Entrambi"
+
+msgid "cpu"
+msgstr "CPU"
+
+msgid "mem"
+msgstr "Mem"
+
+msgid "swap"
+msgstr "Swap"
+
+msgid "net"
+msgstr "Rete"
+
+msgid "disk"
+msgstr "Disco"
+
+msgid "Preferences..."
+msgstr "Preferenze"
+
+msgid "System Monitor..."
+msgstr "Monitor di Sistema"
+
+msgid "System monitor"
+msgstr "Monitor di Sistema"
+
+msgid "user"
+msgstr "Utente"
+
+msgid "system"
+msgstr "Sistema"
+
+msgid "other"
+msgstr "Altro"
+
+msgid "nice"
+msgstr ""
+
+msgid "iowait"
+msgstr ""
+
+msgid "program"
+msgstr "Programma"
+
+msgid "cache"
+msgstr ""
+
+msgid "buffer"
+msgstr ""
+
+msgid "used"
+msgstr "Usato"
+
+msgid "up"
+msgstr "Up"
+
+msgid "down"
+msgstr "Down"
+
+msgid "write"
+msgstr "Scrittura"
+
+msgid "read"
+msgstr "Lettura"

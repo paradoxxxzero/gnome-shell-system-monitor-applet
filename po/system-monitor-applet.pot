@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-06 10:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: system-monitor-applet-config.py:128
+msgid "Display"
+msgstr ""
+
+#: system-monitor-applet-config.py:133
+msgid "Refresh Time"
+msgstr ""
+
+#: system-monitor-applet-config.py:139
+msgid "Graph Width"
+msgstr ""
+
+#: system-monitor-applet-config.py:145
+msgid "Show Text"
+msgstr ""
+
+#: system-monitor-applet-config.py:150
+msgid "Display Style"
+msgstr ""
+
+#: system-monitor-applet-config.py:169
+msgid "System Monitor Applet Configurator"
+msgstr ""
+
+#: system-monitor-applet-config.py:186
+msgid "Display Icon"
+msgstr ""
+
+#: system-monitor-applet-config.py:192
+msgid "Display in the Middle"
+msgstr ""
+
+#: system-monitor-applet-config.py:198
+msgid "Background Color"
+msgstr ""
+
+msgid "Cpu"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Nice"
+msgstr ""
+
+msgid "Iowait"
+msgstr ""
+
+msgid "Memory"
+msgstr ""
+
+msgid "Program"
+msgstr ""
+
+msgid "Cache"
+msgstr ""
+
+msgid "Buffer"
+msgstr ""
+
+msgid "Swap"
+msgstr ""
+
+msgid "Used"
+msgstr ""
+
+msgid "Net"
+msgstr ""
+
+msgid "Up"
+msgstr ""
+
+msgid "Down"
+msgstr ""
+
+msgid "Disk"
+msgstr ""
+
+msgid "Write"
+msgstr ""
+
+msgid "Read"
+msgstr ""
+
+msgid "graph"
+msgstr ""
+
+msgid "digit"
+msgstr ""
+
+msgid "both"
+msgstr ""
+
+msgid "cpu"
+msgstr ""
+
+msgid "mem"
+msgstr ""
+
+msgid "swap"
+msgstr ""
+
+msgid "net"
+msgstr ""
+
+msgid "disk"
+msgstr ""
+
+msgid "Preferences..."
+msgstr ""
+
+msgid "System Monitor..."
+msgstr ""
+
+msgid "System monitor"
+msgstr ""
+
+msgid "user"
+msgstr ""
+
+msgid "system"
+msgstr ""
+
+msgid "other"
+msgstr ""
+
+msgid "nice"
+msgstr ""
+
+msgid "iowait"
+msgstr ""
+
+msgid "program"
+msgstr ""
+
+msgid "cache"
+msgstr ""
+
+msgid "buffer"
+msgstr ""
+
+msgid "used"
+msgstr ""
+
+msgid "up"
+msgstr ""
+
+msgid "down"
+msgstr ""
+
+msgid "write"
+msgstr ""
+
+msgid "read"
+msgstr ""

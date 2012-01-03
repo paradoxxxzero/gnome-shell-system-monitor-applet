@@ -38,8 +38,13 @@ except ImportError:
 
 import os.path
 import gettext
+
+extension_uuid = "system-monitor@paradoxxx.zero.gmail.com"
+localeDir = "~/.local/share/gnome-shell/extensions/" + extension_uuid + "/locale"
+
 from gettext import gettext as _
-gettext.textdomain('system-monitor-applet')
+if os.path.isdir(localeDir):
+    gettext.bindtextdomain('system-monitor-applet',localeDir)
 
 
 def color_to_hex(color):
@@ -232,7 +237,14 @@ class App:
     setting_items = ('cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'freq')
 
     def __init__(self):
-        self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')
+        schemaDir = os.path.expanduser('~/.local/share/gnome-shell/extensions/' + extension_uuid + '/schemas/')
+        if os.path.isdir(schemaDir):
+            extension_id = 'system-monitor'
+            schemaSource = Gio.SettingsSchemaSource.new_from_directory(schemaDir,
+								  Gio.SettingsSchemaSource.get_default(),
+								  0);
+            schema = schemaSource.lookup('org.gnome.shell.extensions.' + extension_id, 0);
+            self.schema = Gio.Settings(schema=schema.get_id())
         keys = self.schema.keys()
         self.window = Gtk.Window(title=_('System Monitor Applet Configurator'))
         self.window.connect('destroy', Gtk.main_quit)

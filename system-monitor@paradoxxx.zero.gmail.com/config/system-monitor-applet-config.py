@@ -244,7 +244,7 @@ class App:
 								  Gio.SettingsSchemaSource.get_default(),
 								  0);
             schema = schemaSource.lookup('org.gnome.shell.extensions.' + extension_id, 0);
-            self.schema = Gio.Settings(schema=schema.get_id())
+            self.schema = Gio.Settings.new_full(schema, None, None)
         keys = self.schema.keys()
         self.window = Gtk.Window(title=_('System Monitor Applet Configurator'))
         self.window.connect('destroy', Gtk.main_quit)

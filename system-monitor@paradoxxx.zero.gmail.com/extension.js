@@ -876,7 +876,7 @@ var init = function (metadata) {
             this.gtop = new GTop.glibtop_fsusage();
             // FIXME Handle colors correctly
             this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
-            for(color in this.colors) {
+            for(let color in this.colors) {
                 let clutterColor = new Clutter.Color();
                 clutterColor.from_string(this.colors[color]);
                 this.colors[color] = clutterColor;

@@ -1,0 +1,5 @@
+gnome-shell-system-monitor-applet (20110605) UNRELEASED; urgency=low
+
+  * Initial release.
+
+ -- Guillame Hain's Launchpad PPA <zedtux@zedroot.org>  Tue, 26 Aug 2011 18:30:38 +0200

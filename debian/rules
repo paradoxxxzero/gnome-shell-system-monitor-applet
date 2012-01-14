@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_install:
+	dh_install
+	# Workaround for #245554
+	mkdir -p debian/gnome-shell-system-monitor-applet/usr/bin
+	cp system-monitor-applet-config.py debian/gnome-shell-system-monitor-applet/usr/bin/system-monitor-applet-config
+
+
+override_dh_installdirs:
+	dh_installdirs
+	# Generate .mo files instead of using the pre-generated ones, useful if
+	# we add patches later.
+	for lang in `ls po/`; do \
+    		if `[ -d po/$$lang ]`; then \
+			mkdir -p debian/gnome-shell-system-monitor-applet/usr/share/locale/LC_MESSAGES/$$lang; \
+			msgfmt po/$$lang/system-monitor-applet.po -o debian/gnome-shell-system-monitor-applet/usr/share/locale/LC_MESSAGES/$$lang/system-monitor-applet.mo; \
+		fi; \
+	done

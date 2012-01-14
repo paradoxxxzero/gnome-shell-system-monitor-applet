@@ -1,0 +1,13 @@
+Source: gnome-shell-system-monitor-applet
+Section: python
+Priority: extra
+Maintainer: Guillame Hain's Launchpad PPA <zedtux@zedroot.org>
+Build-Depends: debhelper (>= 5), gnome-shell, python3-gobject
+Standards-Version: 3.9.2
+Homepage: https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet
+
+Package: gnome-shell-system-monitor-applet
+Architecture: any
+Depends: libglib2.0-bin (>= 2.30.2-4), ${shlibs:Depends}, ${misc:Depends}
+Description: System monitor extension for Gnome-Shell
+ System monitor extension for Gnome-Shell (display mem swap cpu usage)

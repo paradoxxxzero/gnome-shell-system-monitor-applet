@@ -1,3 +1,10 @@
+gnome-shell-system-monitor-applet (20120114) unstable; urgency=low
+
+  * Upgrade source from upstream.
+  * Add gir1.2-gtop-2.0 dependency.
+
+ -- Carlos Alberto Lopez Perez <clopez@igalia.com>  Sat, 14 Jan 2012 20:15:00 +0100
+
 gnome-shell-system-monitor-applet (20110605) UNRELEASED; urgency=low
 
   * Initial release.

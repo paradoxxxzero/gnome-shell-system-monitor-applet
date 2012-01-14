@@ -35,5 +35,6 @@ Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
 The Debian packaging is:
 
     Copyright (C) 2011 Launchpad PPA for Guillaume HAIN <zedtux@zedroot.org>
+    Copyright (C) 2012 Carlos Alberto Lopez Perez <clopez@igalia.com>
 
 and is licensed under the GPL version 3, see above.

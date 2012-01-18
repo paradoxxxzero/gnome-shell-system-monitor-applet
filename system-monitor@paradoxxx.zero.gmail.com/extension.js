@@ -802,15 +802,14 @@ var init = function (metadata) {
         refresh: function() {
             let sfile = Schema.get_string(this.elt + '-sensor-file');
             if(GLib.file_test(sfile,1<<4)){
-                //global.logError("reading sensor");
-                let t_str = Shell.get_file_contents_utf8_sync(sfile).split("\n")[0];
-                this.temperature = parseInt(t_str)/1000.0;
+                let file = Gio.file_new_for_path(sfile);
+                file.load_contents_async(null, Lang.bind(this, function (source, result) {
+                        let as_r = source.load_contents_finish(result)
+                        this.temperature = parseInt(as_r[1])/1000;
+                }));
             }            
             else 
                 global.logError("error reading: " + sfile);
-           
-         
-
         },
         _apply: function() {
             this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();

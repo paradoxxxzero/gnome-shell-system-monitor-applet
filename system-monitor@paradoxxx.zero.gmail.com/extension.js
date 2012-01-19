@@ -25,8 +25,6 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const NMClient = imports.gi.NMClient;
-const NetworkManager = imports.gi.NetworkManager;
 
 const Main = imports.ui.main;const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
@@ -574,22 +572,8 @@ var init = function (metadata) {
         color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
         speed_in_bits: false,
         _init: function() {
-            this.ifs = [];
-            this.client = NMClient.Client.new();
-            this.update_iface_list();
             
-            if(!this.ifs.length){
-            	let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
-            	for(let i = 3; i < net_lines.length - 1 ; i++) {
-                	let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
-                	if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
-                   	.replace(/\s/g, "") == "up" && 
-                   	ifc.indexOf("br") < 0 && 
-                   	ifc.indexOf("lo") < 0) {
-                    		this.ifs.push(ifc);
-                	}
-            	}
-            }
+            this.update_iface_list();
             this.gtop = new GTop.glibtop_netload();
             this.last = [0, 0, 0, 0, 0];
             this.usage = [0, 0, 0, 0, 0];
@@ -599,17 +583,6 @@ var init = function (metadata) {
             this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
-            
-            try {
-                let iface_list = this.client.get_devices();
-                this.NMsigID = []
-                for(let j = 0; j < iface_list.length; j++){
-            	    this.NMsigID[j] = iface_list[j].connect('state-changed' , Lang.bind(this, this.update_iface_list));
-                }
-            }
-            catch(e) {
-                global.logError("Please install Network Manager Gobject Introspection Bindings");
-            }
             this.update();
         },
         update_units: function() {
@@ -638,22 +611,32 @@ var init = function (metadata) {
             }
         },     
         update_iface_list: function(){
-            try {
-                this.ifs = []
-                let iface_list = this.client.get_devices();
-                for(let j = 0; j < iface_list.length; j++){
-                    if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
-                       this.ifs.push(iface_list[j].get_iface());           
-                    }             
+            this.ifs = [];
+            // get default route
+            let net_routes = Shell.get_file_contents_utf8_sync('/proc/net/route').split("\n");
+            for(let r = 1; r < net_routes.length - 1 ; r++) {
+                let route = net_routes[r].split("\t")[7];
+                if (route == "00000000") {
+                    this.ifs.push(net_routes[r].split("\t")[0])
                 }
             }
-            catch(e) {
-                global.logError("Please install Network Manager Gobject Introspection Bindings");
+            // if not default get first iface up
+            if(!this.ifs.length){
+                let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
+                for(let i = 3; i < net_lines.length - 1 ; i++) {
+                    let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
+                    if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
+                    .replace(/\s/g, "") == "up" &&
+                    ifc.indexOf("br") < 0 &&
+                    ifc.indexOf("lo") < 0) {
+                            this.ifs.push(ifc);
+                    }
+                }
             }
         },
         refresh: function() {
             let accum = [0, 0, 0, 0, 0];
-
+            this.update_iface_list();
             for (let ifn in this.ifs) {
                 GTop.glibtop_get_netload(this.gtop, this.ifs[ifn]);
                 accum[0] += this.gtop.bytes_in * (this.speed_in_bits ? 8 : 1);
@@ -892,7 +875,7 @@ var init = function (metadata) {
             this.gtop = new GTop.glibtop_fsusage();
             // FIXME Handle colors correctly
             this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
-            for(color in this.colors) {
+            for(let color in this.colors) {
                 let clutterColor = new Clutter.Color();
                 clutterColor.from_string(this.colors[color]);
                 this.colors[color] = clutterColor;

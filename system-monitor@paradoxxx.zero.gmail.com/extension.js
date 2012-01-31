@@ -643,8 +643,8 @@ var init = function (metadata) {
                 let iface_list = this.client.get_devices();
                 for(let j = 0; j < iface_list.length; j++){
                     if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
-                       this.ifs.push(iface_list[j].get_iface());           
-                    }             
+                       this.ifs.push(iface_list[j].get_ip_iface());
+                    }
                 }
             }
             catch(e) {

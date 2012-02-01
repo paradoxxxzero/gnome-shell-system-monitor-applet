@@ -384,7 +384,7 @@ var init = function (metadata) {
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
             this.current = [0,0,0,0,0];
-            this.total_cores = this.get_cores();
+            this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
@@ -627,8 +627,8 @@ var init = function (metadata) {
                 let iface_list = this.client.get_devices();
                 for(let j = 0; j < iface_list.length; j++){
                     if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
-                       this.ifs.push(iface_list[j].get_iface());           
-                    }             
+                       this.ifs.push(iface_list[j].get_ip_iface());
+                    }
                 }
             }
             catch(e) {
@@ -786,15 +786,14 @@ var init = function (metadata) {
         refresh: function() {
             let sfile = Schema.get_string(this.elt + '-sensor-file');
             if(GLib.file_test(sfile,1<<4)){
-                //global.logError("reading sensor");
-                let t_str = Shell.get_file_contents_utf8_sync(sfile).split("\n")[0];
-                this.temperature = parseInt(t_str)/1000.0;
+                let file = Gio.file_new_for_path(sfile);
+                file.load_contents_async(null, Lang.bind(this, function (source, result) {
+                        let as_r = source.load_contents_finish(result)
+                        this.temperature = parseInt(as_r[1])/1000;
+                }));
             }            
             else 
                 global.logError("error reading: " + sfile);
-           
-         
-
         },
         _apply: function() {
             this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();

@@ -79,7 +79,7 @@ def check_sensors():
             if not os.path.isfile(test):
                 test = sensor_path + 'hwmon' + str(j) + '/device/' + sfile
                 if not os.path.isfile(test):
-                    break
+                    continue
             
             sensor = os.path.split(test)
             infile = open(sensor[0] + '/name', "r")

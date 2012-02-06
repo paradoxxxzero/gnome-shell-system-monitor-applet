@@ -1023,14 +1023,17 @@ var enable = function () {
         function (menu, isOpen) {
             if(isOpen) {
                 Main.__sm.pie.actor.queue_repaint();
-                menu_timeout = Mainloop.timeout_add_seconds(
-                    1,
-                    function () {
-                        Main.__sm.pie.actor.queue_repaint();
-                        return true;
-                    });
-            } else {
-                Mainloop.source_remove(menu_timeout);
+                // There appears to be a big memory leak due to a lack GC when calling actor.get_context()
+                // Until this is fixed, just draw the pie when pulling up the tipbox.
+                //
+                //menu_timeout = Mainloop.timeout_add_seconds(
+                //    1,
+                //    function () {
+                //        Main.__sm.pie.actor.queue_repaint();
+                //        return true;
+                //    });
+            //} else {
+                //Mainloop.source_remove(menu_timeout);
             }
         }
     );

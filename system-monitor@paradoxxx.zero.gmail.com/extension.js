@@ -893,7 +893,7 @@ var init = function (metadata) {
             this.gtop = new GTop.glibtop_fsusage();
             // FIXME Handle colors correctly
             this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
-            for(color in this.colors) {
+            for(let color in this.colors) {
                 let clutterColor = new Clutter.Color();
                 clutterColor.from_string(this.colors[color]);
                 this.colors[color] = clutterColor;
@@ -1068,10 +1068,11 @@ var enable = function () {
 
 var disable = function () {
     Mainloop.source_remove(menu_timeout);
+    Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-    Main.__sm.tray.actor.destroy();
+    Main.__sm.tray.destroy();
     Main.__sm = null;
     log("System monitor applet disable");
 };

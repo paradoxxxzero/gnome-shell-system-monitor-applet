@@ -89,6 +89,7 @@ var init = function (metadata) {
             this.actor.queue_repaint();
         },
         _draw: function() {
+            if (!this.actor.visible) return;
             let [width, height] = this.actor.get_surface_size();
             let cr = this.actor.get_context();
             let max = Math.max.apply(this, this.data[this.data.length - 1]);
@@ -1037,6 +1038,12 @@ var enable = function () {
             }
         }
     );
+    let gc_timeout;
+    gc_timeout = Mainloop.timeout_add_seconds(
+        1,
+        function () {
+            global.gc()
+        });
     
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
@@ -1060,6 +1067,7 @@ var enable = function () {
 };
 
 var disable = function () {
+    Mainloop.source_remove(menu_timeout);
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }

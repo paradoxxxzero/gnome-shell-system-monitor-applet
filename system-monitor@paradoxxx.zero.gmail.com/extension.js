@@ -37,10 +37,13 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
+let extension = imports.misc.extensionUtils.getCurrentExtension();
+let metadata = extension.metadata;
+
 let ElementBase, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
 let Schema, Background, IconSize;
 
-var init = function (metadata) {
+var init = function () {
     function l_limit(t) {
         return (t > 0) ? t : 1000;
     }
@@ -52,12 +55,11 @@ var init = function (metadata) {
         this.text_box.visible = style == 'digit' || style == 'both';
         this.chart.actor.visible = style == 'graph' || style == 'both';
     }
-
     log("System monitor applet init from " + metadata.path);
     
-    let me = imports.ui.extensionSystem.extensions[metadata.uuid];
-    me.convenience.initTranslations(metadata);
-    Schema = me.convenience.getSettings(metadata, 'system-monitor');
+    let me = extension.imports.convenience;
+    me.initTranslations(extension);
+    Schema = me.getSettings(extension, 'system-monitor');
     
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));

@@ -924,8 +924,8 @@ var init = function (metadata) {
                 cr.arc(xc, yc, r, angle, new_angle);
                 return new_angle;
             }
-
-            let thickness = (2 * rc) / (3 * this.mounts.length);
+            let rings = (this.mounts.length > 7?this.mounts.length:7);
+            let thickness = (2 * rc) / (3 * rings);
             let fontsize = 14;
             let r = rc - (thickness / 2);
             cr.setLineWidth(thickness);

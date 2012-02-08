@@ -37,10 +37,13 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
+let extension = imports.misc.extensionUtils.getCurrentExtension();
+let metadata = extension.metadata;
+
 let ElementBase, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
 let Schema, Background, IconSize;
 
-var init = function (metadata) {
+var init = function () {
     function l_limit(t) {
         return (t > 0) ? t : 1000;
     }
@@ -52,12 +55,11 @@ var init = function (metadata) {
         this.text_box.visible = style == 'digit' || style == 'both';
         this.chart.actor.visible = style == 'graph' || style == 'both';
     }
-
     log("System monitor applet init from " + metadata.path);
     
-    let me = imports.ui.extensionSystem.extensions[metadata.uuid];
-    me.convenience.initTranslations(metadata);
-    Schema = me.convenience.getSettings(metadata, 'system-monitor');
+    let me = extension.imports.convenience;
+    me.initTranslations(extension);
+    Schema = me.getSettings(extension, 'system-monitor');
     
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));
@@ -934,9 +936,7 @@ var init = function (metadata) {
         _init: function() {
             this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
                                        icon_type: St.IconType.SYMBOLIC,
-                                       style_class: 'system-status-icon',
-                                       has_tooltip: true,
-                                       tooltip_text: _('System monitor')});
+                                       style_class: 'system-status-icon'});
             this.actor.visible = Schema.get_boolean("icon-display");
             Schema.connect(
                 'changed::icon-display',
@@ -955,7 +955,7 @@ var enable = function () {
         if (Schema.get_boolean("move-clock")) {
             let dateMenu = Main.panel._dateMenu;
             Main.panel._centerBox.remove_actor(dateMenu.actor);
-            Main.panel._rightBox.insert_actor(dateMenu.actor, -1);
+            Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
         }
         panel = Main.panel._centerBox;
     }
@@ -980,7 +980,7 @@ var enable = function () {
         }
     };
     let tray = Main.__sm.tray;
-    panel.insert_actor(tray.actor, 1);
+    panel.insert_child_at_index(tray.actor, 1);
     panel.child_set(tray.actor, { y_fill: true } );
     let box = new St.BoxLayout();
     tray.actor.add_actor(box);

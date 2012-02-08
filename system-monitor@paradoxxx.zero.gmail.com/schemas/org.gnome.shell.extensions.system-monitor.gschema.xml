@@ -30,6 +30,11 @@
       <summary>Display 'mem'</summary>
       <description>Set to true to show 'mem' before memory display</description>
     </key>
+    <key name="memory-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Memory In Menu</summary>
+      <description>Set to true to show memory in pop-up menu</description>
+    </key>
     <key name="memory-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
@@ -53,6 +58,11 @@
       <default>true</default>
       <summary>Display 'swap'</summary>
       <description>Set to true to show 'swap' before swap display</description>
+    </key>
+        <key name="swap-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Swap In Menu</summary>
+      <description>Set to true to show swap in pop-up menu</description>
     </key>
     <key name="swap-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
@@ -78,6 +88,11 @@
       <summary>Display 'cpu'</summary>
       <description>Set to true to show 'cpu' before cpu display</description>
     </key>
+    <key name="cpu-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Cpu In Menu</summary>
+      <description>Set to true to show cpu in pop-up menu</description>
+    </key>
     <key name="cpu-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
@@ -102,6 +117,11 @@
       <summary>Display freq'</summary>
       <description>Set to true to show 'freq' before cpu frequency display</description>
     </key>
+    <key name="freq-show-menu" type="b">
+      <default>false</default>
+      <summary>Display Freq In Menu</summary>
+      <description>Set to true to show freq in pop-up menu</description>
+    </key>
     <key name="freq-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
@@ -125,6 +145,11 @@
       <default>true</default>
       <summary>Display 'net'</summary>
       <description>Set to true to show 'net' before net display</description>
+    </key>
+    <key name="net-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Net In Menu</summary>
+      <description>Set to true to show net in pop-up menu</description>
     </key>
     <key name="net-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
@@ -154,6 +179,11 @@
       <summary>Display 'disk'</summary>
       <description>Set to true to show 'disk' before disk io display</description>
     </key>
+    <key name="disk-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Disk In Menu</summary>
+      <description>Set to true to show disk in pop-up menu</description>
+    </key>
     <key name="disk-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
@@ -178,6 +208,11 @@
       <summary>Display 'thermal'</summary>
       <description>Set to true to show 'thermal' before thermal display</description>
     </key>
+    <key name="thermal-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Temps In Menu</summary>
+      <description>Set to true to show thermal in pop-up menu</description>
+    </key>
     <key name="thermal-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
@@ -186,11 +221,6 @@
       <default>'/sys/devices/virtual/thermal/thermal_zone0/temp'</default>
       <summary>Sensor File</summary>
       <description>Location of the sensor file for cpu temp</description>
-    </key>
-    <key name="thermal-sensor-custom" type="s">
-      <default>''</default>
-      <summary>Sensor Command</summary>
-      <description>Custom command to get temperature</description>
     </key>
     <key name="center-display" type="b">
       <default>false</default>
@@ -278,5 +308,47 @@
       <default>'#ffffff16'</default>
       <summary>Color of background</summary>
     </key>
+	<key name="battery-display" type="b">
+      <default>false</default>
+      <summary>Display battery</summary>
+      <description>Set to false to remove battery display in status bar</description>
+    </key>
+	<key name="battery-refresh-time" type="i">
+      <default>5000</default>
+      <summary>thermal refresh time</summary>
+      <description>Time in ms between 2 refresh of thermal</description>
+    </key>
+    <key name="battery-graph-width" type="i">
+      <default>100</default>
+      <summary>thermal graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+	<key name="battery-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'batt'</summary>
+      <description>Set to true to show 'batt' before net display</description>
+    </key>
+    <key name="battery-show-menu" type="b">
+      <default>false</default>
+      <summary>Display 'batt'</summary>
+      <description>Set to true to show battery in pop-up menu</description>
+    </key>
+	<key name="battery-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'digit'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+	<key name="battery-batt0-color" type="s">
+      <default>'#f2002e'</default>
+      <summary>Color of battery</summary>
+    </key>
+    <key name="battery-time" type="b">
+	  <default>false</default>
+	  <summary>Display battery time remaining rather than percentage</summary>
+	</key>
+    <key name="battery-hidesystem" type="b">
+	  <default>true</default>
+	  <summary>Hide system battery icon</summary>
+	</key>
+
   </schema>
 </schemalist>

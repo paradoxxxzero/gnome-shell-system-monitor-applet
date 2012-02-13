@@ -93,6 +93,8 @@ var init = function (metadata) {
             let [width, height] = this.actor.get_surface_size();
             let cr = this.actor.get_context();
             let max = Math.max.apply(this, this.data[this.data.length - 1]);
+            if (this.parent.elt == 'net')
+                this.max_history = 1;
             max = Math.max(this.max_history, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
             this.max_history = max;
             Clutter.cairo_set_source_color(cr, Background);

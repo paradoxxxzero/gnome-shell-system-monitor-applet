@@ -89,9 +89,12 @@ var init = function (metadata) {
             this.actor.queue_repaint();
         },
         _draw: function() {
+            if (!this.actor.visible) return;
             let [width, height] = this.actor.get_surface_size();
             let cr = this.actor.get_context();
             let max = Math.max.apply(this, this.data[this.data.length - 1]);
+            if (this.parent.elt == 'net')
+                this.max_history = 1;
             max = Math.max(this.max_history, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
             this.max_history = max;
             Clutter.cairo_set_source_color(cr, Background);
@@ -1023,17 +1026,26 @@ var enable = function () {
         function (menu, isOpen) {
             if(isOpen) {
                 Main.__sm.pie.actor.queue_repaint();
-                menu_timeout = Mainloop.timeout_add_seconds(
-                    1,
-                    function () {
-                        Main.__sm.pie.actor.queue_repaint();
-                        return true;
-                    });
-            } else {
-                Mainloop.source_remove(menu_timeout);
+                // There appears to be a big memory leak due to a lack GC when calling actor.get_context()
+                // Until this is fixed, just draw the pie when pulling up the tipbox.
+                //
+                //menu_timeout = Mainloop.timeout_add_seconds(
+                //    1,
+                //    function () {
+                //        Main.__sm.pie.actor.queue_repaint();
+                //        return true;
+                //    });
+            //} else {
+                //Mainloop.source_remove(menu_timeout);
             }
         }
     );
+    let gc_timeout;
+    gc_timeout = Mainloop.timeout_add_seconds(
+        1,
+        function () {
+            global.gc()
+        });
     
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
@@ -1057,6 +1069,7 @@ var enable = function () {
 };
 
 var disable = function () {
+    Mainloop.source_remove(menu_timeout);
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();

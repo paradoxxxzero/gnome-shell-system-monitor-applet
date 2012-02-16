@@ -936,9 +936,7 @@ var init = function () {
         _init: function() {
             this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
                                        icon_type: St.IconType.SYMBOLIC,
-                                       style_class: 'system-status-icon',
-                                       has_tooltip: true,
-                                       tooltip_text: _('System monitor')});
+                                       style_class: 'system-status-icon'});
             this.actor.visible = Schema.get_boolean("icon-display");
             Schema.connect(
                 'changed::icon-display',

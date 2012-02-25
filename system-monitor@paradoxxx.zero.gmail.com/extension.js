@@ -206,16 +206,14 @@ var init = function (metadata) {
 
     TipBox.prototype = {
         _init: function() {
-            this.actor = new St.BoxLayout({ reactive: true });
+            this.actor = new St.BoxLayout({ reactive: true});
             this.actor._delegate = this;
             this.tipmenu = new TipMenu(this.actor);
             // Main.chrome.addActor(this.tipmenu.actor, { visibleInOverview: true,
             // affectsStruts: false });
             this.tipmenu.close();
             this.in_to = this.out_to = 0;
-            // This crash the shell right now
-            // this.actor.connect('enter-event', Lang.bind(this, this.on_enter));
-            // this.actor.connect('leave-event', Lang.bind(this, this.on_leave));
+            
         },
         show_tip: function() {
             this.tipmenu.open();
@@ -234,24 +232,6 @@ var init = function (metadata) {
                 Mainloop.source_remove(this.in_to);
                 this.in_to = 0;
             }
-        },
-        on_enter: function() {
-            if (this.out_to) {
-                Mainloop.source_remove(this.out_to);
-                this.out_to = 0;
-            }
-            if (!this.in_to)
-                this.in_to = Mainloop.timeout_add(500, Lang.bind(this,
-                                                                 this.show_tip));
-        },
-        on_leave: function() {
-            if (this.in_to) {
-                Mainloop.source_remove(this.in_to);
-                this.in_to = 0;
-            }
-            if (!this.out_to)
-                this.out_to = Mainloop.timeout_add(500, Lang.bind(this,
-                                                                  this.hide_tip));
         },
         destroy: function() {
             if (this.in_to) {
@@ -1095,9 +1075,7 @@ var init = function (metadata) {
         _init: function() {
             this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
                                        icon_type: St.IconType.SYMBOLIC,
-                                       style_class: 'system-status-icon',
-                                       has_tooltip: true,
-                                       tooltip_text: _('System monitor')});
+                                       style_class: 'system-status-icon'});
             this.actor.visible = Schema.get_boolean("icon-display");
             Schema.connect(
                 'changed::icon-display',

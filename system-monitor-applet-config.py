@@ -194,6 +194,11 @@ class SettingFrame:
             item.set_active(self.schema.get_boolean(key))
             self.hbox0.add(item)
             item.connect('toggled', set_boolean, self.schema, key)
+        elif sections[1] == 'show' and sections[2] == 'menu':
+            item = Gtk.CheckButton(label=_('Show In Menu'))
+            item.set_active(self.schema.get_boolean(key))
+            self.hbox0.add(item)
+            item.connect('toggled', set_boolean, self.schema, key)
         elif sections[1] == 'style':
             item = Select(_('Display Style'))
             item.add((_('digit'), _('graph'), _('both')))
@@ -225,11 +230,22 @@ class SettingFrame:
             self.hbox3.add(item.actor)
             item.selector.connect('changed', set_string,
                                   self.schema, key, _slist)
+        elif sections[1] == 'time':
+            item = Gtk.CheckButton(label=_('Show Time Remaining'))
+            item.set_active(self.schema.get_boolean(key))
+            self.hbox3.add(item)
+            item.connect('toggled', set_boolean, self.schema, key)
+        elif sections[1] == 'hidesystem':
+            item = Gtk.CheckButton(label=_('Hide System Icon'))
+            item.set_active(self.schema.get_boolean(key))
+            self.hbox3.add(item)
+            item.connect('toggled', set_boolean, self.schema, key)
+            
 
 
 class App:
     opt = {}
-    setting_items = ('cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'freq')
+    setting_items = ('cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'freq', 'battery')
 
     def __init__(self):
         self.schema = Gio.Settings('org.gnome.shell.extensions.system-monitor')

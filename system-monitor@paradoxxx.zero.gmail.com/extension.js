@@ -320,7 +320,7 @@ var init = function (metadata) {
                           }));
 
             this.interval = l_limit(Schema.get_int(this.elt + "-refresh-time"));
-            this.timeout = Mainloop.timeout_add(this.interval,
+            this.timeout = Mainloop.timeout_add_seconds(Math.round(this.interval/1000),
                                                 Lang.bind(this, this.update));
             Schema.connect(
                 'changed::' + this.elt + '-refresh-time',
@@ -328,7 +328,7 @@ var init = function (metadata) {
                           function(schema, key) {
                               Mainloop.source_remove(this.timeout);
                               this.interval = l_limit(Schema.get_int(key));
-                              this.timeout = Mainloop.timeout_add(this.interval,
+                              this.timeout = Mainloop.timeout_add_seconds(Math.round(this.interval/1000),
                                                                   Lang.bind(this, this.update));
                           }));
             Schema.connect('changed::' + this.elt + '-graph-width',

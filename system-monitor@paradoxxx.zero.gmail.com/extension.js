@@ -1021,8 +1021,8 @@ var enable = function () {
     
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
-    let _gsmPrefs = _appSys.lookup_app('system-monitor-applet-config.desktop');
-
+    //let _gsmPrefs = _appSys.lookup_app('system-monitor-applet-config.desktop');
+    let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
     item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
         _gsmApp.activate();

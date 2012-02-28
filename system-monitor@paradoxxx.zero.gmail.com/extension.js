@@ -95,9 +95,12 @@ var init = function () {
             this.actor.queue_repaint();
         },
         _draw: function() {
+            if (!this.actor.visible) return;
             let [width, height] = this.actor.get_surface_size();
             let cr = this.actor.get_context();
             let max = Math.max.apply(this, this.data[this.data.length - 1]);
+            if (this.parent.elt == 'net')
+                this.max_history = 1;
             max = Math.max(this.max_history, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
             this.max_history = max;
             Clutter.cairo_set_source_color(cr, Background);
@@ -299,7 +302,7 @@ var init = function () {
                           }));
 
             this.interval = l_limit(Schema.get_int(this.elt + "-refresh-time"));
-            this.timeout = Mainloop.timeout_add(this.interval,
+            this.timeout = Mainloop.timeout_add_seconds(Math.round(this.interval/1000),
                                                 Lang.bind(this, this.update));
             Schema.connect(
                 'changed::' + this.elt + '-refresh-time',
@@ -307,7 +310,7 @@ var init = function () {
                           function(schema, key) {
                               Mainloop.source_remove(this.timeout);
                               this.interval = l_limit(Schema.get_int(key));
-                              this.timeout = Mainloop.timeout_add(this.interval,
+                              this.timeout = Mainloop.timeout_add_seconds(Math.round(this.interval/1000),
                                                                   Lang.bind(this, this.update));
                           }));
             Schema.connect('changed::' + this.elt + '-graph-width',
@@ -910,8 +913,8 @@ var init = function () {
                 cr.arc(xc, yc, r, angle, new_angle);
                 return new_angle;
             }
-
-            let thickness = (2 * rc) / (3 * this.mounts.length);
+            let rings = (this.mounts.length > 7?this.mounts.length:7);
+            let thickness = (2 * rc) / (3 * rings);
             let fontsize = 14;
             let r = rc - (thickness / 2);
             cr.setLineWidth(thickness);
@@ -1008,7 +1011,7 @@ var enable = function () {
             if(isOpen) {
                 Main.__sm.pie.actor.queue_repaint();
                 menu_timeout = Mainloop.timeout_add_seconds(
-                    1,
+                    30,
                     function () {
                         Main.__sm.pie.actor.queue_repaint();
                         return true;

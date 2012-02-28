@@ -57,3 +57,8 @@
     padding: 0px;
     spacing: 10px;
 }
+.sm-status-icon {
+    padding: 0px 2px;
+    icon-size: 1.14em;
+}
+

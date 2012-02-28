@@ -27,6 +27,7 @@ const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 const NMClient = imports.gi.NMClient;
 const NetworkManager = imports.gi.NetworkManager;
+const Power = imports.ui.status.power;
 
 const Main = imports.ui.main;const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
@@ -37,10 +38,11 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
+
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
-let ElementBase, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
+let ElementBase, Battery, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
 let Schema, Background, IconSize;
 
 var init = function () {
@@ -54,6 +56,9 @@ var init = function () {
         let style = Schema.get_string(this.elt + '-style');
         this.text_box.visible = style == 'digit' || style == 'both';
         this.chart.actor.visible = style == 'graph' || style == 'both';
+    }
+    function change_menu() {
+        this.menu_item.actor.visible = Schema.get_boolean(this.elt + '-show-menu');
     }
     log("System monitor applet init from " + metadata.path);
     
@@ -320,6 +325,9 @@ var init = function () {
                                         style_class: "sm-status-label"});
             change_text.call(this);
             Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
+            
+            change_menu.call(this);
+            Schema.connect('changed::' + this.elt + '-show-menu', Lang.bind(this, change_menu));
 
             this.actor.add_actor(this.label);
             this.text_box = new St.BoxLayout();
@@ -597,7 +605,7 @@ var init = function () {
                 }
             }
             catch(e) {
-                global.logError("Please install Network Manager Gobject Introspection Bindings");
+                global.logError("Please install Network Manager Gobject Introspection Bindings: " + e);
             }
             this.update();
         },
@@ -865,6 +873,150 @@ var init = function () {
                     new St.Label({ text: 'mHz', style_class: "sm-label"})];
         }
     };
+    
+    Battery = function() {
+        this._init.apply(this, arguments);
+    };
+
+    Battery.prototype = {
+        __proto__: ElementBase.prototype,
+        elt: 'battery',
+        color_name: ['batt0'],
+        _init: function() {
+            this.icon_hidden = false;
+            this.percentage = 0;
+            this.timeString = '-- ';
+            this._proxy = Main.panel._statusArea['battery']._proxy;
+            this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
+           
+            //need to specify a default icon, since the contructor completes before UPower callback
+            this.icon = '. GThemedIcon battery-good-symbolic battery-good';
+            this.gicon = Gio.icon_new_for_string(this.icon);
+            
+
+            this.menu_item = new PopupMenu.PopupMenuItem(_("Battery"), {reactive: false});
+            
+            ElementBase.prototype._init.call(this);
+            this.tip_format('%');
+            
+            this.update_battery();
+            this.update_tips();
+            this.hide_system_icon();
+            this.update();
+            
+
+            Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
+            Schema.connect('changed::' + this.elt + '-time', Lang.bind(this, this.update_tips));
+            
+        },
+        refresh: function() {
+            //do nothing here?
+        },
+        update_battery: function(){
+            // callback function for when battery stats updated.
+            let battery_found = false;
+            this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
+                if (error) {
+                    log("SM: Power proxy error: " + error)
+                    this.actor.hide();
+                    this.menu_item.actor.hide();
+                    return;
+                }
+
+                let [result] = devices;
+                for (let i = 0; i < result.length; i++) {
+                    let [device_id, device_type, icon, percentage, state, seconds] = result[i];
+                    if (device_type == Power.UPDeviceType.BATTERY && !battery_found) {
+                        battery_found = true;
+                        //grab data
+                        if (seconds > 60){
+                            let time = Math.round(seconds / 60);
+                            let minutes = time % 60;
+                            let hours = Math.floor(time / 60);
+                            this.percentage = Math.floor(percentage);
+                            this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
+                        } else {
+                            this.timeString = '-- ';
+                        }
+                        this.gicon = Gio.icon_new_for_string(icon);
+
+                        if (Schema.get_boolean(this.elt + '-display'))
+                            this.actor.show()
+                        if (Schema.get_boolean(this.elt + '-show-menu'))
+                            this.menu_item.actor.show();
+                    }
+                }
+                if (!battery_found) {
+                    log("SM: No battery found")
+                    this.actor.hide();
+                    this.menu_item.actor.hide();
+                }
+                    
+            }));
+        },
+        hide_system_icon: function(override) {
+            let value = Schema.get_boolean(this.elt + '-hidesystem');
+            if (override == false ){
+                value = false;
+            }
+            if (value){
+                for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
+                    if(Main.panel._statusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
+                        Main.panel._rightBox.get_children()[Index].destroy();
+                        Main.panel._statusArea['battery'] = null;
+                        this.icon_hidden = true;
+                        break;           
+                    }
+                }
+            } else if(this.icon_hidden){
+                let Indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION['battery'];
+                Main.panel.addToStatusArea('battery', Indicator, Panel.STANDARD_STATUS_AREA_ORDER.indexOf('battery'));
+                this.icon_hidden = false;
+            }
+        },
+        update_tips: function(){
+            let value = Schema.get_boolean(this.elt + '-time');
+            if (value) {
+                this.text_items[2].text = this.menu_items[5].text = 'h';
+            } else {
+                this.text_items[2].text = this.menu_items[5].text = '%';
+            }
+            this.update();
+        },
+        _apply: function() {
+            let displayString;
+            let value = Schema.get_boolean(this.elt + '-time');
+            if (value){
+                displayString = this.timeString;
+            } else {
+                displayString = this.percentage.toString()
+            }
+            this.text_items[1].text = this.menu_items[3].text = displayString;
+            this.text_items[0].gicon = this.gicon;
+            this.vals = [this.percentage];
+            this.tip_vals[0] = Math.round(this.vals[0]);
+            
+        },
+        create_text_items: function() {
+            return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
+                                   icon_type: St.IconType.FULLCOLOR,
+                                   style_class: 'sm-status-icon' }),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: '%', style_class: "sm-unit-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: '%', style_class: "sm-label"})];
+        },
+        destroy: function() {
+            ElementBase.prototype.destroy.call(this);
+            this._proxy.disconnect(this.powerSigID);  
+        }
+    };
 
     Pie = function () {
         this._init.apply(this, arguments);
@@ -979,7 +1131,8 @@ var enable = function () {
             swap: new Swap(),
             net: new Net(),
             disk: new Disk(),
-            thermal: new Thermal()
+            thermal: new Thermal(),
+            battery: new Battery()
         }
     };
     let tray = Main.__sm.tray;
@@ -1024,7 +1177,6 @@ var enable = function () {
     
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
-    //let _gsmPrefs = _appSys.lookup_app('system-monitor-applet-config.desktop');
     let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
     item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
@@ -1034,7 +1186,12 @@ var enable = function () {
 
     item = new PopupMenu.PopupMenuItem(_("Preferences..."));
     item.connect('activate', function () {
-        _gsmPrefs.activate();
+        if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
+            _gsmPrefs.activate();
+        } else {
+            _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
+                             [metadata.uuid],-1,null);
+        }
     });
     tray.menu.addMenuItem(item);
 
@@ -1044,6 +1201,10 @@ var enable = function () {
 };
 
 var disable = function () {
+    //restore system power icon if necessary
+    if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){    
+        Main.__sm.elts.battery.hide_system_icon(false);
+    }
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();

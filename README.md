@@ -7,6 +7,9 @@
 
 
 ### Install:
+#### Gnome Shell 3.3/3.4
++One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
+
 #### Archlinux:
 
 [AUR package](https://aur.archlinux.org/packages.php?ID=49250)

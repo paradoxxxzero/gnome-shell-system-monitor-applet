@@ -1,5 +1,0 @@
-To install the preferences applet, manually run the following commands after installation.
-
-
-ln -s ~/git_projects/gnome-shell-system-monitor-applet/config/system-monitor@paradoxxx.zero.gmail.com
-cp ~/git_projects/gnome-shell-system-monitor-applet/config/system-monitor-applet-config.desktop ~/.local/share/applications/

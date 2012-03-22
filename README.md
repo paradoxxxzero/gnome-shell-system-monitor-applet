@@ -1,3 +1,4 @@
+Gnome Shell 3.2 version
 ## Gnome shell system monitor extension
 ![](http://i.imgur.com/ka9OA.png)
 

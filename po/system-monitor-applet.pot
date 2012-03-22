@@ -50,6 +50,22 @@ msgstr ""
 msgid "Background Color"
 msgstr ""
 
+#: system-monitor-applet-config.py:204
+msgid "Show network speed in bits"
+msgstr ""
+
+#: system-monitor-applet-config.py:215
+msgid "Sensor"
+msgstr ""
+
+#: system-monitor-applet-config.py:217
+msgid "Please install lm-sensors"
+msgstr ""
+
+#: system-monitor-applet-config.py:266
+msgid "Move the clock"
+msgstr ""
+
 msgid "Cpu"
 msgstr ""
 

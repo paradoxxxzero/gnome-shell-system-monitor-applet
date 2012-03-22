@@ -38,10 +38,14 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
+
+let extension = imports.misc.extensionUtils.getCurrentExtension();
+let metadata = extension.metadata;
+
 let ElementBase, Battery, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
 let Schema, Background, IconSize;
 
-var init = function (metadata) {
+var init = function () {
     function l_limit(t) {
         return (t > 0) ? t : 1000;
     }
@@ -58,7 +62,11 @@ var init = function (metadata) {
     }
 
     log("System monitor applet init from " + metadata.path);
-    Schema = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
+    
+    let me = extension.imports.convenience;
+    me.initTranslations(extension);
+    Schema = me.getSettings(extension, 'system-monitor');
+    
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));
     IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
@@ -598,7 +606,7 @@ var init = function (metadata) {
                 }
             }
             catch(e) {
-                global.logError("Please install Network Manager Gobject Introspection Bindings");
+                global.logError("Please install Network Manager Gobject Introspection Bindings: " + e);
             }
             this.update();
         },
@@ -880,7 +888,8 @@ var init = function (metadata) {
             this.percentage = 0;
             this.timeString = '-- ';
             this._proxy = Main.panel._statusArea['battery']._proxy;
-            this.powerSigID = this._proxy.connect('Changed', Lang.bind(this, this.update_battery));
+            this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
+
            
             //need to specify a default icon, since the contructor completes before UPower callback
             this.icon = '. GThemedIcon battery-good-symbolic battery-good';
@@ -910,32 +919,40 @@ var init = function (metadata) {
             let battery_found = false;
             this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
                 if (error) {
-                    log("power proxy error: " + error)
-                    this.actor.hide()
+
+                    log("SM: Power proxy error: " + error)
+                    this.actor.hide();
                     this.menu_item.actor.hide();
                     return;
                 }
-                devices.forEach(Lang.bind(this, function(result) {
-                    let [device_id, device_type, icon, percentage, state, seconds] = result;
+
+                let [result] = devices;
+                for (let i = 0; i < result.length; i++) {
+                    let [device_id, device_type, icon, percentage, state, seconds] = result[i];
                     if (device_type == Power.UPDeviceType.BATTERY && !battery_found) {
                         battery_found = true;
-                        
                         //grab data
                         if (seconds > 60){
-                        let time = Math.round(seconds / 60);
-                        let minutes = time % 60;
-                        let hours = Math.floor(time / 60);
-                        this.percentage = Math.floor(percentage);
-                        this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
+                            let time = Math.round(seconds / 60);
+                            let minutes = time % 60;
+                            let hours = Math.floor(time / 60);
+                            this.percentage = Math.floor(percentage);
+                            this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
                         } else {
                             this.timeString = '-- ';
                         }
-                        this.icon = icon;
                         this.gicon = Gio.icon_new_for_string(icon);
+
+                        if (Schema.get_boolean(this.elt + '-display'))
+                            this.actor.show()
+                        if (Schema.get_boolean(this.elt + '-show-menu'))
+                            this.menu_item.actor.show();
                     }
-                }));
+                }
                 if (!battery_found) {
-                    this.actor.hide()
+                    log("SM: No battery found")
+                    this.actor.hide();
+
                     this.menu_item.actor.hide();
                 }
                     
@@ -968,7 +985,7 @@ var init = function (metadata) {
             } else {
                 this.text_items[2].text = this.menu_items[5].text = '%';
             }
-            this.update_battery();
+
             this.update();
         },
         _apply: function() {
@@ -999,6 +1016,10 @@ var init = function (metadata) {
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: '%', style_class: "sm-label"})];
+        },
+        destroy: function() {
+            ElementBase.prototype.destroy.call(this);
+            this._proxy.disconnect(this.powerSigID);  
         }
     };
 
@@ -1094,7 +1115,7 @@ var enable = function () {
         if (Schema.get_boolean("move-clock")) {
             let dateMenu = Main.panel._dateMenu;
             Main.panel._centerBox.remove_actor(dateMenu.actor);
-            Main.panel._rightBox.insert_actor(dateMenu.actor, -1);
+            Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
         }
         panel = Main.panel._centerBox;
     }
@@ -1120,7 +1141,7 @@ var enable = function () {
         }
     };
     let tray = Main.__sm.tray;
-    panel.insert_actor(tray.actor, 1);
+    panel.insert_child_at_index(tray.actor, 1);
     panel.child_set(tray.actor, { y_fill: true } );
     let box = new St.BoxLayout();
     tray.actor.add_actor(box);
@@ -1164,8 +1185,7 @@ var enable = function () {
         
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
-    let _gsmPrefs = _appSys.lookup_app('system-monitor-applet-config.desktop');
-
+    let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
     item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
         _gsmApp.activate();
@@ -1174,7 +1194,12 @@ var enable = function () {
 
     item = new PopupMenu.PopupMenuItem(_("Preferences..."));
     item.connect('activate', function () {
-        _gsmPrefs.activate();
+        if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
+            _gsmPrefs.activate();
+        } else {
+            _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
+                             [metadata.uuid],-1,null);
+        }
     });
     tray.menu.addMenuItem(item);
 

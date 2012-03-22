@@ -7,25 +7,15 @@
 
 
 ### Install:
-#### Gnome Shell 3.3/3.4
-+One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
+Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2)) if you are using an older version of gnome-shell.
 
-#### Archlinux:
+#### extensions.gnome.org
+This is the recommended install method and offers One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
 
-[AUR package](https://aur.archlinux.org/packages.php?ID=49250)
-You can install it with: yaourt or packer -S gnome-shell-system-monitor-applet-git
-[See also](https://wiki.archlinux.org/index.php/GNOME#Show_system_monitor)
-
-#### Ubuntu:
-
-[See here for the Webupd8 ppa](http://www.webupd8.org/2011/10/gnome-shell-system-monitor-extension.html)
-
-#### Everywhere else for now:
+#### Manual Install:
 
 Dependencies:
     
-    python3
-    python3-gobject
     libgtop and gir bindings
         on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0
         on Fedora: libgtop2-devel, NetworkManager-glib-devel
@@ -39,21 +29,6 @@ Then:
     mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
-    cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.desktop ~/.local/share/applications/
-
-Then install the schema:
-
-    sudo mkdir -p /usr/local/share/glib-2.0/schemas
-    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/local/share/glib-2.0/schemas
-    sudo glib-compile-schemas /usr/local/share/glib-2.0/schemas
-
-To install the configurator (you need python and py3gobject):
-
-    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.py /usr/local/bin/system-monitor-applet-config
-
-To install locale you need gettext:
-
-    sudo msgfmt ~/git_project/gnome-shell-system-monitor-applet/po/YOUR_LANGUAGE/system-monitor-applet.po -o /usr/share/locale/YOUR_LANGUAGE/LC_MESSAGES/system-monitor-applet.mo
 
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 

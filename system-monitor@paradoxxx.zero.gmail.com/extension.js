@@ -510,7 +510,7 @@ var init = function () {
                     new St.Label({ text: "/", style_class: "sm-label"}),
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: "M", style_class: "sm-label"})];
+                    new St.Label({ text: 'MB', style_class: "sm-label"})];
         }
     };
 
@@ -557,7 +557,7 @@ var init = function () {
                     new St.Label({ text: "/", style_class: "sm-label"}),
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: "M", style_class: "sm-label"})];
+                    new St.Label({ text: 'MB', style_class: "sm-label"})];
         }
     };
 
@@ -577,7 +577,7 @@ var init = function () {
             this.update_iface_list();
             
             if(!this.ifs.length){
-            	let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
+                let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             	for(let i = 3; i < net_lines.length - 1 ; i++) {
                 	let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
                 	if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
@@ -617,6 +617,8 @@ var init = function () {
                 this.set_tip_unit(['kbps', '/s', 'kbps', '/s', '/s']);
                 this.text_items[2].text = 'kbps';
                 this.text_items[5].text = 'kbps';
+                this.menu_items[1].text = 'kbps';
+                this.menu_items[4].text = 'kbps';
                 if (!previous_setting) {
                     this.last[0] *= 8;
                     this.last[1] *= 8;
@@ -627,6 +629,8 @@ var init = function () {
                 this.set_tip_unit(['kB/s', '/s', 'kB/s', '/s', '/s']);
                 this.text_items[2].text = 'kB/s';
                 this.text_items[5].text = 'kB/s';
+                this.menu_items[1].text = 'kB/s';
+                this.menu_items[4].text = 'kB/s';
                 if (previous_setting) {
                     this.last[0] /= 8;
                     this.last[1] /= 8;
@@ -689,11 +693,11 @@ var init = function () {
         },
         create_menu_items: function() {
             return [new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'k', style_class: "sm-label"}),
+                    new St.Label({ text:'kB/s', style_class: "sm-label"}),
                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                   icon_size: 16, icon_name:'go-down'}),
                     new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'k', style_class: "sm-label"}),
+                    new St.Label({ text:'kB/s', style_class: "sm-label"}),
                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                   icon_size: 16, icon_name:'go-up'})];
         }
@@ -793,7 +797,7 @@ var init = function () {
             this.temperature = -273.15;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
             ElementBase.prototype._init.call(this);
-            this.tip_format('C');
+            this.tip_format('\u2103');
             Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
             this.update();
         },
@@ -816,7 +820,7 @@ var init = function () {
         },
         create_text_items: function() {
             return [new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'C', style_class: "sm-unit-label"})];
+                    new St.Label({ text: '\u2103', style_class: "sm-unit-label"})];
         },
         create_menu_items: function() {
             return [new St.Label({ style_class: "sm-void"}),
@@ -824,7 +828,7 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: 'C', style_class: "sm-label"})];
+                    new St.Label({ text: '\u2103', style_class: "sm-label"})];
         }
     };
 
@@ -840,7 +844,7 @@ var init = function () {
             this.freq = 0;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
             ElementBase.prototype._init.call(this);
-            this.tip_format('mHz');
+            this.tip_format('MHz');
             this.update();
         },
         refresh: function() {
@@ -862,7 +866,7 @@ var init = function () {
         },
         create_text_items: function() {
             return [new St.Label({ style_class: "sm-big-status-value"}),
-                    new St.Label({ text: 'mHz', style_class: "sm-perc-label"})];
+                    new St.Label({ text: 'MHz', style_class: "sm-perc-label"})];
 
         },
         create_menu_items: function() {
@@ -871,7 +875,7 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: 'mHz', style_class: "sm-label"})];
+                    new St.Label({ text: 'MHz', style_class: "sm-label"})];
         }
     };
     

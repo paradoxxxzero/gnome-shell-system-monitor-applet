@@ -510,7 +510,7 @@ var init = function () {
                     new St.Label({ text: "/", style_class: "sm-label"}),
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: 'MB', style_class: "sm-label"})];
+                    new St.Label({ text: 'MiB', style_class: "sm-label"})];
         }
     };
 
@@ -557,7 +557,7 @@ var init = function () {
                     new St.Label({ text: "/", style_class: "sm-label"}),
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: 'MB', style_class: "sm-label"})];
+                    new St.Label({ text: 'MiB', style_class: "sm-label"})];
         }
     };
 
@@ -770,17 +770,17 @@ var init = function () {
         create_text_items: function() {
             return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
                     new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'MB/s', style_class: "sm-perc-label"}),
+                    new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"}),
                     new St.Label({ text: 'W', style_class: "sm-status-label"}),
                     new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'MB/s', style_class: "sm-perc-label"})];
+                    new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"})];
         },
         create_menu_items: function() {
             return [new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'MB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'MiB/s', style_class: "sm-label"}),
                     new St.Label({ text:'R', style_class: "sm-label"}),
                     new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'MB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'MiB/s', style_class: "sm-label"}),
                     new St.Label({ text:'W', style_class: "sm-label"})];
         }
     };

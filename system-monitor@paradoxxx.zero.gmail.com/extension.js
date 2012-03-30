@@ -365,11 +365,11 @@ var init = function () {
                 this.tip_vals[i] = 0;
             }
         },
-        set_tip_unit: function(unit) {
+/*        set_tip_unit: function(unit) {
             for (let i = 0;i < this.tip_unit_labels.length;i++) {
                 this.tip_unit_labels[i].text = unit[i];
             }
-        },
+        },*/
         update: function() {
             this.refresh();
             this._apply();
@@ -578,7 +578,7 @@ var init = function () {
             
             if(!this.ifs.length){
                 let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
-            	for(let i = 3; i < net_lines.length - 1 ; i++) {
+                for(let i = 3; i < net_lines.length - 1 ; i++) {
                 	let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
                 	if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
                    	.replace(/\s/g, "") == "up" && 
@@ -594,7 +594,7 @@ var init = function () {
             this.last_time = 0;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
             ElementBase.prototype._init.call(this);
-            this.tip_format(['kB/s', '/s', 'kB/s', '/s', '/s']);
+            this.tip_format(['KiB/s', '/s', 'KiB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
             
@@ -611,34 +611,8 @@ var init = function () {
             this.update();
         },
         update_units: function() {
-            let previous_setting = this.speed_in_bits;
             this.speed_in_bits = Schema.get_boolean(this.elt + '-speed-in-bits');
-            if (this.speed_in_bits) {
-                this.set_tip_unit(['kbps', '/s', 'kbps', '/s', '/s']);
-                this.text_items[2].text = 'kbps';
-                this.text_items[5].text = 'kbps';
-                this.menu_items[1].text = 'kbps';
-                this.menu_items[4].text = 'kbps';
-                if (!previous_setting) {
-                    this.last[0] *= 8;
-                    this.last[1] *= 8;
-                    this.usage[0] *= 8;
-                    this.usage[1] *= 8;
-                }
-            } else {
-                this.set_tip_unit(['kB/s', '/s', 'kB/s', '/s', '/s']);
-                this.text_items[2].text = 'kB/s';
-                this.text_items[5].text = 'kB/s';
-                this.menu_items[1].text = 'kB/s';
-                this.menu_items[4].text = 'kB/s';
-                if (previous_setting) {
-                    this.last[0] /= 8;
-                    this.last[1] /= 8;
-                    this.usage[0] /= 8;
-                    this.usage[1] /= 8;
-                }
-            }
-        },     
+        },
         update_iface_list: function(){
             try {
                 this.ifs = []
@@ -658,14 +632,14 @@ var init = function () {
 
             for (let ifn in this.ifs) {
                 GTop.glibtop_get_netload(this.gtop, this.ifs[ifn]);
-                accum[0] += this.gtop.bytes_in * (this.speed_in_bits ? 8 : 1);
+                accum[0] += this.gtop.bytes_in;
                 accum[1] += this.gtop.errors_in;
-                accum[2] += this.gtop.bytes_out * (this.speed_in_bits ? 8 : 1);
+                accum[2] += this.gtop.bytes_out;
                 accum[3] += this.gtop.errors_out;
                 accum[4] += this.gtop.collisions;
             }
 
-            let time = GLib.get_monotonic_time() / 1000;
+            let time = GLib.get_monotonic_time() * 0.001024;
             let delta = time - this.last_time;
             if (delta > 0)
                 for (let i = 0;i < 5;i++) {
@@ -676,6 +650,37 @@ var init = function () {
         },
         _apply: function() {
             this.tip_vals = this.vals = this.usage;
+            if (this.speed_in_bits) {
+                this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
+                this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
+                if (this.tip_vals[0] < 1000)
+                    this.text_items[2].text = this.menu_items[1].text = 'kbps';
+                else {
+                    this.text_items[2].text = this.menu_items[1].text = 'Mbps';
+                    this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
+                }
+                if (this.tip_vals[2] < 1000)
+                    this.text_items[5].text = this.menu_items[4].text = 'kbps';
+                else {
+                    this.text_items[5].text = this.menu_items[4].text = 'Mbps';
+                    this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
+                }                
+                
+            }
+            else {
+                if (this.tip_vals[0] < 1024)
+                    this.text_items[2].text = this.menu_items[1].text = 'KiB/s';
+                else {
+                    this.text_items[2].text = this.menu_items[1].text = 'MiB/s';
+                    this.tip_vals[0] = (this.tip_vals[0] / 1024).toPrecision(3);
+                }
+                if (this.tip_vals[2] < 1024)
+                    this.text_items[5].text = this.menu_items[4].text = 'KiB/s';
+                else {
+                    this.text_items[5].text = this.menu_items[4].text = 'MiB/s';
+                    this.tip_vals[2] = (this.tip_vals[2] / 1024).toPrecision(3);
+                }                
+            }
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
         },
@@ -684,20 +689,20 @@ var init = function () {
                                   icon_size: 2 * IconSize / 3,
                                   icon_name:'go-down'}),
                     new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'kB/s', style_class: "sm-unit-label"}),
+                    new St.Label({ text: 'KiB/s', style_class: "sm-unit-label"}),
                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                   icon_size: 2 * IconSize / 3,
                                   icon_name:'go-up'}),
                     new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'kB/s', style_class: "sm-unit-label"})];
+                    new St.Label({ text: 'KiB/s', style_class: "sm-unit-label"})];
         },
         create_menu_items: function() {
             return [new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'kB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'KiB/s', style_class: "sm-label"}),
                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                   icon_size: 16, icon_name:'go-down'}),
                     new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'kB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'KiB/s', style_class: "sm-label"}),
                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                   icon_size: 16, icon_name:'go-up'})];
         }
@@ -734,7 +739,7 @@ var init = function () {
             this.block_size = this.gtop.block_size/1024/1024/8;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
             ElementBase.prototype._init.call(this);
-            this.tip_format('kB/s');
+            this.tip_format('KiB/s');
             this.update();
         },
         refresh: function() {

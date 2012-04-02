@@ -29,7 +29,8 @@ const NMClient = imports.gi.NMClient;
 const NetworkManager = imports.gi.NetworkManager;
 const Power = imports.ui.status.power;
 
-const Main = imports.ui.main;const Panel = imports.ui.panel;
+const Main = imports.ui.main;
+const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
@@ -42,54 +43,41 @@ const _ = Gettext.gettext;
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
-let ElementBase, Battery, Cpu, Mem, Swap, Net, Disk, Thermal, Freq, Pie, Chart, Icon, TipBox, TipItem, TipMenu;
 let Schema, Background, IconSize;
 
-var init = function () {
-    function l_limit(t) {
-        return (t > 0) ? t : 1000;
-    }
-    function change_text() {
-        this.label.visible = Schema.get_boolean(this.elt + '-show-text');
-    }
-    function change_style() {
-        let style = Schema.get_string(this.elt + '-style');
-        this.text_box.visible = style == 'digit' || style == 'both';
-        this.chart.actor.visible = style == 'graph' || style == 'both';
-    }
-    function change_menu() {
-        this.menu_item.actor.visible = Schema.get_boolean(this.elt + '-show-menu');
-    }
+function l_limit(t) {
+    return (t > 0) ? t : 1000;
+}
+function change_text() {
+    this.label.visible = Schema.get_boolean(this.elt + '-show-text');
+}
+function change_style() {
+    let style = Schema.get_string(this.elt + '-style');
+    this.text_box.visible = style == 'digit' || style == 'both';
+    this.chart.actor.visible = style == 'graph' || style == 'both';
+}
+function change_menu() {
+    this.menu_item.actor.visible = Schema.get_boolean(this.elt + '-show-menu');
+}
 
-    log("System monitor applet init from " + metadata.path);
-    
-    let me = extension.imports.convenience;
-    me.initTranslations(extension);
-    Schema = me.getSettings(extension, 'system-monitor');
-    
-    Background = new Clutter.Color();
-    Background.from_string(Schema.get_string('background'));
-    IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
+const Chart = new Lang.Class({
+        Name: 'SystemMonitor.Chart',
 
-    Chart = function () {
-        this._init.apply(this, arguments);
-    };
-
-    Chart.prototype = {
         _init: function(width, height, parent) {
+//            this.parent()
             this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
-            this.parent = parent;
+            this.parentC = parent;
             this.actor.set_width(this.width=width);
             this.actor.set_height(this.height=height);
             this.actor.connect('repaint', Lang.bind(this, this._draw));
             this.max_history = 1;
             this.data = [];
-            for (let i = 0;i < this.parent.colors.length;i++)
+            for (let i = 0;i < this.parentC.colors.length;i++)
                 this.data[i] = [];
         },
         update: function() {
-            let data_a = this.parent.vals;
-            if (data_a.length != this.parent.colors.length) return;
+            let data_a = this.parentC.vals;
+            if (data_a.length != this.parentC.colors.length) return;
             let accdata = [];
             for (let l = 0 ; l < data_a.length ; l++) {
                 accdata[l] = (l == 0) ? data_a[0] : accdata[l - 1] + ((data_a[l] > 0) ? data_a[l] : 0);
@@ -112,13 +100,13 @@ var init = function () {
             Clutter.cairo_set_source_color(cr, Background);
             cr.rectangle(0, 0, width, height);
             cr.fill();
-            for (let i = this.parent.colors.length - 1;i >= 0;i--) {
+            for (let i = this.parentC.colors.length - 1;i >= 0;i--) {
                 cr.moveTo(width, height);
                 for (let j = this.data[i].length - 1;j >= 0;j--)
                     cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
                 cr.lineTo(width - (this.data[i].length - 1), height);
                 cr.closePath();
-                Clutter.cairo_set_source_color(cr, this.parent.colors[i]);
+                Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
                 cr.fill();
             }
         },
@@ -128,34 +116,29 @@ var init = function () {
             if (old_width == this.width) return;
             this.actor.set_width(this.width);
             if (this.width < this.data[0].length)
-                for (let i = 0;i < this.parent.colors.length;i++)
+                for (let i = 0;i < this.parentC.colors.length;i++)
                     this.data[i] = this.data[i].slice(-this.width);
         }
-    };
-
-    TipItem = function () {
-        this._init.apply(this, arguments);
-    };
-
-    TipItem.prototype = {
-        __proto__: PopupMenu.PopupBaseMenuItem.prototype,
+});
+    
+const TipItem = new Lang.Class({
+        Name: 'SystemMonitor.TipItem',
+        Extends: PopupMenu.PopupBaseMenuItem,
 
         _init: function() {
             PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
             this.actor.remove_style_class_name('popup-menu-item');
             this.actor.add_style_class_name('sm-tooltip-item');
         }
-    };
+});
 
-    TipMenu = function () {
-        this._init.apply(this, arguments);
-    };
-
-    TipMenu.prototype = {
-        __proto__: PopupMenu.PopupMenuBase.prototype,
+const TipMenu = new Lang.Class({
+        Name: 'SystemMonitor.TipMenu',
+        Extends: PopupMenu.PopupMenuBase,
 
         _init: function(sourceActor){
-            PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
+            //PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
+            this.parent('sm-tooltip-box');
             this.actor = new Shell.GenericContainer();
             this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
             this.actor.connect('get-preferred-height', Lang.bind(this, this._boxGetPreferredHeight));
@@ -206,13 +189,11 @@ var init = function () {
             this.actor.hide();
             this.emit('open-state-changed', false);
         }
-    };
+});
 
-    TipBox = function () {
-        this._init.apply(this, arguments);
-    };
+const TipBox = new Lang.Class({
+        Name: 'SystemMonitor.TipBox',
 
-    TipBox.prototype = {
         _init: function() {
             this.actor = new St.BoxLayout({ reactive: true});
             this.actor._delegate = this;
@@ -254,22 +235,18 @@ var init = function () {
 
             this.actor.destroy();
         },
-    };
-
-    ElementBase = function () {
-        throw new TypeError('Trying to instantiate abstract class ElementBase');
-    };
-
-    ElementBase.prototype = {
-        __proto__: TipBox.prototype,
+});
+const ElementBase = new Lang.Class({
+        Name: 'SystemMonitor.ElementBase',
+        Extends: TipBox,
 
         elt: '',
         color_name: [],
         text_items: [],
         menu_items: [],
         _init: function() {
-            TipBox.prototype._init.apply(this, arguments);
-
+//            TipBox.prototype._init.apply(this, arguments);
+            this.parent(arguments);
             this.vals = [];
             this.tip_labels = [];
             this.tip_vals = [];
@@ -382,15 +359,13 @@ var init = function () {
             TipBox.prototype.destroy.call(this);
             Mainloop.source_remove(this.timeout);
         }
-    };
+});
 
 
-    Cpu = function () {
-        this._init.apply(this, arguments);
-    };
+const Cpu = new Lang.Class({
+        Name: 'SystemMonitor.Cpu',
+        Extends: ElementBase,
 
-    Cpu.prototype = {
-        __proto__: ElementBase.prototype,
         elt: 'cpu',
         color_name: ['user', 'system', 'nice', 'iowait', 'other'],
 
@@ -402,7 +377,8 @@ var init = function () {
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
-            ElementBase.prototype._init.call(this);
+            //ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format();
             this.update();
         },
@@ -460,23 +436,19 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: '%', style_class: "sm-label"})];
         }
-    };
+});
 
+const Mem = new Lang.Class({
+        Name: 'SystemMonitor.Mem',
+        Extends: ElementBase,
 
-
-    Mem = function () {
-        this._init.apply(this, arguments);
-    };
-
-    Mem.prototype = {
-        __proto__: ElementBase.prototype,
         elt: 'memory',
         color_name: ['program', 'buffer', 'cache'],
         _init: function() {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
             this.gtop = new GTop.glibtop_mem();
             this.mem = [0, 0, 0];
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format();
             this.update();
         },
@@ -512,21 +484,18 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: 'MiB', style_class: "sm-label"})];
         }
-    };
+});
 
+const Swap = new Lang.Class({
+        Name: 'SystemMonitor.Swap',
+        Extends: ElementBase,
 
-    Swap = function () {
-        this._init.apply(this, arguments);
-    };
-
-    Swap.prototype = {
-        __proto__: ElementBase.prototype,
         elt: 'swap',
         color_name: ['used'],
         _init: function() {
             this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
             this.gtop = new GTop.glibtop_swap();
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format();
             this.update();
         },
@@ -559,15 +528,12 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: 'MiB', style_class: "sm-label"})];
         }
-    };
+});
 
+const Net = new Lang.Class({
+        Name: 'SystemMonitor.Net',
+        Extends: ElementBase,
 
-    Net = function () {
-        this._init.apply(this, arguments);
-    };
-
-    Net.prototype = {
-        __proto__: ElementBase.prototype,
         elt: 'net',
         color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
         speed_in_bits: false,
@@ -593,7 +559,7 @@ var init = function () {
             this.usage = [0, 0, 0, 0, 0];
             this.last_time = 0;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format(['KiB/s', '/s', 'KiB/s', '/s', '/s']);
             this.update_units();
             Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
@@ -706,15 +672,12 @@ var init = function () {
                     new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                                   icon_size: 16, icon_name:'go-up'})];
         }
-    };
+});
 
+const Disk = new Lang.Class({
+        Name: 'SystemMonitor.Disk',
+        Extends: ElementBase,
 
-    Disk = function () {
-        this._init.apply(this, arguments);
-    };
-
-    Disk.prototype = {
-        __proto__: ElementBase.prototype,
         elt: 'disk',
         color_name: ['read', 'write'],
         _init: function() {
@@ -738,7 +701,7 @@ var init = function () {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
             this.block_size = this.gtop.block_size/1024/1024/8;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format('KiB/s');
             this.update();
         },
@@ -788,20 +751,18 @@ var init = function () {
                     new St.Label({ text:'MiB/s', style_class: "sm-label"}),
                     new St.Label({ text:'W', style_class: "sm-label"})];
         }
-    };
-    
-    Thermal = function() {
-        this._init.apply(this, arguments);
-    };
+});
 
-    Thermal.prototype = {
-        __proto__: ElementBase.prototype,
+const Thermal = new Lang.Class({
+        Name: 'SystemMonitor.Thermal',
+        Extends: ElementBase,    
+
         elt: 'thermal',
         color_name: ['tz0'],
         _init: function() {
             this.temperature = -273.15;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format('\u2103');
             Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
             this.update();
@@ -835,20 +796,18 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: '\u2103', style_class: "sm-label"})];
         }
-    };
+});
 
-    Freq = function () {
-        this._init.apply(this, arguments);
-    };
+const Freq = new Lang.Class({
+        Name: 'SystemMonitor.Freq',
+        Extends: ElementBase,
 
-    Freq.prototype = {
-        __proto__: ElementBase.prototype,
         elt: 'freq',
         color_name: ['freq'],
         _init: function() {
             this.freq = 0;
             this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format('MHz');
             this.update();
         },
@@ -882,14 +841,12 @@ var init = function () {
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: 'MHz', style_class: "sm-label"})];
         }
-    };
-    
-    Battery = function() {
-        this._init.apply(this, arguments);
-    };
+});
 
-    Battery.prototype = {
-        __proto__: ElementBase.prototype,
+const Battery = new Lang.Class({
+        Name: 'SystemMonitor.Battery',
+        Extends: ElementBase,
+
         elt: 'battery',
         color_name: ['batt0'],
         _init: function() {
@@ -907,7 +864,7 @@ var init = function () {
 
             this.menu_item = new PopupMenu.PopupMenuItem(_("Battery"), {reactive: false});
             
-            ElementBase.prototype._init.call(this);
+            this.parent()
             this.tip_format('%');
             
             this.update_battery();
@@ -1030,13 +987,11 @@ var init = function () {
             ElementBase.prototype.destroy.call(this);
             this._proxy.disconnect(this.powerSigID);  
         }
-    };
+});
 
-    Pie = function () {
-        this._init.apply(this, arguments);
-    };
-
-    Pie.prototype = {
+const Pie = new Lang.Class({
+        Name: 'SystemMonitor.Pie',
+  
         _init: function() {
             this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
             this.width = arguments[0];
@@ -1095,13 +1050,11 @@ var init = function () {
                 r -= (3 * thickness) / 2;
             }
         }
-    };
+});
 
-    Icon = function () {
-        this._init.apply(this, arguments);
-    };
+const Icon = new Lang.Class({
+        Name: 'SystemMonitor.Icon',
 
-    Icon.prototype = {
         _init: function() {
             this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
                                        icon_type: St.IconType.SYMBOLIC,
@@ -1114,7 +1067,18 @@ var init = function () {
                               this.actor.visible = Schema.get_boolean("icon-display");
                           }));
         }
-    };
+});
+
+var init = function () {
+    log("System monitor applet init from " + metadata.path);
+    
+    let me = extension.imports.convenience;
+    me.initTranslations(extension);
+    Schema = me.getSettings(extension, 'system-monitor');
+    
+    Background = new Clutter.Color();
+    Background.from_string(Schema.get_string('background'));
+    IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 };
 
 var enable = function () {

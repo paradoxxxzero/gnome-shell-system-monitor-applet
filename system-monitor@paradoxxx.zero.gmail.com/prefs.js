@@ -15,8 +15,8 @@ const N_ = function(e) { return e; };
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
 
-let Schema, SettingFrame, App;
-let Select, IntSelect, ColorSelect;
+let Schema;
+
 const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.system-monitor';
 let Settings = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
 
@@ -64,11 +64,9 @@ function check_sensors(){
 };
 
 
-ColorSelect = function(){
-    this._init.apply(this, arguments);
-};
+const ColorSelect = new Lang.Class({
+	Name: 'SystemMonitor.ColorSelect',
 
-ColorSelect.prototype = {
     _init: function(name) {
         this.label = new Gtk.Label({label: name + ":"});
         this.picker = new Gtk.ColorButton();
@@ -85,14 +83,11 @@ ColorSelect.prototype = {
         color.parse('rgba(' + ctemp.join(',') + ')');	
         this.picker.set_rgba(color);
     }
-};
+});
 
+const IntSelect = new Lang.Class({
+	Name: 'SystemMonitor.IntSelect',
 
-IntSelect = function(){
-    this._init.apply(this, arguments);
-};
-    
-IntSelect.prototype = {
     _init: function(name) {
         this.label = new Gtk.Label({label: name + ":"});
         this.spin = new Gtk.SpinButton();
@@ -108,13 +103,11 @@ IntSelect.prototype = {
     set_value: function(value){
         this.spin.set_value(value);
     }
-};
+});
 
-Select = function(){
-    this._init.apply(this, arguments);
-};
-    
-Select.prototype = {
+const Select = new Lang.Class({
+	Name: 'SystemMonitor.Select',
+
     _init: function(name) {
         this.label = new Gtk.Label({label: name + ":"});
         this.selector = new Gtk.ComboBoxText();
@@ -130,7 +123,7 @@ Select.prototype = {
             this.selector.append_text(item);
         }));
     }
-};
+});
 
 function set_enum(combo, schema, name){
     Schema.set_enum(name, combo.get_active());
@@ -144,11 +137,9 @@ function set_string(combo, schema, name, _slist){
     Schema.set_string(name, _slist[combo.get_active()]);
 }
 
-SettingFrame = function(){
-	this._init.apply(this, arguments);
-};
+const SettingFrame = new Lang.Class({
+	Name: 'SystemMonitor.SettingFrame',
 
-SettingFrame.prototype = {
     _init: function(name, schema){
         this.schema = schema;
         this.label = new Gtk.Label({label: name});
@@ -239,13 +230,11 @@ SettingFrame.prototype = {
             Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         }
     }
-};
+});
 
-App = function(){
-    this._init.apply(this, arguments);
-};
+const App = new Lang.Class({
+	Name: 'SystemMonitor.App',
 
-App.prototype = {
     _init: function(){
 
         let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'freq', 'battery'];
@@ -311,7 +300,7 @@ App.prototype = {
         }));
     this.main_vbox.show_all();
     }
-};
+});
 
 function buildPrefsWidget(){
     let widget = new App();

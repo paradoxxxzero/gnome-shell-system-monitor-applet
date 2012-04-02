@@ -120,6 +120,69 @@ const Chart = new Lang.Class({
                     this.data[i] = this.data[i].slice(-this.width);
         }
 });
+
+const Pie = new Lang.Class({
+        Name: 'SystemMonitor.Pie',
+  
+        _init: function() {
+            this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
+            this.width = arguments[0];
+            this.height = arguments[1];
+            this.actor.set_width(this.width);
+            this.actor.set_height(this.height);
+            this.actor.connect('repaint', Lang.bind(this, this._draw));
+            this.gtop = new GTop.glibtop_fsusage();
+            // FIXME Handle colors correctly
+            this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
+            for(let color in this.colors) {
+                let clutterColor = new Clutter.Color();
+                clutterColor.from_string(this.colors[color]);
+                this.colors[color] = clutterColor;
+            }
+            // Can't get mountlist:
+            // GTop.glibtop_get_mountlist
+            // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
+            // Getting it with mtab
+            let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+            this.mounts = [];
+            for(let mount_line in mount_lines) {
+                let mount = mount_lines[mount_line].split(" ");
+                if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+                    this.mounts.push(mount[1]);
+                }
+            }
+        },
+        _draw: function() {
+            if (!this.actor.visible) return;
+            let [width, height] = this.actor.get_surface_size();
+            let cr = this.actor.get_context();
+            let xc = width / 2;
+            let yc = height / 2;
+            let rc = Math.min(xc, yc);
+            let pi = Math.PI;
+            function arc(r, value, max, angle) {
+                if(max == 0) return angle;
+                let new_angle = angle + (value * 2 * pi / max);
+                cr.arc(xc, yc, r, angle, new_angle);
+                return new_angle;
+            }
+            let rings = (this.mounts.length > 7?this.mounts.length:7);
+            let thickness = (2 * rc) / (3 * rings);
+            let fontsize = 14;
+            let r = rc - (thickness / 2);
+            cr.setLineWidth(thickness);
+            cr.setFontSize(fontsize);
+            for (let mount in this.mounts) {
+                GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
+                Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+                arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi/2);
+                cr.moveTo(0, yc - r + thickness / 2);
+                cr.showText(this.mounts[mount]);
+                cr.stroke();
+                r -= (3 * thickness) / 2;
+            }
+        }
+});
     
 const TipItem = new Lang.Class({
         Name: 'SystemMonitor.TipItem',
@@ -360,6 +423,151 @@ const ElementBase = new Lang.Class({
             Mainloop.source_remove(this.timeout);
         }
 });
+const Battery = new Lang.Class({
+        Name: 'SystemMonitor.Battery',
+        Extends: ElementBase,
+
+        elt: 'battery',
+        color_name: ['batt0'],
+        _init: function() {
+            this.icon_hidden = false;
+            this.percentage = 0;
+            this.timeString = '-- ';
+            this._proxy = Main.panel._statusArea['battery']._proxy;
+            this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
+
+           
+            //need to specify a default icon, since the contructor completes before UPower callback
+            this.icon = '. GThemedIcon battery-good-symbolic battery-good';
+            this.gicon = Gio.icon_new_for_string(this.icon);
+            
+
+            this.menu_item = new PopupMenu.PopupMenuItem(_("Battery"), {reactive: false});
+            
+            this.parent()
+            this.tip_format('%');
+            
+            this.update_battery();
+            this.update_tips();
+            this.hide_system_icon();
+            this.update();
+            
+
+            Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
+            Schema.connect('changed::' + this.elt + '-time', Lang.bind(this, this.update_tips));
+            
+        },
+        refresh: function() {
+            //do nothing here?
+        },
+        update_battery: function(){
+            // callback function for when battery stats updated.
+            let battery_found = false;
+            this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
+                if (error) {
+
+                    log("SM: Power proxy error: " + error)
+                    this.actor.hide();
+                    this.menu_item.actor.hide();
+                    return;
+                }
+
+                let [result] = devices;
+                for (let i = 0; i < result.length; i++) {
+                    let [device_id, device_type, icon, percentage, state, seconds] = result[i];
+                    if (device_type == Power.UPDeviceType.BATTERY && !battery_found) {
+                        battery_found = true;
+                        //grab data
+                        if (seconds > 60){
+                            let time = Math.round(seconds / 60);
+                            let minutes = time % 60;
+                            let hours = Math.floor(time / 60);
+                            this.percentage = Math.floor(percentage);
+                            this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
+                        } else {
+                            this.timeString = '-- ';
+                        }
+                        this.gicon = Gio.icon_new_for_string(icon);
+
+                        if (Schema.get_boolean(this.elt + '-display'))
+                            this.actor.show()
+                        if (Schema.get_boolean(this.elt + '-show-menu'))
+                            this.menu_item.actor.show();
+                    }
+                }
+                if (!battery_found) {
+                    log("SM: No battery found")
+                    this.actor.hide();
+
+                    this.menu_item.actor.hide();
+                }
+                    
+            }));
+        },
+        hide_system_icon: function(override) {
+            let value = Schema.get_boolean(this.elt + '-hidesystem');
+            if (override == false ){
+                value = false;
+            }
+            if (value){
+                for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
+                    if(Main.panel._statusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
+                        Main.panel._rightBox.get_children()[Index].destroy();
+                        Main.panel._statusArea['battery'] = null;
+                        this.icon_hidden = true;
+                        break;           
+                    }
+                }
+            } else if(this.icon_hidden){
+                let Indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION['battery'];
+                Main.panel.addToStatusArea('battery', Indicator, Panel.STANDARD_STATUS_AREA_ORDER.indexOf('battery'));
+                this.icon_hidden = false;
+            }
+        },
+        update_tips: function(){
+            let value = Schema.get_boolean(this.elt + '-time');
+            if (value) {
+                this.text_items[2].text = this.menu_items[5].text = 'h';
+            } else {
+                this.text_items[2].text = this.menu_items[5].text = '%';
+            }
+
+            this.update();
+        },
+        _apply: function() {
+            let displayString;
+            let value = Schema.get_boolean(this.elt + '-time');
+            if (value){
+                displayString = this.timeString;
+            } else {
+                displayString = this.percentage.toString()
+            }
+            this.text_items[1].text = this.menu_items[3].text = displayString;
+            this.text_items[0].gicon = this.gicon;
+            this.vals = [this.percentage];
+            this.tip_vals[0] = Math.round(this.vals[0]);
+            
+        },
+        create_text_items: function() {
+            return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
+                                   icon_type: St.IconType.FULLCOLOR,
+                                   style_class: 'sm-status-icon' }),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: '%', style_class: "sm-unit-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: '%', style_class: "sm-label"})];
+        },
+        destroy: function() {
+            ElementBase.prototype.destroy.call(this);
+            this._proxy.disconnect(this.powerSigID);  
+        }
+});
 
 
 const Cpu = new Lang.Class({
@@ -438,6 +646,130 @@ const Cpu = new Lang.Class({
         }
 });
 
+const Disk = new Lang.Class({
+        Name: 'SystemMonitor.Disk',
+        Extends: ElementBase,
+
+        elt: 'disk',
+        color_name: ['read', 'write'],
+        _init: function() {
+            // Can't get mountlist:
+            // GTop.glibtop_get_mountlist
+            // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
+            // Getting it with mtab
+            let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+            this.mounts = [];
+            for(let mount_line in mount_lines) {
+                let mount = mount_lines[mount_line].split(" ");
+                if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+                    this.mounts.push(mount[1]);
+                }
+            }
+            this.gtop = new GTop.glibtop_fsusage();
+            this.last = [0,0];
+            
+            this.usage = [0,0];
+            this.last_time = 0;
+            GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
+            this.block_size = this.gtop.block_size/1024/1024/8;
+            this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
+            this.parent()
+            this.tip_format('KiB/s');
+            this.update();
+        },
+        refresh: function() {
+            let accum = [0, 0];
+
+            for(let mount in this.mounts) {
+                GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
+                accum[0] += this.gtop.read;
+                accum[1] += this.gtop.write;
+            }
+            let time = GLib.get_monotonic_time() / 1000;
+            let delta = (time - this.last_time) / 1000;
+            
+            if (delta > 0)
+                for (let i = 0;i < 2;i++) {
+                    this.usage[i] =(this.block_size* (accum[i] - this.last[i]) / delta) ;
+                    this.last[i] = accum[i];
+                }
+            this.last_time = time;
+        },
+        _apply: function() {
+            this.vals = this.usage.slice();
+            for (let i = 0;i < 2;i++) {    
+                    if (this.usage[i] < 10)
+                        this.usage[i] = this.usage[i].toFixed(1);
+                    else
+                        this.usage[i] = Math.round(this.usage[i]);
+            }
+            this.tip_vals = [this.usage[0] , this.usage[1] ];
+            this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+            this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
+        },
+        create_text_items: function() {
+            return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"}),
+                    new St.Label({ text: 'W', style_class: "sm-status-label"}),
+                    new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"})];
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ text:'MiB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'R', style_class: "sm-label"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ text:'MiB/s', style_class: "sm-label"}),
+                    new St.Label({ text:'W', style_class: "sm-label"})];
+        }
+});
+
+const Freq = new Lang.Class({
+        Name: 'SystemMonitor.Freq',
+        Extends: ElementBase,
+
+        elt: 'freq',
+        color_name: ['freq'],
+        _init: function() {
+            this.freq = 0;
+            this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
+            this.parent()
+            this.tip_format('MHz');
+            this.update();
+        },
+        refresh: function() {
+            let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
+            for(let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                if(line.search(/cpu mhz/i) < 0)
+                    continue;
+                
+                this.freq = parseInt(line.substring(line.indexOf(':') + 2));
+                break;
+            }
+        },
+        _apply: function() {
+            let value = this.freq.toString();
+            this.text_items[0].text = value + ' ';
+            this.tip_vals[0] = value;
+            this.menu_items[3].text = value;
+        },
+        create_text_items: function() {
+            return [new St.Label({ style_class: "sm-big-status-value"}),
+                    new St.Label({ text: 'MHz', style_class: "sm-perc-label"})];
+
+        },
+        create_menu_items: function() {
+            return [new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ style_class: "sm-value"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: 'MHz', style_class: "sm-label"})];
+        }
+});
+
 const Mem = new Lang.Class({
         Name: 'SystemMonitor.Mem',
         Extends: ElementBase,
@@ -472,50 +804,6 @@ const Mem = new Lang.Class({
             this.menu_items[0].text = this.mem[0].toString();
             this.menu_items[3].text = this.total.toString();
         },
-        create_text_items: function() {
-            return [new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: '%', style_class: "sm-perc-label"})];
-        },
-        create_menu_items: function() {
-            return [new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: "/", style_class: "sm-label"}),
-                    new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: 'MiB', style_class: "sm-label"})];
-        }
-});
-
-const Swap = new Lang.Class({
-        Name: 'SystemMonitor.Swap',
-        Extends: ElementBase,
-
-        elt: 'swap',
-        color_name: ['used'],
-        _init: function() {
-            this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
-            this.gtop = new GTop.glibtop_swap();
-            this.parent()
-            this.tip_format();
-            this.update();
-        },
-        refresh: function() {
-            GTop.glibtop_get_swap(this.gtop);
-            this.swap = Math.round(this.gtop.used / 1024 / 1024);
-            this.total = Math.round(this.gtop.total / 1024 / 1024);
-        },
-        _apply: function() {
-            if (this.total == 0) {
-                this.vals = this.tip_vals = [0];
-            } else {
-                this.vals[0] = this.swap / this.total;
-                this.tip_vals[0] = Math.round(this.vals[0] * 100);
-            }
-            this.text_items[0].text = this.tip_vals[0].toString();
-            this.menu_items[0].text = this.swap.toString();
-            this.menu_items[3].text = this.total.toString();
-        },
-
         create_text_items: function() {
             return [new St.Label({ style_class: "sm-status-value"}),
                     new St.Label({ text: '%', style_class: "sm-perc-label"})];
@@ -674,82 +962,47 @@ const Net = new Lang.Class({
         }
 });
 
-const Disk = new Lang.Class({
-        Name: 'SystemMonitor.Disk',
+const Swap = new Lang.Class({
+        Name: 'SystemMonitor.Swap',
         Extends: ElementBase,
 
-        elt: 'disk',
-        color_name: ['read', 'write'],
+        elt: 'swap',
+        color_name: ['used'],
         _init: function() {
-            // Can't get mountlist:
-            // GTop.glibtop_get_mountlist
-            // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-            // Getting it with mtab
-            let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
-            this.mounts = [];
-            for(let mount_line in mount_lines) {
-                let mount = mount_lines[mount_line].split(" ");
-                if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
-                    this.mounts.push(mount[1]);
-                }
-            }
-            this.gtop = new GTop.glibtop_fsusage();
-            this.last = [0,0];
-            
-            this.usage = [0,0];
-            this.last_time = 0;
-            GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
-            this.block_size = this.gtop.block_size/1024/1024/8;
-            this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
+            this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
+            this.gtop = new GTop.glibtop_swap();
             this.parent()
-            this.tip_format('KiB/s');
+            this.tip_format();
             this.update();
         },
         refresh: function() {
-            let accum = [0, 0];
-
-            for(let mount in this.mounts) {
-                GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
-                accum[0] += this.gtop.read;
-                accum[1] += this.gtop.write;
-            }
-            let time = GLib.get_monotonic_time() / 1000;
-            let delta = (time - this.last_time) / 1000;
-            
-            if (delta > 0)
-                for (let i = 0;i < 2;i++) {
-                    this.usage[i] =(this.block_size* (accum[i] - this.last[i]) / delta) ;
-                    this.last[i] = accum[i];
-                }
-            this.last_time = time;
+            GTop.glibtop_get_swap(this.gtop);
+            this.swap = Math.round(this.gtop.used / 1024 / 1024);
+            this.total = Math.round(this.gtop.total / 1024 / 1024);
         },
         _apply: function() {
-            this.vals = this.usage.slice();
-            for (let i = 0;i < 2;i++) {    
-                    if (this.usage[i] < 10)
-                        this.usage[i] = this.usage[i].toFixed(1);
-                    else
-                        this.usage[i] = Math.round(this.usage[i]);
+            if (this.total == 0) {
+                this.vals = this.tip_vals = [0];
+            } else {
+                this.vals[0] = this.swap / this.total;
+                this.tip_vals[0] = Math.round(this.vals[0] * 100);
             }
-            this.tip_vals = [this.usage[0] , this.usage[1] ];
-            this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
-            this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
+            this.text_items[0].text = this.tip_vals[0].toString();
+            this.menu_items[0].text = this.swap.toString();
+            this.menu_items[3].text = this.total.toString();
         },
+
         create_text_items: function() {
-            return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
-                    new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"}),
-                    new St.Label({ text: 'W', style_class: "sm-status-label"}),
-                    new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"})];
+            return [new St.Label({ style_class: "sm-status-value"}),
+                    new St.Label({ text: '%', style_class: "sm-perc-label"})];
         },
         create_menu_items: function() {
             return [new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'MiB/s', style_class: "sm-label"}),
-                    new St.Label({ text:'R', style_class: "sm-label"}),
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: "/", style_class: "sm-label"}),
                     new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ text:'MiB/s', style_class: "sm-label"}),
-                    new St.Label({ text:'W', style_class: "sm-label"})];
+                    new St.Label({ style_class: "sm-void"}),
+                    new St.Label({ text: 'MiB', style_class: "sm-label"})];
         }
 });
 
@@ -795,260 +1048,6 @@ const Thermal = new Lang.Class({
                     new St.Label({ style_class: "sm-value"}),
                     new St.Label({ style_class: "sm-void"}),
                     new St.Label({ text: '\u2103', style_class: "sm-label"})];
-        }
-});
-
-const Freq = new Lang.Class({
-        Name: 'SystemMonitor.Freq',
-        Extends: ElementBase,
-
-        elt: 'freq',
-        color_name: ['freq'],
-        _init: function() {
-            this.freq = 0;
-            this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
-            this.parent()
-            this.tip_format('MHz');
-            this.update();
-        },
-        refresh: function() {
-            let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
-            for(let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-                if(line.search(/cpu mhz/i) < 0)
-                    continue;
-                
-                this.freq = parseInt(line.substring(line.indexOf(':') + 2));
-                break;
-            }
-        },
-        _apply: function() {
-            let value = this.freq.toString();
-            this.text_items[0].text = value + ' ';
-            this.tip_vals[0] = value;
-            this.menu_items[3].text = value;
-        },
-        create_text_items: function() {
-            return [new St.Label({ style_class: "sm-big-status-value"}),
-                    new St.Label({ text: 'MHz', style_class: "sm-perc-label"})];
-
-        },
-        create_menu_items: function() {
-            return [new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: 'MHz', style_class: "sm-label"})];
-        }
-});
-
-const Battery = new Lang.Class({
-        Name: 'SystemMonitor.Battery',
-        Extends: ElementBase,
-
-        elt: 'battery',
-        color_name: ['batt0'],
-        _init: function() {
-            this.icon_hidden = false;
-            this.percentage = 0;
-            this.timeString = '-- ';
-            this._proxy = Main.panel._statusArea['battery']._proxy;
-            this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
-
-           
-            //need to specify a default icon, since the contructor completes before UPower callback
-            this.icon = '. GThemedIcon battery-good-symbolic battery-good';
-            this.gicon = Gio.icon_new_for_string(this.icon);
-            
-
-            this.menu_item = new PopupMenu.PopupMenuItem(_("Battery"), {reactive: false});
-            
-            this.parent()
-            this.tip_format('%');
-            
-            this.update_battery();
-            this.update_tips();
-            this.hide_system_icon();
-            this.update();
-            
-
-            Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
-            Schema.connect('changed::' + this.elt + '-time', Lang.bind(this, this.update_tips));
-            
-        },
-        refresh: function() {
-            //do nothing here?
-        },
-        update_battery: function(){
-            // callback function for when battery stats updated.
-            let battery_found = false;
-            this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
-                if (error) {
-
-                    log("SM: Power proxy error: " + error)
-                    this.actor.hide();
-                    this.menu_item.actor.hide();
-                    return;
-                }
-
-                let [result] = devices;
-                for (let i = 0; i < result.length; i++) {
-                    let [device_id, device_type, icon, percentage, state, seconds] = result[i];
-                    if (device_type == Power.UPDeviceType.BATTERY && !battery_found) {
-                        battery_found = true;
-                        //grab data
-                        if (seconds > 60){
-                            let time = Math.round(seconds / 60);
-                            let minutes = time % 60;
-                            let hours = Math.floor(time / 60);
-                            this.percentage = Math.floor(percentage);
-                            this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
-                        } else {
-                            this.timeString = '-- ';
-                        }
-                        this.gicon = Gio.icon_new_for_string(icon);
-
-                        if (Schema.get_boolean(this.elt + '-display'))
-                            this.actor.show()
-                        if (Schema.get_boolean(this.elt + '-show-menu'))
-                            this.menu_item.actor.show();
-                    }
-                }
-                if (!battery_found) {
-                    log("SM: No battery found")
-                    this.actor.hide();
-
-                    this.menu_item.actor.hide();
-                }
-                    
-            }));
-        },
-        hide_system_icon: function(override) {
-            let value = Schema.get_boolean(this.elt + '-hidesystem');
-            if (override == false ){
-                value = false;
-            }
-            if (value){
-                for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
-                    if(Main.panel._statusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
-                        Main.panel._rightBox.get_children()[Index].destroy();
-                        Main.panel._statusArea['battery'] = null;
-                        this.icon_hidden = true;
-                        break;           
-                    }
-                }
-            } else if(this.icon_hidden){
-                let Indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION['battery'];
-                Main.panel.addToStatusArea('battery', Indicator, Panel.STANDARD_STATUS_AREA_ORDER.indexOf('battery'));
-                this.icon_hidden = false;
-            }
-        },
-        update_tips: function(){
-            let value = Schema.get_boolean(this.elt + '-time');
-            if (value) {
-                this.text_items[2].text = this.menu_items[5].text = 'h';
-            } else {
-                this.text_items[2].text = this.menu_items[5].text = '%';
-            }
-
-            this.update();
-        },
-        _apply: function() {
-            let displayString;
-            let value = Schema.get_boolean(this.elt + '-time');
-            if (value){
-                displayString = this.timeString;
-            } else {
-                displayString = this.percentage.toString()
-            }
-            this.text_items[1].text = this.menu_items[3].text = displayString;
-            this.text_items[0].gicon = this.gicon;
-            this.vals = [this.percentage];
-            this.tip_vals[0] = Math.round(this.vals[0]);
-            
-        },
-        create_text_items: function() {
-            return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
-                                   icon_type: St.IconType.FULLCOLOR,
-                                   style_class: 'sm-status-icon' }),
-                    new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: '%', style_class: "sm-unit-label"})];
-        },
-        create_menu_items: function() {
-            return [new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ style_class: "sm-value"}),
-                    new St.Label({ style_class: "sm-void"}),
-                    new St.Label({ text: '%', style_class: "sm-label"})];
-        },
-        destroy: function() {
-            ElementBase.prototype.destroy.call(this);
-            this._proxy.disconnect(this.powerSigID);  
-        }
-});
-
-const Pie = new Lang.Class({
-        Name: 'SystemMonitor.Pie',
-  
-        _init: function() {
-            this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
-            this.width = arguments[0];
-            this.height = arguments[1];
-            this.actor.set_width(this.width);
-            this.actor.set_height(this.height);
-            this.actor.connect('repaint', Lang.bind(this, this._draw));
-            this.gtop = new GTop.glibtop_fsusage();
-            // FIXME Handle colors correctly
-            this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
-            for(let color in this.colors) {
-                let clutterColor = new Clutter.Color();
-                clutterColor.from_string(this.colors[color]);
-                this.colors[color] = clutterColor;
-            }
-            // Can't get mountlist:
-            // GTop.glibtop_get_mountlist
-            // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-            // Getting it with mtab
-            let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
-            this.mounts = [];
-            for(let mount_line in mount_lines) {
-                let mount = mount_lines[mount_line].split(" ");
-                if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
-                    this.mounts.push(mount[1]);
-                }
-            }
-        },
-        _draw: function() {
-            if (!this.actor.visible) return;
-            let [width, height] = this.actor.get_surface_size();
-            let cr = this.actor.get_context();
-            let xc = width / 2;
-            let yc = height / 2;
-            let rc = Math.min(xc, yc);
-            let pi = Math.PI;
-            function arc(r, value, max, angle) {
-                if(max == 0) return angle;
-                let new_angle = angle + (value * 2 * pi / max);
-                cr.arc(xc, yc, r, angle, new_angle);
-                return new_angle;
-            }
-            let rings = (this.mounts.length > 7?this.mounts.length:7);
-            let thickness = (2 * rc) / (3 * rings);
-            let fontsize = 14;
-            let r = rc - (thickness / 2);
-            cr.setLineWidth(thickness);
-            cr.setFontSize(fontsize);
-            for (let mount in this.mounts) {
-                GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
-                Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
-                arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi/2);
-                cr.moveTo(0, yc - r + thickness / 2);
-                cr.showText(this.mounts[mount]);
-                cr.stroke();
-                r -= (3 * thickness) / 2;
-            }
         }
 });
 

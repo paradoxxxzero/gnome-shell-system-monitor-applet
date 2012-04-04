@@ -4,6 +4,11 @@
     <value value="1" nick="graph"/>
     <value value="2" nick="both"/>
   </enum>
+  <enum id="org.gnome.shell.extensions.system-monitor.disk-usage-style">
+    <value value="0" nick="pie"/>
+    <value value="1" nick="bar"/>
+    <value value="2" nick="none"/>       
+  </enum>
   <schema id="org.gnome.shell.extensions.system-monitor" path="/org/gnome/shell/extensions/system-monitor/">
     <key name="icon-display" type="b">
       <default>true</default>
@@ -187,6 +192,10 @@
     <key name="disk-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
+    </key>
+    <key name="disk-usage-style" enum="org.gnome.shell.extensions.system-monitor.disk-usage-style">
+      <default>'pie'</default>
+      <summary>Choose the disk usage display style.</summary>
     </key>
     <key name="thermal-display" type="b">
       <default>false</default>

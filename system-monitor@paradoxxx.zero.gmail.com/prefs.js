@@ -6,7 +6,7 @@ const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 
 
-
+const SETTINGS_SCHEMA = 'system-monitor';
 
 const Gettext = imports.gettext.domain('system-monitor-applet');
 const _ = Gettext.gettext;
@@ -17,12 +17,10 @@ let convenience = extension.imports.convenience;
 
 let Schema;
 
-const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.system-monitor';
-let Settings = new Gio.Settings({ schema: 'org.gnome.shell.extensions.system-monitor' });
-
 function init() {
     convenience.initTranslations(extension);
-    Schema = convenience.getSettings(extension, 'system-monitor');
+    Schema = convenience.getSettings(extension, SETTINGS_SCHEMA);
+	
 }
 
 String.prototype.capitalize = function(){
@@ -162,26 +160,26 @@ const SettingFrame = new Lang.Class({
         if (sections[1] == 'display'){
             let item = new Gtk.CheckButton({label:_('Display')});
             this.hbox0.add(item);
-			Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+			Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
 			
         } else if (sections[1] == 'refresh'){
             let item = new IntSelect(_('Refresh Time'));
             item.set_args(50, 100000, 1000, 5000);
             this.hbox1.add(item.actor);
-			Settings.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+			Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'graph' && sections[2] == 'width'){
             let item = new IntSelect(_('Graph Width'));
             item.set_args(1, 1000, 1, 10);
             this.hbox1.add(item.actor);
-        	Settings.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+        	Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'show' && sections[2] == 'text'){
             let item = new Gtk.CheckButton({label:_('Show Text')});
             this.hbox0.add(item);
-			Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+			Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'show' && sections[2] == 'menu'){
             let item = new Gtk.CheckButton({label:_('Show In Menu')});
             this.hbox0.add(item);
-         	Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+         	Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'style'){
             let item = new Select(_('Display Style'));
             item.add([_('digit'), _('graph'), _('both')]);
@@ -190,11 +188,11 @@ const SettingFrame = new Lang.Class({
             item.selector.connect('changed', function(style){
                 set_enum(style, Schema, key);
             });
-			//Settings.bind(key, item.selector, 'active', Gio.SettingsBindFlags.DEFAULT);
+			//Schema.bind(key, item.selector, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'speed'){
             let item = new Gtk.CheckButton({label:_('Show network speed in bits')});
             this.hbox3.add(item);
-            Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections.length == 3 && sections[2] == 'color'){
             let item = new ColorSelect(_(sections[1].capitalize()));
             item.set_value(this.schema.get_string(key));
@@ -223,11 +221,20 @@ const SettingFrame = new Lang.Class({
         } else if (sections[1] == 'time'){
             let item = new Gtk.CheckButton({label:_('Show Time Remaining')});
             this.hbox3.add(item);
-            Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'hidesystem'){
             let item = new Gtk.CheckButton({label:_('Hide System Icon')});
             this.hbox3.add(item);
-            Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+        } else if (sections[1] == 'usage' && sections[2] == 'style'){
+            let item = new Select(_('Usage Style'));
+            item.add([_('pie'), _('bar'), _('none')]);
+            item.set_value(this.schema.get_enum(key));
+            this.hbox3.pack_end(item.actor,false,false,20);
+            
+            item.selector.connect('changed', function(style){
+                set_enum(style, Schema, key);
+            });
         }
     }
 });
@@ -264,19 +271,19 @@ const App = new Lang.Class({
                 /*item.connect('toggled', function(check){
                     set_boolean(check, Schema, key);
                 });*/
-				Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+				Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key == 'center-display'){
                 let item = new Gtk.CheckButton({label: _('Display in the Middle')})
                 //item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
- 				Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);		
+ 				Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);		
             } else if (key == 'move-clock'){
                 let item = new Gtk.CheckButton({label:_('Move the clock')})
                 //item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
-                Settings.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key == 'background'){
                 let item = new ColorSelect(_('Background Color'))
                 item.set_value(Schema.get_string(key))

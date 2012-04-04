@@ -28,6 +28,7 @@ const St = imports.gi.St;
 const NMClient = imports.gi.NMClient;
 const NetworkManager = imports.gi.NetworkManager;
 const Power = imports.ui.status.power;
+const System = imports.system;
 
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
@@ -58,6 +59,11 @@ function change_style() {
 }
 function change_menu() {
     this.menu_item.actor.visible = Schema.get_boolean(this.elt + '-show-menu');
+}
+function change_usage(){
+    let usage = Schema.get_string('disk-usage-style');
+    Main.__sm.pie.show(usage == 'pie');
+    Main.__sm.bar.show(usage == 'bar');
 }
 
 const Chart = new Lang.Class({
@@ -120,14 +126,14 @@ const Chart = new Lang.Class({
                     this.data[i] = this.data[i].slice(-this.width);
         }
 });
-
-const Pie = new Lang.Class({
-        Name: 'SystemMonitor.Pie',
-  
+const Graph = new Lang.Class({
+        Name: 'SystemMonitor.Graph',
+        
+        menu_item: '',
         _init: function() {
             this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
-            this.width = arguments[0];
-            this.height = arguments[1];
+            this.width = arguments[0][0];
+            this.height = arguments[0][1];
             this.actor.set_width(this.width);
             this.actor.set_height(this.height);
             this.actor.connect('repaint', Lang.bind(this, this._draw));
@@ -151,6 +157,56 @@ const Pie = new Lang.Class({
                     this.mounts.push(mount[1]);
                 }
             }
+        },
+        create_menu_item: function(){
+            this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
+            this.menu_item.addActor(this.actor, {span: -1, expand: true});
+            //tray.menu.addMenuItem(this.menu_item);    
+        },
+        show: function(visible){
+            this.menu_item.actor.visible = visible;
+        }
+        
+});
+const Bar = new Lang.Class({
+        Name: 'SystemMonitor.Bar',
+        Extends: Graph,
+        
+        _init: function() {
+            this.parent(arguments);
+        },
+        _draw: function(){
+            if (!this.actor.visible) return;
+            let [width, height] = this.actor.get_surface_size();
+            let cr = this.actor.get_context();
+            let thickness = 15;
+            let fontsize = 14;
+            let x0 = width/8;
+            let y0 = thickness/2;
+         
+            cr.setLineWidth(thickness);
+            cr.setFontSize(fontsize);
+            for (let mount in this.mounts) {
+                GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
+                let perc_full = (this.gtop.blocks - this.gtop.bfree)/this.gtop.blocks;
+                Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+                cr.moveTo(2*x0,y0)
+                cr.relLineTo(perc_full*0.6*width, 0);
+                cr.moveTo(0, y0+thickness/3);
+                cr.showText(this.mounts[mount]);
+                //cr.stroke();
+                cr.moveTo(width - x0, y0+thickness/3);
+                cr.showText(Math.round(perc_full*100).toString()+'%');
+                cr.stroke();
+                y0 += (3 * thickness) / 2;
+            }
+        }
+});
+const Pie = new Lang.Class({
+        Name: 'SystemMonitor.Pie',
+        Extends: Graph,
+        _init: function() {
+            this.parent(arguments);
         },
         _draw: function() {
             if (!this.actor.visible) return;
@@ -201,7 +257,7 @@ const TipMenu = new Lang.Class({
 
         _init: function(sourceActor){
             //PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
-            this.parent('sm-tooltip-box');
+            this.parent(sourceActor,'sm-tooltip-box');
             this.actor = new Shell.GenericContainer();
             this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
             this.actor.connect('get-preferred-height', Lang.bind(this, this._boxGetPreferredHeight));
@@ -1039,7 +1095,7 @@ const Thermal = new Lang.Class({
         },
         create_text_items: function() {
             return [new St.Label({ style_class: "sm-status-value"}),
-                    new St.Label({ text: '\u2103', style_class: "sm-unit-label"})];
+                    new St.Label({ text: '\u2103', style_class: "sm-temp-label"})];
         },
         create_menu_items: function() {
             return [new St.Label({ style_class: "sm-void"}),
@@ -1101,6 +1157,7 @@ var enable = function () {
         tray: new PanelMenu.Button(0.5),
         icon: new Icon(),
         pie: new Pie(300, 300),
+        bar: new Bar(300, 150),
         elts: {
             cpu: new Cpu(),
             freq: new Freq(),
@@ -1122,18 +1179,20 @@ var enable = function () {
         box.add_actor(Main.__sm.elts[elt].actor);
         tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
     }
-    let item;
-    item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-    item.addActor(Main.__sm.pie.actor, {span: -1, expand: true});
-
-    // ... Seems to break the menu 
-    // let overflow_item = new PopupMenu.PopupSubMenuMenuItem(_("Disks usage..."));
-    // tray.menu.addMenuItem(overflow_item, 5);
-    // overflow_item.addMenuItem(item);
-    tray.menu.addMenuItem(item);
-
+    
+    let pie_item = Main.__sm.pie;
+    pie_item.create_menu_item();
+    tray.menu.addMenuItem(pie_item.menu_item);
+    
+    let bar_item = Main.__sm.bar;
+    bar_item.create_menu_item(); 
+    tray.menu.addMenuItem(bar_item.menu_item);
+    
+    change_usage();
+    Schema.connect('changed::' + 'disk-usage-style', change_usage);
+    
     tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
+    
     let menu_timeout;
     tray.menu.connect(
         'open-state-changed',
@@ -1147,6 +1206,7 @@ var enable = function () {
                     30,
                     function () {
                         Main.__sm.pie.actor.queue_repaint();
+                        System.gc();
                         return true;
                     });
                 } else {
@@ -1154,6 +1214,8 @@ var enable = function () {
             }
         }
     );
+    
+    
         
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');

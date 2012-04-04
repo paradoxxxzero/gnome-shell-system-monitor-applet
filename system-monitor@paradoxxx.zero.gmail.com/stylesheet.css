@@ -21,6 +21,12 @@
     padding: 0 5px 0 2px;
 }
 
+.sm-temp-label {
+    color: #aaa;
+    font-size: 11px;
+    padding: 0 5px 0 2px;
+}
+
 .sm-status-value {
     min-width: 25px;
     text-align: right;

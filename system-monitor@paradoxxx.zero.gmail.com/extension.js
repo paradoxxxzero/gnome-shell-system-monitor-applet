@@ -45,6 +45,7 @@ let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
 let Schema, Background, IconSize;
+let menu_timeout, gc_timeout;
 
 function l_limit(t) {
     return (t > 0) ? t : 1000;
@@ -1193,20 +1194,16 @@ var enable = function () {
     
     tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
     
-    let menu_timeout;
     tray.menu.connect(
         'open-state-changed',
         function (menu, isOpen) {
             if(isOpen) {
                 Main.__sm.pie.actor.queue_repaint();
-                // There appears to be a big memory leak due to a lack GC when calling actor.get_context()
-                // Until this is fixed reduce timer to update less frequently.
-                
+
                 menu_timeout = Mainloop.timeout_add_seconds(
-                    30,
+                    5,
                     function () {
                         Main.__sm.pie.actor.queue_repaint();
-                        System.gc();
                         return true;
                     });
                 } else {
@@ -1214,12 +1211,11 @@ var enable = function () {
             }
         }
     );
-    
-    
         
     let _appSys = Shell.AppSystem.get_default();
     let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
     let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
+    let item;
     item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
     item.connect('activate', function () {
         _gsmApp.activate();
@@ -1239,10 +1235,16 @@ var enable = function () {
 
     Main.panel._menus.addMenu(tray.menu);
 
+    gc_timeout = Mainloop.timeout_add_seconds(
+        300,
+        function () {
+            System.gc()
+        });
     log("System monitor applet enabling done");
 };
 
 var disable = function () {
+    Mainloop.source_remove(gc_timeout);
     //restore system power icon if necessary
     if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){    
         Main.__sm.elts.battery.hide_system_icon(false);

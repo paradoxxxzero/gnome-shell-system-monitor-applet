@@ -132,6 +132,20 @@ const Graph = new Lang.Class({
         
         menu_item: '',
         _init: function() {
+            // Can't get mountlist:
+            // GTop.glibtop_get_mountlist
+            // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
+            // Getting it with mtab
+            let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+            this.mounts = [];
+            for(let mount_line in mount_lines) {
+                let mount = mount_lines[mount_line].split(" ");
+                if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+                    this.mounts.push(mount[1]);
+                }
+            }
+            
+            log(this.__caller__._owner);
             this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
             this.width = arguments[0][0];
             this.height = arguments[0][1];
@@ -146,18 +160,7 @@ const Graph = new Lang.Class({
                 clutterColor.from_string(this.colors[color]);
                 this.colors[color] = clutterColor;
             }
-            // Can't get mountlist:
-            // GTop.glibtop_get_mountlist
-            // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-            // Getting it with mtab
-            let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
-            this.mounts = [];
-            for(let mount_line in mount_lines) {
-                let mount = mount_lines[mount_line].split(" ");
-                if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
-                    this.mounts.push(mount[1]);
-                }
-            }
+            
         },
         create_menu_item: function(){
             this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
@@ -174,32 +177,34 @@ const Bar = new Lang.Class({
         Extends: Graph,
         
         _init: function() {
+            this.thickness = 15;
+            this.fontsize = 14;
             this.parent(arguments);
+            this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         },
         _draw: function(){
             if (!this.actor.visible) return;
             let [width, height] = this.actor.get_surface_size();
             let cr = this.actor.get_context();
-            let thickness = 15;
-            let fontsize = 14;
+            
             let x0 = width/8;
-            let y0 = thickness/2;
+            let y0 = this.thickness/2;
          
-            cr.setLineWidth(thickness);
-            cr.setFontSize(fontsize);
+            cr.setLineWidth(this.thickness);
+            cr.setFontSize(this.fontsize);
             for (let mount in this.mounts) {
                 GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
                 let perc_full = (this.gtop.blocks - this.gtop.bfree)/this.gtop.blocks;
                 Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
                 cr.moveTo(2*x0,y0)
                 cr.relLineTo(perc_full*0.6*width, 0);
-                cr.moveTo(0, y0+thickness/3);
+                cr.moveTo(0, y0+this.thickness/3);
                 cr.showText(this.mounts[mount]);
                 //cr.stroke();
-                cr.moveTo(width - x0, y0+thickness/3);
+                cr.moveTo(width - x0, y0+this.thickness/3);
                 cr.showText(Math.round(perc_full*100).toString()+'%');
                 cr.stroke();
-                y0 += (3 * thickness) / 2;
+                y0 += (3 * this.thickness) / 2;
             }
         }
 });

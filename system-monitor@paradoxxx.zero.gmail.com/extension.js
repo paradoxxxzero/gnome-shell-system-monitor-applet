@@ -1245,16 +1245,10 @@ var enable = function () {
 
     Main.panel._menus.addMenu(tray.menu);
 
-    gc_timeout = Mainloop.timeout_add_seconds(
-        300,
-        function () {
-            System.gc()
-        });
     log("System monitor applet enabling done");
 };
 
 var disable = function () {
-    Mainloop.source_remove(gc_timeout);
     //restore system power icon if necessary
     if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){    
         Main.__sm.elts.battery.hide_system_icon(false);

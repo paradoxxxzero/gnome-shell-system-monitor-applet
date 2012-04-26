@@ -643,7 +643,12 @@ const Cpu = new Lang.Class({
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
             this.current = [0,0,0,0,0];
-            this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
+            try {
+                this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
+            }catch(e) {
+                this.total_cores = this.get_cores();
+                global.logError(e)
+            }
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});

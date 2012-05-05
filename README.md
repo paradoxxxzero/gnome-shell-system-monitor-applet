@@ -27,6 +27,7 @@ Dependencies:
     libgtop and gir bindings
         on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0
         on Fedora: libgtop2-devel, NetworkManager-glib-devel
+		on Arch: libgtop, networkmanager
 
 Install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc)
 Then:
@@ -34,6 +35,7 @@ Then:
     mkdir ~/git_projects
     cd ~/git_projects
     git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git
+	git checkout gnome-3.2
     mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com

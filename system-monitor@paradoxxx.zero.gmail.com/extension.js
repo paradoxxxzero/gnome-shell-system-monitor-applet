@@ -18,17 +18,41 @@
 
 // Author: Florian Mounier aka paradoxxxzero
 
+const MESSAGE = "Dependencies Missing\n\
+Please install: \n\
+libgtop, Network Manager and gir bindings \n\
+\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
+\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
+\t    on Arch: libgtop, networkmanager\n"
+
+let smDepsGtop = true;
+let smDepsNM = true;
+
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
-const GTop = imports.gi.GTop;
+
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const NMClient = imports.gi.NMClient;
-const NetworkManager = imports.gi.NetworkManager;
 const Power = imports.ui.status.power;
 const System = imports.system;
+const ModalDialog = imports.ui.modalDialog;
+
+try {
+    const GTop = imports.gi.GTop;
+} catch(e) {
+    log(e);
+    smDepsGtop = false;
+}
+
+try {
+    const NMClient = imports.gi.NMClient;
+    const NetworkManager = imports.gi.NetworkManager;
+} catch(e) {
+    log(e);
+    smDepsNM = false;
+}
 
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
@@ -66,6 +90,51 @@ function change_usage(){
     Main.__sm.pie.show(usage == 'pie');
     Main.__sm.bar.show(usage == 'bar');
 }
+
+const smDialog = Lang.Class({
+    Name: 'SystemMonitor.smDialog',
+    Extends: ModalDialog.ModalDialog,
+
+    _init : function() {
+        this.parent({ styleClass: 'prompt-dialog' });
+        let mainContentBox = new St.BoxLayout({ style_class: 'prompt-dialog-main-layout',
+                                                vertical: false });
+        this.contentLayout.add(mainContentBox,
+                               { x_fill: true,
+                                 y_fill: true });
+
+        let messageBox = new St.BoxLayout({ style_class: 'prompt-dialog-message-layout',
+                                            vertical: true });
+        mainContentBox.add(messageBox,
+                           { y_align: St.Align.START });
+
+        this._subjectLabel = new St.Label({ style_class: 'prompt-dialog-headline',
+                                            text: _("System Monitor Extension") });
+
+        messageBox.add(this._subjectLabel,
+                       { y_fill:  false,
+                         y_align: St.Align.START });
+
+        this._descriptionLabel = new St.Label({ style_class: 'prompt-dialog-description',
+                                                text: _(MESSAGE) });
+
+        messageBox.add(this._descriptionLabel,
+                       { y_fill:  true,
+                         y_align: St.Align.START });
+
+
+        this.setButtons([
+            {
+                label: _("Cancel"),
+                action: Lang.bind(this, function() {
+                    this.close();
+                }),
+                key: Clutter.Escape
+            }
+        ]);
+    },
+
+});
 
 const Chart = new Lang.Class({
         Name: 'SystemMonitor.Chart',
@@ -145,7 +214,6 @@ const Graph = new Lang.Class({
                 }
             }
             
-            log(this.__caller__._owner);
             this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
             this.width = arguments[0][0];
             this.height = arguments[0][1];
@@ -643,7 +711,12 @@ const Cpu = new Lang.Class({
             this.gtop = new GTop.glibtop_cpu();
             this.last = [0,0,0,0,0];
             this.current = [0,0,0,0,0];
-            this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
+            try {
+                this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
+            }catch(e) {
+                this.total_cores = this.get_cores();
+                global.logError(e)
+            }
             this.last_total = 0;
             this.usage = [0,0,0,1,0];
             this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
@@ -1144,112 +1217,123 @@ var init = function () {
 
 var enable = function () {
     log("System monitor applet enabling");
-    let panel = Main.panel._rightBox;
-    if (Schema.get_boolean("center-display")) {
-        if (Schema.get_boolean("move-clock")) {
-            let dateMenu = Main.panel._dateMenu;
-            Main.panel._centerBox.remove_actor(dateMenu.actor);
-            Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
+   
+        
+    
+    if (!(smDepsGtop && smDepsNM)) {
+        Main.__sm = {
+            smdialog: new smDialog()
         }
-        panel = Main.panel._centerBox;
-    }
-    Schema.connect('changed::background', Lang.bind(
-        Background, function (schema, key) {
-            this.from_string(Schema.get_string(key));
-        }));
 
-    //Debug
-    Main.__sm = {
-        tray: new PanelMenu.Button(0.5),
-        icon: new Icon(),
-        pie: new Pie(300, 300),
-        bar: new Bar(300, 150),
-        elts: {
-            cpu: new Cpu(),
-            freq: new Freq(),
-            memory: new Mem(),
-            swap: new Swap(),
-            net: new Net(),
-            disk: new Disk(),
-            thermal: new Thermal(),
-            battery: new Battery()
-        }
-    };
-    let tray = Main.__sm.tray;
-    panel.insert_child_at_index(tray.actor, 1);
-    panel.child_set(tray.actor, { y_fill: true } );
-    let box = new St.BoxLayout();
-    tray.actor.add_actor(box);
-    box.add_actor(Main.__sm.icon.actor);
-    for (let elt in Main.__sm.elts) {
-        box.add_actor(Main.__sm.elts[elt].actor);
-        tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
-    }
-    
-    let pie_item = Main.__sm.pie;
-    pie_item.create_menu_item();
-    tray.menu.addMenuItem(pie_item.menu_item);
-    
-    let bar_item = Main.__sm.bar;
-    bar_item.create_menu_item(); 
-    tray.menu.addMenuItem(bar_item.menu_item);
-    
-    change_usage();
-    Schema.connect('changed::' + 'disk-usage-style', change_usage);
-    
-    tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-    
-    tray.menu.connect(
-        'open-state-changed',
-        function (menu, isOpen) {
-            if(isOpen) {
-                Main.__sm.pie.actor.queue_repaint();
-
-                menu_timeout = Mainloop.timeout_add_seconds(
-                    5,
+        let dialog_timeout = Mainloop.timeout_add_seconds(
+                    1,
                     function () {
-                        Main.__sm.pie.actor.queue_repaint();
+                        Main.__sm.smdialog.open()
+                        Mainloop.source_remove(dialog_timeout);
                         return true;
                     });
-                } else {
-                    Mainloop.source_remove(menu_timeout);
+    } else {
+        let panel = Main.panel._rightBox;
+        if (Schema.get_boolean("center-display")) {
+            if (Schema.get_boolean("move-clock")) {
+                let dateMenu = Main.panel._dateMenu;
+                Main.panel._centerBox.remove_actor(dateMenu.actor);
+                Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
             }
+            panel = Main.panel._centerBox;
         }
-    );
+        Schema.connect('changed::background', Lang.bind(
+            Background, function (schema, key) {
+                this.from_string(Schema.get_string(key));
+            }));
+
+        //Debug
+        Main.__sm = {
+            tray: new PanelMenu.Button(0.5),
+            icon: new Icon(),
+            pie: new Pie(300, 300),
+            bar: new Bar(300, 150),
+            elts: {
+                cpu: new Cpu(),
+                freq: new Freq(),
+                memory: new Mem(),
+                swap: new Swap(),
+                net: new Net(),
+                disk: new Disk(),
+                thermal: new Thermal(),
+                battery: new Battery(),
+            
+            }
+        };
+        let tray = Main.__sm.tray;
+        panel.insert_child_at_index(tray.actor, 1);
+        panel.child_set(tray.actor, { y_fill: true } );
+        let box = new St.BoxLayout();
+        tray.actor.add_actor(box);
+        box.add_actor(Main.__sm.icon.actor);
+        for (let elt in Main.__sm.elts) {
+            box.add_actor(Main.__sm.elts[elt].actor);
+            tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
+        }
+    
+        let pie_item = Main.__sm.pie;
+        pie_item.create_menu_item();
+        tray.menu.addMenuItem(pie_item.menu_item);
+    
+        let bar_item = Main.__sm.bar;
+        bar_item.create_menu_item(); 
+        tray.menu.addMenuItem(bar_item.menu_item);
+    
+        change_usage();
+        Schema.connect('changed::' + 'disk-usage-style', change_usage);
+    
+        tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+    
+        tray.menu.connect(
+            'open-state-changed',
+            function (menu, isOpen) {
+                if(isOpen) {
+                    Main.__sm.pie.actor.queue_repaint();
+
+                    menu_timeout = Mainloop.timeout_add_seconds(
+                        5,
+                        function () {
+                            Main.__sm.pie.actor.queue_repaint();
+                            return true;
+                        });
+                    } else {
+                    Mainloop.source_remove(menu_timeout);
+                }
+            }
+        );
         
-    let _appSys = Shell.AppSystem.get_default();
-    let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
-    let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
-    let item;
-    item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
-    item.connect('activate', function () {
-        _gsmApp.activate();
-    });
-    tray.menu.addMenuItem(item);
-
-    item = new PopupMenu.PopupMenuItem(_("Preferences..."));
-    item.connect('activate', function () {
-        if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
-            _gsmPrefs.activate();
-        } else {
-            _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
-                             [metadata.uuid],-1,null);
-        }
-    });
-    tray.menu.addMenuItem(item);
-
-    Main.panel._menus.addMenu(tray.menu);
-
-    gc_timeout = Mainloop.timeout_add_seconds(
-        300,
-        function () {
-            System.gc()
+        let _appSys = Shell.AppSystem.get_default();
+        let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
+        let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
+        let item;
+        item = new PopupMenu.PopupMenuItem(_("System Monitor..."));
+        item.connect('activate', function () {
+            _gsmApp.activate();
         });
+        tray.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_("Preferences..."));
+        item.connect('activate', function () {
+            if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
+                _gsmPrefs.activate();
+            } else {
+                _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
+                                 [metadata.uuid],-1,null);
+            }
+        });
+        tray.menu.addMenuItem(item);
+        Main.panel._menus.addMenu(tray.menu);
+ 
+    }
     log("System monitor applet enabling done");
 };
 
 var disable = function () {
-    Mainloop.source_remove(gc_timeout);
     //restore system power icon if necessary
     if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){    
         Main.__sm.elts.battery.hide_system_icon(false);

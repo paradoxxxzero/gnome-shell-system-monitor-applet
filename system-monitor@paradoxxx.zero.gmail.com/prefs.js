@@ -204,7 +204,7 @@ const SettingFrame = new Lang.Class({
             let [_slist, _strlist] = check_sensors();
             let item = new Select(_('Sensor'));
             if (_slist.length == 0){
-                item.add(_('Please install lm-sensors'));
+                item.add([_('Please install lm-sensors')]);
             } else if (_slist.length == 1){
                 this.schema.set_string(key, _slist[0]);
             }

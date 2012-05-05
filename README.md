@@ -12,13 +12,13 @@ Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/g
 #### extensions.gnome.org
 This is the recommended install method and offers One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
 
-#### Manual Install:
-
-Dependencies:
+#### Dependencies:
     
     libgtop and gir bindings
         on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0
         on Fedora: libgtop2-devel, NetworkManager-glib-devel
+
+#### Manual Install:
 
 Install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc)
 Then:

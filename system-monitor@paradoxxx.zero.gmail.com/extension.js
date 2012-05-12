@@ -639,7 +639,7 @@ const Battery = new Lang.Class({
             if (override == false ){
                 value = false;
             }
-            if (value){
+            if (value && Schema.get_boolean(this.elt + '-display')){
                 for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
                     if(Main.panel._statusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
                         Main.panel._rightBox.get_children()[Index].destroy();
@@ -1034,11 +1034,12 @@ const Net = new Lang.Class({
                 for (let i = 0;i < 5;i++) {
                     this.usage[i] = Math.round((accum[i] - this.last[i]) / delta);
                     this.last[i] = accum[i];
+                    this.vals[i] = this.usage[i];
                 }
             this.last_time = time;
         },
         _apply: function() {
-            this.tip_vals = this.vals = this.usage;
+            this.tip_vals = this.usage;
             if (this.speed_in_bits) {
                 this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
                 this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);

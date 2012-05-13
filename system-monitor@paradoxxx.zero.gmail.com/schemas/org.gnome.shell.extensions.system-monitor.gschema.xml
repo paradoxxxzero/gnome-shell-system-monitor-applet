@@ -355,7 +355,7 @@
 	  <summary>Display battery time remaining rather than percentage</summary>
 	</key>
     <key name="battery-hidesystem" type="b">
-	  <default>true</default>
+	  <default>false</default>
 	  <summary>Hide system battery icon</summary>
 	</key>
 

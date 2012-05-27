@@ -1205,7 +1205,7 @@ const Icon = new Lang.Class({
 });
 
 var init = function () {
-    log("System monitor applet init from " + metadata.path);
+    log("System monitor applet init from " + extension.path);
     
     let me = extension.imports.convenience;
     me.initTranslations(extension);
@@ -1267,6 +1267,7 @@ var enable = function () {
             }
         };
         let tray = Main.__sm.tray;
+        Main.panel._statusArea.systemMonitor = tray;
         panel.insert_child_at_index(tray.actor, 1);
         panel.child_set(tray.actor, { y_fill: true } );
         let box = new St.BoxLayout();
@@ -1344,6 +1345,7 @@ var disable = function () {
         Main.__sm.elts[eltName].destroy();
     }
     Main.__sm.tray.destroy();
+    Main.panel._statusArea.systemMonitor = null;
     Main.__sm = null;
     log("System monitor applet disable");
 };

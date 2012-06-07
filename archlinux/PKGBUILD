@@ -1,0 +1,35 @@
+# Maintainer: Florian Mounier aka paradoxxxzero <paradoxxx.zero@gmail.com>
+pkgname=gnome-shell-system-monitor-applet-git
+pkgver=20120504
+pkgrel=1
+pkgdesc="System monitor extension for Gnome-Shell (display mem swap cpu usage)"
+arch=('any')
+url="http://github.com/paradoxxxzero/gnome-shell-system-monitor-applet"
+license=('GPL3')
+depends=('gnome-shell>=3.3.90' 'libgtop' 'networkmanager')
+makedepends=('git')
+provides=("system-monitor-applet")
+#install=gschemas.install
+
+_gitroot="git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git"
+_gitname="gnome-shell-system-monitor-applet"
+
+build() {
+    cd ${srcdir}/
+    msg "Connecting to the GIT server..."
+    if [[ -d ${srcdir}/${_gitname} ]] ; then
+	cd ${_gitname}
+        git pull origin
+        msg "The local files are updated..."
+    else
+        git clone ${_gitroot} ${_gitname}
+    fi
+    msg "GIT checkout done."
+}
+
+package() {
+    cd "$srcdir/gnome-shell-system-monitor-applet"
+    mkdir -p "$pkgdir/usr/share/gnome-shell/extensions/"
+    cp -R "system-monitor@paradoxxx.zero.gmail.com" "$pkgdir/usr/share/gnome-shell/extensions"
+}
+

@@ -7,13 +7,18 @@
 
 
 ### Install:
-#### On archlinux:
+Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2)) if you are using an older version of gnome-shell.
 
-I've created a package in aur: https://aur.archlinux.org/packages.php?ID=49250
+#### extensions.gnome.org
+This is the recommended install method and offers One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
 
-You can install it with: yaourt or packer -S gnome-shell-system-monitor-applet-git
+#### Dependencies:
+    
+    libgtop and gir bindings
+        on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0
+        on Fedora: libgtop2-devel, NetworkManager-glib-devel
 
-#### Everywhere else for now:
+#### Manual Install:
 
 Install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc)
 Then:
@@ -25,32 +30,16 @@ Then:
     cd ~/.local/share/gnome-shell/extensions
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
 
-Then install the schema:
-
-    sudo mkdir -p /usr/local/share/glib-2.0/schemas
-    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/org.gnome.shell.extensions.system-monitor.gschema.xml /usr/local/share/glib-2.0/schemas
-    sudo glib-compile-schemas /usr/local/share/glib-2.0/schemas
-
-To install the configurator (you need python and py3gobject):
-    sudo cp ~/git_projects/gnome-shell-system-monitor-applet/system-monitor-applet-config.py /usr/local/bin/system-monitor-applet-config
-
-To install locale you need gettext:
-    sudo msgfmt ~/git_project/gnome-shell-system-monitor-applet/po/YOUR_LANGUAGE/system-monitor-applet.po -o /usr/share/locale/YOUR_LANGUAGE/LC_MESSAGES/system-monitor-applet.mo
-
-If we do not have the translation of your language and you want to translate by yourself, please edit po/system-monitor-applet.po (or the translation you want to modify) and send it to us at:
-
-[paradoxxxzero](mailto://paradoxxx.zero@gmail.com)
-
-or
-
-[yuyichao](mailto://yyc1992@gmail.com)
-
 And restart gnome-shell (Alt + F2 -> r) or reboot.
+
+If we do not have the translation of your language and you want to translate by yourself, please make a fork add your po/YOUR_LANG/system-monitor-applet.po file and make a pull request.
+
 
 ### Authors:
 [paradoxxxzero](https://github.com/paradoxxxzero)
-
 [yuyichao](https://github.com/yuyichao)
+[darkxst](https://github.com/darkxst)
+And [many contributors](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/contributors)
 
 ### License:
 

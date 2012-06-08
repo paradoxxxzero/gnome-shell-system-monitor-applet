@@ -783,6 +783,8 @@ const Cpu = new Lang.Class({
         let other = 100;
         for (let i = 0;i < this.usage.length;i++)
             other -= this.usage[i];
+        //Not to be confusing
+        other = Math.max(0, other);
         this.vals = [this.usage[0], this.usage[1],
                      this.usage[2], this.usage[4], other];
         for (let i = 0;i < 5;i++)

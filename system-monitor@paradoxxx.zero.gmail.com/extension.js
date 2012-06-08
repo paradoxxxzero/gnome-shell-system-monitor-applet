@@ -331,10 +331,12 @@ const TipMenu = new Lang.Class({
 
         _init: function(sourceActor){
             //PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
-            this.parent(sourceActor,'sm-tooltip-box');
+            this.parent(sourceActor, 'sm-tooltip-box');
             this.actor = new Shell.GenericContainer();
-            this.actor.connect('get-preferred-width', Lang.bind(this, this._boxGetPreferredWidth));
-            this.actor.connect('get-preferred-height', Lang.bind(this, this._boxGetPreferredHeight));
+            this.actor.connect('get-preferred-width',
+                               Lang.bind(this, this._boxGetPreferredWidth));
+            this.actor.connect('get-preferred-height',
+                               Lang.bind(this, this._boxGetPreferredHeight));
             this.actor.connect('allocate', Lang.bind(this, this._boxAllocate));
             this.actor.add_actor(this.box);
         },
@@ -385,48 +387,84 @@ const TipMenu = new Lang.Class({
 });
 
 const TipBox = new Lang.Class({
-        Name: 'SystemMonitor.TipBox',
+    Name: 'SystemMonitor.TipBox',
 
-        _init: function() {
-            this.actor = new St.BoxLayout({ reactive: true});
-            this.actor._delegate = this;
-            this.tipmenu = new TipMenu(this.actor);
-            // Main.chrome.addActor(this.tipmenu.actor, { affectsStruts: false });
-            this.tipmenu.close();
-            this.in_to = this.out_to = 0;
-        },
-        show_tip: function() {
-            this.tipmenu.open();
-            if (this.in_to) {
-                Mainloop.source_remove(this.in_to);
-                this.in_to = 0;
-            }
-        },
-        hide_tip: function() {
-            this.tipmenu.close();
-            if (this.out_to) {
-                Mainloop.source_remove(this.out_to);
-                this.out_to = 0;
-            }
-            if (this.in_to) {
-                Mainloop.source_remove(this.in_to);
-                this.in_to = 0;
-            }
-        },
-        destroy: function() {
-            if (this.in_to) {
-                Mainloop.source_remove(this.in_to);
-                this.in_to = 0;
-            }
+    _init: function() {
+        this.actor = new St.BoxLayout({ reactive: true});
+        this.actor._delegate = this;
+        this.set_tip(new TipMenu(this.actor))
+        this.in_to = this.out_to = 0;
+        this.actor.connect('enter-event', Lang.bind(this, this.on_enter));
+        this.actor.connect('leave-event', Lang.bind(this, this.on_leave));
+    },
+    set_tip: function(tipmenu) {
+        if (this.tipmenu)
+            this.tipmenu.destory();
+        this.tipmenu = tipmenu;
+        if (this.tipmenu) {
+            Main.uiGroup.add_actor(this.tipmenu.actor);
+            this.hide_tip();
+        }
+    },
+    show_tip: function() {
+        if (!this.tipmenu)
+            return;
+        this.tipmenu.open();
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+    },
+    hide_tip: function() {
+        if (!this.tipmenu)
+            return;
+        this.tipmenu.close();
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+    },
+    on_enter: function() {
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
+        if (!this.in_to) {
+            this.in_to = Mainloop.timeout_add(500,
+                                              Lang.bind(this,
+                                                        this.show_tip));
+        }
+    },
+    on_leave: function() {
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
+        if (!this.out_to) {
+            this.out_to = Mainloop.timeout_add(500,
+                                               Lang.bind(this,
+                                                         this.hide_tip));
+        }
+    },
+    destroy: function() {
+        if (this.in_to) {
+            Mainloop.source_remove(this.in_to);
+            this.in_to = 0;
+        }
 
-            if (this.out_to) {
-                Mainloop.source_remove(this.out_to);
-                this.out_to = 0;
-            }
+        if (this.out_to) {
+            Mainloop.source_remove(this.out_to);
+            this.out_to = 0;
+        }
 
-            this.actor.destroy();
-        },
+        this.actor.destroy();
+    },
 });
+
 const ElementBase = new Lang.Class({
         Name: 'SystemMonitor.ElementBase',
         Extends: TipBox,
@@ -705,7 +743,7 @@ const Cpu = new Lang.Class({
             this.current = [0,0,0,0,0];
             try {
                 this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
-            }catch(e) {
+            } catch(e) {
                 this.total_cores = this.get_cores();
                 global.logError(e)
             }

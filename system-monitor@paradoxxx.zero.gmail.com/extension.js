@@ -773,14 +773,15 @@ const Cpu = new Lang.Class({
         }
     },
     _apply: function() {
-        let percent = Math.round(((100*this.total_cores)-this.usage[3])/this.total_cores);
+        let percent = Math.round(((100 * this.total_cores) - this.usage[3])
+                                 / this.total_cores);
         this.text_items[0].text = this.menu_items[3].text = percent.toString();
-        let other = 1;
+        let other = 100;
         for (let i = 0;i < this.usage.length;i++)
             other -= this.usage[i];
         this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
         for (let i = 0;i < 5;i++)
-            this.tip_vals[i] = Math.round(this.vals[i] * 100);
+            this.tip_vals[i] = Math.round(this.vals[i]);
     },
 
     get_cores: function(){

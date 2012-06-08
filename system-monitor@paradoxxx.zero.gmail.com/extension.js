@@ -146,7 +146,6 @@ const Chart = new Lang.Class({
         this.actor.set_width(this.width=width);
         this.actor.set_height(this.height=height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
-        this.max_history = 1;
         this.data = [];
         for (let i = 0;i < this.parentC.colors.length;i++)
             this.data[i] = [];
@@ -168,11 +167,13 @@ const Chart = new Lang.Class({
         if (!this.actor.visible) return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-        let max = Math.max.apply(this, this.data[this.data.length - 1]);
-        if (this.parentC.elt == 'net')
-            this.max_history = 1;
-        max = Math.max(this.max_history, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
-        this.max_history = max;
+        let max;
+        if (this.parentC.max) {
+            max = this.parentC.max;
+        } else {
+            max = Math.max.apply(this, this.data[this.data.length - 1]);
+            max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
+        }
         Clutter.cairo_set_source_color(cr, Background);
         cr.rectangle(0, 0, width, height);
         cr.fill();
@@ -595,6 +596,8 @@ const Battery = new Lang.Class({
 
     elt: 'battery',
     color_name: ['batt0'],
+    max: 100,
+
     _init: function() {
         this.icon_hidden = false;
         this.percentage = 0;
@@ -736,6 +739,7 @@ const Cpu = new Lang.Class({
 
     elt: 'cpu',
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
+    max: 100,
 
     _init: function() {
         this.gtop = new GTop.glibtop_cpu();
@@ -939,6 +943,8 @@ const Mem = new Lang.Class({
 
     elt: 'memory',
     color_name: ['program', 'buffer', 'cache'],
+    max: 100,
+
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         this.gtop = new GTop.glibtop_mem();
@@ -1130,6 +1136,8 @@ const Swap = new Lang.Class({
 
     elt: 'swap',
     color_name: ['used'],
+    max: 100,
+
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         this.gtop = new GTop.glibtop_swap();
@@ -1196,6 +1204,7 @@ const Thermal = new Lang.Class({
     },
     _apply: function() {
         this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
+        //Making it looks better in chart.
         this.vals = [this.temperature / 100];
         global.logError(this.vals);
         this.tip_vals[0] = Math.round(this.temperature);

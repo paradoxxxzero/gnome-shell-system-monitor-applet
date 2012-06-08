@@ -706,7 +706,7 @@ const Battery = new Lang.Class({
         this.text_items[1].text = this.menu_items[3].text = displayString;
         this.text_items[0].gicon = this.gicon;
         this.vals = [this.percentage];
-        this.tip_vals[0] = Math.round(this.vals[0]);
+        this.tip_vals[0] = Math.round(this.percentage);
     },
     create_text_items: function() {
         return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
@@ -779,7 +779,8 @@ const Cpu = new Lang.Class({
         let other = 100;
         for (let i = 0;i < this.usage.length;i++)
             other -= this.usage[i];
-        this.vals = [this.usage[0], this.usage[1], this.usage[2], this.usage[4], other];
+        this.vals = [this.usage[0], this.usage[1],
+                     this.usage[2], this.usage[4], other];
         for (let i = 0;i < 5;i++)
             this.tip_vals[i] = Math.round(this.vals[i]);
     },
@@ -866,7 +867,7 @@ const Disk = new Lang.Class({
             else
                 this.usage[i] = Math.round(this.usage[i]);
         }
-        this.tip_vals = [this.usage[0] , this.usage[1] ];
+        this.tip_vals = [this.usage[0] , this.usage[1]];
         this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     },
@@ -1187,7 +1188,7 @@ const Thermal = new Lang.Class({
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = parseInt(as_r[1])/1000;
+                this.temperature = parseInt(as_r[1]) / 1000;
             }));
         } else {
             global.logError("error reading: " + sfile);
@@ -1195,8 +1196,9 @@ const Thermal = new Lang.Class({
     },
     _apply: function() {
         this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
-        this.vals = [this.temperature];
-        this.tip_vals[0] = Math.round(this.vals[0]);
+        this.vals = [this.temperature / 100];
+        global.logError(this.vals);
+        this.tip_vals[0] = Math.round(this.temperature);
     },
     create_text_items: function() {
         return [new St.Label({ style_class: "sm-status-value"}),

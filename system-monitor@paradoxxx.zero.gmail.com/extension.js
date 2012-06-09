@@ -164,7 +164,8 @@ const Chart = new Lang.Class({
         this.actor.queue_repaint();
     },
     _draw: function() {
-        if (!this.actor.visible) return;
+        if (!this.actor.visible)
+            return;
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
         let max;
@@ -190,7 +191,8 @@ const Chart = new Lang.Class({
     resize: function(schema, key) {
         let old_width = this.width;
         this.width = Schema.get_int(key);
-        if (old_width == this.width) return;
+        if (old_width == this.width)
+            return;
         this.actor.set_width(this.width);
         if (this.width < this.data[0].length)
             for (let i = 0;i < this.parentC.colors.length;i++)
@@ -354,6 +356,7 @@ const TipMenu = new Lang.Class({
         this.box.allocate(box, flags);
     },
     _shift: function() {
+        //Probably old but works
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
         let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
@@ -365,8 +368,9 @@ const TipMenu = new Lang.Class({
         let [xm, ym] = [allocation.x1 + contentbox.x2,
                         allocation.y1 + contentbox.y2];
         let [width, height] = this.actor.get_size();
-        let tipx = Math.floor(Math.min(cx - width / 2,
-                                       primary.x + primary.width - width));
+        let tipx = cx - width / 2;
+        tipx = Math.max(tipx, primary.x);
+        tipx = Math.min(tipx, primary.x + primary.width - width);
         let tipy = Math.floor(ym);
         this.actor.set_position(tipx, tipy);
     },

@@ -57,6 +57,7 @@
     background-color: rgba(10, 10, 10, 0.7);
     border-radius: 5px;
     padding: 3px;
+    border: 1px solid #a5a5a5;
 }
 
 .sm-tooltip-item {
@@ -67,4 +68,3 @@
     padding: 0px 2px;
     icon-size: 1.14em;
 }
-

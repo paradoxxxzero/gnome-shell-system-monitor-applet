@@ -751,6 +751,7 @@ const Cpu = new Lang.Class({
         this.current = [0,0,0,0,0];
         try {
             this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
+            this.max *= this.total_cores;
         } catch(e) {
             this.total_cores = this.get_cores();
             global.logError(e)

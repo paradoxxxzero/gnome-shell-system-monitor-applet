@@ -1,15 +1,15 @@
 # Translation to czech language (cs_CZ)
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Jan Lipovský <janlipovsky@gmail.com>, 2011.
-
+# Jan Lipovský <janlipovsky@gmail.com>, 2011-2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Jan Lipovský <janlipovsky@gmail.com>\n"
+"Last-Translator: Jan Lipovsky <janlipovsky@gmail.com>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -50,6 +50,22 @@ msgstr "Zobrazit uprostřed"
 msgid "Background Color"
 msgstr "Barva pozadí"
 
+#: system-monitor-applet-config.py:204
+msgid "Show network speed in bits"
+msgstr "Zobrazit rychlost sítě v bitech"
+
+#: system-monitor-applet-config.py:215
+msgid "Sensor"
+msgstr "Sensor"
+
+#: system-monitor-applet-config.py:217
+msgid "Please install lm-sensors"
+msgstr "Nainstalujte si lm-sensors, prosím."
+
+#: system-monitor-applet-config.py:266
+msgid "Move the clock"
+msgstr "Posunout hodiny"
+
 msgid "Cpu"
 msgstr "Cpu"
 
@@ -63,10 +79,10 @@ msgid "Other"
 msgstr "Jiný"
 
 msgid "Nice"
-msgstr "Dobrý"
+msgstr "Nice"
 
 msgid "Iowait"
-msgstr "Nizký"
+msgstr "Iowait"
 
 msgid "Memory"
 msgstr "Paměť"
@@ -84,7 +100,7 @@ msgid "Swap"
 msgstr "Swap"
 
 msgid "Used"
-msgstr "Zabráno"
+msgstr "Využito"
 
 msgid "Net"
 msgstr "Síť"
@@ -132,25 +148,25 @@ msgid "Preferences..."
 msgstr "Možnosti..."
 
 msgid "System Monitor..."
-msgstr "System Monitor..."
+msgstr "Sledování systému..."
 
 msgid "System monitor"
-msgstr "System monitor"
+msgstr "Sledování systému"
 
 msgid "user"
-msgstr "Uživatel"
+msgstr "uživatel"
 
 msgid "system"
-msgstr "Systém"
+msgstr "systém"
 
 msgid "other"
-msgstr "Jiný"
+msgstr "jiný"
 
 msgid "nice"
-msgstr "Dobrý"
+msgstr "nice"
 
 msgid "iowait"
-msgstr "nizký"
+msgstr "iowait"
 
 msgid "program"
 msgstr "program"
@@ -162,16 +178,23 @@ msgid "buffer"
 msgstr "buffer"
 
 msgid "used"
-msgstr "Zabráno"
+msgstr "využito"
 
 msgid "up"
-msgstr "Odchozí"
+msgstr "odchozí"
 
 msgid "down"
-msgstr "Příchozí"
+msgstr "příchozí"
 
 msgid "write"
-msgstr "Zápis"
+msgstr "zápis"
 
 msgid "read"
-msgstr "Čtení"
+msgstr "čtení"
+
+msgid "Thermal"
+msgstr "Teplota"
+
+msgid "thermal"
+msgstr "teplota"
+

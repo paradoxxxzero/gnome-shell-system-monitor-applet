@@ -360,7 +360,7 @@ const TipMenu = new Lang.Class({
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
         let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
-        let primary = Main.layoutManager.primaryMonitor;
+        let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor)
         let [x, y] = [allocation.x1 + contentbox.x1,
                       allocation.y1 + contentbox.y1];
         let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
@@ -369,8 +369,8 @@ const TipMenu = new Lang.Class({
                         allocation.y1 + contentbox.y2];
         let [width, height] = this.actor.get_size();
         let tipx = cx - width / 2;
-        tipx = Math.max(tipx, primary.x);
-        tipx = Math.min(tipx, primary.x + primary.width - width);
+        tipx = Math.max(tipx, monitor.x);
+        tipx = Math.min(tipx, monitor.x + monitor.width - width);
         let tipy = Math.floor(ym);
         this.actor.set_position(tipx, tipy);
     },

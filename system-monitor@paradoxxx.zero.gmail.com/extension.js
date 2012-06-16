@@ -950,7 +950,7 @@ const Mem = new Lang.Class({
 
     elt: 'memory',
     color_name: ['program', 'buffer', 'cache'],
-    max: 100,
+    max: 1,
 
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
@@ -1143,7 +1143,7 @@ const Swap = new Lang.Class({
 
     elt: 'swap',
     color_name: ['used'],
-    max: 100,
+    max: 1,
 
     _init: function() {
         this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
@@ -1213,7 +1213,6 @@ const Thermal = new Lang.Class({
         this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
         //Making it looks better in chart.
         this.vals = [this.temperature / 100];
-        global.logError(this.vals);
         this.tip_vals[0] = Math.round(this.temperature);
     },
     create_text_items: function() {

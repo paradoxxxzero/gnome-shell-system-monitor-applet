@@ -1084,29 +1084,29 @@ const Net = new Lang.Class({
             this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
             this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
             if (this.tip_vals[0] < 1000)
-                this.text_items[2].text = this.menu_items[1].text = 'kbps';
+                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
             else {
-                this.text_items[2].text = this.menu_items[1].text = 'Mbps';
+                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
                 this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
             }
             if (this.tip_vals[2] < 1000)
-                this.text_items[5].text = this.menu_items[4].text = 'kbps';
+                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
             else {
-                this.text_items[5].text = this.menu_items[4].text = 'Mbps';
+                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
                 this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
             }
         }
         else {
             if (this.tip_vals[0] < 1024)
-                this.text_items[2].text = this.menu_items[1].text = 'KiB/s';
+                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'KiB/s';
             else {
-                this.text_items[2].text = this.menu_items[1].text = 'MiB/s';
+                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'MiB/s';
                 this.tip_vals[0] = (this.tip_vals[0] / 1024).toPrecision(3);
             }
             if (this.tip_vals[2] < 1024)
-                this.text_items[5].text = this.menu_items[4].text = 'KiB/s';
+                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'KiB/s';
             else {
-                this.text_items[5].text = this.menu_items[4].text = 'MiB/s';
+                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'MiB/s';
                 this.tip_vals[2] = (this.tip_vals[2] / 1024).toPrecision(3);
             }
         }

@@ -404,7 +404,7 @@ const TipBox = new Lang.Class({
     },
     set_tip: function(tipmenu) {
         if (this.tipmenu)
-            this.tipmenu.destory();
+            this.tipmenu.destroy();
         this.tipmenu = tipmenu;
         if (this.tipmenu) {
             Main.uiGroup.add_actor(this.tipmenu.actor);

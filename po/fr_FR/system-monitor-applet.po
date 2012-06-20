@@ -154,7 +154,6 @@ msgid "Preferences..."
 msgstr "Préférences…"
 
 #: extension.js:1340
-#, fuzzy
 msgid "System Monitor..."
 msgstr "Moniteur système…"
 
@@ -202,68 +201,70 @@ msgstr "lecture"
 
 #: extension.js:1179
 msgid "Thermal"
-msgstr ""
+msgstr "Thermique"
 
-#, fuzzy
 msgid "thermal"
-msgstr "Autre"
+msgstr "thermique"
 
 #: prefs.js:180
 msgid "Show In Menu"
-msgstr ""
+msgstr "Afficher dans le menu"
 
 #: prefs.js:222
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Afficher le temps restant"
 
 #: prefs.js:226
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "Moniteur système"
+msgstr "Cacher l'icône système"
 
 #: prefs.js:230
-#, fuzzy
 msgid "Usage Style"
 msgstr "Type d’affichage"
 
 #: prefs.js:231
 msgid "pie"
-msgstr ""
+msgstr "circulaire"
 
 #: prefs.js:231
 msgid "bar"
-msgstr ""
+msgstr "barre"
 
 #: prefs.js:231
 msgid "none"
-msgstr ""
+msgstr "aucun"
 
 #: extension.js:6
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
 "libgtop, Network Manager and gir bindings \n"
-"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    on Arch: libgtop, networkmanager\n"
+"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t on Arch: libgtop, networkmanager\n"
 msgstr ""
+"Dépendances manquantes\n"
+"S'il vous plaît, veuillez installer : \n"
+"libgtop, Network Manager et les bibliothèques de liaisons gir \n"
+"\t sur Ubuntu : gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t sur Fedora : libgtop2-devel, NetworkManager-glib-devel \n"
+"\t sur Arch : libgtop, networkmanager\n"
 
 #: extension.js:97
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "Moniteur système"
+msgstr "Extension de surveillance système"
 
 #: extension.js:113
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: extension.js:601
 msgid "Battery"
-msgstr ""
+msgstr "Batterie"
 
 #: extension.js:896
 msgid "Freq"
-msgstr ""
+msgstr "Fréq."
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configuration de l’applet moniteur système"

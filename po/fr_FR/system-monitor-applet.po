@@ -1,15 +1,15 @@
-# German translation.
+# French translation.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Michael Pusterhofer <pusterhofer@student.tugraz.at>, 2011.
+# Guillaume Ayoub <guillaume.ayoub@kozea.fr>, 2011.
 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-06-06 10:56+0800\n"
-"PO-Revision-Date: 2011-08-01 03:33+0200\n"
-"Last-Translator: Guillaume Ayoub <guillaume.ayoub@kozea.fr>\n"
+"PO-Revision-Date: 2012-06-20 12:46+0200\n"
+"Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -51,6 +51,22 @@ msgstr "Afficher au milieu"
 #: system-monitor-applet-config.py:198
 msgid "Background Color"
 msgstr "Couleur de fond"
+
+#: system-monitor-applet-config.py:204
+msgid "Show network speed in bits"
+msgstr "Afficher le débit réseau en bits"
+
+#: system-monitor-applet-config.py:215
+msgid "Sensor"
+msgstr "Capteur"
+
+#: system-monitor-applet-config.py:217
+msgid "Please install lm-sensors"
+msgstr "Veuillez installer lm-sensors, s'il vous plaît"
+
+#: system-monitor-applet-config.py:266
+msgid "Move the clock"
+msgstr "Déplacer l'horloge"
 
 msgid "Cpu"
 msgstr "CPU"
@@ -107,31 +123,34 @@ msgid "Read"
 msgstr "Lecture"
 
 msgid "graph"
-msgstr "Graphe"
+msgstr "graphe"
 
 msgid "digit"
-msgstr "Chiffre"
+msgstr "chiffre"
 
 msgid "both"
-msgstr "Les deux"
+msgstr "les deux"
 
 msgid "cpu"
 msgstr "CPU"
 
 msgid "mem"
-msgstr "Mém."
+msgstr "mém."
 
 msgid "swap"
-msgstr "Swap"
+msgstr "swap"
 
 msgid "net"
-msgstr "Réseau"
+msgstr "réseau"
 
 msgid "disk"
-msgstr "Disque"
+msgstr "disque"
 
 msgid "Preferences..."
 msgstr "Préférences…"
+
+msgid "System monitor..."
+msgstr "Moniteur système…"
 
 msgid "System monitor"
 msgstr "Moniteur système"
@@ -170,7 +189,7 @@ msgid "down"
 msgstr "descendant"
 
 msgid "write"
-msgstr "Écriture"
+msgstr "écriture"
 
 msgid "read"
 msgstr "lecture"

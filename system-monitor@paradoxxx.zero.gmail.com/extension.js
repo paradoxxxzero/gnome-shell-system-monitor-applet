@@ -18,13 +18,6 @@
 
 // Author: Florian Mounier aka paradoxxxzero
 
-const MESSAGE = "Dependencies Missing\n\
-Please install: \n\
-libgtop, Network Manager and gir bindings \n\
-\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
-\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
-\t    on Arch: libgtop, networkmanager\n"
-
 let smDepsGtop = true;
 let smDepsNM = true;
 
@@ -64,6 +57,12 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
+const MESSAGE = _("Dependencies Missing\n\
+Please install: \n\
+libgtop, Network Manager and gir bindings \n\
+\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
+\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
+\t    on Arch: libgtop, networkmanager\n");
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
@@ -116,7 +115,7 @@ const smDialog = Lang.Class({
                          y_align: St.Align.START });
 
         this._descriptionLabel = new St.Label({ style_class: 'prompt-dialog-description',
-                                                text: _(MESSAGE) });
+                                                text: MESSAGE });
 
         messageBox.add(this._descriptionLabel,
                        { y_fill:  true,
@@ -533,7 +532,7 @@ const ElementBase = new Lang.Class({
         Schema.connect('changed::' + this.elt + '-graph-width',
                        Lang.bind(this.chart, this.chart.resize));
 
-        this.label = new St.Label({ text: this.elt == "memory" ? "mem" : _(this.elt),
+        this.label = new St.Label({ text: this.elt == "memory" ? _("mem") : _(this.elt),
                                     style_class: "sm-status-label"});
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));

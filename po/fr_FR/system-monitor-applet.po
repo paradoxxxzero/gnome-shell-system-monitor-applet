@@ -2,12 +2,11 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Guillaume Ayoub <guillaume.ayoub@kozea.fr>, 2011.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-06 10:56+0800\n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: 2012-06-20 12:46+0200\n"
 "Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,58 +15,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: system-monitor-applet-config.py:128
+#: prefs.js:161
 msgid "Display"
 msgstr "Affichage"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "Rafraîchissement"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "Largeur du graphe"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "Montrer le texte"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "Type d’affichage"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "Configuration de l’applet moniteur système"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "Afficher l’icône"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "Afficher au milieu"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "Couleur de fond"
 
-#: system-monitor-applet-config.py:204
+#: prefs.js:193
 msgid "Show network speed in bits"
 msgstr "Afficher le débit réseau en bits"
 
-#: system-monitor-applet-config.py:215
+#: prefs.js:205
 msgid "Sensor"
 msgstr "Capteur"
 
-#: system-monitor-applet-config.py:217
+#: prefs.js:207
 msgid "Please install lm-sensors"
 msgstr "Veuillez installer lm-sensors, s'il vous plaît"
 
-#: system-monitor-applet-config.py:266
+#: prefs.js:282
 msgid "Move the clock"
 msgstr "Déplacer l'horloge"
 
+#: extension.js:746
 msgid "Cpu"
 msgstr "CPU"
 
@@ -86,6 +82,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "IOwait"
 
+#: extension.js:941
 msgid "Memory"
 msgstr "Mémoire"
 
@@ -98,12 +95,14 @@ msgstr "Cache"
 msgid "Buffer"
 msgstr "Tampon"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "Swap"
 
 msgid "Used"
 msgstr "Utilisé"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "Réseau"
 
@@ -113,6 +112,7 @@ msgstr "Montant"
 msgid "Down"
 msgstr "Descendant"
 
+#: extension.js:836
 msgid "Disk"
 msgstr "Disque"
 
@@ -122,12 +122,15 @@ msgstr "Écriture"
 msgid "Read"
 msgstr "Lecture"
 
+#: prefs.js:185
 msgid "graph"
 msgstr "graphe"
 
+#: prefs.js:185
 msgid "digit"
 msgstr "chiffre"
 
+#: prefs.js:185
 msgid "both"
 msgstr "les deux"
 
@@ -146,10 +149,13 @@ msgstr "réseau"
 msgid "disk"
 msgstr "disque"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "Préférences…"
 
-msgid "System monitor..."
+#: extension.js:1340
+#, fuzzy
+msgid "System Monitor..."
 msgstr "Moniteur système…"
 
 msgid "System monitor"
@@ -193,3 +199,71 @@ msgstr "écriture"
 
 msgid "read"
 msgstr "lecture"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr ""
+
+#, fuzzy
+msgid "thermal"
+msgstr "Autre"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr ""
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr ""
+
+#: prefs.js:226
+#, fuzzy
+msgid "Hide System Icon"
+msgstr "Moniteur système"
+
+#: prefs.js:230
+#, fuzzy
+msgid "Usage Style"
+msgstr "Type d’affichage"
+
+#: prefs.js:231
+msgid "pie"
+msgstr ""
+
+#: prefs.js:231
+msgid "bar"
+msgstr ""
+
+#: prefs.js:231
+msgid "none"
+msgstr ""
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+
+#: extension.js:97
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "Moniteur système"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:601
+msgid "Battery"
+msgstr ""
+
+#: extension.js:896
+msgid "Freq"
+msgstr ""
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "Configuration de l’applet moniteur système"

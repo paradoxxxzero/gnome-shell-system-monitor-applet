@@ -2,12 +2,11 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Michael Pusterhofer <pusterhofer@student.tugraz.at>, 2011.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-06 10:56+0800\n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Michael Pusterhofer <pusterhofer@student.tugraz.at>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,42 +15,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: system-monitor-applet-config.py:128
+#: prefs.js:161
 msgid "Display"
 msgstr "Anzeigen"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "Wiederholfrequenz"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "Diagrammbreite"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "Zeige Text"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "Anzeigestil"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "System Monitor Applet Konfigurator"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "Zeige Icon"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "Anzeige zentrieren"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "Hintergrundfarbe"
 
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr ""
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr ""
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr ""
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr ""
+
+#: extension.js:746
 msgid "Cpu"
 msgstr "CPU"
 
@@ -70,6 +82,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "IOwait"
 
+#: extension.js:941
 msgid "Memory"
 msgstr "Speicher"
 
@@ -82,12 +95,14 @@ msgstr "Zwischenspeicher"
 msgid "Buffer"
 msgstr "Pufferspeicher"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "Auslagerungsdateien"
 
 msgid "Used"
 msgstr "Verwendet"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "Netzwerk"
 
@@ -97,6 +112,7 @@ msgstr "Hinauf"
 msgid "Down"
 msgstr "Herunter"
 
+#: extension.js:836
 msgid "Disk"
 msgstr "Festplatte"
 
@@ -106,12 +122,15 @@ msgstr "Schreiben"
 msgid "Read"
 msgstr "Lesen"
 
+#: prefs.js:185
 msgid "graph"
 msgstr "Diagramm"
 
+#: prefs.js:185
 msgid "digit"
 msgstr "Zahl"
 
+#: prefs.js:185
 msgid "both"
 msgstr "Beides"
 
@@ -130,14 +149,16 @@ msgstr "Netzwerk"
 msgid "disk"
 msgstr "Festplatte"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "Einstellungen..."
 
-msgid "System monitor"
-msgstr "System Monitor"
-
+#: extension.js:1340
 msgid "System Monitor..."
 msgstr "System Monitor..."
+
+msgid "System monitor"
+msgstr "System Monitor"
 
 msgid "user"
 msgstr "benutzer"
@@ -177,3 +198,71 @@ msgstr "schreiben"
 
 msgid "read"
 msgstr "lesen"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr ""
+
+#, fuzzy
+msgid "thermal"
+msgstr "Andere"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr ""
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr ""
+
+#: prefs.js:226
+#, fuzzy
+msgid "Hide System Icon"
+msgstr "System Monitor"
+
+#: prefs.js:230
+#, fuzzy
+msgid "Usage Style"
+msgstr "Anzeigestil"
+
+#: prefs.js:231
+msgid "pie"
+msgstr ""
+
+#: prefs.js:231
+msgid "bar"
+msgstr ""
+
+#: prefs.js:231
+msgid "none"
+msgstr ""
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+
+#: extension.js:97
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "System Monitor"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:601
+msgid "Battery"
+msgstr ""
+
+#: extension.js:896
+msgid "Freq"
+msgstr ""
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "System Monitor Applet Konfigurator"

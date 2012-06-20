@@ -2,12 +2,11 @@
 # Copyright (C) 2011
 # This file is distributed under the same license as the PACKAGE package.
 # Emanuel Angelo <emanuel.angelo@gmail.com>, 2011.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-06 10:56+0800\n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Emanuel Angelo <emanuel.angelo@gmail.com>\n"
 "Language-Team: pt_PT <LL@li.org>\n"
@@ -16,42 +15,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: system-monitor-applet-config.py:128
+#: prefs.js:161
 msgid "Display"
 msgstr "Apresentar"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "Tempo de refrescamento"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "Largura do gráfico"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "Mostrar identificador"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "Estilo de apresentação"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "Configurador do System Monitor Applet"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "Mostrar ícone"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "Posicionar no centro"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "Cor de fundo"
 
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr "Apresentar velocidade em bits por segundo"
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr "Sensor"
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr ""
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr "Deslocar o relógio"
+
+#: extension.js:746
 msgid "Cpu"
 msgstr "Processador (CPU)"
 
@@ -70,6 +82,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "IOwait"
 
+#: extension.js:941
 msgid "Memory"
 msgstr "Memória (RAM)"
 
@@ -82,33 +95,24 @@ msgstr "Reserva (cache)"
 msgid "Buffer"
 msgstr "Tampão (buffer)"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "Memória virtual (swap)"
 
 msgid "Used"
 msgstr "Em utilização"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "Rede"
-
-msgid "Uperrors"
-msgstr "Erros ao enviar"
 
 msgid "Up"
 msgstr "Enviados"
 
-msgid "Downerrors"
-msgstr "Erros ao receber"
-
 msgid "Down"
 msgstr "Recebidos"
 
-msgid "Collisions"
-msgstr "Colisões"
-
-msgid "Show network speed in bits"
-msgstr "Apresentar velocidade em bits por segundo"
-
+#: extension.js:836
 msgid "Disk"
 msgstr "Disco"
 
@@ -118,12 +122,15 @@ msgstr "Escrita"
 msgid "Read"
 msgstr "Leitura"
 
+#: prefs.js:185
 msgid "graph"
 msgstr "gráfico"
 
+#: prefs.js:185
 msgid "digit"
 msgstr "valor"
 
+#: prefs.js:185
 msgid "both"
 msgstr "ambos"
 
@@ -142,9 +149,11 @@ msgstr "rede"
 msgid "disk"
 msgstr "disco"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "Preferências..."
 
+#: extension.js:1340
 msgid "System Monitor..."
 msgstr "Monitor do Sistema..."
 
@@ -190,15 +199,78 @@ msgstr "escrita"
 msgid "read"
 msgstr "leitura"
 
-msgid "Move the clock"
-msgstr "Deslocar o relógio"
-
+#: extension.js:1179
 msgid "Thermal"
 msgstr "Temperatura"
 
 msgid "thermal"
 msgstr "temp"
 
-msgid "Sensor"
-msgstr "Sensor"
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr ""
 
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr ""
+
+#: prefs.js:226
+#, fuzzy
+msgid "Hide System Icon"
+msgstr "Monitor do sistema"
+
+#: prefs.js:230
+#, fuzzy
+msgid "Usage Style"
+msgstr "Estilo de apresentação"
+
+#: prefs.js:231
+msgid "pie"
+msgstr ""
+
+#: prefs.js:231
+msgid "bar"
+msgstr ""
+
+#: prefs.js:231
+msgid "none"
+msgstr ""
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+
+#: extension.js:97
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "Monitor do sistema"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:601
+msgid "Battery"
+msgstr ""
+
+#: extension.js:896
+msgid "Freq"
+msgstr ""
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "Configurador do System Monitor Applet"
+
+#~ msgid "Uperrors"
+#~ msgstr "Erros ao enviar"
+
+#~ msgid "Downerrors"
+#~ msgstr "Erros ao receber"
+
+#~ msgid "Collisions"
+#~ msgstr "Colisões"

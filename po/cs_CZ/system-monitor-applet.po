@@ -5,7 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Jan Lipovsky <janlipovsky@gmail.com>\n"
 "Language-Team: \n"
@@ -14,58 +15,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: system-monitor-applet-config.py:128
+#: prefs.js:161
 msgid "Display"
 msgstr "Zobrazit"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "Doba obnovy"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "Šířka grafu"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "Zobrazit text"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "Styl zobrazení"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "System Monitor Applet Konfigurátor"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "Zobrazit ikonu"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "Zobrazit uprostřed"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "Barva pozadí"
 
-#: system-monitor-applet-config.py:204
+#: prefs.js:193
 msgid "Show network speed in bits"
 msgstr "Zobrazit rychlost sítě v bitech"
 
-#: system-monitor-applet-config.py:215
+#: prefs.js:205
 msgid "Sensor"
 msgstr "Sensor"
 
-#: system-monitor-applet-config.py:217
+#: prefs.js:207
 msgid "Please install lm-sensors"
 msgstr "Nainstalujte si lm-sensors, prosím."
 
-#: system-monitor-applet-config.py:266
+#: prefs.js:282
 msgid "Move the clock"
 msgstr "Posunout hodiny"
 
+#: extension.js:746
 msgid "Cpu"
 msgstr "Cpu"
 
@@ -84,6 +82,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "Iowait"
 
+#: extension.js:941
 msgid "Memory"
 msgstr "Paměť"
 
@@ -96,12 +95,14 @@ msgstr "Cache"
 msgid "Buffer"
 msgstr "Buffer"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "Swap"
 
 msgid "Used"
 msgstr "Využito"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "Síť"
 
@@ -111,6 +112,7 @@ msgstr "Odchozí"
 msgid "Down"
 msgstr "Příchozí"
 
+#: extension.js:836
 msgid "Disk"
 msgstr "Disk"
 
@@ -120,12 +122,15 @@ msgstr "Zápis"
 msgid "Read"
 msgstr "Čtení"
 
+#: prefs.js:185
 msgid "graph"
 msgstr "graf"
 
+#: prefs.js:185
 msgid "digit"
 msgstr "čísla"
 
+#: prefs.js:185
 msgid "both"
 msgstr "oboje"
 
@@ -144,9 +149,11 @@ msgstr "síť"
 msgid "disk"
 msgstr "disk"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "Možnosti..."
 
+#: extension.js:1340
 msgid "System Monitor..."
 msgstr "Sledování systému..."
 
@@ -192,9 +199,69 @@ msgstr "zápis"
 msgid "read"
 msgstr "čtení"
 
+#: extension.js:1179
 msgid "Thermal"
 msgstr "Teplota"
 
 msgid "thermal"
 msgstr "teplota"
 
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr ""
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr ""
+
+#: prefs.js:226
+#, fuzzy
+msgid "Hide System Icon"
+msgstr "Sledování systému"
+
+#: prefs.js:230
+#, fuzzy
+msgid "Usage Style"
+msgstr "Styl zobrazení"
+
+#: prefs.js:231
+msgid "pie"
+msgstr ""
+
+#: prefs.js:231
+msgid "bar"
+msgstr ""
+
+#: prefs.js:231
+msgid "none"
+msgstr ""
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+
+#: extension.js:97
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "Sledování systému"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:601
+msgid "Battery"
+msgstr ""
+
+#: extension.js:896
+msgid "Freq"
+msgstr ""
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "System Monitor Applet Konfigurátor"

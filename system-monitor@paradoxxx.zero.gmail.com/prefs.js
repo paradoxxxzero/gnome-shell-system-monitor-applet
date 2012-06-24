@@ -66,7 +66,7 @@ const ColorSelect = new Lang.Class({
 	Name: 'SystemMonitor.ColorSelect',
 
     _init: function(name) {
-        this.label = new Gtk.Label({label: name + ":"});
+        this.label = new Gtk.Label({label: name + _(":")});
         this.picker = new Gtk.ColorButton();
         this.actor = new Gtk.HBox();
         this.actor.add(this.label);
@@ -87,7 +87,7 @@ const IntSelect = new Lang.Class({
 	Name: 'SystemMonitor.IntSelect',
 
     _init: function(name) {
-        this.label = new Gtk.Label({label: name + ":"});
+        this.label = new Gtk.Label({label: name + _(":")});
         this.spin = new Gtk.SpinButton();
         this.actor = new Gtk.HBox();
         this.actor.add(this.label);
@@ -107,7 +107,7 @@ const Select = new Lang.Class({
 	Name: 'SystemMonitor.Select',
 
     _init: function(name) {
-        this.label = new Gtk.Label({label: name + ":"});
+        this.label = new Gtk.Label({label: name + _(":")});
         this.selector = new Gtk.ComboBoxText();
         this.actor = new Gtk.HBox();
         this.actor.add(this.label);

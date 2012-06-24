@@ -1,10 +1,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome shell system monitor applet\n"
-"POT-Creation-Date: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: zamox <zamox.goo@gmail.com>\n"
 "Language-Team: \n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,42 +15,55 @@ msgstr ""
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#: system-monitor-applet-config.py:128
+#: prefs.js:161
 msgid "Display"
 msgstr "Afișează"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "Perioadă Recitire Date"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "Lățime Grafic"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "Arată Titlu"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "Tip Afișaj"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "Configurator al Monitorului de Sistem"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "Afișează Pictogramă"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "Afișează la Centru"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "Culoare Fundal"
 
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr ""
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr ""
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr ""
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr ""
+
+#: extension.js:746
 msgid "Cpu"
 msgstr "Cpu"
 
@@ -67,6 +82,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "Iowait"
 
+#: extension.js:941
 msgid "Memory"
 msgstr "Memorie"
 
@@ -79,12 +95,14 @@ msgstr "Cache"
 msgid "Buffer"
 msgstr "Buffer"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "Swap"
 
 msgid "Used"
 msgstr "Folosit"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "Net"
 
@@ -94,6 +112,7 @@ msgstr "Incărcare"
 msgid "Down"
 msgstr "Descărcare"
 
+#: extension.js:836
 msgid "Disk"
 msgstr "Disc"
 
@@ -103,12 +122,15 @@ msgstr "Scriere"
 msgid "Read"
 msgstr "Citire"
 
+#: prefs.js:185
 msgid "graph"
 msgstr "grafic"
 
+#: prefs.js:185
 msgid "digit"
 msgstr "cifre"
 
+#: prefs.js:185
 msgid "both"
 msgstr "ambele"
 
@@ -127,10 +149,16 @@ msgstr "net"
 msgid "disk"
 msgstr "disc"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "Preferințe..."
 
+#: extension.js:1340
 msgid "System Monitor..."
+msgstr "Monitor Sistem..."
+
+#, fuzzy
+msgid "System monitor"
 msgstr "Monitor Sistem..."
 
 msgid "user"
@@ -171,3 +199,70 @@ msgstr "scriere"
 
 msgid "read"
 msgstr "citire"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr ""
+
+#, fuzzy
+msgid "thermal"
+msgstr "Altele"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr ""
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr ""
+
+#: prefs.js:226
+msgid "Hide System Icon"
+msgstr ""
+
+#: prefs.js:230
+#, fuzzy
+msgid "Usage Style"
+msgstr "Tip Afișaj"
+
+#: prefs.js:231
+msgid "pie"
+msgstr ""
+
+#: prefs.js:231
+msgid "bar"
+msgstr ""
+
+#: prefs.js:231
+msgid "none"
+msgstr ""
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+
+#: extension.js:97
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "Monitor Sistem..."
+
+#: extension.js:113
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:601
+msgid "Battery"
+msgstr ""
+
+#: extension.js:896
+msgid "Freq"
+msgstr ""
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "Configurator al Monitorului de Sistem"

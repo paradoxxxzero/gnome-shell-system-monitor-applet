@@ -1,57 +1,69 @@
-# German translation.
+# French translation.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Michael Pusterhofer <pusterhofer@student.tugraz.at>, 2011.
-
+# Guillaume Ayoub <guillaume.ayoub@kozea.fr>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-06 10:56+0800\n"
-"PO-Revision-Date: 2011-08-01 03:33+0200\n"
-"Last-Translator: Guillaume Ayoub <guillaume.ayoub@kozea.fr>\n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
+"PO-Revision-Date: 2012-06-20 12:46+0200\n"
+"Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: system-monitor-applet-config.py:128
+#: prefs.js:161
 msgid "Display"
 msgstr "Affichage"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "Rafraîchissement"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "Largeur du graphe"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "Montrer le texte"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "Type d’affichage"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "Configuration de l’applet moniteur système"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "Afficher l’icône"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "Afficher au milieu"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "Couleur de fond"
 
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr "Afficher le débit réseau en bits"
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr "Capteur"
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr "Veuillez installer lm-sensors, s'il vous plaît"
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr "Déplacer l'horloge"
+
+#: extension.js:746
 msgid "Cpu"
 msgstr "CPU"
 
@@ -70,6 +82,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "IOwait"
 
+#: extension.js:941
 msgid "Memory"
 msgstr "Mémoire"
 
@@ -82,12 +95,14 @@ msgstr "Cache"
 msgid "Buffer"
 msgstr "Tampon"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "Swap"
 
 msgid "Used"
 msgstr "Utilisé"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "Réseau"
 
@@ -97,6 +112,7 @@ msgstr "Montant"
 msgid "Down"
 msgstr "Descendant"
 
+#: extension.js:836
 msgid "Disk"
 msgstr "Disque"
 
@@ -106,32 +122,40 @@ msgstr "Écriture"
 msgid "Read"
 msgstr "Lecture"
 
+#: prefs.js:185
 msgid "graph"
-msgstr "Graphe"
+msgstr "graphe"
 
+#: prefs.js:185
 msgid "digit"
-msgstr "Chiffre"
+msgstr "chiffre"
 
+#: prefs.js:185
 msgid "both"
-msgstr "Les deux"
+msgstr "les deux"
 
 msgid "cpu"
 msgstr "CPU"
 
 msgid "mem"
-msgstr "Mém."
+msgstr "mém."
 
 msgid "swap"
-msgstr "Swap"
+msgstr "swap"
 
 msgid "net"
-msgstr "Réseau"
+msgstr "réseau"
 
 msgid "disk"
-msgstr "Disque"
+msgstr "disque"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "Préférences…"
+
+#: extension.js:1340
+msgid "System Monitor..."
+msgstr "Moniteur système…"
 
 msgid "System monitor"
 msgstr "Moniteur système"
@@ -170,7 +194,77 @@ msgid "down"
 msgstr "descendant"
 
 msgid "write"
-msgstr "Écriture"
+msgstr "écriture"
 
 msgid "read"
 msgstr "lecture"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr "Thermique"
+
+msgid "thermal"
+msgstr "thermique"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr "Afficher dans le menu"
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr "Afficher le temps restant"
+
+#: prefs.js:226
+msgid "Hide System Icon"
+msgstr "Cacher l'icône système"
+
+#: prefs.js:230
+msgid "Usage Style"
+msgstr "Type d’affichage"
+
+#: prefs.js:231
+msgid "pie"
+msgstr "circulaire"
+
+#: prefs.js:231
+msgid "bar"
+msgstr "barre"
+
+#: prefs.js:231
+msgid "none"
+msgstr "aucun"
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t on Arch: libgtop, networkmanager\n"
+msgstr ""
+"Dépendances manquantes\n"
+"S'il vous plaît, veuillez installer : \n"
+"libgtop, Network Manager et les bibliothèques de liaisons gir \n"
+"\t sur Ubuntu : gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t sur Fedora : libgtop2-devel, NetworkManager-glib-devel \n"
+"\t sur Arch : libgtop, networkmanager\n"
+
+#: extension.js:97
+msgid "System Monitor Extension"
+msgstr "Extension de surveillance système"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr "Annuler"
+
+#: extension.js:601
+msgid "Battery"
+msgstr "Batterie"
+
+#: extension.js:896
+msgid "Freq"
+msgstr "Fréq."
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "Configuration de l’applet moniteur système"

@@ -1,15 +1,15 @@
 # Copyright (C) 2011 Iranian Free Software Users Group (IFSUG.org)translation team.
 # This file is distributed under the same license as the PACKAGE package.
 # Arash Mousavi <mousavi.arash@gmail.com>, 2011.
-#: system-monitor-applet-config.py:128
-
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arash Mousavi <mousavi.arash@gmail.com>\n"
 "Language-Team: Persian <translate@ifsug.org>\n"
+"Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -17,41 +17,55 @@ msgstr ""
 "X-Poedit-Country: IRAN, ISLAMIC REPUBLIC OF\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: prefs.js:161
 msgid "Display"
 msgstr "نمایش"
 
-#: system-monitor-applet-config.py:133
+#: prefs.js:166
 msgid "Refresh Time"
 msgstr "زمان نوسازی"
 
-#: system-monitor-applet-config.py:139
+#: prefs.js:171
 msgid "Graph Width"
 msgstr "طول گراف"
 
-#: system-monitor-applet-config.py:145
+#: prefs.js:176
 msgid "Show Text"
 msgstr "نمایش متن"
 
-#: system-monitor-applet-config.py:150
+#: prefs.js:184
 msgid "Display Style"
 msgstr "سبک نمایش"
 
-#: system-monitor-applet-config.py:169
-msgid "System Monitor Applet Configurator"
-msgstr "پیکربندی برنامک پایشگر سیستم"
-
-#: system-monitor-applet-config.py:186
+#: prefs.js:267
 msgid "Display Icon"
 msgstr "نمایش شمایل"
 
-#: system-monitor-applet-config.py:192
+#: prefs.js:276
 msgid "Display in the Middle"
 msgstr "نمایش در وسط"
 
-#: system-monitor-applet-config.py:198
+#: prefs.js:288
 msgid "Background Color"
 msgstr "رنگ پس‌زمینه"
 
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr ""
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr ""
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr ""
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr ""
+
+#: extension.js:746
 msgid "Cpu"
 msgstr "سی‌پی‌یو"
 
@@ -70,6 +84,7 @@ msgstr "نایس"
 msgid "Iowait"
 msgstr ""
 
+#: extension.js:941
 msgid "Memory"
 msgstr "حافظه"
 
@@ -82,12 +97,14 @@ msgstr "حافظه‌نهان"
 msgid "Buffer"
 msgstr "بافر"
 
+#: extension.js:1134
 msgid "Swap"
 msgstr "سوئپ"
 
 msgid "Used"
 msgstr "استفاده شده"
 
+#: extension.js:1010
 msgid "Net"
 msgstr "شبکه"
 
@@ -97,6 +114,7 @@ msgstr "آپلود"
 msgid "Down"
 msgstr "دانلود"
 
+#: extension.js:836
 msgid "Disk"
 msgstr "دیسک"
 
@@ -106,12 +124,15 @@ msgstr "نوشتن"
 msgid "Read"
 msgstr "خواندن"
 
+#: prefs.js:185
 msgid "graph"
 msgstr "گراف"
 
+#: prefs.js:185
 msgid "digit"
 msgstr "عددی"
 
+#: prefs.js:185
 msgid "both"
 msgstr "هر دو"
 
@@ -130,9 +151,11 @@ msgstr "شبکه"
 msgid "disk"
 msgstr "دیسک"
 
+#: extension.js:1346
 msgid "Preferences..."
 msgstr "ترجیحات..."
 
+#: extension.js:1340
 msgid "System Monitor..."
 msgstr "پایشگر سیستم..."
 
@@ -177,3 +200,71 @@ msgstr "نوشتن"
 
 msgid "read"
 msgstr "خواندن"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr ""
+
+#, fuzzy
+msgid "thermal"
+msgstr "دیگر"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr ""
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr ""
+
+#: prefs.js:226
+#, fuzzy
+msgid "Hide System Icon"
+msgstr "پایشگر سیستم"
+
+#: prefs.js:230
+#, fuzzy
+msgid "Usage Style"
+msgstr "سبک نمایش"
+
+#: prefs.js:231
+msgid "pie"
+msgstr ""
+
+#: prefs.js:231
+msgid "bar"
+msgstr ""
+
+#: prefs.js:231
+msgid "none"
+msgstr ""
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+
+#: extension.js:97
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "پایشگر سیستم"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:601
+msgid "Battery"
+msgstr ""
+
+#: extension.js:896
+msgid "Freq"
+msgstr ""
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "پیکربندی برنامک پایشگر سیستم"

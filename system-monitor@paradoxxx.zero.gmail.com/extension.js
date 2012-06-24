@@ -849,7 +849,7 @@ const Disk = new Lang.Class({
         this.block_size = this.gtop.block_size/1024/1024/8;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         this.parent()
-        this.tip_format('KiB/s');
+        this.tip_format(_('KiB/s'));
         this.update();
     },
     refresh: function() {
@@ -884,17 +884,17 @@ const Disk = new Lang.Class({
     create_text_items: function() {
         return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
                 new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"}),
+                new St.Label({ text: _('MiB/s'), style_class: "sm-perc-label"}),
                 new St.Label({ text: 'W', style_class: "sm-status-label"}),
                 new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: 'MiB/s', style_class: "sm-perc-label"})];
+                new St.Label({ text: _('MiB/s'), style_class: "sm-perc-label"})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:'MiB/s', style_class: "sm-label"}),
+                new St.Label({ text:_('MiB/s'), style_class: "sm-label"}),
                 new St.Label({ text:'R', style_class: "sm-label"}),
                 new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:'MiB/s', style_class: "sm-label"}),
+                new St.Label({ text:_('MiB/s'), style_class: "sm-label"}),
                 new St.Label({ text:'W', style_class: "sm-label"})];
     }
 });
@@ -989,7 +989,7 @@ const Mem = new Lang.Class({
                 new St.Label({ text: "/", style_class: "sm-label"}),
                 new St.Label({ style_class: "sm-value"}),
                 new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: 'MiB', style_class: "sm-label"})];
+                new St.Label({ text: _('MiB'), style_class: "sm-label"})];
     }
 });
 
@@ -1023,7 +1023,7 @@ const Net = new Lang.Class({
         this.last_time = 0;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         this.parent()
-        this.tip_format(['KiB/s', '/s', 'KiB/s', '/s', '/s']);
+        this.tip_format([_('KiB/s'), '/s', _('KiB/s'), '/s', '/s']);
         this.update_units();
         Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
         try {
@@ -1097,15 +1097,15 @@ const Net = new Lang.Class({
         }
         else {
             if (this.tip_vals[0] < 1024)
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'KiB/s';
+                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = _('KiB/s');
             else {
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'MiB/s';
+                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = _('MiB/s');
                 this.tip_vals[0] = (this.tip_vals[0] / 1024).toPrecision(3);
             }
             if (this.tip_vals[2] < 1024)
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'KiB/s';
+                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = _('KiB/s');
             else {
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'MiB/s';
+                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = _('MiB/s');
                 this.tip_vals[2] = (this.tip_vals[2] / 1024).toPrecision(3);
             }
         }
@@ -1117,20 +1117,20 @@ const Net = new Lang.Class({
                               icon_size: 2 * IconSize / 3,
                               icon_name:'go-down'}),
                 new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: 'KiB/s', style_class: "sm-unit-label"}),
+                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                               icon_size: 2 * IconSize / 3,
                               icon_name:'go-up'}),
                 new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: 'KiB/s', style_class: "sm-unit-label"})];
+                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:'KiB/s', style_class: "sm-label"}),
+                new St.Label({ text:_('KiB/s'), style_class: "sm-label"}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                               icon_size: 16, icon_name:'go-down'}),
                 new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:'KiB/s', style_class: "sm-label"}),
+                new St.Label({ text:_('KiB/s'), style_class: "sm-label"}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                               icon_size: 16, icon_name:'go-up'})];
     }
@@ -1178,7 +1178,7 @@ const Swap = new Lang.Class({
                 new St.Label({ text: "/", style_class: "sm-label"}),
                 new St.Label({ style_class: "sm-value"}),
                 new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: 'MiB', style_class: "sm-label"})];
+                new St.Label({ text: _('MiB'), style_class: "sm-label"})];
     }
 });
 

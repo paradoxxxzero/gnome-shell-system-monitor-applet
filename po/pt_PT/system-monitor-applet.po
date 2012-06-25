@@ -15,6 +15,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ""
+
 #: prefs.js:161
 msgid "Display"
 msgstr "Apresentar"
@@ -112,6 +116,12 @@ msgstr "Enviados"
 msgid "Down"
 msgstr "Recebidos"
 
+msgid "Uperrors"
+msgstr "Erros ao enviar"
+
+msgid "Downerrors"
+msgstr "Erros ao receber"
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disco"
@@ -193,11 +203,28 @@ msgstr "enviado"
 msgid "down"
 msgstr "recebido"
 
+#, fuzzy
+msgid "uperrors"
+msgstr "Erros ao enviar"
+
+#, fuzzy
+msgid "downerrors"
+msgstr "Erros ao receber"
+
 msgid "write"
 msgstr "escrita"
 
 msgid "read"
 msgstr "leitura"
+
+msgid "KiB/s"
+msgstr ""
+
+msgid "MiB/s"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
 
 #: extension.js:1179
 msgid "Thermal"
@@ -265,12 +292,6 @@ msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configurador do System Monitor Applet"
-
-#~ msgid "Uperrors"
-#~ msgstr "Erros ao enviar"
-
-#~ msgid "Downerrors"
-#~ msgstr "Erros ao receber"
 
 #~ msgid "Collisions"
 #~ msgstr "Colisões"

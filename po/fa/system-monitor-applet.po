@@ -17,6 +17,10 @@ msgstr ""
 "X-Poedit-Country: IRAN, ISLAMIC REPUBLIC OF\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ""
+
 #: prefs.js:161
 msgid "Display"
 msgstr "نمایش"
@@ -114,6 +118,12 @@ msgstr "آپلود"
 msgid "Down"
 msgstr "دانلود"
 
+msgid "Uperrors"
+msgstr ""
+
+msgid "Downerrors"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "دیسک"
@@ -195,11 +205,26 @@ msgstr "آپلود"
 msgid "down"
 msgstr "دانلود"
 
+msgid "uperrors"
+msgstr ""
+
+msgid "downerrors"
+msgstr ""
+
 msgid "write"
 msgstr "نوشتن"
 
 msgid "read"
 msgstr "خواندن"
+
+msgid "KiB/s"
+msgstr ""
+
+msgid "MiB/s"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
 
 #: extension.js:1179
 msgid "Thermal"

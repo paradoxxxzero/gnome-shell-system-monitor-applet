@@ -260,13 +260,14 @@ msgid "none"
 msgstr "aucun"
 
 #: extension.js:6
+#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
 "libgtop, Network Manager and gir bindings \n"
-"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t on Arch: libgtop, networkmanager\n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
 "Dépendances manquantes\n"
 "S'il vous plaît, veuillez installer : \n"

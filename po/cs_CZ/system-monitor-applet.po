@@ -15,6 +15,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ""
+
 #: prefs.js:161
 msgid "Display"
 msgstr "Zobrazit"
@@ -112,6 +116,12 @@ msgstr "Odchozí"
 msgid "Down"
 msgstr "Příchozí"
 
+msgid "Uperrors"
+msgstr ""
+
+msgid "Downerrors"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disk"
@@ -193,11 +203,26 @@ msgstr "odchozí"
 msgid "down"
 msgstr "příchozí"
 
+msgid "uperrors"
+msgstr ""
+
+msgid "downerrors"
+msgstr ""
+
 msgid "write"
 msgstr "zápis"
 
 msgid "read"
 msgstr "čtení"
+
+msgid "KiB/s"
+msgstr ""
+
+msgid "MiB/s"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
 
 #: extension.js:1179
 msgid "Thermal"

@@ -15,6 +15,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ""
+
 #: prefs.js:161
 msgid "Display"
 msgstr "显示"
@@ -112,6 +116,12 @@ msgstr "上传"
 msgid "Down"
 msgstr "下载"
 
+msgid "Uperrors"
+msgstr ""
+
+msgid "Downerrors"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "硬盘"
@@ -193,11 +203,26 @@ msgstr "上传"
 msgid "down"
 msgstr "下载"
 
+msgid "uperrors"
+msgstr ""
+
+msgid "downerrors"
+msgstr ""
+
 msgid "write"
 msgstr "写入"
 
 msgid "read"
 msgstr "读取"
+
+msgid "KiB/s"
+msgstr ""
+
+msgid "MiB/s"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
 
 #: extension.js:1179
 msgid "Thermal"

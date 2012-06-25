@@ -11,6 +11,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ""
+
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -112,6 +116,12 @@ msgstr "Odosielanie"
 msgid "Down"
 msgstr "Sťahovanie"
 
+msgid "Uperrors"
+msgstr ""
+
+msgid "Downerrors"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disk"
@@ -193,11 +203,26 @@ msgstr "odosielanie"
 msgid "down"
 msgstr "sťahovanie"
 
+msgid "uperrors"
+msgstr ""
+
+msgid "downerrors"
+msgstr ""
+
 msgid "write"
 msgstr "zápis"
 
 msgid "read"
 msgstr "čítanie"
+
+msgid "KiB/s"
+msgstr ""
+
+msgid "MiB/s"
+msgstr ""
+
+msgid "MiB"
+msgstr ""
 
 #: extension.js:1179
 msgid "Thermal"

@@ -89,6 +89,12 @@ function change_usage(){
     Main.__sm.pie.show(usage == 'pie');
     Main.__sm.bar.show(usage == 'bar');
 }
+function interesting_mountpoint(mount){
+    if (mount.length < 3)
+        return false;
+
+    return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase().indexOf("nfs") == 0) && mount[2].toLowerCase() != "udf");
+}
 
 const smDialog = Lang.Class({
     Name: 'SystemMonitor.smDialog',
@@ -211,7 +217,7 @@ const Graph = new Lang.Class({
         this.mounts = [];
         for(let mount_line in mount_lines) {
             let mount = mount_lines[mount_line].split(" ");
-            if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+            if(interesting_mountpoint(mount) && this.mounts.indexOf(mount[1]) < 0) {
                 this.mounts.push(mount[1]);
             }
         }
@@ -837,7 +843,7 @@ const Disk = new Lang.Class({
         this.mounts = [];
         for(let mount_line in mount_lines) {
             let mount = mount_lines[mount_line].split(" ");
-            if(mount[0].indexOf("/dev/") == 0 && this.mounts.indexOf(mount[1]) < 0) {
+            if(interesting_mountpoint(mount) && this.mounts.indexOf(mount[1]) < 0) {
                 this.mounts.push(mount[1]);
             }
         }

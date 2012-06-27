@@ -34,7 +34,7 @@ function color_to_hex(color){
 }
 
 function check_sensors(){
-    let inputs = ['temp1_input','temp2_input'];
+    let inputs = ['temp1_input','temp2_input','temp3_input'];
     let sensor_path = '/sys/class/hwmon/';
     let sensor_list = [];
     let string_list = [];

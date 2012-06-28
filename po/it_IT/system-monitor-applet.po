@@ -5,7 +5,7 @@
 # Federico Piazza fede.piazza92@gmail.com, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: federico 92-gnome-shell-system-monitor-applet-translation-0.1\n"
+"Project-Id-Version: federico 92-gnome-shell-system-monitor-applet-translation-1.0\n"
 "Report-Msgid-Bugs-To: fede.piazza92@gmail.com\n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: 2012-06-28 11:43+0100\n"

@@ -93,7 +93,7 @@ function interesting_mountpoint(mount){
     if (mount.length < 3)
         return false;
 
-    return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase().indexOf("nfs") == 0) && mount[2].toLowerCase() != "udf");
+    return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase().indexOf("nfs") == 0) && mount[2].toLowerCase() != "udf" && mount[2].toLowerCase() != "nfsd");
 }
 
 const smDialog = Lang.Class({

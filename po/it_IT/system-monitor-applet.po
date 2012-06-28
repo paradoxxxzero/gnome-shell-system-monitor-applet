@@ -1,15 +1,15 @@
-## Italian translations for system-monitor package
+# Italian translations for system-monitor package
 # Traduzione italiana per il pacchetto system-monitor.
 # Copyright (C) 2012 THE system-monitor'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the system-monitor package.
-# Federico Piazza <fede.piazza92@gmail.com>, 2012.
+# Federico Piazza fede.piazza92@gmail.com, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: federico 92-gnome-shell-system-monitor-applet-translation-0.1\n"
-"Report-Msgid-Bugs-To: <fede.piazza92@gmail.com>\n"
+"Report-Msgid-Bugs-To: fede.piazza92@gmail.com\n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: 2012-06-28 11:43+0100\n"
-"Last-Translator: Federico Piazza <fede.piazza92@gmail.com>\n"
+"Last-Translator: Federico Piazza fede.piazza92@gmail.com\n"
 "Language-Team: Italian\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -268,16 +268,16 @@ msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
 "libgtop, Network Manager and gir bindings \n"
-"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    on Arch: libgtop, networkmanager\n"
+"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t on Arch: libgtop, networkmanager\n"
 msgstr ""
 "Dipendenze Mancanti\n"
 "Si prega di installare: \n"
 "libgtop, Network Manager e gir bindings \n"
-"\t    su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    su Arch: libgtop, networkmanager\n"
+"\t su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t su Arch: libgtop, networkmanager\n"
 
 #: extension.js:97
 msgid "System Monitor Extension"

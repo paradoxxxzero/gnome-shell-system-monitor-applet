@@ -15,9 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69
+#: prefs.js:90
+#: prefs.js:110
 msgid ":"
-msgstr ""
+msgstr ":"
 
 #: prefs.js:161
 msgid "Display"
@@ -117,10 +119,10 @@ msgid "Down"
 msgstr "Příchozí"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "Odchozí chyby"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "Příchozí chyby"
 
 #: extension.js:836
 msgid "Disk"
@@ -204,10 +206,10 @@ msgid "down"
 msgstr "příchozí"
 
 msgid "uperrors"
-msgstr ""
+msgstr "odchozí chyby"
 
 msgid "downerrors"
-msgstr ""
+msgstr "příchozí chyby"
 
 msgid "write"
 msgstr "zápis"
@@ -216,13 +218,13 @@ msgid "read"
 msgstr "čtení"
 
 msgid "KiB/s"
-msgstr ""
+msgstr "KiB/s"
 
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
 #: extension.js:1179
 msgid "Thermal"
@@ -233,33 +235,31 @@ msgstr "teplota"
 
 #: prefs.js:180
 msgid "Show In Menu"
-msgstr ""
+msgstr "Zobrazit v menu"
 
 #: prefs.js:222
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Zobrazit zbývající čas"
 
 #: prefs.js:226
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "Sledování systému"
+msgstr "Skrýt systémovou ikonu"
 
 #: prefs.js:230
-#, fuzzy
 msgid "Usage Style"
 msgstr "Styl zobrazení"
 
 #: prefs.js:231
 msgid "pie"
-msgstr ""
+msgstr "koláčový"
 
 #: prefs.js:231
 msgid "bar"
-msgstr ""
+msgstr "sloupcový"
 
 #: prefs.js:231
 msgid "none"
-msgstr ""
+msgstr "žádný"
 
 #: extension.js:6
 msgid ""
@@ -270,23 +270,28 @@ msgid ""
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
+"Chybějící závislosti\n"
+"Prosím nainstalujte si: \n"
+"libgtop, Network Manager a gir bindings \n"
+"\t    Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    Arch: libgtop, networkmanager\n"
 
 #: extension.js:97
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "Sledování systému"
+msgstr "Sledování systému rozšíření"
 
 #: extension.js:113
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušit"
 
 #: extension.js:601
 msgid "Battery"
-msgstr ""
+msgstr "Baterie"
 
 #: extension.js:896
 msgid "Freq"
-msgstr ""
+msgstr "Frekvence"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "System Monitor Applet Konfigurátor"

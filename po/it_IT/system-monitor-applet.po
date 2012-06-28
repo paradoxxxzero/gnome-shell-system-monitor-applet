@@ -1,21 +1,25 @@
-# Italian translation.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+## Italian translations for system-monitor package
+# Traduzione italiana per il pacchetto system-monitor.
+# Copyright (C) 2012 THE system-monitor'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the system-monitor package.
 # Federico Piazza <fede.piazza92@gmail.com>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: federico 92-gnome-shell-system-monitor-applet-translation-0.1\n"
+"Report-Msgid-Bugs-To: <fede.piazza92@gmail.com>\n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2012-06-28 10:31+ZONE\n"
+"PO-Revision-Date: 2012-06-28 11:43+0100\n"
 "Last-Translator: Federico Piazza <fede.piazza92@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language-Team: Italian\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69
+#: prefs.js:90
+#: prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -61,7 +65,7 @@ msgstr "Sensore"
 
 #: prefs.js:207
 msgid "Please install lm-sensors"
-msgstr "Perfavore installare lm-sensors"
+msgstr "Si prega di installare lm-sensors"
 
 #: prefs.js:282
 msgid "Move the clock"
@@ -81,7 +85,7 @@ msgid "Other"
 msgstr "Altro"
 
 msgid "Nice"
-msgstr "Nicee"
+msgstr "Nice"
 
 msgid "Iowait"
 msgstr "IOwait"
@@ -168,7 +172,7 @@ msgid "System Monitor..."
 msgstr "Monitor di Sistema..."
 
 msgid "System monitor"
-msgstr "Monitor di Sistema"
+msgstr "Monitor di sistema"
 
 msgid "user"
 msgstr "utente"
@@ -216,7 +220,7 @@ msgid "read"
 msgstr "lettura"
 
 msgid "KiB/s"
-msgstr "KiB/s"
+msgstr "kiB/s"
 
 msgid "MiB/s"
 msgstr "MiB/s"
@@ -269,7 +273,7 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
 "Dipendenze Mancanti\n"
-"Perfavore installare: \n"
+"Si prega di installare: \n"
 "libgtop, Network Manager e gir bindings \n"
 "\t    su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
 "\t    su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
@@ -290,6 +294,3 @@ msgstr "Batteria"
 #: extension.js:896
 msgid "Freq"
 msgstr "Frequenza"
-
-#~ msgid "System Monitor Applet Configurator"
-#~ msgstr "Applet di configurazione per Monitor di Sistema"

@@ -3,7 +3,7 @@ const Gio = imports.gi.Gio;
 
 function initTranslations(metadata) {
     let localeDir = metadata.dir.get_child('locale').get_path();
-    Gettext.bindtextdomain('gnome-shell-extensions', localeDir);
+    Gettext.bindtextdomain('system-monitor-applet', localeDir);
 }
 
 function getSettings(metadata, extension_id) {

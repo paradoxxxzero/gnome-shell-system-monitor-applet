@@ -1,4 +1,4 @@
-<schemalist gettext-domain="gnome-shell-extensions">
+<schemalist gettext-domain="system-monitor-applet">
   <enum id="org.gnome.shell.extensions.system-monitor.display-style">
     <value value="0" nick="digit"/>
     <value value="1" nick="graph"/>

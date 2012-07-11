@@ -741,6 +741,32 @@ const Battery = new Lang.Class({
     }
 });
 
+/* Check if one graph per core must be displayed and create the
+   appropriate number of cpu items */
+function createCpus()
+{
+    let array = new Array();
+    if (Schema.get_boolean("cpu-dissociate-cores")) {
+        // get number of cores
+        let gtop = new GTop.glibtop_cpu();
+        let numcores = 1;
+        try {
+            numcores = GTop.glibtop_get_sysinfo().ncpu;
+        } catch(e) {
+            global.logError(e);
+        }
+        
+        // instantiate each cpu instance
+        for (let i = 0; i < numcores; i++)
+            array.push(new Cpu(i));
+    }
+    // just display a global cpu item
+    else {
+        array.push(new Cpu(-1));
+    }
+
+    return array;
+}
 
 const Cpu = new Lang.Class({
     Name: 'SystemMonitor.Cpu',
@@ -749,21 +775,27 @@ const Cpu = new Lang.Class({
     elt: 'cpu',
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     max: 100,
+    cpuid: -1, // cpuid is -1 when all cores are displayed in the same graph
 
-    _init: function() {
+    _init: function(cpuid) {
+        this.cpuid = cpuid;
         this.gtop = new GTop.glibtop_cpu();
         this.last = [0,0,0,0,0];
         this.current = [0,0,0,0,0];
         try {
             this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
-            this.max *= this.total_cores;
+            if (cpuid == -1)
+                this.max *= this.total_cores;
         } catch(e) {
             this.total_cores = this.get_cores();
             global.logError(e)
         }
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+        let item_name = _("Cpu");
+        if (cpuid != -1)
+            item_name += " " + (cpuid + 1); // append cpu number to cpu name in popup
+        this.menu_item = new PopupMenu.PopupMenuItem(item_name, {reactive: false});
         //ElementBase.prototype._init.call(this);
         this.parent()
         this.tip_format();
@@ -771,24 +803,88 @@ const Cpu = new Lang.Class({
     },
     refresh: function() {
         GTop.glibtop_get_cpu(this.gtop);
-        this.current[0] = this.gtop.user;
-        this.current[1] = this.gtop.sys;
-        this.current[2] = this.gtop.nice;
-        this.current[3] = this.gtop.idle;
-        this.current[4] = this.gtop.iowait;
+        // display global cpu usage on 1 graph
+        if (this.cpuid == -1) {
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.sys;
+            this.current[2] = this.gtop.nice;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+            let delta = (this.gtop.total - this.last_total)/(100*this.total_cores);
 
-        let delta = (this.gtop.total - this.last_total)/(100*this.total_cores) ;
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                this.last_total = this.gtop.total;
+            }
+        }
+        // display per cpu data
+        else {
+            this.current[0] = this.gtop.xcpu_user[this.cpuid];
+            this.current[1] = this.gtop.xcpu_sys[this.cpuid];
+            this.current[2] = this.gtop.xcpu_nice[this.cpuid];
+            this.current[3] = this.gtop.xcpu_idle[this.cpuid];
+            this.current[4] = this.gtop.xcpu_iowait[this.cpuid];
+            let delta = (this.gtop.xcpu_total[this.cpuid] - this.last_total)/100;
+
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                this.last_total = this.gtop.xcpu_total[this.cpuid];
+            }
+        }
+
+        /*
+        GTop.glibtop_get_cpu(this.gtop);
+        // display global cpu usage on 1 graph
+        if (this.cpuid == -1)
+        {
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.sys;
+            this.current[2] = this.gtop.nice;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+        }
+        // display cpu usage for given core
+        else
+        {
+            this.current[0] = this.gtop.xcpu_user[this.cpuid];
+            this.current[1] = this.gtop.xcpu_sys[this.cpuid];
+            this.current[2] = this.gtop.xcpu_nice[this.cpuid];
+            this.current[3] = this.gtop.xcpu_idle[this.cpuid];
+            this.current[4] = this.gtop.xcpu_iowait[this.cpuid];
+        }
+
+        let delta = 0;
+        if (this.cpuid == -1)
+            delta = (this.gtop.total - this.last_total)/(100*this.total_cores);
+        else
+            delta = (this.gtop.xcpu_total[this.cpuid] - this.last_total)/100;
+
         if (delta > 0){
             for (let i = 0;i < 5;i++){
                 this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
                 this.last[i] = this.current[i];
             }
-            this.last_total = this.gtop.total;
+            if (this.cpuid == -1)
+                this.last_total = this.gtop.total;
+            else
+                this.last_total = this.gtop.xcpu_total[this.cpuid];
         }
+        */
     },
     _apply: function() {
-        let percent = Math.round(((100 * this.total_cores) - this.usage[3])
+        let percent = 0;
+        if (this.cpuid == -1)
+            percent = Math.round(((100 * this.total_cores) - this.usage[3])
                                  / this.total_cores);
+        else
+            percent = Math.round((100 - this.usage[3]));
+
         this.text_items[0].text = this.menu_items[3].text = percent.toString();
         let other = 100;
         for (let i = 0;i < this.usage.length;i++)
@@ -1299,17 +1395,18 @@ var enable = function () {
             icon: new Icon(),
             pie: new Pie(300, 300),
             bar: new Bar(300, 150),
-            elts: {
-                cpu: new Cpu(),
-                freq: new Freq(),
-                memory: new Mem(),
-                swap: new Swap(),
-                net: new Net(),
-                disk: new Disk(),
-                thermal: new Thermal(),
-                battery: new Battery(),
-            }
+            elts: new Array(),
         };
+
+        Main.__sm.elts = createCpus();
+        Main.__sm.elts.push(new Freq());
+        Main.__sm.elts.push(new Mem());
+        Main.__sm.elts.push(new Swap());
+        Main.__sm.elts.push(new Net());
+        Main.__sm.elts.push(new Disk());
+        Main.__sm.elts.push(new Thermal());
+        Main.__sm.elts.push(new Battery());
+
         let tray = Main.__sm.tray;
         Main.panel._statusArea.systemMonitor = tray;
         panel.insert_child_at_index(tray.actor, 1);

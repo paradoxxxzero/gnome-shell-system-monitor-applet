@@ -193,6 +193,10 @@ const SettingFrame = new Lang.Class({
             let item = new Gtk.CheckButton({label:_('Show network speed in bits')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+        } else if (sections[1] == 'dissociate' && sections[2] == 'cores'){
+            let item = new Gtk.CheckButton({label:_('Dissociate Cores')});
+            this.hbox3.add(item);
+			Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections.length == 3 && sections[2] == 'color'){
             let item = new ColorSelect(_(sections[1].capitalize()));
             item.set_value(this.schema.get_string(key));

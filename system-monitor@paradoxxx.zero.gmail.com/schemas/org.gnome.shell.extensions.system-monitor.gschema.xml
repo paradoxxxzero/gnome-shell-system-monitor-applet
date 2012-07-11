@@ -102,6 +102,11 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="cpu-dissociate-cores" type="b">
+      <default>false</default>
+      <summary>Display one graph per cpu core</summary>
+      <description>Set to true to display one graph per cpu core</description>
+    </key>
     <key name="freq-display" type="b">
       <default>false</default>
       <summary>Display freq</summary>

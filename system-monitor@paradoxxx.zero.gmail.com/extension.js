@@ -746,7 +746,7 @@ const Battery = new Lang.Class({
 function createCpus()
 {
     let array = new Array();
-    if (Schema.get_boolean("cpu-dissociate-cores")) {
+    if (Schema.get_boolean("cpu-individual-cores")) {
         // get number of cores
         let gtop = new GTop.glibtop_cpu();
         let numcores = 1;

@@ -1151,10 +1151,12 @@ const Net = new Lang.Class({
     elt: 'net',
     color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
     speed_in_bits: false,
+    compact: false,
     _init: function() {
         this.ifs = [];
         this.client = NMClient.Client.new();
         this.update_iface_list();
+        this.compact = Schema.get_boolean(this.elt + '-compact-text');
 
         if(!this.ifs.length){
             let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
@@ -1228,42 +1230,74 @@ const Net = new Lang.Class({
             }
         this.last_time = time;
     },
+
+    // pad a string with leading 0s
+    _pad:function(number, length) {
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        return str;   
+    },
+
     _apply: function() {
         this.tip_vals = this.usage;
         if (this.speed_in_bits) {
             this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
             this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
-            if (this.tip_vals[0] < 1000)
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
+            if (this.tip_vals[0] < 1000) {
+                this.text_items[2].text = (this.compact ? 'kb' : 'kbps');
+                this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
+            }
             else {
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
+                this.text_items[2].text = (this.compact ? 'Mb' : 'Mbps');
+                this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
                 this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
             }
-            if (this.tip_vals[2] < 1000)
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
+            if (this.tip_vals[2] < 1000) {
+                this.text_items[5].text = (this.compact ? 'kb' : 'kbps');
+                this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
+            }
             else {
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
+                this.text_items[5].text = (this.compact ? 'Mb' : 'Mbps');
+                this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
                 this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
             }
         }
         else {
-            if (this.tip_vals[0] < 1024)
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = _('KiB/s');
+            if (this.tip_vals[0] < 1024) {
+                this.text_items[2].text = (this.compact ? _('kB') : _('KiB/s'));
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('KiB/s');
+            }
             else {
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = _('MiB/s');
+                this.text_items[2].text = (this.compact ? _('MB') : _('MiB/s'));
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('MiB/s');
                 this.tip_vals[0] = (this.tip_vals[0] / 1024).toPrecision(3);
             }
-            if (this.tip_vals[2] < 1024)
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = _('KiB/s');
+            if (this.tip_vals[2] < 1024) {
+                this.text_items[5].text = (this.compact ? _('kB') : _('KiB/s'));
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('KiB/s');
+            }
             else {
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = _('MiB/s');
+                this.text_items[5].text = (this.compact ? _('MB') : _('MiB/s'));
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('MiB/s');
                 this.tip_vals[2] = (this.tip_vals[2] / 1024).toPrecision(3);
             }
         }
-        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
+
+        if (!this.compact) {
+            this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+            this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
+        }
+        else {
+            this.menu_items[0].text = this.text_items[1].text = this._pad(this.tip_vals[0].toString(), 3);
+            this.menu_items[3].text = this.text_items[4].text = this._pad(this.tip_vals[2].toString(), 3);
+        }
+
     },
     create_text_items: function() {
+        if (!this.compact)
+        {
         return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                               icon_size: 2 * IconSize / 3,
                               icon_name:'go-down'}),
@@ -1274,6 +1308,19 @@ const Net = new Lang.Class({
                               icon_name:'go-up'}),
                 new St.Label({ style_class: "sm-status-value"}),
                 new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"})];
+        }
+        else {
+        return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                          icon_size: 2 * IconSize / 5,
+                          icon_name:'go-down'}),
+                new St.Label({ style_class: "sm-status-value-compact"}),
+                new St.Label({ style_class: "sm-unit-label-compact"}),
+                new St.Icon({ icon_type: St.IconType.SYMBOLIC,
+                          icon_size: 2 * IconSize / 5,
+                          icon_name:'go-up'}),
+                new St.Label({ style_class: "sm-status-value-compact"}),
+                new St.Label({ style_class: "sm-unit-label-compact"})];
+        }
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),

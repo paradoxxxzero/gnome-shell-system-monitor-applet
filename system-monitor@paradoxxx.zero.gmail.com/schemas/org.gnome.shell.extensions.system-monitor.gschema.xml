@@ -169,6 +169,10 @@
       <default>false</default>
       <summary>Show network speed in bits/sec</summary>
     </key>
+    <key name="net-compact-text" type="b">
+      <default>false</default>
+      <summary>Compact and fixed width network speed texts</summary>
+    </key>
     <key name="disk-display" type="b">
       <default>false</default>
       <summary>Display disk io speed</summary>

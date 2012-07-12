@@ -746,21 +746,27 @@ const Battery = new Lang.Class({
 function createCpus()
 {
     let array = new Array();
+    let numcores = 1;
+
     if (Schema.get_boolean("cpu-individual-cores")) {
         // get number of cores
         let gtop = new GTop.glibtop_cpu();
-        let numcores = 1;
         try {
             numcores = GTop.glibtop_get_sysinfo().ncpu;
         } catch(e) {
             global.logError(e);
+            numcores = 1;
         }
-        
-        // instantiate each cpu instance
+    }
+    
+    // there are several cores to display,
+    // instantiate each cpu
+    if (numcores > 1) {
         for (let i = 0; i < numcores; i++)
             array.push(new Cpu(i));
     }
-    // just display a global cpu item
+    // individual cores option is not set or we failed to
+    // get the number of cores, create a global cpu item
     else {
         array.push(new Cpu(-1));
     }

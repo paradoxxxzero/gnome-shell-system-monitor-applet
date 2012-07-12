@@ -957,7 +957,7 @@ const Disk = new Lang.Class({
         this.block_size = this.gtop.block_size/1024/1024/8;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         this.parent()
-        this.tip_format(_('KiB/s'));
+        this.tip_format(_('MiB/s'));
         this.update();
     },
     refresh: function() {

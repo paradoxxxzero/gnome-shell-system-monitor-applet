@@ -32,6 +32,18 @@
     text-align: right;
 }
 
+.sm-status-value-compact {
+    padding: 5px 1px;
+    font-size:11px;
+    text-align: right;
+}
+
+.sm-unit-label-compact {
+    padding: 8px 2px 0px 2px;
+    text-align: right;
+    font-size: 7px;
+}
+
 .sm-big-status-value {
     min-width: 32px;
     text-align: right;

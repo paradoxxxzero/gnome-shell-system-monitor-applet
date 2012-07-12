@@ -193,6 +193,10 @@ const SettingFrame = new Lang.Class({
             let item = new Gtk.CheckButton({label:_('Show network speed in bits')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+        } else if (sections[1] == 'compact' && sections[2] == 'text'){
+            let item = new Gtk.CheckButton({label:_('Show compact text')});
+            this.hbox3.add(item);
+            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'individual' && sections[2] == 'cores'){
             let item = new Gtk.CheckButton({label:_('Display Individual Cores')});
             this.hbox3.add(item);

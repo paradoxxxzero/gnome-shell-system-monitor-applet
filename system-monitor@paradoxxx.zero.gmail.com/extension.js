@@ -324,6 +324,7 @@ const Bar = new Lang.Class({
     },
     update_mounts: function(mounts) {
         this.mounts = mounts;
+        this.actor.queue_repaint();
     }
 });
 const Pie = new Lang.Class({
@@ -367,6 +368,7 @@ const Pie = new Lang.Class({
     },
     update_mounts: function(mounts){
         this.mounts = mounts;
+        this.actor.queue_repaint();
     }
 });
 

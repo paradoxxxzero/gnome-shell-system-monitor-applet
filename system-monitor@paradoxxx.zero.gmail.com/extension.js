@@ -67,7 +67,7 @@ libgtop, Network Manager and gir bindings \n\
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
-let Schema, Background, IconSize;
+let Schema, Background, IconSize, Style;
 let menu_timeout, gc_timeout;
 
 function l_limit(t) {
@@ -95,6 +95,53 @@ function interesting_mountpoint(mount){
 
     return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase() == "nfs") && mount[2].toLowerCase() != "udf");
 }
+
+
+const smStyleManager = new Lang.Class({
+    Name: 'SystemMonitor.smStyleManager',
+    extension: '',
+    iconsize: 1,
+    diskunits: _('MiB/s'),
+    netunits_kbytes: _('kiB/s'),
+    netunits_mbytes: _('MiB/s'),
+    netunits_kbits : 'kbps',
+    netunits_mbits : 'Mbps',
+
+    _init: function() {
+        this.compact = Schema.get_boolean('compact-display');
+        if (this.compact) {
+            this.extension = '-compact';
+            this.iconsize = 3/5;
+            this.diskunits = _('MB');
+            this.netunits_kbytes = _('kB');
+            this.netunits_mbytes = _('MB');
+            this.netunits_kbits = 'kb';
+            this.netunits_mbits = 'Mb';
+        }
+    },
+    _ext: function() {
+        return this.extension;
+    },
+    _iconsize: function() {
+        return this.iconsize;
+    },
+    _diskunits: function() {
+        return this.diskunits;
+    },
+    _netunits_kbytes: function() {
+        return this.netunits_kbytes;
+    },
+    _netunits_mbytes: function() {
+        return this.netunits_mbytes;
+    },
+    _netunits_kbits: function() {
+        return this.netunits_kbits;
+    },
+    _netunits_mbits: function() {
+        return this.netunits_mbits;
+    }
+});
+
 
 const smDialog = Lang.Class({
     Name: 'SystemMonitor.smDialog',
@@ -589,7 +636,7 @@ const ElementBase = new Lang.Class({
                        Lang.bind(this.chart, this.chart.resize));
 
         this.label = new St.Label({ text: this.elt == "memory" ? _("mem") : _(this.elt),
-                                    style_class: "sm-status-label"});
+                                    style_class: "sm-status-label" + Style._ext()});
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
@@ -773,9 +820,9 @@ const Battery = new Lang.Class({
     create_text_items: function() {
         return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
                               icon_type: St.IconType.FULLCOLOR,
-                              style_class: 'sm-status-icon' }),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-unit-label"})];
+                              style_class: 'sm-status-icon' + Style._ext() }),
+                new St.Label({ style_class: "sm-status-value" + Style._ext()}),
+                new St.Label({ text: '%', style_class: "sm-unit-label" + Style._ext()})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-void"}),
@@ -966,8 +1013,8 @@ const Cpu = new Lang.Class({
         return 1;
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: "sm-status-value" + Style._ext()}),
+                new St.Label({ text: '%', style_class: "sm-perc-label" + Style._ext()})];
 
     },
     create_menu_items: function() {
@@ -1033,12 +1080,12 @@ const Disk = new Lang.Class({
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     },
     create_text_items: function() {
-        return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('MiB/s'), style_class: "sm-perc-label"}),
-                new St.Label({ text: 'W', style_class: "sm-status-label"}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('MiB/s'), style_class: "sm-perc-label"})];
+        return [new St.Label({ text: 'R', style_class: "sm-status-label" + Style._ext()}),
+                new St.Label({ style_class: "sm-disk-value" + Style._ext()}),
+                new St.Label({ text: Style._diskunits(), style_class: "sm-perc-label" + Style._ext()}),
+                new St.Label({ text: 'W', style_class: "sm-status-label" + Style._ext()}),
+                new St.Label({ style_class: "sm-disk-value" + Style._ext()}),
+                new St.Label({ text: Style._diskunits(), style_class: "sm-perc-label" + Style._ext()})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),
@@ -1080,8 +1127,8 @@ const Freq = new Lang.Class({
         this.menu_items[3].text = value;
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-big-status-value"}),
-                new St.Label({ text: 'MHz', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: "sm-big-status-value" + Style._ext()}),
+                new St.Label({ text: 'MHz', style_class: "sm-perc-label" + Style._ext()})];
 
     },
     create_menu_items: function() {
@@ -1131,8 +1178,8 @@ const Mem = new Lang.Class({
         this.menu_items[3].text = this.total.toString();
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: "sm-status-value" + Style._ext()}),
+                new St.Label({ text: '%', style_class: "sm-perc-label" + Style._ext()})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),
@@ -1151,12 +1198,10 @@ const Net = new Lang.Class({
     elt: 'net',
     color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
     speed_in_bits: false,
-    compact: false,
     _init: function() {
         this.ifs = [];
         this.client = NMClient.Client.new();
         this.update_iface_list();
-        this.compact = Schema.get_boolean(this.elt + '-compact-text');
 
         if(!this.ifs.length){
             let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
@@ -1246,46 +1291,46 @@ const Net = new Lang.Class({
             this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
             this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
             if (this.tip_vals[0] < 1000) {
-                this.text_items[2].text = (this.compact ? 'kb' : 'kbps');
+                this.text_items[2].text = Style._netunits_kbits();
                 this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
             }
             else {
-                this.text_items[2].text = (this.compact ? 'Mb' : 'Mbps');
+                this.text_items[2].text = Style._netunits_mbits();
                 this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
                 this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
             }
             if (this.tip_vals[2] < 1000) {
-                this.text_items[5].text = (this.compact ? 'kb' : 'kbps');
+                this.text_items[5].text = Style._netunits_kbits();
                 this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
             }
             else {
-                this.text_items[5].text = (this.compact ? 'Mb' : 'Mbps');
+                this.text_items[5].text = Style._netunits_mbits();
                 this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
                 this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
             }
         }
         else {
             if (this.tip_vals[0] < 1024) {
-                this.text_items[2].text = (this.compact ? _('kB') : _('KiB/s'));
+                this.text_items[2].text = Style._netunits_kbytes();
                 this.menu_items[1].text = this.tip_unit_labels[0].text = _('KiB/s');
             }
             else {
-                this.text_items[2].text = (this.compact ? _('MB') : _('MiB/s'));
+                this.text_items[2].text = Style._netunits_mbytes();
                 this.menu_items[1].text = this.tip_unit_labels[0].text = _('MiB/s');
                 this.tip_vals[0] = (this.tip_vals[0] / 1024).toPrecision(3);
             }
             if (this.tip_vals[2] < 1024) {
-                this.text_items[5].text = (this.compact ? _('kB') : _('KiB/s'));
+                this.text_items[5].text = Style._netunits_kbytes();
                 this.menu_items[4].text = this.tip_unit_labels[2].text = _('KiB/s');
             }
             else {
-                this.text_items[5].text = (this.compact ? _('MB') : _('MiB/s'));
+                this.text_items[5].text = Style._netunits_mbytes();
                 this.menu_items[4].text = this.tip_unit_labels[2].text = _('MiB/s');
                 this.tip_vals[2] = (this.tip_vals[2] / 1024).toPrecision(3);
             }
         }
 
-        if (!this.compact) {
+        if (Style._ext() != '-compact') {
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
         }
@@ -1296,31 +1341,16 @@ const Net = new Lang.Class({
 
     },
     create_text_items: function() {
-        if (!this.compact)
-        {
         return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 2 * IconSize / 3,
+                              icon_size: 2 * IconSize / 3 * Style._iconsize(),
                               icon_name:'go-down'}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"}),
+                new St.Label({ style_class: "sm-net-value" + Style._ext()}),
+                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label" + Style._ext()}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 2 * IconSize / 3,
+                              icon_size: 2 * IconSize / 3 * Style._iconsize(),
                               icon_name:'go-up'}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"})];
-        }
-        else {
-        return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                          icon_size: 2 * IconSize / 5,
-                          icon_name:'go-down'}),
-                new St.Label({ style_class: "sm-status-value-compact"}),
-                new St.Label({ style_class: "sm-unit-label-compact"}),
-                new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                          icon_size: 2 * IconSize / 5,
-                          icon_name:'go-up'}),
-                new St.Label({ style_class: "sm-status-value-compact"}),
-                new St.Label({ style_class: "sm-unit-label-compact"})];
-        }
+                new St.Label({ style_class: "sm-net-value" + Style._ext()}),
+                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label" + Style._ext()})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),
@@ -1367,8 +1397,8 @@ const Swap = new Lang.Class({
     },
 
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: "sm-status-value" + Style._ext()}),
+                new St.Label({ text: '%', style_class: "sm-perc-label" + Style._ext()})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-value"}),
@@ -1413,8 +1443,8 @@ const Thermal = new Lang.Class({
         this.tip_vals[0] = Math.round(this.temperature);
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '\u2103', style_class: "sm-temp-label"})];
+        return [new St.Label({ style_class: "sm-status-value" + Style._ext()}),
+                new St.Label({ text: '\u2103', style_class: "sm-temp-label" + Style._ext()})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: "sm-void"}),
@@ -1443,12 +1473,15 @@ const Icon = new Lang.Class({
     }
 });
 
+
 var init = function () {
     log("System monitor applet init from " + extension.path);
 
     let me = extension.imports.convenience;
     me.initTranslations(extension);
     Schema = me.getSettings(extension, 'system-monitor');
+
+    Style = new smStyleManager();
 
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));

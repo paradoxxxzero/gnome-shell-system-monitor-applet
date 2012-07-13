@@ -169,10 +169,6 @@
       <default>false</default>
       <summary>Show network speed in bits/sec</summary>
     </key>
-    <key name="net-compact-text" type="b">
-      <default>false</default>
-      <summary>Compact and fixed width network speed texts</summary>
-    </key>
     <key name="disk-display" type="b">
       <default>false</default>
       <summary>Display disk io speed</summary>
@@ -249,6 +245,11 @@
       <default>true</default>
       <summary>Move the clock to the right when center-display is true</summary>
       <description>True: Move the clock to the right, False: Keep it in center</description>
+    </key>
+    <key name="compact-display" type="b">
+      <default>false</default>
+      <summary>Optimize view for small displays</summary>
+      <description>Optimize texts sizes to fit on a small display </description>
     </key>
     <key name="memory-program-color" type="s">
       <default>'#00b35b'</default>

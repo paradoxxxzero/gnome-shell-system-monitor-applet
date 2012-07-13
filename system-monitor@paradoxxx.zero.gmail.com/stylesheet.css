@@ -32,16 +32,14 @@
     text-align: right;
 }
 
-.sm-status-value-compact {
-    padding: 5px 1px;
-    font-size:11px;
+.sm-net-value {
+    min-width: 25px;
     text-align: right;
 }
 
-.sm-unit-label-compact {
-    padding: 8px 2px 0px 2px;
+.sm-disk-value {
+    min-width: 25px;
     text-align: right;
-    font-size: 7px;
 }
 
 .sm-big-status-value {
@@ -77,6 +75,63 @@
     spacing: 10px;
 }
 .sm-status-icon {
+    padding: 0px 2px;
+    icon-size: 1.14em;
+}
+
+.sm-status-label-compact {
+    color: #bbb;
+    font-size: 8px;
+    padding: 2px 0px 0 0px;
+}
+
+.sm-status-value-compact {
+    padding:6px 0px 0 1px;
+    font-size:11px;
+    text-align: right;
+    min-width:16px;
+}
+
+.sm-net-value-compact {
+    padding:6px 0px 0 1px;
+    font-size:11px;
+    text-align: right;
+    min-width:24px;
+}
+
+.sm-disk-value-compact {
+    padding: 6px 1px 0 1px;
+    font-size: 11px;
+    text-align: right;
+    min-width: 20px;
+}
+
+.sm-big-status-value-compact {
+    padding: 6px 0px 0px 1px;
+    font-size: 11px;
+    min-width: 38px;
+    text-align: right;
+}
+
+.sm-unit-label-compact {
+    padding: 9px 3px 0px 1px;
+    text-align: right;
+    font-size: 7px;
+}
+
+.sm-perc-label-compact {
+    padding: 9px 3px 0 0px;
+    color: #aaa;
+    font-size: 8px;
+}
+
+.sm-temp-label-compact {
+    font-size: 10px;
+    color: #aaa;
+    padding: 3px 1px 0 1px;
+}
+
+.sm-status-icon-compact {
     padding: 0px 2px;
     icon-size: 1.14em;
 }

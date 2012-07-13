@@ -204,11 +204,33 @@ const Chart = new Lang.Class({
                 this.data[i] = this.data[i].slice(-this.width);
     }
 });
-const Graph = new Lang.Class({
-    Name: 'SystemMonitor.Graph',
 
-    menu_item: '',
+// Class to deal with volumes insertion / ejection
+const MountsMonitor = new Lang.Class({
+    Name: 'SystemMonitor.MountsMonitor',
+    files: new Array(),
+    num_mounts: -1,
+    cb: null,
     _init: function() {
+        try {
+	    this.manager = Main.placesManager;
+	    this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
+        }
+        catch (e) {
+            global.error('Failed to register on placesManager notifications');
+            global.error('Got exception : ');
+        }
+        this.refresh();
+    },
+    refresh: function() {
+        // try check that number of volumes has changed
+        try {
+	    let num_mounts = this.manager.getMounts().length;
+            if (num_mounts == this.num_mounts)
+                return;
+            this.num_mounts = num_mounts;
+        } catch (e) {};
+
         // Can't get mountlist:
         // GTop.glibtop_get_mountlist
         // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
@@ -221,7 +243,22 @@ const Graph = new Lang.Class({
                 this.mounts.push(mount[1]);
             }
         }
+        if (this.cb != null)
+            this.cb(this.mounts);
+    },
+    set_cb: function(cb) {
+        this.cb = cb;
+    },
+    get_mounts: function() {
+        return this.mounts;
+    }
+});
 
+const Graph = new Lang.Class({
+    Name: 'SystemMonitor.Graph',
+
+    menu_item: '',
+    _init: function() {
         this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
         this.width = arguments[0][0];
         this.height = arguments[0][1];
@@ -246,13 +283,14 @@ const Graph = new Lang.Class({
     show: function(visible){
         this.menu_item.actor.visible = visible;
     }
-
 });
 const Bar = new Lang.Class({
     Name: 'SystemMonitor.Bar',
     Extends: Graph,
-
+    monitor: new MountsMonitor(),
     _init: function() {
+        this.mounts = this.monitor.get_mounts();
+        this.monitor.set_cb(Lang.bind(this, this.update_mounts));
         this.thickness = 15;
         this.fontsize = 14;
         this.parent(arguments);
@@ -260,6 +298,7 @@ const Bar = new Lang.Class({
     },
     _draw: function(){
         if (!this.actor.visible) return;
+        this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
 
@@ -282,12 +321,18 @@ const Bar = new Lang.Class({
             cr.stroke();
             y0 += (3 * this.thickness) / 2;
         }
+    },
+    update_mounts: function(mounts) {
+        this.mounts = mounts;
     }
 });
 const Pie = new Lang.Class({
     Name: 'SystemMonitor.Pie',
     Extends: Graph,
+    monitor: new MountsMonitor(),
     _init: function() {
+        this.mounts = this.monitor.get_mounts();
+        this.monitor.set_cb(Lang.bind(this, this.update_mounts));
         this.parent(arguments);
     },
     _draw: function() {
@@ -319,6 +364,9 @@ const Pie = new Lang.Class({
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
+    },
+    update_mounts: function(mounts){
+        this.mounts = mounts;
     }
 });
 
@@ -932,23 +980,14 @@ const Cpu = new Lang.Class({
 
 const Disk = new Lang.Class({
     Name: 'SystemMonitor.Disk',
-    Extends: ElementBase,
-
+    Extends: ElementBase, 
+    
     elt: 'disk',
     color_name: ['read', 'write'],
+    monitor: new MountsMonitor(),
     _init: function() {
-        // Can't get mountlist:
-        // GTop.glibtop_get_mountlist
-        // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-        // Getting it with mtab
-        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
-        this.mounts = [];
-        for(let mount_line in mount_lines) {
-            let mount = mount_lines[mount_line].split(" ");
-            if(interesting_mountpoint(mount) && this.mounts.indexOf(mount[1]) < 0) {
-                this.mounts.push(mount[1]);
-            }
-        }
+        this.mounts = this.monitor.get_mounts();
+        this.monitor.set_cb(Lang.bind(this, this.update_mounts));
         this.gtop = new GTop.glibtop_fsusage();
         this.last = [0,0];
         this.usage = [0,0];
@@ -960,9 +999,11 @@ const Disk = new Lang.Class({
         this.tip_format(_('MiB/s'));
         this.update();
     },
+    update_mounts : function(mounts){
+        this.mounts = mounts;
+    },
     refresh: function() {
         let accum = [0, 0];
-
         for(let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             accum[0] += this.gtop.read;

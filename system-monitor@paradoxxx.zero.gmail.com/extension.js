@@ -67,7 +67,7 @@ libgtop, Network Manager and gir bindings \n\
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
-let Schema, Background, IconSize, Style;
+let Schema, Background, IconSize, Style, MountsMonitor;
 let menu_timeout, gc_timeout;
 
 function l_limit(t) {
@@ -253,11 +253,12 @@ const Chart = new Lang.Class({
 });
 
 // Class to deal with volumes insertion / ejection
-const MountsMonitor = new Lang.Class({
-    Name: 'SystemMonitor.MountsMonitor',
+const smMountsMonitor = new Lang.Class({
+    Name: 'SystemMonitor.smMountsMonitor',
     files: new Array(),
     num_mounts: -1,
     cb: null,
+    listeners:new Array(),
     _init: function() {
         try {
 	    this.manager = Main.placesManager;
@@ -292,6 +293,16 @@ const MountsMonitor = new Lang.Class({
         }
         if (this.cb != null)
             this.cb(this.mounts);
+
+        for (let i in this.listeners){
+            this.listeners[i](this.mounts);
+        }
+    },
+    add_listener: function(cb) {
+        this.listeners.push(cb);
+    },
+    remove_listener: function(cb) {
+        this.listeners.pop(cb);
     },
     set_cb: function(cb) {
         this.cb = cb;
@@ -334,10 +345,9 @@ const Graph = new Lang.Class({
 const Bar = new Lang.Class({
     Name: 'SystemMonitor.Bar',
     Extends: Graph,
-    monitor: new MountsMonitor(),
     _init: function() {
-        this.mounts = this.monitor.get_mounts();
-        this.monitor.set_cb(Lang.bind(this, this.update_mounts));
+        this.mounts = MountsMonitor.get_mounts();
+        MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.thickness = 15;
         this.fontsize = 14;
         this.parent(arguments);
@@ -377,10 +387,9 @@ const Bar = new Lang.Class({
 const Pie = new Lang.Class({
     Name: 'SystemMonitor.Pie',
     Extends: Graph,
-    monitor: new MountsMonitor(),
     _init: function() {
-        this.mounts = this.monitor.get_mounts();
-        this.monitor.set_cb(Lang.bind(this, this.update_mounts));
+        this.mounts = MountsMonitor.get_mounts();
+        MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.parent(arguments);
     },
     _draw: function() {
@@ -1033,10 +1042,9 @@ const Disk = new Lang.Class({
     
     elt: 'disk',
     color_name: ['read', 'write'],
-    monitor: new MountsMonitor(),
     _init: function() {
-        this.mounts = this.monitor.get_mounts();
-        this.monitor.set_cb(Lang.bind(this, this.update_mounts));
+        this.mounts = MountsMonitor.get_mounts();
+        MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.gtop = new GTop.glibtop_fsusage();
         this.last = [0,0];
         this.usage = [0,0];
@@ -1094,7 +1102,7 @@ const Disk = new Lang.Class({
                 new St.Label({ style_class: "sm-value"}),
                 new St.Label({ text:_('MiB/s'), style_class: "sm-label"}),
                 new St.Label({ text:'W', style_class: "sm-label"})];
-    }
+    },
 });
 
 const Freq = new Lang.Class({
@@ -1482,6 +1490,7 @@ var init = function () {
     Schema = me.getSettings(extension, 'system-monitor');
 
     Style = new smStyleManager();
+    MountsMonitor = new smMountsMonitor();
 
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));
@@ -1606,6 +1615,7 @@ var enable = function () {
 };
 
 var disable = function () {
+    MountsManager.destroy();
     //restore system power icon if necessary
     if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){
         Main.__sm.elts.battery.hide_system_icon(false);
@@ -1614,6 +1624,7 @@ var disable = function () {
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
+    Style.destroy();
     Main.__sm.tray.destroy();
     Main.panel._statusArea.systemMonitor = null;
     Main.__sm = null;

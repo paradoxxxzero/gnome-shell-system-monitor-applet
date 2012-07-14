@@ -257,7 +257,6 @@ const smMountsMonitor = new Lang.Class({
     Name: 'SystemMonitor.smMountsMonitor',
     files: new Array(),
     num_mounts: -1,
-    cb: null,
     listeners:new Array(),
     _init: function() {
         try {
@@ -291,8 +290,6 @@ const smMountsMonitor = new Lang.Class({
                 this.mounts.push(mount[1]);
             }
         }
-        if (this.cb != null)
-            this.cb(this.mounts);
 
         for (let i in this.listeners){
             this.listeners[i](this.mounts);
@@ -303,9 +300,6 @@ const smMountsMonitor = new Lang.Class({
     },
     remove_listener: function(cb) {
         this.listeners.pop(cb);
-    },
-    set_cb: function(cb) {
-        this.cb = cb;
     },
     get_mounts: function() {
         return this.mounts;

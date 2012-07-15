@@ -55,10 +55,6 @@ msgstr "Couleur de fond"
 msgid "Show network speed in bits"
 msgstr "Afficher le débit réseau en bits"
 
-#: prefs.js:196
-msgid "Show compact text"
-msgstr" Compacter le texte"
-
 #: prefs.js:197
 msgid "Display Individual Cores"
 msgstr "Afficher tous les coeurs"
@@ -74,6 +70,10 @@ msgstr "Veuillez installer lm-sensors, s'il vous plaît"
 #: prefs.js:282
 msgid "Move the clock"
 msgstr "Déplacer l'horloge"
+
+#: prefs.js:286
+msgid "Compact Display"
+msgstr "Affichage Compact"
 
 #: extension.js:746
 msgid "Cpu"

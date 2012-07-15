@@ -60,10 +60,6 @@ msgstr ""
 msgid "Show network speed in bits"
 msgstr ""
 
-#:prefs.js:196
-msgid "Compact text"
-msgstr ""
-
 #: prefs.js:205
 msgid "Sensor"
 msgstr ""
@@ -74,6 +70,10 @@ msgstr ""
 
 #: prefs.js:282
 msgid "Move the clock"
+msgstr ""
+
+#:prefs.js:286
+msgid "Compact Display"
 msgstr ""
 
 #: extension.js:746

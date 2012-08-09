@@ -102,6 +102,11 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="cpu-individual-cores" type="b">
+      <default>false</default>
+      <summary>Display one graph per cpu core</summary>
+      <description>Set to true to display one graph per cpu core</description>
+    </key>
     <key name="freq-display" type="b">
       <default>false</default>
       <summary>Display freq</summary>
@@ -240,6 +245,11 @@
       <default>true</default>
       <summary>Move the clock to the right when center-display is true</summary>
       <description>True: Move the clock to the right, False: Keep it in center</description>
+    </key>
+    <key name="compact-display" type="b">
+      <default>false</default>
+      <summary>Optimize view for small displays</summary>
+      <description>Optimize texts sizes to fit on a small display </description>
     </key>
     <key name="memory-program-color" type="s">
       <default>'#00b35b'</default>

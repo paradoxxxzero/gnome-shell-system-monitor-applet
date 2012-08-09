@@ -55,6 +55,10 @@ msgstr "Couleur de fond"
 msgid "Show network speed in bits"
 msgstr "Afficher le débit réseau en bits"
 
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr "Afficher tous les coeurs"
+
 #: prefs.js:205
 msgid "Sensor"
 msgstr "Capteur"
@@ -66,6 +70,10 @@ msgstr "Veuillez installer lm-sensors, s'il vous plaît"
 #: prefs.js:282
 msgid "Move the clock"
 msgstr "Déplacer l'horloge"
+
+#: prefs.js:286
+msgid "Compact Display"
+msgstr "Affichage Compact"
 
 #: extension.js:746
 msgid "Cpu"
@@ -223,6 +231,12 @@ msgstr "Mio/s"
 
 msgid "MiB"
 msgstr "Mio"
+
+msgid "kB"
+msgstr "ko"
+
+msgid "MB"
+msgstr "Mo"
 
 #: extension.js:1179
 msgid "Thermal"

@@ -8,7 +8,7 @@ const Lang = imports.lang;
 
 const SETTINGS_SCHEMA = 'system-monitor';
 
-const Gettext = imports.gettext.domain('system-monitor-applet');
+const Gettext = imports.gettext.domain('system-monitor');
 const _ = Gettext.gettext;
 const N_ = function(e) { return e; };
 

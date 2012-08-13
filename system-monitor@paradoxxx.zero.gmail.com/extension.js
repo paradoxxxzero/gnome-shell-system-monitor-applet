@@ -52,7 +52,7 @@ const Panel = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-const Gettext = imports.gettext.domain('system-monitor-applet');
+const Gettext = imports.gettext.domain('system-monitor');
 const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;

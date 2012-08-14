@@ -3,7 +3,7 @@
 
 ![](http://i.imgur.com/mmRTu.png)
 
-![](http://i.imgur.com/wDfAF.png)
+![](http://i.imgur.com/X7Sss.png)
 
 
 ### Install:

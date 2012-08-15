@@ -67,7 +67,7 @@ libgtop, Network Manager and gir bindings \n\
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
-let Schema, Background, IconSize;
+let Schema, Background, IconSize, Style, MountsMonitor;
 let menu_timeout, gc_timeout;
 
 function l_limit(t) {
@@ -95,6 +95,82 @@ function interesting_mountpoint(mount){
 
     return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase() == "nfs") && mount[2].toLowerCase() != "udf");
 }
+
+
+const smStyleManager = new Lang.Class({
+    Name: 'SystemMonitor.smStyleManager',
+    _extension: '',
+    _iconsize: 1,
+    _diskunits: _('MiB/s'),
+    _netunits_kbytes: _('kiB/s'),
+    _netunits_mbytes: _('MiB/s'),
+    _netunits_kbits : 'kbps',
+    _netunits_mbits : 'Mbps',
+    _pie_width : 300,
+    _pie_height: 300,
+    _pie_fontsize: 14,
+    _bar_width : 300,
+    _bar_height: 150,
+    _bar_fontsize: 14,
+
+    _init: function() {
+        this._compact = Schema.get_boolean('compact-display');
+        if (this._compact) {
+            this._extension = '-compact';
+            this._iconsize = 3/5;
+            this._diskunits = _('MB');
+            this._netunits_kbytes = _('kB');
+            this._netunits_mbytes = _('MB');
+            this._netunits_kbits = 'kb';
+            this._netunits_mbits = 'Mb';
+            this._pie_width  *= 4/5;
+            this._pie_height *= 4/5;
+            this._pie_fontsize = 12;
+            this._bar_width  *= 3/5;
+            this._bar_height *= 3/5;
+            this._bar_fontsize = 12;
+        }
+    },
+    get: function(style) {
+        return style + this._extension;
+    },
+    iconsize: function() {
+        return this._iconsize;
+    },
+    diskunits: function() {
+        return this._diskunits;
+    },
+    netunits_kbytes: function() {
+        return this._netunits_kbytes;
+    },
+    netunits_mbytes: function() {
+        return this._netunits_mbytes;
+    },
+    netunits_kbits: function() {
+        return this._netunits_kbits;
+    },
+    netunits_mbits: function() {
+        return this._netunits_mbits;
+    },
+    pie_width: function() {
+        return this._pie_width;
+    },
+    pie_height: function() {
+        return this._pie_height;
+    },
+    pie_fontsize: function() {
+        return this._pie_fontsize;
+    },
+    bar_width: function() {
+        return this._bar_width;
+    },
+    bar_height: function() {
+        return this._bar_height;
+    },
+    bar_fontsize: function() {
+        return this._bar_fontsize;
+    },
+});
 
 const smDialog = Lang.Class({
     Name: 'SystemMonitor.smDialog',
@@ -146,7 +222,7 @@ const Chart = new Lang.Class({
 
     _init: function(width, height, parent) {
         //            this.parent()
-        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
+        this.actor = new St.DrawingArea({ style_class: Style.get("sm-chart"), reactive: false});
         this.parentC = parent;
         this.actor.set_width(this.width=width);
         this.actor.set_height(this.height=height);
@@ -204,11 +280,33 @@ const Chart = new Lang.Class({
                 this.data[i] = this.data[i].slice(-this.width);
     }
 });
-const Graph = new Lang.Class({
-    Name: 'SystemMonitor.Graph',
 
-    menu_item: '',
+// Class to deal with volumes insertion / ejection
+const smMountsMonitor = new Lang.Class({
+    Name: 'SystemMonitor.smMountsMonitor',
+    files: new Array(),
+    num_mounts: -1,
+    listeners:new Array(),
     _init: function() {
+        try {
+	    this.manager = Main.placesManager;
+	    this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
+        }
+        catch (e) {
+            global.error('Failed to register on placesManager notifications');
+            global.error('Got exception : ');
+        }
+        this.refresh();
+    },
+    refresh: function() {
+        // try check that number of volumes has changed
+        try {
+	    let num_mounts = this.manager.getMounts().length;
+            if (num_mounts == this.num_mounts)
+                return;
+            this.num_mounts = num_mounts;
+        } catch (e) {};
+
         // Can't get mountlist:
         // GTop.glibtop_get_mountlist
         // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
@@ -222,7 +320,27 @@ const Graph = new Lang.Class({
             }
         }
 
-        this.actor = new St.DrawingArea({ style_class: "sm-chart", reactive: false});
+        for (let i in this.listeners){
+            this.listeners[i](this.mounts);
+        }
+    },
+    add_listener: function(cb) {
+        this.listeners.push(cb);
+    },
+    remove_listener: function(cb) {
+        this.listeners.pop(cb);
+    },
+    get_mounts: function() {
+        return this.mounts;
+    }
+});
+
+const Graph = new Lang.Class({
+    Name: 'SystemMonitor.Graph',
+
+    menu_item: '',
+    _init: function() {
+        this.actor = new St.DrawingArea({ style_class: Style.get("sm-chart"), reactive: false});
         this.width = arguments[0][0];
         this.height = arguments[0][1];
         this.actor.set_width(this.width);
@@ -246,20 +364,21 @@ const Graph = new Lang.Class({
     show: function(visible){
         this.menu_item.actor.visible = visible;
     }
-
 });
 const Bar = new Lang.Class({
     Name: 'SystemMonitor.Bar',
     Extends: Graph,
-
     _init: function() {
+        this.mounts = MountsMonitor.get_mounts();
+        MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.thickness = 15;
-        this.fontsize = 14;
+        this.fontsize = Style.bar_fontsize();
         this.parent(arguments);
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
     },
     _draw: function(){
         if (!this.actor.visible) return;
+        this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
 
@@ -282,12 +401,18 @@ const Bar = new Lang.Class({
             cr.stroke();
             y0 += (3 * this.thickness) / 2;
         }
+    },
+    update_mounts: function(mounts) {
+        this.mounts = mounts;
+        this.actor.queue_repaint();
     }
 });
 const Pie = new Lang.Class({
     Name: 'SystemMonitor.Pie',
     Extends: Graph,
     _init: function() {
+        this.mounts = MountsMonitor.get_mounts();
+        MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.parent(arguments);
     },
     _draw: function() {
@@ -306,7 +431,7 @@ const Pie = new Lang.Class({
         }
         let rings = (this.mounts.length > 7?this.mounts.length:7);
         let thickness = (2 * rc) / (3 * rings);
-        let fontsize = 14;
+        let fontsize = Style.pie_fontsize();
         let r = rc - (thickness / 2);
         cr.setLineWidth(thickness);
         cr.setFontSize(fontsize);
@@ -319,6 +444,10 @@ const Pie = new Lang.Class({
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
+    },
+    update_mounts: function(mounts){
+        this.mounts = mounts;
+        this.actor.queue_repaint();
     }
 });
 
@@ -539,7 +668,7 @@ const ElementBase = new Lang.Class({
                        Lang.bind(this.chart, this.chart.resize));
 
         this.label = new St.Label({ text: this.elt == "memory" ? _("mem") : _(this.elt),
-                                    style_class: "sm-status-label"});
+                                    style_class: Style.get("sm-status-label")});
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
@@ -723,17 +852,17 @@ const Battery = new Lang.Class({
     create_text_items: function() {
         return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
                               icon_type: St.IconType.FULLCOLOR,
-                              style_class: 'sm-status-icon' }),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-unit-label"})];
+                              style_class: Style.get('sm-status-icon')}),
+                new St.Label({ style_class: Style.get("sm-status-value")}),
+                new St.Label({ text: '%', style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: '%', style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: '%', style_class: Style.get("sm-label")})];
     },
     destroy: function() {
         ElementBase.prototype.destroy.call(this);
@@ -741,6 +870,38 @@ const Battery = new Lang.Class({
     }
 });
 
+/* Check if one graph per core must be displayed and create the
+   appropriate number of cpu items */
+function createCpus()
+{
+    let array = new Array();
+    let numcores = 1;
+
+    if (Schema.get_boolean("cpu-individual-cores")) {
+        // get number of cores
+        let gtop = new GTop.glibtop_cpu();
+        try {
+            numcores = GTop.glibtop_get_sysinfo().ncpu;
+        } catch(e) {
+            global.logError(e);
+            numcores = 1;
+        }
+    }
+    
+    // there are several cores to display,
+    // instantiate each cpu
+    if (numcores > 1) {
+        for (let i = 0; i < numcores; i++)
+            array.push(new Cpu(i));
+    }
+    // individual cores option is not set or we failed to
+    // get the number of cores, create a global cpu item
+    else {
+        array.push(new Cpu(-1));
+    }
+
+    return array;
+}
 
 const Cpu = new Lang.Class({
     Name: 'SystemMonitor.Cpu',
@@ -749,21 +910,27 @@ const Cpu = new Lang.Class({
     elt: 'cpu',
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     max: 100,
+    cpuid: -1, // cpuid is -1 when all cores are displayed in the same graph
 
-    _init: function() {
+    _init: function(cpuid) {
+        this.cpuid = cpuid;
         this.gtop = new GTop.glibtop_cpu();
         this.last = [0,0,0,0,0];
         this.current = [0,0,0,0,0];
         try {
             this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
-            this.max *= this.total_cores;
+            if (cpuid == -1)
+                this.max *= this.total_cores;
         } catch(e) {
             this.total_cores = this.get_cores();
             global.logError(e)
         }
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Cpu"), {reactive: false});
+        let item_name = _("Cpu");
+        if (cpuid != -1)
+            item_name += " " + (cpuid + 1); // append cpu number to cpu name in popup
+        this.menu_item = new PopupMenu.PopupMenuItem(item_name, {reactive: false});
         //ElementBase.prototype._init.call(this);
         this.parent()
         this.tip_format();
@@ -771,24 +938,88 @@ const Cpu = new Lang.Class({
     },
     refresh: function() {
         GTop.glibtop_get_cpu(this.gtop);
-        this.current[0] = this.gtop.user;
-        this.current[1] = this.gtop.sys;
-        this.current[2] = this.gtop.nice;
-        this.current[3] = this.gtop.idle;
-        this.current[4] = this.gtop.iowait;
+        // display global cpu usage on 1 graph
+        if (this.cpuid == -1) {
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.sys;
+            this.current[2] = this.gtop.nice;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+            let delta = (this.gtop.total - this.last_total)/(100*this.total_cores);
 
-        let delta = (this.gtop.total - this.last_total)/(100*this.total_cores) ;
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                this.last_total = this.gtop.total;
+            }
+        }
+        // display per cpu data
+        else {
+            this.current[0] = this.gtop.xcpu_user[this.cpuid];
+            this.current[1] = this.gtop.xcpu_sys[this.cpuid];
+            this.current[2] = this.gtop.xcpu_nice[this.cpuid];
+            this.current[3] = this.gtop.xcpu_idle[this.cpuid];
+            this.current[4] = this.gtop.xcpu_iowait[this.cpuid];
+            let delta = (this.gtop.xcpu_total[this.cpuid] - this.last_total)/100;
+
+            if (delta > 0){
+                for (let i = 0;i < 5;i++){
+                    this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
+                    this.last[i] = this.current[i];
+                }
+                this.last_total = this.gtop.xcpu_total[this.cpuid];
+            }
+        }
+
+        /*
+        GTop.glibtop_get_cpu(this.gtop);
+        // display global cpu usage on 1 graph
+        if (this.cpuid == -1)
+        {
+            this.current[0] = this.gtop.user;
+            this.current[1] = this.gtop.sys;
+            this.current[2] = this.gtop.nice;
+            this.current[3] = this.gtop.idle;
+            this.current[4] = this.gtop.iowait;
+        }
+        // display cpu usage for given core
+        else
+        {
+            this.current[0] = this.gtop.xcpu_user[this.cpuid];
+            this.current[1] = this.gtop.xcpu_sys[this.cpuid];
+            this.current[2] = this.gtop.xcpu_nice[this.cpuid];
+            this.current[3] = this.gtop.xcpu_idle[this.cpuid];
+            this.current[4] = this.gtop.xcpu_iowait[this.cpuid];
+        }
+
+        let delta = 0;
+        if (this.cpuid == -1)
+            delta = (this.gtop.total - this.last_total)/(100*this.total_cores);
+        else
+            delta = (this.gtop.xcpu_total[this.cpuid] - this.last_total)/100;
+
         if (delta > 0){
             for (let i = 0;i < 5;i++){
                 this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
                 this.last[i] = this.current[i];
             }
-            this.last_total = this.gtop.total;
+            if (this.cpuid == -1)
+                this.last_total = this.gtop.total;
+            else
+                this.last_total = this.gtop.xcpu_total[this.cpuid];
         }
+        */
     },
     _apply: function() {
-        let percent = Math.round(((100 * this.total_cores) - this.usage[3])
+        let percent = 0;
+        if (this.cpuid == -1)
+            percent = Math.round(((100 * this.total_cores) - this.usage[3])
                                  / this.total_cores);
+        else
+            percent = Math.round((100 - this.usage[3]));
+
         this.text_items[0].text = this.menu_items[3].text = percent.toString();
         let other = 100;
         for (let i = 0;i < this.usage.length;i++)
@@ -814,39 +1045,29 @@ const Cpu = new Lang.Class({
         return 1;
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: Style.get("sm-status-value")}),
+                new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
 
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: '%', style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: '%', style_class: Style.get("sm-label")})];
     }
 });
 
 const Disk = new Lang.Class({
     Name: 'SystemMonitor.Disk',
-    Extends: ElementBase,
-
+    Extends: ElementBase, 
+    
     elt: 'disk',
     color_name: ['read', 'write'],
     _init: function() {
-        // Can't get mountlist:
-        // GTop.glibtop_get_mountlist
-        // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
-        // Getting it with mtab
-        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
-        this.mounts = [];
-        for(let mount_line in mount_lines) {
-            let mount = mount_lines[mount_line].split(" ");
-            if(interesting_mountpoint(mount) && this.mounts.indexOf(mount[1]) < 0) {
-                this.mounts.push(mount[1]);
-            }
-        }
+        this.mounts = MountsMonitor.get_mounts();
+        MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.gtop = new GTop.glibtop_fsusage();
         this.last = [0,0];
         this.usage = [0,0];
@@ -855,12 +1076,14 @@ const Disk = new Lang.Class({
         this.block_size = this.gtop.block_size/1024/1024/8;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         this.parent()
-        this.tip_format(_('KiB/s'));
+        this.tip_format(_('MiB/s'));
         this.update();
+    },
+    update_mounts : function(mounts){
+        this.mounts = mounts;
     },
     refresh: function() {
         let accum = [0, 0];
-
         for(let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             accum[0] += this.gtop.read;
@@ -888,21 +1111,21 @@ const Disk = new Lang.Class({
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     },
     create_text_items: function() {
-        return [new St.Label({ text: 'R', style_class: "sm-status-label"}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('MiB/s'), style_class: "sm-perc-label"}),
-                new St.Label({ text: 'W', style_class: "sm-status-label"}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('MiB/s'), style_class: "sm-perc-label"})];
+        return [new St.Label({ text: 'R', style_class: Style.get("sm-status-label")}),
+                new St.Label({ style_class: Style.get("sm-disk-value")}),
+                new St.Label({ text: Style.diskunits(), style_class: Style.get("sm-disk-unit-label")}),
+                new St.Label({ text: 'W', style_class: Style.get("sm-status-label")}),
+                new St.Label({ style_class: Style.get("sm-disk-value")}),
+                new St.Label({ text: Style.diskunits(), style_class: Style.get("sm-disk-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:_('MiB/s'), style_class: "sm-label"}),
-                new St.Label({ text:'R', style_class: "sm-label"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:_('MiB/s'), style_class: "sm-label"}),
-                new St.Label({ text:'W', style_class: "sm-label"})];
-    }
+        return [new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label")}),
+                new St.Label({ text:'R', style_class: Style.get("sm-label")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label")}),
+                new St.Label({ text:'W', style_class: Style.get("sm-label")})];
+    },
 });
 
 const Freq = new Lang.Class({
@@ -935,17 +1158,17 @@ const Freq = new Lang.Class({
         this.menu_items[3].text = value;
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-big-status-value"}),
-                new St.Label({ text: 'MHz', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: Style.get("sm-big-status-value")}),
+                new St.Label({ text: 'MHz', style_class: Style.get("sm-perc-label")})];
 
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: 'MHz', style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: 'MHz', style_class: Style.get("sm-label")})];
     }
 });
 
@@ -986,16 +1209,16 @@ const Mem = new Lang.Class({
         this.menu_items[3].text = this.total.toString();
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: Style.get("sm-status-value")}),
+                new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: "/", style_class: "sm-label"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: _('MiB'), style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: "/", style_class: Style.get("sm-label")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1083,62 +1306,92 @@ const Net = new Lang.Class({
             }
         this.last_time = time;
     },
+
+    // pad a string with leading 0s
+    _pad:function(number, length) {
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+        return str;   
+    },
+
     _apply: function() {
         this.tip_vals = this.usage;
         if (this.speed_in_bits) {
             this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
             this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
-            if (this.tip_vals[0] < 1000)
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
+            if (this.tip_vals[0] < 1000) {
+                this.text_items[2].text = Style.netunits_kbits();
+                this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
+            }
             else {
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
+                this.text_items[2].text = Style.netunits_mbits();
+                this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
                 this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
             }
-            if (this.tip_vals[2] < 1000)
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
+            if (this.tip_vals[2] < 1000) {
+                this.text_items[5].text = Style.netunits_kbits();
+                this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
+            }
             else {
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
+                this.text_items[5].text = Style.netunits_mbits();
+                this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
                 this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
             }
         }
         else {
-            if (this.tip_vals[0] < 1024)
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = _('KiB/s');
+            if (this.tip_vals[0] < 1024) {
+                this.text_items[2].text = Style.netunits_kbytes();
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('KiB/s');
+            }
             else {
-                this.text_items[2].text = this.menu_items[1].text = this.tip_unit_labels[0].text = _('MiB/s');
+                this.text_items[2].text = Style.netunits_mbytes();
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('MiB/s');
                 this.tip_vals[0] = (this.tip_vals[0] / 1024).toPrecision(3);
             }
-            if (this.tip_vals[2] < 1024)
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = _('KiB/s');
+            if (this.tip_vals[2] < 1024) {
+                this.text_items[5].text = Style.netunits_kbytes();
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('KiB/s');
+            }
             else {
-                this.text_items[5].text = this.menu_items[4].text = this.tip_unit_labels[2].text = _('MiB/s');
+                this.text_items[5].text = Style.netunits_mbytes();
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('MiB/s');
                 this.tip_vals[2] = (this.tip_vals[2] / 1024).toPrecision(3);
             }
         }
-        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
+
+        if (Style.get('') != '-compact') {
+            this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
+            this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
+        }
+        else {
+            this.menu_items[0].text = this.text_items[1].text = this._pad(this.tip_vals[0].toString(), 3);
+            this.menu_items[3].text = this.text_items[4].text = this._pad(this.tip_vals[2].toString(), 3);
+        }
+
     },
     create_text_items: function() {
         return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 2 * IconSize / 3,
+                              icon_size: 2 * IconSize / 3 * Style.iconsize(),
                               icon_name:'go-down'}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"}),
+                new St.Label({ style_class: Style.get("sm-net-value")}),
+                new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-unit-label")}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 2 * IconSize / 3,
+                              icon_size: 2 * IconSize / 3 * Style.iconsize(),
                               icon_name:'go-up'}),
-                new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: _('KiB/s'), style_class: "sm-unit-label"})];
+                new St.Label({ style_class: Style.get("sm-net-value")}),
+                new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:_('KiB/s'), style_class: "sm-label"}),
+        return [new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 16, icon_name:'go-down'}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ text:_('KiB/s'), style_class: "sm-label"}),
+                              icon_size: 16 * Style.iconsize(), icon_name:'go-down'}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 16, icon_name:'go-up'})];
+                              icon_size: 16 * Style.iconsize(), icon_name:'go-up'})];
     }
 });
 
@@ -1175,16 +1428,16 @@ const Swap = new Lang.Class({
     },
 
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '%', style_class: "sm-perc-label"})];
+        return [new St.Label({ style_class: Style.get("sm-status-value")}),
+                new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: "/", style_class: "sm-label"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: _('MiB'), style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: "/", style_class: Style.get("sm-label")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1221,16 +1474,16 @@ const Thermal = new Lang.Class({
         this.tip_vals[0] = Math.round(this.temperature);
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: '\u2103', style_class: "sm-temp-label"})];
+        return [new St.Label({ style_class: Style.get("sm-status-value")}),
+                new St.Label({ text: '\u2103', style_class: Style.get("sm-temp-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: '\u2103', style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: '\u2103', style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1251,12 +1504,16 @@ const Icon = new Lang.Class({
     }
 });
 
+
 var init = function () {
     log("System monitor applet init from " + extension.path);
 
     let me = extension.imports.convenience;
     me.initTranslations(extension);
     Schema = me.getSettings(extension, 'system-monitor');
+
+    Style = new smStyleManager();
+    MountsMonitor = new smMountsMonitor();
 
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));
@@ -1297,19 +1554,20 @@ var enable = function () {
         Main.__sm = {
             tray: new PanelMenu.Button(0.5),
             icon: new Icon(),
-            pie: new Pie(300, 300),
-            bar: new Bar(300, 150),
-            elts: {
-                cpu: new Cpu(),
-                freq: new Freq(),
-                memory: new Mem(),
-                swap: new Swap(),
-                net: new Net(),
-                disk: new Disk(),
-                thermal: new Thermal(),
-                battery: new Battery(),
-            }
+            pie: new Pie(Style.pie_width(), Style.pie_height()), // 300, 300
+            bar: new Bar(Style.bar_width(), Style.bar_height()),  // 300, 150
+            elts: new Array(),
         };
+
+        Main.__sm.elts = createCpus();
+        Main.__sm.elts.push(new Freq());
+        Main.__sm.elts.push(new Mem());
+        Main.__sm.elts.push(new Swap());
+        Main.__sm.elts.push(new Net());
+        Main.__sm.elts.push(new Disk());
+        Main.__sm.elts.push(new Thermal());
+        Main.__sm.elts.push(new Battery());
+
         let tray = Main.__sm.tray;
         Main.panel._statusArea.systemMonitor = tray;
         panel.insert_child_at_index(tray.actor, 1);
@@ -1318,8 +1576,10 @@ var enable = function () {
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
         for (let elt in Main.__sm.elts) {
+            Main.__sm.elts[elt].menu_item.actor.add_style_class_name(Style.get('sm-popup-menu-item'));
             box.add_actor(Main.__sm.elts[elt].actor);
-            tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
+            //if (elt == 0)
+                tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
         }
 
         let pie_item = Main.__sm.pie;
@@ -1381,9 +1641,15 @@ var enable = function () {
 
 var disable = function () {
     //restore system power icon if necessary
-    if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){
-        Main.__sm.elts.battery.hide_system_icon(false);
+    // workaround bug introduced by multiple cpus init :
+    //if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){
+    //    Main.__sm.elts.battery.hide_system_icon(false);
+    //}
+    for (let i in Main.__sm.elts) {
+        if (Main.__sm.elts[i].elt == 'battery')
+            Main.__sm.elts[i].hide_system_icon(false);
     }
+
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();

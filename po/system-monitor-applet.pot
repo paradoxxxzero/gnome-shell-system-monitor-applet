@@ -52,6 +52,10 @@ msgstr ""
 msgid "Background Color"
 msgstr ""
 
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr ""
+
 #: prefs.js:193
 msgid "Show network speed in bits"
 msgstr ""
@@ -66,6 +70,10 @@ msgstr ""
 
 #: prefs.js:282
 msgid "Move the clock"
+msgstr ""
+
+#:prefs.js:286
+msgid "Compact Display"
 msgstr ""
 
 #: extension.js:746
@@ -223,6 +231,12 @@ msgid "MiB/s"
 msgstr ""
 
 msgid "MiB"
+msgstr ""
+
+msgid "kB"
+msgstr ""
+
+msgid "MB"
 msgstr ""
 
 #: extension.js:1179

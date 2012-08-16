@@ -293,8 +293,8 @@ const smMountsMonitor = new Lang.Class({
 	    this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
         }
         catch (e) {
-            global.error('Failed to register on placesManager notifications');
-            global.error('Got exception : ');
+            global.logError('Failed to register on placesManager notifications');
+            global.logError('Got exception : ');
         }
         this.refresh();
     },
@@ -332,7 +332,10 @@ const smMountsMonitor = new Lang.Class({
     },
     get_mounts: function() {
         return this.mounts;
-    }
+    },
+    destroy: function() {
+	this.manager.disconnect(this.update_id);
+    },
 });
 
 const Graph = new Lang.Class({
@@ -1649,6 +1652,8 @@ var disable = function () {
         if (Main.__sm.elts[i].elt == 'battery')
             Main.__sm.elts[i].hide_system_icon(false);
     }
+
+    MountsMonitor.destroy();
 
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {

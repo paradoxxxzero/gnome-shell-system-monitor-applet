@@ -287,15 +287,8 @@ const smMountsMonitor = new Lang.Class({
     files: new Array(),
     num_mounts: -1,
     listeners:new Array(),
+    connected: false,
     _init: function() {
-        try {
-	    this.manager = Main.placesManager;
-	    this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
-        }
-        catch (e) {
-            global.logError('Failed to register on placesManager notifications');
-            global.logError('Got exception : ');
-        }
         this.refresh();
     },
     refresh: function() {
@@ -333,8 +326,24 @@ const smMountsMonitor = new Lang.Class({
     get_mounts: function() {
         return this.mounts;
     },
-    destroy: function() {
-	this.manager.disconnect(this.update_id);
+    connect: function() {
+        if (this.connected)
+            return;
+        try {
+            this.manager = Main.placesManager;
+            this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
+            this.connected = true;
+        }
+        catch (e) {
+            global.logError('Failed to register on placesManager notifications');
+            global.logError('Got exception : ');
+        }
+    },
+    disconnect: function() {
+        if (!this.connected)
+            return;
+        this.manager.disconnect(this.update_id);
+        this.connected = false;
     },
 });
 
@@ -1553,6 +1562,8 @@ var enable = function () {
                 this.from_string(Schema.get_string(key));
             }));
 
+        MountsMonitor.connect();
+
         //Debug
         Main.__sm = {
             tray: new PanelMenu.Button(0.5),
@@ -1653,7 +1664,7 @@ var disable = function () {
             Main.__sm.elts[i].hide_system_icon(false);
     }
 
-    MountsMonitor.destroy();
+    MountsMonitor.disconnect();
 
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
@@ -1663,4 +1674,5 @@ var disable = function () {
     Main.panel._statusArea.systemMonitor = null;
     Main.__sm = null;
     log("System monitor applet disable");
+
 };

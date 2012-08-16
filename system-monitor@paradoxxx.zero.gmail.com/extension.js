@@ -289,7 +289,7 @@ const smMountsMonitor = new Lang.Class({
     listeners:new Array(),
     connected: false,
     _init: function() {
-        this.refresh();
+        this.connect();
     },
     refresh: function() {
         // try check that number of volumes has changed
@@ -346,6 +346,9 @@ const smMountsMonitor = new Lang.Class({
         this.manager.disconnect(this.update_id);
         this.connected = false;
     },
+    destroy: function() {
+        this.disconnect();
+    }
 });
 
 const Graph = new Lang.Class({

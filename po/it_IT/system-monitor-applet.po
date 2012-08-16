@@ -1,21 +1,19 @@
-# Italian translations for system-monitor package
 # Traduzione italiana per il pacchetto system-monitor.
 # Copyright (C) 2012 THE system-monitor'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the system-monitor package.
 # Federico Piazza fede.piazza92@gmail.com, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: federico 92-gnome-shell-system-monitor-applet-translation-1.0\n"
+"Project-Id-Version: gnome-shell-system-monitor-applet-translation-2.0\n"
 "Report-Msgid-Bugs-To: fede.piazza92@gmail.com\n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2012-06-28 11:43+0100\n"
-"Last-Translator: Federico Piazza fede.piazza92@gmail.com\n"
+"PO-Revision-Date: 2012-08-16 16:18+0100\n"
+"Last-Translator: Federico Piazza <fede.piazza92@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: prefs.js:69
 #: prefs.js:90
@@ -55,6 +53,10 @@ msgstr "Visualizza nel Centro"
 msgid "Background Color"
 msgstr "Colore di Sfondo"
 
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr "Mostra Ogni Core"
+
 #: prefs.js:193
 msgid "Show network speed in bits"
 msgstr "Mostra velocità della rete in bits"
@@ -70,6 +72,10 @@ msgstr "Si prega di installare lm-sensors"
 #: prefs.js:282
 msgid "Move the clock"
 msgstr "Sposta l'orologio"
+
+#: prefs.js:286
+msgid "Compact Display"
+msgstr "Display Compatto"
 
 #: extension.js:746
 msgid "Cpu"
@@ -178,7 +184,7 @@ msgid "user"
 msgstr "utente"
 
 msgid "system"
-msgstr "sistema"
+msgstr "altro"
 
 msgid "other"
 msgstr "altro"
@@ -220,13 +226,19 @@ msgid "read"
 msgstr "lettura"
 
 msgid "KiB/s"
-msgstr "kiB/s"
+msgstr "KiB/s"
 
 msgid "MiB/s"
 msgstr "MiB/s"
 
 msgid "MiB"
 msgstr "MiB"
+
+msgid "kB"
+msgstr "kB"
+
+msgid "MB"
+msgstr "MB"
 
 #: extension.js:1179
 msgid "Thermal"
@@ -268,9 +280,9 @@ msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
 "libgtop, Network Manager and gir bindings \n"
-"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t on Arch: libgtop, networkmanager\n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
 "Dipendenze Mancanti\n"
 "Si prega di installare: \n"

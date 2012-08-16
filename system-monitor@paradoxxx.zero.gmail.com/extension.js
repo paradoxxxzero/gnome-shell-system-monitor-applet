@@ -335,9 +335,10 @@ const smMountsMonitor = new Lang.Class({
             this.connected = true;
         }
         catch (e) {
-            global.logError('Failed to register on placesManager notifications');
-            global.logError('Got exception : ');
+            log('Failed to register on placesManager notifications');
+            log('Got exception : ');
         }
+        this.refresh();
     },
     disconnect: function() {
         if (!this.connected)

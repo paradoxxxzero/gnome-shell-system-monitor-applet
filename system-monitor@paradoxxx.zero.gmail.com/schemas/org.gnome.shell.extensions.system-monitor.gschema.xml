@@ -236,6 +236,44 @@
       <summary>Sensor File</summary>
       <description>Location of the sensor file for cpu temp</description>
     </key>
+    <key name="fan-display" type="b">
+      <default>false</default>
+      <summary>Display fan</summary>
+      <description>Set to false to remove fan display in status bar</description>
+    </key>
+    <key name="fan-refresh-time" type="i">
+      <default>5000</default>
+      <summary>fan refresh time</summary>
+      <description>Time in ms between 2 refresh of fan</description>
+    </key>
+    <key name="fan-graph-width" type="i">
+      <default>100</default>
+      <summary>fan graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="fan-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'fan'</summary>
+      <description>Set to true to show 'fan' before fan display</description>
+    </key>
+    <key name="fan-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Fans In Menu</summary>
+      <description>Set to true to show fan in pop-up menu</description>
+    </key>
+    <key name="fan-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="fan-sensor-file" type="s">
+      <default>'/sys/devices/virtual/thermal/cooling_device0/cur_state'</default>
+      <summary>Sensor File</summary>
+      <description>Location of the sensor file for fan</description>
+    </key>
+    <key name="fan-fan0-color" type="s">
+      <default>'#f2002e'</default>
+      <summary>Color of fan in the chart</summary>
+    </key>
     <key name="center-display" type="b">
       <default>false</default>
       <summary>Display informations next to the clock</summary>

@@ -33,8 +33,8 @@ function color_to_hex(color){
     return output;
 }
 
-function check_sensors(){
-    let inputs = ['temp1_input','temp2_input','temp3_input'];
+function check_sensors(sensor_type){
+    let inputs = [sensor_type+'1_input',sensor_type+'2_input',sensor_type+'3_input'];
     let sensor_path = '/sys/class/hwmon/';
     let sensor_list = [];
     let string_list = [];
@@ -205,7 +205,8 @@ const SettingFrame = new Lang.Class({
                 set_color(color, Schema, key);
             });
         } else if (sections[1] == 'sensor'){
-            let [_slist, _strlist] = check_sensors();
+        	let sensor_type = sections[0] == 'fan' ? 'fan' : 'temp';
+            let [_slist, _strlist] = check_sensors(sensor_type);
             let item = new Select(_('Sensor'));
             if (_slist.length == 0){
                 item.add([_('Please install lm-sensors')]);
@@ -248,7 +249,7 @@ const App = new Lang.Class({
 
     _init: function(){
 
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal','fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
     
         this.items = [];

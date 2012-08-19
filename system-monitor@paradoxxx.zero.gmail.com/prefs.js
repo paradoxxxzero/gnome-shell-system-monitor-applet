@@ -5,9 +5,6 @@ const GLib = imports.gi.GLib;
 const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 
-
-const SETTINGS_SCHEMA = 'system-monitor';
-
 const Gettext = imports.gettext.domain('system-monitor');
 const _ = Gettext.gettext;
 const N_ = function(e) { return e; };
@@ -18,8 +15,8 @@ let convenience = extension.imports.convenience;
 let Schema;
 
 function init() {
-    convenience.initTranslations(extension);
-    Schema = convenience.getSettings(extension, SETTINGS_SCHEMA);
+    convenience.initTranslations();
+    Schema = convenience.getSettings();
 	
 }
 

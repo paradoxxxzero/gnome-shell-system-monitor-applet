@@ -32,6 +32,12 @@ const Power = imports.ui.status.power;
 const System = imports.system;
 const ModalDialog = imports.ui.modalDialog;
 
+const ExtensionSystem = imports.ui.extensionSystem;
+const ExtensionUtils = imports.misc.extensionUtils;
+
+const Me = ExtensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
+
 try {
     const GTop = imports.gi.GTop;
 } catch(e) {
@@ -1508,9 +1514,8 @@ const Icon = new Lang.Class({
 var init = function () {
     log("System monitor applet init from " + extension.path);
 
-    let me = extension.imports.convenience;
-    me.initTranslations(extension);
-    Schema = me.getSettings(extension, 'system-monitor');
+    Convenience.initTranslations();
+    Schema = Convenience.getSettings();
 
     Style = new smStyleManager();
     MountsMonitor = new smMountsMonitor();

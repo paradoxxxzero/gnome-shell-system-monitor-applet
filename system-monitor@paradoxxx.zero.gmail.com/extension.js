@@ -1513,7 +1513,7 @@ const Fan = new Lang.Class({
         this.rpm = 0;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Fan"), {reactive: false});
         this.parent()
-        this.tip_format('rpm');
+        this.tip_format(_("rpm"));
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
         this.update();
     },
@@ -1536,16 +1536,16 @@ const Fan = new Lang.Class({
         this.tip_vals[0] = this.rpm;
     },
     create_text_items: function() {
-        return [new St.Label({ style_class: "sm-status-value"}),
-                new St.Label({ text: 'rpm', style_class: "sm-unit-label"})];
+        return [new St.Label({ style_class: Style.get("sm-status-value")}),
+                new St.Label({ text: _("rpm"), style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ style_class: "sm-value"}),
-                new St.Label({ style_class: "sm-void"}),
-                new St.Label({ text: 'rpm', style_class: "sm-label"})];
+        return [new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text: _("rpm"), style_class: Style.get("sm-label")})];
     }
 });
 

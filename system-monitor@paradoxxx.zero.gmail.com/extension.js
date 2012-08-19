@@ -293,16 +293,9 @@ const smMountsMonitor = new Lang.Class({
     files: new Array(),
     num_mounts: -1,
     listeners:new Array(),
+    connected: false,
     _init: function() {
-        try {
-	    this.manager = Main.placesManager;
-	    this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
-        }
-        catch (e) {
-            global.error('Failed to register on placesManager notifications');
-            global.error('Got exception : ');
-        }
-        this.refresh();
+        this.connect();
     },
     refresh: function() {
         // try check that number of volumes has changed
@@ -338,6 +331,29 @@ const smMountsMonitor = new Lang.Class({
     },
     get_mounts: function() {
         return this.mounts;
+    },
+    connect: function() {
+        if (this.connected)
+            return;
+        try {
+            this.manager = Main.placesManager;
+            this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
+            this.connected = true;
+        }
+        catch (e) {
+            log('Failed to register on placesManager notifications');
+            log('Got exception : ');
+        }
+        this.refresh();
+    },
+    disconnect: function() {
+        if (!this.connected)
+            return;
+        this.manager.disconnect(this.update_id);
+        this.connected = false;
+    },
+    destroy: function() {
+        this.disconnect();
     }
 });
 
@@ -1555,6 +1571,8 @@ var enable = function () {
                 this.from_string(Schema.get_string(key));
             }));
 
+        MountsMonitor.connect();
+
         //Debug
         Main.__sm = {
             tray: new PanelMenu.Button(0.5),
@@ -1655,6 +1673,8 @@ var disable = function () {
             Main.__sm.elts[i].hide_system_icon(false);
     }
 
+    MountsMonitor.disconnect();
+
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
@@ -1663,4 +1683,5 @@ var disable = function () {
     Main.panel._statusArea.systemMonitor = null;
     Main.__sm = null;
     log("System monitor applet disable");
+
 };

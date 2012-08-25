@@ -55,7 +55,7 @@
 
 .sm-value {
     text-align: right;
-    width: 45px;
+    min-width: 45px;
 }
 
 .sm-void {

@@ -21,6 +21,7 @@
 let smDepsGtop = true;
 let smDepsNM = true;
 
+
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 
@@ -73,7 +74,7 @@ libgtop, Network Manager and gir bindings \n\
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
-let Schema, Background, IconSize, Style, MountsMonitor;
+let Schema, Background, IconSize, Style, MountsMonitor, StatusArea;
 let menu_timeout, gc_timeout;
 
 function l_limit(t) {
@@ -227,7 +228,6 @@ const Chart = new Lang.Class({
     Name: 'SystemMonitor.Chart',
 
     _init: function(width, height, parent) {
-        //            this.parent()
         this.actor = new St.DrawingArea({ style_class: Style.get("sm-chart"), reactive: false});
         this.parentC = parent;
         this.actor.set_width(this.width=width);
@@ -295,22 +295,28 @@ const smMountsMonitor = new Lang.Class({
     listeners:new Array(),
     connected: false,
     _init: function() {
+        this._volumeMonitor = Gio.VolumeMonitor.get();
+
+        this.base_mounts = ['/'];
+        if (this.is_home_mount)
+            this.base_mounts.push('/home');
         this.connect();
+
     },
     refresh: function() {
         // try check that number of volumes has changed
-        try {
+        /*try {
 	    let num_mounts = this.manager.getMounts().length;
             if (num_mounts == this.num_mounts)
                 return;
             this.num_mounts = num_mounts;
-        } catch (e) {};
+        } catch (e) {};*/
 
         // Can't get mountlist:
         // GTop.glibtop_get_mountlist
         // Error: No symbol 'glibtop_get_mountlist' in namespace 'GTop'
         // Getting it with mtab
-        let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
+        /*let mount_lines = Shell.get_file_contents_utf8_sync('/etc/mtab').split("\n");
         this.mounts = [];
         for(let mount_line in mount_lines) {
             let mount = mount_lines[mount_line].split(" ");
@@ -318,7 +324,18 @@ const smMountsMonitor = new Lang.Class({
                 this.mounts.push(mount[1]);
             }
         }
-
+        log("old mounts: " + this.mounts);*/
+        this.mounts = [];
+        for (let base in this.base_mounts){
+            log(this.base_mounts[base]);
+            this.mounts.push(this.base_mounts[base]);
+        }
+        let mount_lines = this._volumeMonitor.get_mounts();
+        mount_lines.forEach(Lang.bind(this, function(mount) {
+            this.mounts.push(mount.get_root().get_path());
+        }));
+        log("base: " + this.base_mounts);
+        log("mounts: " + this.mounts);
         for (let i in this.listeners){
             this.listeners[i](this.mounts);
         }
@@ -332,12 +349,18 @@ const smMountsMonitor = new Lang.Class({
     get_mounts: function() {
         return this.mounts;
     },
+    is_home_mount: function() {
+        let file = Gio.file_new_for_path('/home/');
+        let info = file.query_info(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT,
+                                 Gio.FileQueryInfoFlags.NONE, null);
+        return is_mount = info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+    },
     connect: function() {
         if (this.connected)
             return;
         try {
-            this.manager = Main.placesManager;
-            this.update_id = this.manager.connect('mounts-updated', Lang.bind(this, this.refresh));
+            this.manager = this._volumeManager;
+            this.update_id = this.manager.connect('mount-added', Lang.bind(this, this.refresh));
             this.connected = true;
         }
         catch (e) {
@@ -403,10 +426,9 @@ const Bar = new Lang.Class({
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
-
+ 
         let x0 = width/8;
         let y0 = this.thickness/2;
-
         cr.setLineWidth(this.thickness);
         cr.setFontSize(this.fontsize);
         for (let mount in this.mounts) {
@@ -762,7 +784,7 @@ const Battery = new Lang.Class({
         this.icon_hidden = false;
         this.percentage = 0;
         this.timeString = '-- ';
-        this._proxy = Main.panel._statusArea['battery']._proxy;
+        this._proxy = StatusArea['battery']._proxy;
         this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
 
         //need to specify a default icon, since the contructor completes before UPower callback
@@ -835,9 +857,9 @@ const Battery = new Lang.Class({
         }
         if (value && Schema.get_boolean(this.elt + '-display')){
             for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
-                if(Main.panel._statusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
+                if(StatusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
                     Main.panel._rightBox.get_children()[Index].destroy();
-                    Main.panel._statusArea['battery'] = null;
+                    StatusArea['battery'] = null;
                     this.icon_hidden = true;
                     break;
                 }
@@ -1538,6 +1560,7 @@ var init = function () {
 
     Background = new Clutter.Color();
     Background.from_string(Schema.get_string('background'));
+
     IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 };
 
@@ -1558,6 +1581,11 @@ var enable = function () {
             });
     } else {
         let panel = Main.panel._rightBox;
+        StatusArea = Main.panel._statusArea;
+        if (StatusArea == undefined){
+            StatusArea = Main.panel.statusArea;
+        }
+
         if (Schema.get_boolean("center-display")) {
             if (Schema.get_boolean("move-clock")) {
                 let dateMenu = Main.panel._dateMenu;
@@ -1592,7 +1620,8 @@ var enable = function () {
         Main.__sm.elts.push(new Battery());
 
         let tray = Main.__sm.tray;
-        Main.panel._statusArea.systemMonitor = tray;
+
+        StatusArea.systemMonitor = tray;
         panel.insert_child_at_index(tray.actor, 1);
         panel.child_set(tray.actor, { y_fill: true } );
         let box = new St.BoxLayout();
@@ -1680,7 +1709,7 @@ var disable = function () {
         Main.__sm.elts[eltName].destroy();
     }
     Main.__sm.tray.destroy();
-    Main.panel._statusArea.systemMonitor = null;
+    StatusArea.systemMonitor = null;
     Main.__sm = null;
     log("System monitor applet disable");
 

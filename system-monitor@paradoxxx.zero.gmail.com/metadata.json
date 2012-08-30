@@ -1,5 +1,5 @@
 {
-    "shell-version": ["3.3.5","3.3.90","3.3.92","3.4"],
+    "shell-version": ["3.4","3.5.4","3.5.90"],
     "uuid": "system-monitor@paradoxxx.zero.gmail.com",
     "name": "system-monitor",
     "url": "https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet",

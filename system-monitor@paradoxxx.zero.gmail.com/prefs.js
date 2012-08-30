@@ -11,6 +11,7 @@ const N_ = function(e) { return e; };
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
+let Compat = extension.imports.compat;
 
 let Schema;
 
@@ -71,8 +72,7 @@ const ColorSelect = new Lang.Class({
         this.picker.set_use_alpha(true);
     },
     set_value: function(value){
-        let clutterColor = new Clutter.Color();
-    	clutterColor.from_string(value);
+        let clutterColor = Compat.color_from_string(value);
         let color = new Gdk.RGBA();
         let ctemp = [clutterColor.red,clutterColor.green,clutterColor.blue,clutterColor.alpha/255];
         color.parse('rgba(' + ctemp.join(',') + ')');	

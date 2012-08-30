@@ -21,7 +21,7 @@
 let smDepsGtop = true;
 let smDepsNM = true;
 
-
+//const Config = imports.misc.config;
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 
@@ -30,7 +30,7 @@ const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 const Power = imports.ui.status.power;
-const System = imports.system;
+//const System = imports.system;
 const ModalDialog = imports.ui.modalDialog;
 
 const ExtensionSystem = imports.ui.extensionSystem;
@@ -38,6 +38,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Compat = Me.imports.compat;
 
 try {
     const GTop = imports.gi.GTop;
@@ -96,6 +97,8 @@ function change_usage(){
     Main.__sm.pie.show(usage == 'pie');
     Main.__sm.bar.show(usage == 'bar');
 }
+let color_from_string = Compat.color_from_string;
+
 function interesting_mountpoint(mount){
     if (mount.length < 3)
         return false;
@@ -395,9 +398,7 @@ const Graph = new Lang.Class({
         // FIXME Handle colors correctly
         this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
         for(let color in this.colors) {
-            let clutterColor = new Clutter.Color();
-            clutterColor.from_string(this.colors[color]);
-            this.colors[color] = clutterColor;
+            this.colors[color] = color_from_string(this.colors[color]);
         }
 
     },
@@ -666,12 +667,11 @@ const ElementBase = new Lang.Class({
 
         this.colors = [];
         for(let color in this.color_name) {
-            let clutterColor = new Clutter.Color();
             let name = this.elt + '-' + this.color_name[color] + '-color';
-            clutterColor.from_string(Schema.get_string(name));
+            let clutterColor = color_from_string(Schema.get_string(name));
             Schema.connect('changed::' + name, Lang.bind(
                 clutterColor, function (schema, key) {
-                    this.from_string(Schema.get_string(key));
+                    this.clutterColor = color_from_string(Schema.get_string(key));
                 }));
             Schema.connect('changed::' + name,
                            Lang.bind(this,
@@ -1558,8 +1558,7 @@ var init = function () {
     Style = new smStyleManager();
     MountsMonitor = new smMountsMonitor();
 
-    Background = new Clutter.Color();
-    Background.from_string(Schema.get_string('background'));
+    Background = color_from_string(Schema.get_string('background'));
 
     IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 };
@@ -1595,8 +1594,8 @@ var enable = function () {
             panel = Main.panel._centerBox;
         }
         Schema.connect('changed::background', Lang.bind(
-            Background, function (schema, key) {
-                this.from_string(Schema.get_string(key));
+            this, function (schema, key) {
+                Background = color_from_string(Schema.get_string(key));
             }));
 
         MountsMonitor.connect();

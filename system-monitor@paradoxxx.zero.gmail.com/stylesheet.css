@@ -9,7 +9,8 @@
     padding: 0 2px 0 5px;
 }
 
-.sm-unit-label {
+.sm-unit-label,
+.sm-net-unit-label {
     color: #aaa;
     font-size: 8px;
     padding: 6px 5px 0 2px;
@@ -19,6 +20,10 @@
     color: #aaa;
     font-size: 10px;
     padding: 0 5px 0 2px;
+}
+
+.sm-net-unit-label {
+    min-width: 25px; 
 }
 
 .sm-perc-label {
@@ -39,8 +44,8 @@
 }
 
 .sm-net-value {
-    min-width: 30px;
-    text-align: right;
+    min-width: 40px;
+    text-align: center;
 }
 
 .sm-disk-value {
@@ -107,7 +112,8 @@
     padding: 2px 0px 0 0px;
 } /* names and Disk R and W signs in text items */
 
-.sm-unit-label-compact {
+.sm-unit-label-compact,
+.sm-net-unit-label-compact {
     color: #aaa;
     padding: 9px 3px 0px 1px;
     text-align: right;

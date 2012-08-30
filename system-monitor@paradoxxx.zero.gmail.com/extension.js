@@ -1421,12 +1421,12 @@ const Net = new Lang.Class({
                               icon_size: 2 * IconSize / 3 * Style.iconsize(),
                               icon_name:'go-down'}),
                 new St.Label({ style_class: Style.get("sm-net-value")}),
-                new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-unit-label")}),
+                new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-net-unit-label")}),
                 new St.Icon({ icon_type: St.IconType.SYMBOLIC,
                               icon_size: 2 * IconSize / 3 * Style.iconsize(),
                               icon_name:'go-up'}),
                 new St.Label({ style_class: Style.get("sm-net-value")}),
-                new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-unit-label")})];
+                new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-net-unit-label")})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),

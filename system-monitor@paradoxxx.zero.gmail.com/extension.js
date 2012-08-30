@@ -363,7 +363,8 @@ const smMountsMonitor = new Lang.Class({
             return;
         try {
             this.manager = this._volumeMonitor;
-            this.update_id = this.manager.connect('mount-added', Lang.bind(this, this.refresh));
+            this.mount_added_id = this.manager.connect('mount-added', Lang.bind(this, this.refresh));
+            this.mount_removed_id = this.manager.connect('mount-removed', Lang.bind(this, this.refresh));
             //need to add the other signals here 
             this.connected = true;
         }
@@ -376,7 +377,8 @@ const smMountsMonitor = new Lang.Class({
     disconnect: function() {
         if (!this.connected)
             return;
-        this.manager.disconnect(this.update_id);
+        this.manager.disconnect(this.mount_added_id);
+        this.manager.disconnect(this.mount_removed_id);
         this.connected = false;
     },
     destroy: function() {

@@ -112,7 +112,7 @@ const smStyleManager = new Lang.Class({
     _extension: '',
     _iconsize: 1,
     _diskunits: _('MiB/s'),
-    _netunits_kbytes: _('kiB/s'),
+    _netunits_kbytes: _('KiB/s'),
     _netunits_mbytes: _('MiB/s'),
     _netunits_kbits : 'kbps',
     _netunits_mbits : 'Mbps',

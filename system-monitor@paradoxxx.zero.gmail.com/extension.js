@@ -330,15 +330,15 @@ const smMountsMonitor = new Lang.Class({
         log("old mounts: " + this.mounts);*/
         this.mounts = [];
         for (let base in this.base_mounts){
-            log(this.base_mounts[base]);
+            //log(this.base_mounts[base]);
             this.mounts.push(this.base_mounts[base]);
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
             this.mounts.push(mount.get_root().get_path());
         }));
-        log("base: " + this.base_mounts);
-        log("mounts: " + this.mounts);
+        //log("base: " + this.base_mounts);
+        //log("mounts: " + this.mounts);
         for (let i in this.listeners){
             this.listeners[i](this.mounts);
         }
@@ -362,13 +362,14 @@ const smMountsMonitor = new Lang.Class({
         if (this.connected)
             return;
         try {
-            this.manager = this._volumeManager;
+            this.manager = this._volumeMonitor;
             this.update_id = this.manager.connect('mount-added', Lang.bind(this, this.refresh));
+            //need to add the other signals here 
             this.connected = true;
         }
         catch (e) {
             log('Failed to register on placesManager notifications');
-            log('Got exception : ');
+            log('Got exception : ' + e);
         }
         this.refresh();
     },
@@ -1619,7 +1620,6 @@ var enable = function () {
         Main.__sm.elts.push(new Battery());
 
         let tray = Main.__sm.tray;
-
         StatusArea.systemMonitor = tray;
         panel.insert_child_at_index(tray.actor, 1);
         panel.child_set(tray.actor, { y_fill: true } );

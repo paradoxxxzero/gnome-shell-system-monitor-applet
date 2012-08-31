@@ -51,13 +51,13 @@ msgstr "Afficher au milieu"
 msgid "Background Color"
 msgstr "Couleur de fond"
 
-#: prefs.js:193
-msgid "Show network speed in bits"
-msgstr "Afficher le débit réseau en bits"
-
 #: prefs.js:197
 msgid "Display Individual Cores"
 msgstr "Afficher tous les coeurs"
+
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr "Afficher le débit réseau en bits"
 
 #: prefs.js:205
 msgid "Sensor"
@@ -305,6 +305,14 @@ msgstr "Batterie"
 #: extension.js:896
 msgid "Freq"
 msgstr "Fréq."
+
+#: extension.js:1540
+msgid "Fan"
+msgstr ""
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
+msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configuration de l’applet moniteur système"

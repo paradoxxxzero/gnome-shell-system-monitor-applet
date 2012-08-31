@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-system-monitor-applet-translation-2.0\n"
-"Report-Msgid-Bugs-To: fede.piazza92@gmail.com\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: 2012-08-16 16:18+0100\n"
 "Last-Translator: Federico Piazza <fede.piazza92@gmail.com>\n"
@@ -15,9 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69
-#: prefs.js:90
-#: prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -306,3 +304,11 @@ msgstr "Batteria"
 #: extension.js:896
 msgid "Freq"
 msgstr "Frequenza"
+
+#: extension.js:1540
+msgid "Fan"
+msgstr ""
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
+msgstr ""

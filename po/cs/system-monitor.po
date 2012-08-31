@@ -15,9 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69
-#: prefs.js:90
-#: prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -53,6 +51,10 @@ msgstr "Zobrazit uprostřed"
 msgid "Background Color"
 msgstr "Barva pozadí"
 
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr ""
+
 #: prefs.js:193
 msgid "Show network speed in bits"
 msgstr "Zobrazit rychlost sítě v bitech"
@@ -68,6 +70,11 @@ msgstr "Nainstalujte si lm-sensors, prosím."
 #: prefs.js:282
 msgid "Move the clock"
 msgstr "Posunout hodiny"
+
+#: prefs.js:286
+#, fuzzy
+msgid "Compact Display"
+msgstr "Zobrazit"
 
 #: extension.js:746
 msgid "Cpu"
@@ -226,6 +233,13 @@ msgstr "MiB/s"
 msgid "MiB"
 msgstr "MiB"
 
+msgid "kB"
+msgstr ""
+
+#, fuzzy
+msgid "MB"
+msgstr "MiB"
+
 #: extension.js:1179
 msgid "Thermal"
 msgstr "Teplota"
@@ -292,6 +306,14 @@ msgstr "Baterie"
 #: extension.js:896
 msgid "Freq"
 msgstr "Frekvence"
+
+#: extension.js:1540
+msgid "Fan"
+msgstr ""
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
+msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "System Monitor Applet Konfigurátor"

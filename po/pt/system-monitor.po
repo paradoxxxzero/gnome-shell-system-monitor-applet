@@ -51,6 +51,10 @@ msgstr "Posicionar no centro"
 msgid "Background Color"
 msgstr "Cor de fundo"
 
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr ""
+
 #: prefs.js:193
 msgid "Show network speed in bits"
 msgstr "Apresentar velocidade em bits por segundo"
@@ -66,6 +70,11 @@ msgstr ""
 #: prefs.js:282
 msgid "Move the clock"
 msgstr "Deslocar o relógio"
+
+#: prefs.js:286
+#, fuzzy
+msgid "Compact Display"
+msgstr "Apresentar"
 
 #: extension.js:746
 msgid "Cpu"
@@ -226,6 +235,12 @@ msgstr ""
 msgid "MiB"
 msgstr ""
 
+msgid "kB"
+msgstr ""
+
+msgid "MB"
+msgstr ""
+
 #: extension.js:1179
 msgid "Thermal"
 msgstr "Temperatura"
@@ -288,6 +303,14 @@ msgstr ""
 
 #: extension.js:896
 msgid "Freq"
+msgstr ""
+
+#: extension.js:1540
+msgid "Fan"
+msgstr ""
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
 msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"

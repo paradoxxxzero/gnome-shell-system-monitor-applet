@@ -72,7 +72,7 @@ msgstr ""
 msgid "Move the clock"
 msgstr ""
 
-#:prefs.js:286
+#: prefs.js:286
 msgid "Compact Display"
 msgstr ""
 
@@ -298,4 +298,12 @@ msgstr ""
 
 #: extension.js:896
 msgid "Freq"
+msgstr ""
+
+#: extension.js:1540
+msgid "Fan"
+msgstr ""
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
 msgstr ""

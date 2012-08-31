@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2012-06-24 12:46+0200\n"
+"PO-Revision-Date: 2012-08-31 07:22+0200\n"
 "Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -274,7 +274,6 @@ msgid "none"
 msgstr "aucun"
 
 #: extension.js:6
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -308,11 +307,11 @@ msgstr "Fréq."
 
 #: extension.js:1540
 msgid "Fan"
-msgstr ""
+msgstr "Ventilateur"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
-msgstr ""
+msgstr "tr/min"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configuration de l’applet moniteur système"

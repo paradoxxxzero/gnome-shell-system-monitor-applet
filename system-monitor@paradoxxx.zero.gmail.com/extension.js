@@ -898,7 +898,6 @@ const Battery = new Lang.Class({
     },
     create_text_items: function() {
         return [new St.Icon({ gicon: Gio.icon_new_for_string(this.icon),
-                              icon_type: St.IconType.FULLCOLOR,
                               style_class: Style.get('sm-status-icon')}),
                 new St.Label({ style_class: Style.get("sm-status-value")}),
                 new St.Label({ text: '%', style_class: Style.get("sm-unit-label")})];
@@ -1419,26 +1418,22 @@ const Net = new Lang.Class({
 
     },
     create_text_items: function() {
-        return [new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 2 * IconSize / 3 * Style.iconsize(),
-                              icon_name:'go-down'}),
+        return [new St.Icon({icon_size: 2 * IconSize / 3 * Style.iconsize(),
+                              icon_name:'go-down-symbolic'}),
                 new St.Label({ style_class: Style.get("sm-net-value")}),
                 new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-net-unit-label")}),
-                new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 2 * IconSize / 3 * Style.iconsize(),
-                              icon_name:'go-up'}),
+                new St.Icon({ icon_size: 2 * IconSize / 3 * Style.iconsize(),
+                              icon_name:'go-up-symbolic'}),
                 new St.Label({ style_class: Style.get("sm-net-value")}),
                 new St.Label({ text: _('KiB/s'), style_class: Style.get("sm-net-unit-label")})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
-                new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 16 * Style.iconsize(), icon_name:'go-down'}),
+                new St.Icon({ icon_size: 16 * Style.iconsize(), icon_name:'go-down-symbolic'}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
-                new St.Icon({ icon_type: St.IconType.SYMBOLIC,
-                              icon_size: 16 * Style.iconsize(), icon_name:'go-up'})];
+                new St.Icon({ icon_size: 16 * Style.iconsize(), icon_name:'go-up-symbolic'})];
     }
 });
 
@@ -1584,8 +1579,7 @@ const Icon = new Lang.Class({
     Name: 'SystemMonitor.Icon',
 
     _init: function() {
-        this.actor = new St.Icon({ icon_name: 'utilities-system-monitor',
-                                   icon_type: St.IconType.SYMBOLIC,
+        this.actor = new St.Icon({ icon_name: 'utilities-system-monitor-symbolic',
                                    style_class: 'system-status-icon'});
         this.actor.visible = Schema.get_boolean("icon-display");
         Schema.connect(

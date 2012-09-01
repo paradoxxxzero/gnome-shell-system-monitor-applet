@@ -832,11 +832,11 @@ const Battery = new Lang.Class({
                         let time = Math.round(seconds / 60);
                         let minutes = time % 60;
                         let hours = Math.floor(time / 60);
-                        this.percentage = Math.floor(percentage);
                         this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
                     } else {
                         this.timeString = '-- ';
                     }
+                    this.percentage = Math.ceil(percentage);
                     this.gicon = Gio.icon_new_for_string(icon);
 
                     if (Schema.get_boolean(this.elt + '-display'))

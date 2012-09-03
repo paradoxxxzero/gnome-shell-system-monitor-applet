@@ -4,20 +4,25 @@
 # Michael Pusterhofer <pusterhofer@student.tugraz.at>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: paradoxxxzero/gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Michael Pusterhofer <pusterhofer@student.tugraz.at>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2012-09-04 00:53+0100\n"
+"Last-Translator: Agilo Kern <prdiewelt@googlemail.com>\n"
+"Language-Team: LANGUAGE <prdiewelt@googlemail.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"X-Poedit-KeywordsList: Collisions\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69
+#: prefs.js:90
+#: prefs.js:110
 msgid ":"
-msgstr ""
+msgstr ":"
 
 #: prefs.js:161
 msgid "Display"
@@ -25,7 +30,7 @@ msgstr "Anzeigen"
 
 #: prefs.js:166
 msgid "Refresh Time"
-msgstr "Wiederholfrequenz"
+msgstr "Aktualisierungs-Intervall"
 
 #: prefs.js:171
 msgid "Graph Width"
@@ -33,7 +38,7 @@ msgstr "Diagrammbreite"
 
 #: prefs.js:176
 msgid "Show Text"
-msgstr "Zeige Text"
+msgstr "Anzeige beschriften"
 
 #: prefs.js:184
 msgid "Display Style"
@@ -53,28 +58,27 @@ msgstr "Hintergrundfarbe"
 
 #: prefs.js:197
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "Einzelne Prozessorkerne anzeigen"
 
 #: prefs.js:193
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "Übertragungsrate in Bits anzeigen"
 
 #: prefs.js:205
 msgid "Sensor"
-msgstr ""
+msgstr "Sensor"
 
 #: prefs.js:207
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "Bitte installieren Sie lm-sensors"
 
 #: prefs.js:282
 msgid "Move the clock"
-msgstr ""
+msgstr "Uhr verschieben"
 
 #: prefs.js:286
-#, fuzzy
 msgid "Compact Display"
-msgstr "Anzeigen"
+msgstr "Kompakte Darstellung"
 
 #: extension.js:746
 msgid "Cpu"
@@ -97,7 +101,7 @@ msgstr "IOwait"
 
 #: extension.js:941
 msgid "Memory"
-msgstr "Speicher"
+msgstr "Hauptspeicher"
 
 msgid "Program"
 msgstr "Programm"
@@ -120,16 +124,16 @@ msgid "Net"
 msgstr "Netzwerk"
 
 msgid "Up"
-msgstr "Hinauf"
+msgstr "Senden"
 
 msgid "Down"
-msgstr "Herunter"
+msgstr "Empfangen"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "Sendefehler"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "Empfangsfehler"
 
 #: extension.js:836
 msgid "Disk"
@@ -160,7 +164,7 @@ msgid "mem"
 msgstr "Speicher"
 
 msgid "swap"
-msgstr "Zwischenspeicher"
+msgstr "Zw.-Speicher"
 
 msgid "net"
 msgstr "Netzwerk"
@@ -174,49 +178,49 @@ msgstr "Einstellungen..."
 
 #: extension.js:1340
 msgid "System Monitor..."
-msgstr "System Monitor..."
+msgstr "Systemüberwachung..."
 
 msgid "System monitor"
 msgstr "System Monitor"
 
 msgid "user"
-msgstr "benutzer"
+msgstr "Benutzer"
 
 msgid "system"
-msgstr "system"
+msgstr "System"
 
 msgid "other"
 msgstr "Andere"
 
 msgid "nice"
-msgstr "nice"
+msgstr "Nice"
 
 msgid "iowait"
-msgstr "iowait"
+msgstr "Iowait"
 
 msgid "program"
-msgstr "programm"
+msgstr "Programmspeicher"
 
 msgid "cache"
-msgstr "zwischenspeicher"
+msgstr "Zwischenspeicher"
 
 msgid "buffer"
-msgstr "pufferspeicher"
+msgstr "Pufferspeicher"
 
 msgid "used"
-msgstr "verwendet"
+msgstr "belegt"
 
 msgid "up"
-msgstr "hinauf"
+msgstr "Senden"
 
 msgid "down"
-msgstr "herunter"
+msgstr "Empfangen"
 
 msgid "uperrors"
-msgstr ""
+msgstr "Sendefehler"
 
 msgid "downerrors"
-msgstr ""
+msgstr "Empfangsfehler"
 
 msgid "write"
 msgstr "schreiben"
@@ -225,57 +229,54 @@ msgid "read"
 msgstr "lesen"
 
 msgid "KiB/s"
-msgstr ""
+msgstr "KB/s"
 
 msgid "MiB/s"
-msgstr ""
+msgstr "MB/s"
 
 msgid "MiB"
-msgstr ""
+msgstr "MB"
 
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: extension.js:1179
 msgid "Thermal"
-msgstr ""
+msgstr "Temperatur"
 
-#, fuzzy
 msgid "thermal"
-msgstr "Andere"
+msgstr "Temp."
 
 #: prefs.js:180
 msgid "Show In Menu"
-msgstr ""
+msgstr "Im Menü anzeigen"
 
 #: prefs.js:222
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Verbleibende Zeit anzeigen"
 
 #: prefs.js:226
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "System Monitor"
+msgstr "Systemeigenes Icon verbergen"
 
 #: prefs.js:230
-#, fuzzy
 msgid "Usage Style"
-msgstr "Anzeigestil"
+msgstr "Anzeigestil der Speicherbelegung"
 
 #: prefs.js:231
 msgid "pie"
-msgstr ""
+msgstr "Kreisdiagramm"
 
 #: prefs.js:231
 msgid "bar"
-msgstr ""
+msgstr "Balkendiagramm"
 
 #: prefs.js:231
 msgid "none"
-msgstr ""
+msgstr "nicht anzeigen"
 
 #: extension.js:6
 msgid ""
@@ -286,31 +287,38 @@ msgid ""
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
+"Fehlende Abhängigkeiten\n"
+"Bitte installieren Sie: \n"
+"libgtop, Netzwerkverwaltung und Gir-Anbindungen\n"
+"\t unter Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t unter Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t unter Arch Linux: libgtop, networkmanager\n"
 
 #: extension.js:97
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "System Monitor"
+msgstr "Shell-Erweiterung System Monitor"
 
 #: extension.js:113
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #: extension.js:601
 msgid "Battery"
-msgstr ""
+msgstr "Akku"
 
 #: extension.js:896
 msgid "Freq"
-msgstr ""
+msgstr "Taktfrequenz"
 
 #: extension.js:1540
 msgid "Fan"
-msgstr ""
+msgstr "Lüfter"
 
-#: extension.js:1542 extension.js:1566 extension.js:1574
+#: extension.js:1542
+#: extension.js:1566
+#: extension.js:1574
 msgid "rpm"
-msgstr ""
+msgstr "1/min"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "System Monitor Applet Konfigurator"

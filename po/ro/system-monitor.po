@@ -135,6 +135,12 @@ msgstr ""
 msgid "Downerrors"
 msgstr ""
 
+msgid "collisions"
+msgstr ""
+
+msgid "Collisions"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disc"
@@ -304,12 +310,21 @@ msgstr ""
 msgid "Battery"
 msgstr ""
 
+msgid "battery"
+msgstr ""
+
 #: extension.js:896
 msgid "Freq"
 msgstr ""
 
+msgid "freq"
+msgstr ""
+
 #: extension.js:1540
 msgid "Fan"
+msgstr ""
+
+msgid "fan"
 msgstr ""
 
 #: extension.js:1542 extension.js:1566 extension.js:1574

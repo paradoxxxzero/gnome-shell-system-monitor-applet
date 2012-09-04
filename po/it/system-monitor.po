@@ -130,6 +130,12 @@ msgstr "Errori in upload"
 msgid "Downerrors"
 msgstr "Errori in download"
 
+msgid "collisions"
+msgstr ""
+
+msgid "Collisions"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disco"
@@ -301,12 +307,22 @@ msgstr "Annulla"
 msgid "Battery"
 msgstr "Batteria"
 
+#, fuzzy
+msgid "battery"
+msgstr "Batteria"
+
 #: extension.js:896
 msgid "Freq"
 msgstr "Frequenza"
 
+msgid "freq"
+msgstr ""
+
 #: extension.js:1540
 msgid "Fan"
+msgstr ""
+
+msgid "fan"
 msgstr ""
 
 #: extension.js:1542 extension.js:1566 extension.js:1574

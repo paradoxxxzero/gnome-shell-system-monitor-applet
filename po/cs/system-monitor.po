@@ -131,6 +131,12 @@ msgstr "Odchozí chyby"
 msgid "Downerrors"
 msgstr "Příchozí chyby"
 
+msgid "collisions"
+msgstr ""
+
+msgid "Collisions"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disk"
@@ -303,12 +309,22 @@ msgstr "Zrušit"
 msgid "Battery"
 msgstr "Baterie"
 
+#, fuzzy
+msgid "battery"
+msgstr "Baterie"
+
 #: extension.js:896
 msgid "Freq"
 msgstr "Frekvence"
 
+msgid "freq"
+msgstr ""
+
 #: extension.js:1540
 msgid "Fan"
+msgstr ""
+
+msgid "fan"
 msgstr ""
 
 #: extension.js:1542 extension.js:1566 extension.js:1574

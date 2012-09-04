@@ -131,6 +131,13 @@ msgstr "Erros ao enviar"
 msgid "Downerrors"
 msgstr "Erros ao receber"
 
+#, fuzzy
+msgid "collisions"
+msgstr "Colisões"
+
+msgid "Collisions"
+msgstr "Colisões"
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disco"
@@ -301,12 +308,21 @@ msgstr ""
 msgid "Battery"
 msgstr ""
 
+msgid "battery"
+msgstr ""
+
 #: extension.js:896
 msgid "Freq"
 msgstr ""
 
+msgid "freq"
+msgstr ""
+
 #: extension.js:1540
 msgid "Fan"
+msgstr ""
+
+msgid "fan"
 msgstr ""
 
 #: extension.js:1542 extension.js:1566 extension.js:1574
@@ -315,6 +331,3 @@ msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configurador do System Monitor Applet"
-
-#~ msgid "Collisions"
-#~ msgstr "Colisões"

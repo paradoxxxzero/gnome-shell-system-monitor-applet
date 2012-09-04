@@ -18,9 +18,7 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-KeywordsList: Collisions\n"
 
-#: prefs.js:69
-#: prefs.js:90
-#: prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -134,6 +132,12 @@ msgstr "Sendefehler"
 
 msgid "Downerrors"
 msgstr "Empfangsfehler"
+
+msgid "collisions"
+msgstr ""
+
+msgid "Collisions"
+msgstr ""
 
 #: extension.js:836
 msgid "Disk"
@@ -306,17 +310,26 @@ msgstr "Abbrechen"
 msgid "Battery"
 msgstr "Akku"
 
+#, fuzzy
+msgid "battery"
+msgstr "Akku"
+
 #: extension.js:896
 msgid "Freq"
 msgstr "Taktfrequenz"
+
+msgid "freq"
+msgstr ""
 
 #: extension.js:1540
 msgid "Fan"
 msgstr "Lüfter"
 
-#: extension.js:1542
-#: extension.js:1566
-#: extension.js:1574
+#, fuzzy
+msgid "fan"
+msgstr "Lüfter"
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
 msgstr "1/min"
 

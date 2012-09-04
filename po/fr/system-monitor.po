@@ -130,6 +130,12 @@ msgstr "Erreurs montantes"
 msgid "Downerrors"
 msgstr "Erreurs descendantes"
 
+msgid "collisions"
+msgstr ""
+
+msgid "Collisions"
+msgstr ""
+
 #: extension.js:836
 msgid "Disk"
 msgstr "Disque"
@@ -301,12 +307,23 @@ msgstr "Annuler"
 msgid "Battery"
 msgstr "Batterie"
 
+#, fuzzy
+msgid "battery"
+msgstr "Batterie"
+
 #: extension.js:896
 msgid "Freq"
 msgstr "Fréq."
 
+msgid "freq"
+msgstr ""
+
 #: extension.js:1540
 msgid "Fan"
+msgstr "Ventilateur"
+
+#, fuzzy
+msgid "fan"
 msgstr "Ventilateur"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574

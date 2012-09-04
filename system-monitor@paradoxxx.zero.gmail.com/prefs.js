@@ -66,7 +66,7 @@ const ColorSelect = new Lang.Class({
     _init: function(name) {
         this.label = new Gtk.Label({label: name + _(":")});
         this.picker = new Gtk.ColorButton();
-        this.actor = new Gtk.HBox();
+        this.actor = new Gtk.HBox({spacing:5});
         this.actor.add(this.label);
         this.actor.add(this.picker);
         this.picker.set_use_alpha(true);
@@ -105,8 +105,9 @@ const Select = new Lang.Class({
 
     _init: function(name) {
         this.label = new Gtk.Label({label: name + _(":")});
+        //this.label.set_justify(Gtk.Justification.RIGHT);
         this.selector = new Gtk.ComboBoxText();
-        this.actor = new Gtk.HBox();
+        this.actor = new Gtk.HBox({spacing:5});
         this.actor.add(this.label);
         this.actor.add(this.selector);
     },
@@ -216,7 +217,11 @@ const SettingFrame = new Lang.Class({
             } catch (e) {
                 item.set_value(0);
             }
-            this.hbox3.add(item.actor);
+            //this.hbox3.add(item.actor);
+            if (sections[0] == 'fan')            
+                this.hbox2.pack_end(item.actor, true, false, 0);
+            else
+                this.hbox2.pack_start(item.actor, true, false, 0);
             item.selector.connect('changed', function(combo){
                 set_string(combo, Schema, key, _slist);
             });

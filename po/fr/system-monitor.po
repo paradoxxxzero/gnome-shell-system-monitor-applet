@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2012-08-31 07:22+0200\n"
+"PO-Revision-Date: 2012-09-05 07:22+0200\n"
 "Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -131,10 +131,10 @@ msgid "Downerrors"
 msgstr "Erreurs descendantes"
 
 msgid "collisions"
-msgstr ""
+msgstr "collisions"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Collisions"
 
 #: extension.js:836
 msgid "Disk"
@@ -307,24 +307,22 @@ msgstr "Annuler"
 msgid "Battery"
 msgstr "Batterie"
 
-#, fuzzy
 msgid "battery"
-msgstr "Batterie"
+msgstr "batterie"
 
 #: extension.js:896
 msgid "Freq"
 msgstr "Fréq."
 
 msgid "freq"
-msgstr ""
+msgstr "fréq."
 
 #: extension.js:1540
 msgid "Fan"
 msgstr "Ventilateur"
 
-#, fuzzy
 msgid "fan"
-msgstr "Ventilateur"
+msgstr "ventilateur"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"

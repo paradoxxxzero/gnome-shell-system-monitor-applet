@@ -1472,14 +1472,16 @@ const Freq = new Lang.Class({
     elt: 'freq',
     item_name: _('Freq'),
     color_name: ['freq'],
-    _init: function () {
-        this.item_name = _('Freq');
+    cpuid: 0,
+    _init: function (cpuid) {
+        this.item_name = _('Freq') + (cpuid < 0 ? '' : ' ' + (cpuid + 1));
+        this.cpuid = cpuid;
         this.freq = 0;
         if (GLib.file_test('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq', 1 << 4)) {
             this.fixed_freq = -1;
-            this.off = this.get_cpufreq('scaling_min_freq', 0);
+            this.off = this.get_cpufreq('scaling_min_freq', cpuid < 0 ? 0 : cpuid);
         } else {
-            this.fixed_freq = this.get_freq_from_cpuinfo();
+            this.fixed_freq = this.get_freq_from_cpuinfo(cpuid < 0 ? 0 : cpuid);
             this.off = 0;
         }
         this.parent()
@@ -1487,13 +1489,15 @@ const Freq = new Lang.Class({
         this.update();
     },
     refresh: function () {
-        if (this.fixed_freq < 0) {
+        if (this.fixed_freq < 0 && this.cpuid < 0) {
             let total_frequency = 0;
             let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
             for (let i = 0; i < num_cpus; i++) {
                 total_frequency += this.get_cpufreq('scaling_cur_freq', i);
             }
             this.freq = Math.round(total_frequency / num_cpus);
+        } else if (this.fixed_freq < 0) {
+            this.freq = this.get_cpufreq('scaling_cur_freq', this.cpuid);
         } else {
             this.freq = this.fixed_freq;
         }
@@ -1528,14 +1532,18 @@ const Freq = new Lang.Class({
         sys_file = '/sys/devices/system/cpu/cpu' + cpuid + '/cpufreq/' + sys_file;
         return parseInt(Shell.get_file_contents_utf8_sync(sys_file)) / 1000;
     },
-    get_freq_from_cpuinfo: function () {
+    get_freq_from_cpuinfo: function (cpuid) {
+        let cnt = cpuid;
         let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split('\n');
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i];
             if (line.search(/cpu mhz/i) < 0) {
                 continue;
             }
-            return parseInt(line.substring(line.indexOf(':') + 2));
+            if (cnt === 0) {
+                return parseInt(line.substring(line.indexOf(':') + 2));
+            }
+            cnt--;
         }
         return 0;
     }
@@ -2303,7 +2311,14 @@ var enable = function () {
 
         // Items to Monitor
         Main.__sm.elts = createCpus();
-        Main.__sm.elts.push(new Freq());
+        let num_cpus = Main.__sm.elts.length;
+        if (num_cpus === 1) {
+            Main.__sm.elts.push(new Freq(-1));
+        } else {
+            for (let i = 0; i < num_cpus; i++) {
+                Main.__sm.elts.push(new Freq(i));
+            }
+        }
         Main.__sm.elts.push(new Mem());
         Main.__sm.elts.push(new Swap());
         Main.__sm.elts.push(new Net());

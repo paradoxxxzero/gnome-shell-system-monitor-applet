@@ -21,7 +21,7 @@
 let smDepsGtop = true;
 let smDepsNM = true;
 
-//const Config = imports.misc.config;
+const Config = imports.misc.config;
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 
@@ -77,7 +77,7 @@ let metadata = extension.metadata;
 
 let Schema, Background, IconSize, Style, MountsMonitor, StatusArea;
 let menu_timeout, gc_timeout;
-
+let shell_Version = Config.PACKAGE_VERSION;
 function l_limit(t) {
     return (t > 0) ? t : 1000;
 }
@@ -1661,11 +1661,17 @@ var enable = function () {
         Main.__sm.elts.push(new Thermal());
         Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());
-
+        
         let tray = Main.__sm.tray;
         StatusArea.systemMonitor = tray;
-        panel.insert_child_at_index(tray.actor, 1);
-        panel.child_set(tray.actor, { y_fill: true } );
+
+        if (shell_Version < "3.5"){
+            panel.insert_child_at_index(tray.actor, 1);
+            panel.child_set(tray.actor, { y_fill: true } );
+        } else {
+            Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
+        }
+        
         let box = new St.BoxLayout();
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
@@ -1673,7 +1679,7 @@ var enable = function () {
             Main.__sm.elts[elt].menu_item.actor.add_style_class_name(Style.get('sm-popup-menu-item'));
             box.add_actor(Main.__sm.elts[elt].actor);
             //if (elt == 0)
-                tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
+            tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
         }
 
         let pie_item = Main.__sm.pie;
@@ -1683,7 +1689,7 @@ var enable = function () {
         let bar_item = Main.__sm.bar;
         bar_item.create_menu_item();
         tray.menu.addMenuItem(bar_item.menu_item);
-
+        
         change_usage();
         Schema.connect('changed::' + 'disk-usage-style', change_usage);
 
@@ -1727,7 +1733,10 @@ var enable = function () {
             }
         });
         tray.menu.addMenuItem(item);
-        Main.panel._menus.addMenu(tray.menu);
+        if (shell_Version < "3.5")
+            Main.panel.menuManager.addMenu(tray.menu);
+        else
+            Main.panel._menus.addMenu(tray.menu);
 
     }
     log("System monitor applet enabling done");

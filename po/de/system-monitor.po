@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: paradoxxxzero/gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2012-09-04 00:53+0100\n"
+"PO-Revision-Date: 2012-09-05 20:42+0100\n"
 "Last-Translator: Agilo Kern <prdiewelt@googlemail.com>\n"
 "Language-Team: LANGUAGE <prdiewelt@googlemail.com>\n"
 "Language: \n"
@@ -18,7 +18,9 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-KeywordsList: Collisions\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69
+#: prefs.js:90
+#: prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -134,10 +136,10 @@ msgid "Downerrors"
 msgstr "Empfangsfehler"
 
 msgid "collisions"
-msgstr ""
+msgstr "Kollisionsdaten"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Kollisionsdaten"
 
 #: extension.js:836
 msgid "Disk"
@@ -287,9 +289,9 @@ msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
 "libgtop, Network Manager and gir bindings \n"
-"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    on Arch: libgtop, networkmanager\n"
+"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t on Arch: libgtop, networkmanager\n"
 msgstr ""
 "Fehlende Abhängigkeiten\n"
 "Bitte installieren Sie: \n"
@@ -310,7 +312,6 @@ msgstr "Abbrechen"
 msgid "Battery"
 msgstr "Akku"
 
-#, fuzzy
 msgid "battery"
 msgstr "Akku"
 
@@ -319,17 +320,18 @@ msgid "Freq"
 msgstr "Taktfrequenz"
 
 msgid "freq"
-msgstr ""
+msgstr "Taktfrequenz"
 
 #: extension.js:1540
 msgid "Fan"
 msgstr "Lüfter"
 
-#, fuzzy
 msgid "fan"
 msgstr "Lüfter"
 
-#: extension.js:1542 extension.js:1566 extension.js:1574
+#: extension.js:1542
+#: extension.js:1566
+#: extension.js:1574
 msgid "rpm"
 msgstr "1/min"
 

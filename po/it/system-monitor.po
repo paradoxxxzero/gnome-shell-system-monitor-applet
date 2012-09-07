@@ -316,15 +316,15 @@ msgid "Freq"
 msgstr "Frequenza"
 
 msgid "freq"
-msgstr ""
+msgstr "frequenza"
 
 #: extension.js:1540
 msgid "Fan"
-msgstr ""
+msgstr "Ventola"
 
 msgid "fan"
-msgstr ""
+msgstr "ventola"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
-msgstr ""
+msgstr "giri/min"

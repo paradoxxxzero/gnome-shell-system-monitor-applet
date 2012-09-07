@@ -107,8 +107,7 @@ function interesting_mountpoint(mount){
 }
 
 Number.prototype.toLocaleFixed = function(dots){
-    //return parseFloat(this.toFixed(dots)).toLocaleString();
-    return this.toPrecision(dots).toLocaleString();
+    return this.toFixed(dots).toLocaleString();
 }
 
 

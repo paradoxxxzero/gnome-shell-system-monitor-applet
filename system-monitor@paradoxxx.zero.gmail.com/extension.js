@@ -106,6 +106,11 @@ function interesting_mountpoint(mount){
     return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase() == "nfs") && mount[2].toLowerCase() != "udf");
 }
 
+Number.prototype.toLocaleFixed = function(dots){
+    //return parseFloat(this.toFixed(dots)).toLocaleString();
+    return this.toPrecision(dots).toLocaleString();
+}
+
 
 const smStyleManager = new Lang.Class({
     Name: 'SystemMonitor.smStyleManager',
@@ -1148,7 +1153,7 @@ const Disk = new Lang.Class({
         this.vals = this.usage.slice();
         for (let i = 0;i < 2;i++) {
             if (this.usage[i] < 10)
-                this.usage[i] = this.usage[i].toFixed(1);
+                this.usage[i] = this.usage[i].toLocaleFixed(1);
             else
                 this.usage[i] = Math.round(this.usage[i]);
         }
@@ -1733,7 +1738,7 @@ var enable = function () {
             }
         });
         tray.menu.addMenuItem(item);
-        if (shell_Version < "3.5")
+        if (shell_Version > "3.5")
             Main.panel.menuManager.addMenu(tray.menu);
         else
             Main.panel._menus.addMenu(tray.menu);
@@ -1759,8 +1764,12 @@ var disable = function () {
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-    Main.__sm.tray.destroy();
-    StatusArea.systemMonitor = null;
+    
+    if (shell_Version < "3.5"){
+        Main.__sm.tray.destroy();
+        StatusArea.systemMonitor = null;
+    } else
+        Main.__sm.tray.actor.destroy();
     Main.__sm = null;
     log("System monitor applet disable");
 

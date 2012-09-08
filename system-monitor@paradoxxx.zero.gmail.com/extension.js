@@ -303,10 +303,12 @@ const smMountsMonitor = new Lang.Class({
     connected: false,
     _init: function() {
         this._volumeMonitor = Gio.VolumeMonitor.get();
-
+        let sys_mounts = ['/home','/tmp','/boot','/usr','/usr/local'];
         this.base_mounts = ['/'];
-        if (this.is_home_mount)
-            this.base_mounts.push('/home');
+        sys_mounts.forEach(Lang.bind(this,function(sMount){
+            if (this.is_sys_mount(sMount+'/'))
+                this.base_mounts.push(sMount);
+        }));
         this.connect();
 
     },
@@ -356,8 +358,8 @@ const smMountsMonitor = new Lang.Class({
     get_mounts: function() {
         return this.mounts;
     },
-    is_home_mount: function() {
-        let file = Gio.file_new_for_path('/home/');
+    is_sys_mount: function(mpath) {
+        let file = Gio.file_new_for_path(mpath);
         let info = file.query_info(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT,
                                  Gio.FileQueryInfoFlags.NONE, null);
         return is_mount = info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);

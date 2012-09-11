@@ -1163,20 +1163,20 @@ const Disk = new Lang.Class({
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
     },
     create_text_items: function() {
-        return [new St.Label({ text: 'R', style_class: Style.get("sm-status-label")}),
+        return [new St.Label({ text: _('R'), style_class: Style.get("sm-status-label")}),
                 new St.Label({ style_class: Style.get("sm-disk-value")}),
                 new St.Label({ text: Style.diskunits(), style_class: Style.get("sm-disk-unit-label")}),
-                new St.Label({ text: 'W', style_class: Style.get("sm-status-label")}),
+                new St.Label({ text: _('W'), style_class: Style.get("sm-status-label")}),
                 new St.Label({ style_class: Style.get("sm-disk-value")}),
                 new St.Label({ text: Style.diskunits(), style_class: Style.get("sm-disk-unit-label")})];
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label")}),
-                new St.Label({ text:'R', style_class: Style.get("sm-label")}),
+                new St.Label({ text:_('R'), style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label")}),
-                new St.Label({ text:'W', style_class: Style.get("sm-label")})];
+                new St.Label({ text:_('W'), style_class: Style.get("sm-label")})];
     },
 });
 

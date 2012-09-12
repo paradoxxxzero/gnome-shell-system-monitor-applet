@@ -1636,7 +1636,10 @@ var enable = function () {
 
         if (Schema.get_boolean("center-display")) {
             if (Schema.get_boolean("move-clock")) {
-                let dateMenu = Main.panel._dateMenu;
+                if (shell_Version >= "3.5.91")
+                    let dateMenu = Main.panel.statusArea.dateMenu;
+                else
+                    let dateMenu = Main.panel._dateMenu;
                 Main.panel._centerBox.remove_actor(dateMenu.actor);
                 Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
             }

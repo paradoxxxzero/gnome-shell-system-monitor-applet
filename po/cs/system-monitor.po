@@ -4,18 +4,20 @@
 # Jan Lipovský <janlipovsky@gmail.com>, 2011-2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Jan Lipovsky <janlipovsky@gmail.com>\n"
+"PO-Revision-Date: 2012-09-15\n"
+"Last-Translator: Jan Lipovský <janlipovsky@gmail.com>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: Czech\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69
+#: prefs.js:90
+#: prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -53,7 +55,7 @@ msgstr "Barva pozadí"
 
 #: prefs.js:197
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "Zobrazit jednotlivá jádra"
 
 #: prefs.js:193
 msgid "Show network speed in bits"
@@ -72,9 +74,8 @@ msgid "Move the clock"
 msgstr "Posunout hodiny"
 
 #: prefs.js:286
-#, fuzzy
 msgid "Compact Display"
-msgstr "Zobrazit"
+msgstr "Kompaktní zobrazení"
 
 #: extension.js:746
 msgid "Cpu"
@@ -132,10 +133,10 @@ msgid "Downerrors"
 msgstr "Příchozí chyby"
 
 msgid "collisions"
-msgstr ""
+msgstr "kolize"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Kolize"
 
 #: extension.js:836
 msgid "Disk"
@@ -240,11 +241,10 @@ msgid "MiB"
 msgstr "MiB"
 
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
-#, fuzzy
 msgid "MB"
-msgstr "MiB"
+msgstr "MB"
 
 #: extension.js:1179
 msgid "Thermal"
@@ -309,27 +309,28 @@ msgstr "Zrušit"
 msgid "Battery"
 msgstr "Baterie"
 
-#, fuzzy
 msgid "battery"
-msgstr "Baterie"
+msgstr "baterie"
 
 #: extension.js:896
 msgid "Freq"
 msgstr "Frekvence"
 
 msgid "freq"
-msgstr ""
+msgstr "frekvence"
 
 #: extension.js:1540
 msgid "Fan"
-msgstr ""
+msgstr "Ventilátor"
 
 msgid "fan"
-msgstr ""
+msgstr "ventilátor"
 
-#: extension.js:1542 extension.js:1566 extension.js:1574
+#: extension.js:1542
+#: extension.js:1566
+#: extension.js:1574
 msgid "rpm"
-msgstr ""
+msgstr "ot/min"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "System Monitor Applet Konfigurátor"

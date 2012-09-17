@@ -341,7 +341,8 @@ const smMountsMonitor = new Lang.Class({
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
-            this.mounts.push(mount.get_root().get_path());
+            if (!this.is_ro_mount(mount))
+                this.mounts.push(mount.get_root().get_path());
         }));
         //log("base: " + this.base_mounts);
         //log("mounts: " + this.mounts);
@@ -362,7 +363,12 @@ const smMountsMonitor = new Lang.Class({
         let file = Gio.file_new_for_path(mpath);
         let info = file.query_info(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT,
                                  Gio.FileQueryInfoFlags.NONE, null);
-        return is_mount = info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+        return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+    },
+    is_ro_mount: function(mount) {
+        let file = mount.get_default_location();
+        let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY, null);
+        return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY);
     },
     connect: function() {
         if (this.connected)
@@ -1614,7 +1620,6 @@ var init = function () {
 
 var enable = function () {
     log("System monitor applet enabling");
-
     if (!(smDepsGtop && smDepsNM)) {
         Main.__sm = {
             smdialog: new smDialog()
@@ -1636,7 +1641,7 @@ var enable = function () {
 
         if (Schema.get_boolean("center-display")) {
             if (Schema.get_boolean("move-clock")) {
-                let dateMenu
+                let dateMenu;
                 if (shell_Version >= "3.5.91")
                     dateMenu = Main.panel.statusArea.dateMenu;
                 else
@@ -1747,8 +1752,8 @@ var enable = function () {
             Main.panel.menuManager.addMenu(tray.menu);
         else
             Main.panel._menus.addMenu(tray.menu);
-
     }
+
     log("System monitor applet enabling done");
 };
 

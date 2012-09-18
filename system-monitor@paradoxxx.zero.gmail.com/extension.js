@@ -1502,7 +1502,7 @@ const Thermal = new Lang.Class({
     elt: 'thermal',
     color_name: ['tz0'],
     _init: function() {
-        this.temperature = -273.15;
+        this.temperature = null;
         this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
         this.parent()
         this.tip_format('\u2103');
@@ -1522,10 +1522,21 @@ const Thermal = new Lang.Class({
         }
     },
     _apply: function() {
-        this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
-        //Making it looks better in chart.
-        this.vals = [this.temperature / 100];
-        this.tip_vals[0] = Math.round(this.temperature);
+	var temperature_str;
+	var temperature_val;
+	var temperature_tip;
+	if (this.temperature != null) {
+		temperature_str = this.temperature.toString(); 
+		//Making it looks better in chart.
+		temperature_val = this.temperature / 100;
+		temperature_tip = Math.round(this.temperature);
+	} else {
+		temperature_str = temperature_tip = '  -  ';
+		temperature_val = 0;
+	}
+	this.text_items[0].text = this.menu_items[3].text = temperature_str;
+	this.vals = [ temperature_val ];
+	this.tip_vals[0] = temperature_tip;
     },
     create_text_items: function() {
         return [new St.Label({ style_class: Style.get("sm-status-value")}),

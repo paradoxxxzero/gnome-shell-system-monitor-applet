@@ -1680,7 +1680,7 @@ var enable = function () {
         let tray = Main.__sm.tray;
         StatusArea.systemMonitor = tray;
 
-        if (shell_Version < "3.5"){
+        if (shell_Version < "3.5.5"){
             panel.insert_child_at_index(tray.actor, 1);
             panel.child_set(tray.actor, { y_fill: true } );
         } else {

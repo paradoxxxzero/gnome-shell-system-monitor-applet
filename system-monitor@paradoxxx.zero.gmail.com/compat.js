@@ -5,7 +5,7 @@ function color_from_string(color){
     let clutterColor, res;
 
     let shell_Version = Config.PACKAGE_VERSION;
-    if (shell_Version < "3.5.90"){
+    if (shell_Version < "3.5.4"){
         clutterColor = new Clutter.Color();
         clutterColor.from_string(color);
     } else {

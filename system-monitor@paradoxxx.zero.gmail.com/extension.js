@@ -1748,7 +1748,7 @@ var enable = function () {
             }
         });
         tray.menu.addMenuItem(item);
-        if (shell_Version > "3.5")
+        if (shell_Version > "3.5.5")
             Main.panel.menuManager.addMenu(tray.menu);
         else
             Main.panel._menus.addMenu(tray.menu);

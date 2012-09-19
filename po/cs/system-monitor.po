@@ -15,9 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69
-#: prefs.js:90
-#: prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -147,6 +145,14 @@ msgstr "Zápis"
 
 msgid "Read"
 msgstr "Čtení"
+
+#: extension.js:1182
+msgid "R"
+msgstr ""
+
+#: extension.js:1185
+msgid "W"
+msgstr ""
 
 #: prefs.js:185
 msgid "graph"
@@ -326,9 +332,7 @@ msgstr "Ventilátor"
 msgid "fan"
 msgstr "ventilátor"
 
-#: extension.js:1542
-#: extension.js:1566
-#: extension.js:1574
+#: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
 msgstr "ot/min"
 

@@ -18,9 +18,7 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-KeywordsList: Collisions\n"
 
-#: prefs.js:69
-#: prefs.js:90
-#: prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
 msgstr ":"
 
@@ -150,6 +148,14 @@ msgstr "Schreiben"
 
 msgid "Read"
 msgstr "Lesen"
+
+#: extension.js:1182
+msgid "R"
+msgstr ""
+
+#: extension.js:1185
+msgid "W"
+msgstr ""
 
 #: prefs.js:185
 msgid "graph"
@@ -285,13 +291,14 @@ msgid "none"
 msgstr "nicht anzeigen"
 
 #: extension.js:6
+#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
 "libgtop, Network Manager and gir bindings \n"
-"\t on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t on Arch: libgtop, networkmanager\n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
 "Fehlende Abhängigkeiten\n"
 "Bitte installieren Sie: \n"
@@ -329,9 +336,7 @@ msgstr "Lüfter"
 msgid "fan"
 msgstr "Lüfter"
 
-#: extension.js:1542
-#: extension.js:1566
-#: extension.js:1574
+#: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
 msgstr "1/min"
 

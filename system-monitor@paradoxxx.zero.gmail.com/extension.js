@@ -341,8 +341,11 @@ const smMountsMonitor = new Lang.Class({
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
-            if (!this.is_ro_mount(mount))
-                this.mounts.push(mount.get_root().get_path());
+            if (!this.is_ro_mount(mount)){
+                let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
+                if (mpath)
+                    this.mounts.push(mpath);
+            }
         }));
         //log("base: " + this.base_mounts);
         //log("mounts: " + this.mounts);

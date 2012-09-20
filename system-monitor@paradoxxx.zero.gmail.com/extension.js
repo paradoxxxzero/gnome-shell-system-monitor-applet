@@ -1645,12 +1645,15 @@ var enable = function () {
         if (Schema.get_boolean("center-display")) {
             if (Schema.get_boolean("move-clock")) {
                 let dateMenu;
-                if (shell_Version >= "3.5.91")
+                if (shell_Version >= "3.5.91"){
                     dateMenu = Main.panel.statusArea.dateMenu;
-                else
+                    Main.panel._centerBox.remove_actor(dateMenu.container);
+                    Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
+                } else {
                     dateMenu = Main.panel._dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.actor);
-                Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
+                    Main.panel._centerBox.remove_actor(dateMenu.actor);
+                    Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
+                }
             }
             panel = Main.panel._centerBox;
         }
@@ -1761,6 +1764,21 @@ var enable = function () {
 };
 
 var disable = function () {
+    //restore clock
+    if (Schema.get_boolean("center-display")) {
+            if (Schema.get_boolean("move-clock")) {
+                let dateMenu;
+                if (shell_Version >= "3.5.91"){
+                    dateMenu = Main.panel.statusArea.dateMenu;
+                    Main.panel._rightBox.remove_actor(dateMenu.container);
+                    Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._centerBox);
+                } else {
+                    dateMenu = Main.panel._dateMenu;
+                    Main.panel._rightBox.remove_actor(dateMenu.actor);
+                    Main.panel._centerBox.insert_child_at_index(dateMenu.actor, -1);
+                }
+            }
+    }
     //restore system power icon if necessary
     // workaround bug introduced by multiple cpus init :
     //if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){

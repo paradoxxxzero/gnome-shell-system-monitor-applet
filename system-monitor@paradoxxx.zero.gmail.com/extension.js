@@ -1505,7 +1505,7 @@ const Thermal = new Lang.Class({
     elt: 'thermal',
     color_name: ['tz0'],
     _init: function() {
-        this.temperature = ' -- ';
+        this.temperature = '-- ';
         this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
         this.parent()
         this.tip_format('\u2103');
@@ -1518,7 +1518,7 @@ const Thermal = new Lang.Class({
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = parseInt(as_r[1]) / 1000;
+                this.temperature = Math.round(parseInt(as_r[1]) / 1000);
             }));
         } else {
             global.logError("error reading: " + sfile);
@@ -1528,7 +1528,7 @@ const Thermal = new Lang.Class({
         this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
         //Making it looks better in chart.
         this.vals = [this.temperature / 100];
-        this.tip_vals[0] = Math.round(this.temperature);
+        this.tip_vals[0] = this.temperature;
     },
     create_text_items: function() {
         return [new St.Label({ style_class: Style.get("sm-status-value")}),

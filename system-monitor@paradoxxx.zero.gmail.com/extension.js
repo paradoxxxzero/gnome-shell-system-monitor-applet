@@ -1505,7 +1505,7 @@ const Thermal = new Lang.Class({
     elt: 'thermal',
     color_name: ['tz0'],
     _init: function() {
-        this.temperature = -273.15;
+        this.temperature = ' -- ';
         this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
         this.parent()
         this.tip_format('\u2103');

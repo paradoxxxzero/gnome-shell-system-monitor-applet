@@ -369,9 +369,13 @@ const smMountsMonitor = new Lang.Class({
         return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
     },
     is_ro_mount: function(mount) {
-        let file = mount.get_default_location();
-        let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY, null);
-        return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY);
+        try {
+            let file = mount.get_default_location();
+            let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY, null);
+            return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY);
+        } catch(e) {
+            return false;
+        }
     },
     connect: function() {
         if (this.connected)
@@ -1504,6 +1508,7 @@ const Thermal = new Lang.Class({
 
     elt: 'thermal',
     color_name: ['tz0'],
+    max: 100,
     _init: function() {
         this.temperature = '-- ';
         this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
@@ -1527,7 +1532,8 @@ const Thermal = new Lang.Class({
     _apply: function() {
         this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
         //Making it looks better in chart.
-        this.vals = [this.temperature / 100];
+        //this.vals = [this.temperature / 100];
+        this.vals = [this.temperature];
         this.tip_vals[0] = this.temperature;
     },
     create_text_items: function() {
@@ -1684,9 +1690,10 @@ var enable = function () {
         Main.__sm.elts.push(new Battery());
         
         let tray = Main.__sm.tray;
-        StatusArea.systemMonitor = tray;
+        
 
         if (shell_Version < "3.5.5"){
+            StatusArea.systemMonitor = tray;
             panel.insert_child_at_index(tray.actor, 1);
             panel.child_set(tray.actor, { y_fill: true } );
         } else {

@@ -878,18 +878,33 @@ const Battery = new Lang.Class({
             value = false;
         }
         if (value && Schema.get_boolean(this.elt + '-display')){
-            for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
-                if(StatusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
-                    Main.panel._rightBox.get_children()[Index].destroy();
-                    StatusArea['battery'] = null;
+            if (shell_Version > "3.5") {
+                if (StatusArea.battery.actor.visible) {
+                    StatusArea.battery.destroy();
                     this.icon_hidden = true;
-                    break;
+                }
+            }
+            else {
+                for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
+                    if(StatusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
+                        Main.panel._rightBox.get_children()[Index].destroy();
+                        StatusArea['battery'] = null;
+                        this.icon_hidden = true;
+                        break;
+                    }
                 }
             }
         } else if(this.icon_hidden){
-            let Indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION['battery'];
-            Main.panel.addToStatusArea('battery', Indicator, Panel.STANDARD_STATUS_AREA_ORDER.indexOf('battery'));
+            if (shell_Version < "3.5") {
+                let Indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION['battery'];
+                Main.panel.addToStatusArea('battery', Indicator, Panel.STANDARD_STATUS_AREA_ORDER.indexOf('battery'));
+            } else {
+                let Indicator = new Panel.PANEL_ITEM_IMPLEMENTATIONS['battery'];
+                Main.panel.addToStatusArea('battery', Indicator, Main.sessionMode.panel.right.indexOf('battery'),'right');
+            }
             this.icon_hidden = false;
+            //Main.panel._updatePanel('right');
+
         }
     },
     update_tips: function(){

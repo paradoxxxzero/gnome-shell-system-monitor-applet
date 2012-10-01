@@ -1662,26 +1662,9 @@ var enable = function () {
         if (StatusArea == undefined){
             StatusArea = Main.panel.statusArea;
         }
-
         if (Schema.get_boolean("center-display")) {
-            if (Schema.get_boolean("move-clock")) {
-                let dateMenu;
-                if (shell_Version >= "3.5.91"){
-                    dateMenu = Main.panel.statusArea.dateMenu;
-                    Main.panel._centerBox.remove_actor(dateMenu.container);
-                    Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
-                } else {
-                    dateMenu = Main.panel._dateMenu;
-                    Main.panel._centerBox.remove_actor(dateMenu.actor);
-                    Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
-                }
-            }
             panel = Main.panel._centerBox;
         }
-        Schema.connect('changed::background', Lang.bind(
-            this, function (schema, key) {
-                Background = color_from_string(Schema.get_string(key));
-            }));
 
         MountsMonitor.connect();
 
@@ -1706,7 +1689,25 @@ var enable = function () {
         
         let tray = Main.__sm.tray;
         
+        
+        if (Schema.get_boolean("move-clock")) {
+            let dateMenu;
+            if (shell_Version >= "3.5.91"){
+                dateMenu = Main.panel.statusArea.dateMenu;
+                Main.panel._centerBox.remove_actor(dateMenu.container);
+                Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
+            } else {
+                dateMenu = Main.panel._dateMenu;
+                Main.panel._centerBox.remove_actor(dateMenu.actor);
+                Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
+            }
+            tray.clockMoved = true;
+        }
 
+        Schema.connect('changed::background', Lang.bind(
+            this, function (schema, key) {
+                Background = color_from_string(Schema.get_string(key));
+            }));
         if (shell_Version < "3.5.5"){
             StatusArea.systemMonitor = tray;
             panel.insert_child_at_index(tray.actor, 1);
@@ -1787,19 +1788,17 @@ var enable = function () {
 
 var disable = function () {
     //restore clock
-    if (Schema.get_boolean("center-display")) {
-            if (Schema.get_boolean("move-clock")) {
-                let dateMenu;
-                if (shell_Version >= "3.5.91"){
-                    dateMenu = Main.panel.statusArea.dateMenu;
-                    Main.panel._rightBox.remove_actor(dateMenu.container);
-                    Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._centerBox);
-                } else {
-                    dateMenu = Main.panel._dateMenu;
-                    Main.panel._rightBox.remove_actor(dateMenu.actor);
-                    Main.panel._centerBox.insert_child_at_index(dateMenu.actor, -1);
-                }
-            }
+    if (Main.__sm.tray.clockMoved) {
+        let dateMenu;
+        if (shell_Version >= "3.5.91"){
+            dateMenu = Main.panel.statusArea.dateMenu;
+            Main.panel._rightBox.remove_actor(dateMenu.container);
+            Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
+        } else {
+            dateMenu = Main.panel._dateMenu;
+            Main.panel._rightBox.remove_actor(dateMenu.actor);
+            Main.panel._centerBox.insert_child_at_index(dateMenu.actor, 0);
+        }
     }
     //restore system power icon if necessary
     // workaround bug introduced by multiple cpus init :

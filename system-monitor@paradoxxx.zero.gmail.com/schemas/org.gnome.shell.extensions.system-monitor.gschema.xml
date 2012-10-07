@@ -280,7 +280,7 @@
       <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
     </key>
     <key name="move-clock" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Move the clock to the right when center-display is true</summary>
       <description>True: Move the clock to the right, False: Keep it in center</description>
     </key>

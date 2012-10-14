@@ -72,6 +72,9 @@ libgtop, Network Manager and gir bindings \n\
 \t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
 \t    on Arch: libgtop, networkmanager\n");
 
+//stale network shares will cause the shell to freeze, enable this with caution
+const ENABLE_NETWORK_DISK_USAGE = false;
+
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 
@@ -341,7 +344,7 @@ const smMountsMonitor = new Lang.Class({
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
-            if (!this.is_ro_mount(mount)){
+            if ((!this.is_ro_mount(mount)) && (!ENABLE_NETWORK_DISK_USAGE && !this.is_net_mount(mount))){
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
                 if (mpath)
                     this.mounts.push(mpath);
@@ -373,6 +376,16 @@ const smMountsMonitor = new Lang.Class({
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY, null);
             return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY);
+        } catch(e) {
+            return false;
+        }
+    },
+    is_net_mount: function(mount) {
+        try {
+            let file = mount.get_default_location();
+            let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
+            let result = info.get_attribute_string(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+            return (result == 'nfs' || result == 'smbfs' || result == 'cifs');
         } catch(e) {
             return false;
         }

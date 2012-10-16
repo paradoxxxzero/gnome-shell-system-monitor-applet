@@ -148,11 +148,11 @@ msgstr "Lettura"
 
 #: extension.js:1182
 msgid "R"
-msgstr ""
+msgstr "L"
 
 #: extension.js:1185
 msgid "W"
-msgstr ""
+msgstr "S"
 
 #: prefs.js:185
 msgid "graph"

@@ -1,0 +1,340 @@
+# Portuguese (Brazil) translation for system-monitor-applet.
+# Copyright (C) 2011 darkxst
+# This file is distributed under the same license as the system-monitor-applet package.
+# Rafael Ferreira <rafael.f.f1@gmail.com>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: system-monitor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
+"PO-Revision-Date: 2012-11-17 22:28-0300\n"
+"Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
+"Language-Team: pt_BR\n"
+"Language: Portuguese (Brazil)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ":"
+
+#: prefs.js:161
+msgid "Display"
+msgstr "Exibir"
+
+#: prefs.js:166
+msgid "Refresh Time"
+msgstr "Tempo de atualização"
+
+#: prefs.js:171
+msgid "Graph Width"
+msgstr "Largura do gráfico"
+
+#: prefs.js:176
+msgid "Show Text"
+msgstr "Mostrar identificador"
+
+#: prefs.js:184
+msgid "Display Style"
+msgstr "Estilo de apresentação"
+
+#: prefs.js:267
+msgid "Display Icon"
+msgstr "Mostrar ícone"
+
+#: prefs.js:276
+msgid "Display in the Middle"
+msgstr "Posicionar no centro"
+
+#: prefs.js:288
+msgid "Background Color"
+msgstr "Cor de fundo"
+
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr "Exibir núcleos individuais"
+
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr "Apresentar velocidade em bits por segundo"
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr "Sensor"
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr "Por favor, instale lm-sensors"
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr "Deslocar o relógio"
+
+#: prefs.js:286
+msgid "Compact Display"
+msgstr "Modo compactado"
+
+#: extension.js:746
+msgid "Cpu"
+msgstr "Processador (CPU)"
+
+msgid "User"
+msgstr "Utilizador"
+
+msgid "System"
+msgstr "Sistema"
+
+msgid "Other"
+msgstr "Outro"
+
+msgid "Nice"
+msgstr "Nice"
+
+msgid "Iowait"
+msgstr "IOwait"
+
+#: extension.js:941
+msgid "Memory"
+msgstr "Memória (RAM)"
+
+msgid "Program"
+msgstr "Programa"
+
+msgid "Cache"
+msgstr "Cache"
+
+msgid "Buffer"
+msgstr "Buffer"
+
+#: extension.js:1134
+msgid "Swap"
+msgstr "Memória virtual (swap)"
+
+msgid "Used"
+msgstr "Em utilização"
+
+#: extension.js:1010
+msgid "Net"
+msgstr "Rede"
+
+msgid "Up"
+msgstr "Enviados"
+
+msgid "Down"
+msgstr "Recebidos"
+
+msgid "Uperrors"
+msgstr "Erros ao enviar"
+
+msgid "Downerrors"
+msgstr "Erros ao receber"
+
+msgid "collisions"
+msgstr "colisões"
+
+msgid "Collisions"
+msgstr "Colisões"
+
+#: extension.js:836
+msgid "Disk"
+msgstr "Disco"
+
+msgid "Write"
+msgstr "Escrita"
+
+msgid "Read"
+msgstr "Leitura"
+
+# Leitura
+#: extension.js:1182
+msgid "R"
+msgstr "L"
+
+# Escrita
+#: extension.js:1185
+msgid "W"
+msgstr "E"
+
+#: prefs.js:185
+msgid "graph"
+msgstr "gráfico"
+
+#: prefs.js:185
+msgid "digit"
+msgstr "valor"
+
+#: prefs.js:185
+msgid "both"
+msgstr "ambos"
+
+msgid "cpu"
+msgstr "cpu"
+
+msgid "mem"
+msgstr "mem"
+
+msgid "swap"
+msgstr "swap"
+
+msgid "net"
+msgstr "rede"
+
+msgid "disk"
+msgstr "disco"
+
+#: extension.js:1346
+msgid "Preferences..."
+msgstr "Preferências..."
+
+#: extension.js:1340
+msgid "System Monitor..."
+msgstr "Monitor do Sistema..."
+
+msgid "System monitor"
+msgstr "Monitor do sistema"
+
+msgid "user"
+msgstr "usuário"
+
+msgid "system"
+msgstr "sistema"
+
+msgid "other"
+msgstr "outro"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "programa"
+
+msgid "cache"
+msgstr "cache"
+
+msgid "buffer"
+msgstr "buffer"
+
+msgid "used"
+msgstr "usado"
+
+msgid "up"
+msgstr "enviado"
+
+msgid "down"
+msgstr "recebido"
+
+msgid "uperrors"
+msgstr "erros envio"
+
+msgid "downerrors"
+msgstr "erros recebimento"
+
+msgid "write"
+msgstr "escrita"
+
+msgid "read"
+msgstr "leitura"
+
+msgid "KiB/s"
+msgstr "KB/s"
+
+msgid "MiB/s"
+msgstr "MB/s"
+
+msgid "MiB"
+msgstr "MB"
+
+msgid "kB"
+msgstr "kB"
+
+msgid "MB"
+msgstr "MB"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr "Temperatura"
+
+msgid "thermal"
+msgstr "temp"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr "Mostrar no menu"
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr "Mostrar tempo restante"
+
+#: prefs.js:226
+msgid "Hide System Icon"
+msgstr "Esconder ícone de sistema"
+
+#: prefs.js:230
+msgid "Usage Style"
+msgstr "Estilo de uso"
+
+#: prefs.js:231
+msgid "pie"
+msgstr "setores"
+
+#: prefs.js:231
+msgid "bar"
+msgstr "barra"
+
+#: prefs.js:231
+msgid "none"
+msgstr "nenhum"
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+"Dependências faltando\n"
+"Por favor instale: \n"
+"libgtop, Network Manager e bindings de gir \n"
+"\t    no Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    no Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    no Arch: libgtop, networkmanager\n"
+
+#: extension.js:97
+msgid "System Monitor Extension"
+msgstr "Extensão de monitor do sistema"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: extension.js:601
+msgid "Battery"
+msgstr "Bateria"
+
+msgid "battery"
+msgstr "bateria"
+
+#: extension.js:896
+msgid "Freq"
+msgstr "Freq"
+
+msgid "freq"
+msgstr "freq"
+
+#: extension.js:1540
+msgid "Fan"
+msgstr "Ventoinha"
+
+msgid "fan"
+msgstr "vent"
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
+msgstr "rpm"

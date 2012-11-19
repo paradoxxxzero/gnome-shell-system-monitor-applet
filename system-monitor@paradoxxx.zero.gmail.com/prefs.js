@@ -251,7 +251,7 @@ const App = new Lang.Class({
 
     _init: function(){
 
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal','fan', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'swap', 'disk', 'latency', 'net', 'thermal','fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
     
         this.items = [];

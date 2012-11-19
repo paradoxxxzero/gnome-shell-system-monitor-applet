@@ -1624,6 +1624,87 @@ const Fan = new Lang.Class({
     }
 });
 
+const Latency = new Lang.Class({
+    Name: 'SystemMonitor.Latency',
+    Extends: ElementBase, 
+    
+    elt: 'latency',
+    color_name: ['ping'],
+    _init: function() {
+        this.latency = 0;
+        this.menu_item = new PopupMenu.PopupMenuItem(_("Latency"), {reactive: false});
+        this.parent();
+        this.tip_format(_('ms'));
+        this.update();
+    },
+
+//synchronous version (slow down the system way too much)
+//    refresh: function() {
+//        [res,out]=GLib.spawn_command_line_sync("ping -c1 www.google.com");
+//        test=out.toString().match(/time= *(.*) *ms/);
+//        this.latency=parseInt(test[1]);
+//    },
+
+//asynchronous version
+    refresh: function() {
+        let begin=GLib.get_monotonic_time()/1000;
+        let command=["/bin/ping", "-c1", "www.google.com"];
+        let [res, pid, in_fd, out_fd, err_fd]=GLib.spawn_async_with_pipes(null,/* Working directory*/
+                command,                                        /* Argument vector */
+                null,                                            /* Environment */
+                GLib.SpawnFlags.SEARCH_PATH,                     /* Flags */
+                null);                                          /*child process config*/
+        let out_reader = new Gio.DataInputStream({
+                base_stream: new Gio.UnixInputStream({fd: out_fd})
+        });
+        let err_reader = new Gio.DataInputStream({
+                base_stream: new Gio.UnixInputStream({fd: err_fd})
+        });
+        let [err, size_err] = err_reader.read_line(null);
+        while (size_err>0){
+                log('error with '+command.join(' ')+' :'+err);
+                [err, size_err] = err_reader.read_line(null);
+        }
+        let [out, size_out] = out_reader.read_line(null);
+        while (size_out>0){
+                let test=out.toString().match(/time= *(.*) *ms/);
+                if (test)
+                {
+                        this.latency=parseInt(test[1]);
+                        break;
+                }
+                [out, size_out] = out_reader.read_line(null);
+        }
+        out_reader.close(null);
+        GLib.spawn_close_pid(pid);
+        let end=GLib.get_monotonic_time()/1000;
+        let diff=end-begin;
+        if(diff>300)
+                log(Date()+" Latency.refresh() took "+diff.toPrecision(5).toString()+"ms");
+    },
+
+    _apply: function() {
+        let value = this.latency.toString();
+        this.vals[0] = this.latency;
+        this.text_items[0].text = value + ' ';
+        this.tip_vals[0] = value;
+        this.menu_items[3].text = value;
+    },
+    create_text_items: function() {
+        return [new St.Label({ style_class: Style.get("sm-big-status-value")}),
+                new St.Label({ text: 'ms', style_class: Style.get("sm-perc-label")})];
+
+    },
+    create_menu_items: function() {
+        return [new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ text:_('ms'), style_class: Style.get("sm-label")})];
+    }
+});
+
 const Icon = new Lang.Class({
     Name: 'SystemMonitor.Icon',
 
@@ -1694,8 +1775,9 @@ var enable = function () {
         Main.__sm.elts.push(new Freq());
         Main.__sm.elts.push(new Mem());
         Main.__sm.elts.push(new Swap());
-        Main.__sm.elts.push(new Net());
         Main.__sm.elts.push(new Disk());
+        Main.__sm.elts.push(new Latency());
+        Main.__sm.elts.push(new Net());
         Main.__sm.elts.push(new Thermal());
         Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());

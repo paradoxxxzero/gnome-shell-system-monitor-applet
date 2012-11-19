@@ -73,6 +73,35 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="latency-display" type="b">
+      <default>true</default>
+      <summary>Display latency</summary>
+      <description>Set to false to remove latency display in status bar</description>
+    </key>
+    <key name="latency-refresh-time" type="i">
+      <default>1000</default>
+      <summary>Swap refresh time</summary>
+      <description>Time in ms between 2 refresh of swap</description>
+    </key>
+    <key name="latency-graph-width" type="i">
+      <default>100</default>
+      <summary>Latency graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="latency-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'latency'</summary>
+      <description>Set to true to show 'latency' before latency display</description>
+    </key>
+    <key name="latency-show-menu" type="b">
+      <default>true</default>
+      <summary>Display latency In Menu</summary>
+      <description>Set to true to show latency in pop-up menu</description>
+    </key>
+    <key name="latency-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'digit'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="cpu-display" type="b">
       <default>true</default>
       <summary>Display cpu</summary>
@@ -348,6 +377,10 @@
     <key name="swap-used-color" type="s">
       <default>'#8b00c3'</default>
       <summary>Color of used swap in the chart</summary>
+    </key>
+    <key name="latency-ping-color" type="s">
+      <default>'#00c3c3'</default>
+      <summary>Color of used latency in the chart</summary>
     </key>
     <key name="disk-read-color" type="s">
       <default>'#c65000'</default>

@@ -1648,7 +1648,7 @@ const Latency = new Lang.Class({
 //asynchronous version
     refresh: function() {
         let begin=GLib.get_monotonic_time()/1000;
-        let command=["/bin/ping", "-c1", "www.google.com"];
+        let command=["/bin/ping", "-c1", "-w5", "www.google.com"];
         let [res, pid, in_fd, out_fd, err_fd]=GLib.spawn_async_with_pipes(null,/* Working directory*/
                 command,                                        /* Argument vector */
                 null,                                            /* Environment */

@@ -1635,52 +1635,60 @@ const Latency = new Lang.Class({
         this.menu_item = new PopupMenu.PopupMenuItem(_("Latency"), {reactive: false});
         this.parent();
         this.tip_format(_('ms'));
+        Schema.connect('changed::' + this.elt + '-address', Lang.bind(this, this.refresh));
         this.update();
     },
 
-//synchronous version (slow down the system way too much)
-//    refresh: function() {
-//        [res,out]=GLib.spawn_command_line_sync("ping -c1 www.google.com");
-//        test=out.toString().match(/time= *(.*) *ms/);
-//        this.latency=parseInt(test[1]);
-//    },
+    search_latency: function(source, result) {
+        [out,size]=source.read_line_finish(result);
+        if(size==0){
+            this.latency=5000;
+            return;
+        }
+        let test=out.toString().match(/time= *(.*) *ms/);
+        if (test)
+            this.latency=parseInt(test[1]);
+        else
+            source.read_line_async(GLib.PRIORITY_DEFAULT, null, Lang.bind(this,function(source,result){ 
+                this.search_latency(source, result)
+            }));
+    },
 
-//asynchronous version
+    log_error: function(source, result) {
+        [err,size]=source.read_line_finish(result);
+        if(size==0){
+            return;
+        }
+        log('error with '+command.join(' ')+' :'+err);
+        source.read_line_async(GLib.PRIORITY_DEFAULT, null, Lang.bind(this,function(source,result){ 
+            this.log_error(source, result)
+        }));
+    },
+
     refresh: function() {
         let begin=GLib.get_monotonic_time()/1000;
-        let command=["/bin/ping", "-c1", "-w5", "www.google.com"];
+        this.address=Schema.get_string('latency-address');
+        let command=["/bin/ping", "-c1", "-w5", this.address];
+        let beforecommand=GLib.get_monotonic_time()/1000;
         let [res, pid, in_fd, out_fd, err_fd]=GLib.spawn_async_with_pipes(null,/* Working directory*/
                 command,                                        /* Argument vector */
                 null,                                            /* Environment */
                 GLib.SpawnFlags.SEARCH_PATH,                     /* Flags */
                 null);                                          /*child process config*/
-        let out_reader = new Gio.DataInputStream({
-                base_stream: new Gio.UnixInputStream({fd: out_fd})
-        });
+        let aftercommand=GLib.get_monotonic_time()/1000;
         let err_reader = new Gio.DataInputStream({
                 base_stream: new Gio.UnixInputStream({fd: err_fd})
         });
-        let [err, size_err] = err_reader.read_line(null);
-        while (size_err>0){
-                log('error with '+command.join(' ')+' :'+err);
-                [err, size_err] = err_reader.read_line(null);
-        }
-        let [out, size_out] = out_reader.read_line(null);
-        while (size_out>0){
-                let test=out.toString().match(/time= *(.*) *ms/);
-                if (test)
-                {
-                        this.latency=parseInt(test[1]);
-                        break;
-                }
-                [out, size_out] = out_reader.read_line(null);
-        }
-        out_reader.close(null);
+        err_reader.read_line_async(GLib.PRIORITY_DEFAULT, null, Lang.bind(this,function(source,result){ 
+            this.log_error(source, result)
+        }));
+        let out_reader = new Gio.DataInputStream({
+            base_stream: new Gio.UnixInputStream({fd: out_fd})
+        });
+        out_reader.read_line_async(GLib.PRIORITY_DEFAULT, null, Lang.bind(this, function(source,result){ 
+            this.search_latency(source, result)
+        }));
         GLib.spawn_close_pid(pid);
-        let end=GLib.get_monotonic_time()/1000;
-        let diff=end-begin;
-        if(diff>300)
-                log(Date()+" Latency.refresh() took "+diff.toPrecision(5).toString()+"ms");
     },
 
     _apply: function() {

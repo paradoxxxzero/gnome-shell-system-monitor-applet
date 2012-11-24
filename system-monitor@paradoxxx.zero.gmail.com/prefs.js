@@ -100,6 +100,22 @@ const IntSelect = new Lang.Class({
     }
 });
 
+const StringSelect = new Lang.Class({
+    Name: 'SystemMonitor.StringSelect',
+
+    _init: function(name,value) {
+        this.label = new Gtk.Label({label: name + _(":")});
+	this.entry = new Gtk.Entry();
+        this.entry.set_text(value);
+        this.actor = new Gtk.HBox({spacing:5});
+	this.actor.add(this.label);
+	this.actor.add(this.entry);
+    },
+    set_value: function(text){
+        this.entry.set_text(text);
+    }
+});
+
 const Select = new Lang.Class({
 	Name: 'SystemMonitor.Select',
 
@@ -131,6 +147,10 @@ function set_color(color, schema, name){
 
 function set_string(combo, schema, name, _slist){
     Schema.set_string(name, _slist[combo.get_active()]);
+}
+
+function set_string_entry(combo, schema, name){
+    Schema.set_string(name, combo.get_text());
 }
 
 const SettingFrame = new Lang.Class({
@@ -233,6 +253,13 @@ const SettingFrame = new Lang.Class({
             let item = new Gtk.CheckButton({label:_('Hide System Icon')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+        } else if (sections[1] == 'address'){
+            let item = new StringSelect('address',this.schema.get_string(key));
+            this.hbox3.add(item.actor);
+            item.entry.connect('changed', function(combo){
+		set_string_entry(combo, Schema, key);
+            });
+            Schema.bind(key, item.entry, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'usage' && sections[2] == 'style'){
             let item = new Select(_('Usage Style'));
             item.add([_('pie'), _('bar'), _('none')]);

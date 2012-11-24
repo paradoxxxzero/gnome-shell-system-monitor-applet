@@ -88,6 +88,11 @@
       <summary>Latency graph width</summary>
       <description>Graph width in pixel</description>
     </key>
+    <key name="latency-address" type="s">
+	<default>'www.google.com'</default>
+	<summary>pinged address</summary>
+      	<description>address to ping to get latency</description>
+    </key>
     <key name="latency-show-text" type="b">
       <default>true</default>
       <summary>Display 'latency'</summary>

@@ -1315,6 +1315,55 @@ const Mem = new Lang.Class({
     }
 });
 
+const LoadAvg = new Lang.Class({
+    Name: 'SystemMonitor.LoadAvg',
+    Extends: ElementBase,
+
+    elt: 'loadavg',
+    color_name: ['1m', '5m', '15m'],
+    max: GTop.glibtop_get_sysinfo().ncpu*2.0,
+
+    _init: function() {
+        this.menu_item = new PopupMenu.PopupMenuItem(_("LoadAvg"), {reactive: false});
+        this.avg1m = 0;
+        this.avg5m = 0;
+        this.avg15m = 0;
+        this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
+        this.parent();
+        this.tip_format(['','','']);
+        this.update();
+    },
+    refresh: function() {
+        let avgs = Shell.get_file_contents_utf8_sync('/proc/loadavg').split(" ");
+
+        this.avg1m = (avgs[0])*1.0;
+        this.avg5m = (avgs[1])*1.0;
+        this.avg15m =(avgs[2])*1.0;
+    },
+    _apply: function() {
+        this.menu_items[0].text = this.avg1m.toString();
+        this.menu_items[2].text = this.avg5m.toString();
+        this.menu_items[4].text = this.avg15m.toString();
+        this.vals = this.tip_vals = [this.avg1m, this.avg5m, this.avg15m];
+        for (let i = 0;i < 3;i++) {
+            this.vals[i] = (this.vals[i]*1.0);
+        }
+
+        this.text_items[0].text = this.tip_vals[0].toString();
+    },
+    create_text_items: function() {
+        return [new St.Label({ style_class: Style.get("sm-status-value")})];
+    },
+    create_menu_items: function() {
+        return [new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label({ style_class: Style.get("sm-value")}),
+                new St.Label({ style_class: Style.get("sm-void")})];
+    }
+});
+
 const Net = new Lang.Class({
     Name: 'SystemMonitor.Net',
     Extends: ElementBase,

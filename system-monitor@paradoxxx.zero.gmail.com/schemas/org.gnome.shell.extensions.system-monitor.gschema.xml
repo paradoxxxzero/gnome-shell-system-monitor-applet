@@ -44,6 +44,35 @@
       <default>'graph'</default>
       <summary>Choose the display style.</summary>
     </key>
+    <key name="loadavg-display" type="b">
+      <default>true</default>
+      <summary>Display loadavg</summary>
+      <description>Set to false to remove loadavg display in status bar</description>
+    </key>
+    <key name="loadavg-refresh-time" type="i">
+      <default>1500</default>
+      <summary>Loadavg refresh time</summary>
+      <description>Time in ms between 2 refresh of loadavg</description>
+    </key>
+    <key name="loadavg-graph-width" type="i">
+      <default>100</default>
+      <summary>Loadavg graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="loadavg-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'mem'</summary>
+      <description>Set to true to show 'mem' before loadavg display</description>
+    </key>
+    <key name="loadavg-show-menu" type="b">
+      <default>true</default>
+      <summary>Display Loadavg In Menu</summary>
+      <description>Set to true to show loadavg in pop-up menu</description>
+    </key>
+    <key name="loadavg-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="swap-display" type="b">
       <default>false</default>
       <summary>Display swap</summary>
@@ -300,6 +329,18 @@
     <key name="memory-cache-color" type="s">
       <default>'#aaf5d0'</default>
       <summary>Color of cache memory in the chart</summary>
+    </key>
+    <key name="loadavg-1m-color" type="s">
+      <default>'#EDD400'</default>
+      <summary>Color of program loadavg in the chart</summary>
+    </key>
+    <key name="loadavg-5m-color" type="s">
+      <default>'#3465A4'</default>
+      <summary>Color of buffer loadavg in the chart</summary>
+    </key>
+    <key name="loadavg-15m-color" type="s">
+      <default>'#73D216'</default>
+      <summary>Color of cache loadavg in the chart</summary>
     </key>
     <key name="net-down-color" type="s">
       <default>'#fce94f'</default>

@@ -284,6 +284,9 @@ const Chart = new Lang.Class({
             Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
             cr.fill();
         }
+        if (shell_Version >= "3.7.4") {
+            cr.$dispose();
+        }
     },
     resize: function(schema, key) {
         let old_width = this.width;
@@ -481,6 +484,9 @@ const Bar = new Lang.Class({
             cr.stroke();
             y0 += (3 * this.thickness) / 2;
         }
+        if (shell_Version >= "3.7.4") {
+            cr.$dispose();
+        }
     },
     update_mounts: function(mounts) {
         this.mounts = mounts;
@@ -523,6 +529,9 @@ const Pie = new Lang.Class({
             cr.showText(this.mounts[mount]);
             cr.stroke();
             r -= (3 * thickness) / 2;
+        }
+        if (shell_Version >= "3.7.4") {
+            cr.$dispose();
         }
     },
     update_mounts: function(mounts){

@@ -151,6 +151,11 @@
       <summary>Net graph width</summary>
       <description>Graph width in pixel</description>
     </key>
+    <key name="net-graph-minnetheight" type="i">
+      <default>0</default>
+      <summary>Net graph min height</summary>
+      <description>Min graph height in KiB</description>
+    </key>
     <key name="net-show-text" type="b">
       <default>true</default>
       <summary>Display 'net'</summary>

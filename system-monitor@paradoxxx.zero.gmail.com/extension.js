@@ -271,6 +271,12 @@ const Chart = new Lang.Class({
         } else {
             max = Math.max.apply(this, this.data[this.data.length - 1]);
             max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
+            
+            if(this.parentC.desired_max) {
+				if(max < this.parentC.desired_max) {
+					max = this.parentC.desired_max;
+				}
+			}
         }
         Clutter.cairo_set_source_color(cr, Background);
         cr.rectangle(0, 0, width, height);
@@ -1328,6 +1334,7 @@ const Net = new Lang.Class({
     Name: 'SystemMonitor.Net',
     Extends: ElementBase,
 
+	desired_max: 0,
     elt: 'net',
     color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
     speed_in_bits: false,
@@ -1357,6 +1364,9 @@ const Net = new Lang.Class({
         this.tip_format([_('KiB/s'), '/s', _('KiB/s'), '/s', '/s']);
         this.update_units();
         Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
+        
+        Schema.connect('changed::' + this.elt + '-graph-minnetheight', Lang.bind(this, this.update_minnetheight));
+        
         try {
             let iface_list = this.client.get_devices();
             this.NMsigID = []
@@ -1369,6 +1379,9 @@ const Net = new Lang.Class({
         }
         this.update();
     },
+    update_minnetheight: function() {
+		this.desired_max = Schema.get_int(this.elt + '-graph-minnetheight');
+	},
     update_units: function() {
         this.speed_in_bits = Schema.get_boolean(this.elt + '-speed-in-bits');
     },

@@ -170,6 +170,11 @@ const SettingFrame = new Lang.Class({
             item.set_args(1, 1000, 1, 10);
             this.hbox1.add(item.actor);
         	Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+        } else if (sections[1] == 'graph' && sections[2] == 'minnetheight'){
+            let item = new IntSelect(_('Min KiB Height'));
+            item.set_args(0, 1024*1024, 1, 10); // in KiB, allow up to 1GiB
+            this.hbox3.add(item.actor);
+        	Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         } else if (sections[1] == 'show' && sections[2] == 'text'){
             let item = new Gtk.CheckButton({label:_('Show Text')});
             this.hbox0.add(item);

@@ -272,11 +272,9 @@ const Chart = new Lang.Class({
             max = Math.max.apply(this, this.data[this.data.length - 1]);
             max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
             
-            if(this.parentC.desired_max) {
-				if(max < this.parentC.desired_max) {
-					max = this.parentC.desired_max;
-				}
-			}
+            if(max < this.parentC.desired_max) {
+                max = this.parentC.desired_max;
+            }
         }
         Clutter.cairo_set_source_color(cr, Background);
         cr.rectangle(0, 0, width, height);

@@ -400,7 +400,7 @@ const smMountsMonitor = new Lang.Class({
             this.manager = this._volumeMonitor;
             this.mount_added_id = this.manager.connect('mount-added', Lang.bind(this, this.refresh));
             this.mount_removed_id = this.manager.connect('mount-removed', Lang.bind(this, this.refresh));
-            //need to add the other signals here 
+            //need to add the other signals here
             this.connected = true;
         }
         catch (e) {
@@ -465,7 +465,7 @@ const Bar = new Lang.Class({
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
- 
+
         let x0 = width/8;
         let y0 = this.thickness/2;
         cr.setLineWidth(this.thickness);
@@ -989,7 +989,7 @@ function createCpus()
             numcores = 1;
         }
     }
-    
+
     // there are several cores to display,
     // instantiate each cpu
     if (numcores > 1) {
@@ -1077,6 +1077,11 @@ const Cpu = new Lang.Class({
                     this.last[i] = this.current[i];
                 }
                 this.last_total = this.gtop.xcpu_total[this.cpuid];
+            } else if (delta < 0) {
+                this.last = [0,0,0,0,0];
+                this.current = [0,0,0,0,0];
+                this.last_total = 0;
+                this.usage = [0,0,0,1,0];
             }
         }
 
@@ -1168,8 +1173,8 @@ const Cpu = new Lang.Class({
 
 const Disk = new Lang.Class({
     Name: 'SystemMonitor.Disk',
-    Extends: ElementBase, 
-    
+    Extends: ElementBase,
+
     elt: 'disk',
     color_name: ['read', 'write'],
     _init: function() {
@@ -1420,7 +1425,7 @@ const Net = new Lang.Class({
         while (str.length < length) {
             str = '0' + str;
         }
-        return str;   
+        return str;
     },
 
     _apply: function() {
@@ -1713,10 +1718,10 @@ var enable = function () {
         Main.__sm.elts.push(new Thermal());
         Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());
-        
+
         let tray = Main.__sm.tray;
-        
-        
+
+
         if (Schema.get_boolean("move-clock")) {
             let dateMenu;
             if (shell_Version >= "3.5.91"){
@@ -1742,7 +1747,7 @@ var enable = function () {
         } else {
             Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
         }
-        
+
         let box = new St.BoxLayout();
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
@@ -1760,7 +1765,7 @@ var enable = function () {
         let bar_item = Main.__sm.bar;
         bar_item.create_menu_item();
         tray.menu.addMenuItem(bar_item.menu_item);
-        
+
         change_usage();
         Schema.connect('changed::' + 'disk-usage-style', change_usage);
 
@@ -1843,7 +1848,7 @@ var disable = function () {
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-    
+
     if (shell_Version < "3.5"){
         Main.__sm.tray.destroy();
         StatusArea.systemMonitor = null;

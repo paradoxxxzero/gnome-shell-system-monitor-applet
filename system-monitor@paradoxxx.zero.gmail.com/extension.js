@@ -284,7 +284,7 @@ const Chart = new Lang.Class({
             Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
             cr.fill();
         }
-        if (shell_Version >= "3.7.4") {
+        if (Compat.versionCompare(shell_Version, "3.7.4")) {
             cr.$dispose();
         }
     },
@@ -442,7 +442,7 @@ const Graph = new Lang.Class({
     },
     create_menu_item: function(){
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        this.menu_item.addActor(this.actor, {span: -1, expand: true});
+        this.menu_item.actor.add(this.actor, {span: -1, expand: true});
         //tray.menu.addMenuItem(this.menu_item);
     },
     show: function(visible){
@@ -484,7 +484,7 @@ const Bar = new Lang.Class({
             cr.stroke();
             y0 += (3 * this.thickness) / 2;
         }
-        if (shell_Version >= "3.7.4") {
+        if (Compat.versionCompare(shell_Version, "3.7.4")) {
             cr.$dispose();
         }
     },
@@ -530,7 +530,7 @@ const Pie = new Lang.Class({
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
-        if (shell_Version >= "3.7.4") {
+        if (Compat.versionCompare(shell_Version, "3.7.4")) {
             cr.$dispose();
         }
     },
@@ -567,8 +567,8 @@ const TipMenu = new Lang.Class({
         this.actor.add_actor(this.box);
     },
     _boxGetPreferredWidth: function (actor, forHeight, alloc) {
-        let columnWidths = this.getColumnWidths();
-        this.setColumnWidths(columnWidths);
+        //let columnWidths = this.getColumnWidths();
+        //this.setColumnWidths(columnWidths);
 
         [alloc.min_size, alloc.natural_size] = this.box.get_preferred_width(forHeight);
     },
@@ -775,7 +775,7 @@ const ElementBase = new Lang.Class({
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
         this.menu_items = this.create_menu_items();
         for (let item in this.menu_items)
-            this.menu_item.addActor(this.menu_items[item]);
+            this.menu_item.actor.add(this.menu_items[item]);
     },
     tip_format: function(unit) {
         typeof(unit) == 'undefined' && (unit = '%');
@@ -789,12 +789,12 @@ const ElementBase = new Lang.Class({
         for (let i = 0;i < this.color_name.length;i++) {
             let tipline = new TipItem();
             this.tipmenu.addMenuItem(tipline);
-            tipline.addActor(new St.Label({ text: _(this.color_name[i]) }));
+            tipline.actor.add(new St.Label({ text: _(this.color_name[i]) }));
             this.tip_labels[i] = new St.Label();
-            tipline.addActor(this.tip_labels[i]);
+            tipline.actor.add(this.tip_labels[i]);
 
             this.tip_unit_labels[i] = new St.Label({ text: unit[i] });
-            tipline.addActor(this.tip_unit_labels[i]);
+            tipline.actor.add(this.tip_unit_labels[i]);
             this.tip_vals[i] = 0;
         }
     },
@@ -828,7 +828,9 @@ const Battery = new Lang.Class({
         this.icon_hidden = false;
         this.percentage = 0;
         this.timeString = '-- ';
-        this._proxy = StatusArea['battery']._proxy;
+        this._proxy = StatusArea.aggregateMenu['_power']._proxy
+        if (this._proxy == undefined)
+            this._proxy = StatusArea['battery']._proxy;
         this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
 
         //need to specify a default icon, since the contructor completes before UPower callback
@@ -842,10 +844,10 @@ const Battery = new Lang.Class({
 
         this.update_battery();
         this.update_tips();
-        this.hide_system_icon();
+        //this.hide_system_icon();
         this.update();
 
-        Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
+        //Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
         Schema.connect('changed::' + this.elt + '-time', Lang.bind(this, this.update_tips));
     },
     refresh: function() {
@@ -854,6 +856,7 @@ const Battery = new Lang.Class({
     update_battery: function(){
         // callback function for when battery stats updated.
         let battery_found = false;
+        let isBattery = false;
         this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
             if (error) {
 
@@ -866,7 +869,13 @@ const Battery = new Lang.Class({
             let [result] = devices;
             for (let i = 0; i < result.length; i++) {
                 let [device_id, device_type, icon, percentage, state, seconds] = result[i];
-                if (device_type == Power.UPDeviceType.BATTERY && !battery_found) {
+
+                if (Compat.versionCompare(shell_Version, "3.9"))
+                   isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+                else
+                   isBattery = (device_type == Power.UPDeviceType.BATTERY);
+
+                if (isBattery && !battery_found) {
                     battery_found = true;
                     //grab data
                     if (seconds > 60){
@@ -929,6 +938,7 @@ const Battery = new Lang.Class({
 
         }
     },
+
     update_tips: function(){
         let value = Schema.get_boolean(this.elt + '-time');
         if (value) {
@@ -1719,7 +1729,7 @@ var enable = function () {
         
         if (Schema.get_boolean("move-clock")) {
             let dateMenu;
-            if (shell_Version >= "3.5.91"){
+            if (Compat.versionCompare(shell_Version, "3.5.90")){
                 dateMenu = Main.panel.statusArea.dateMenu;
                 Main.panel._centerBox.remove_actor(dateMenu.container);
                 Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
@@ -1735,7 +1745,7 @@ var enable = function () {
             this, function (schema, key) {
                 Background = color_from_string(Schema.get_string(key));
             }));
-        if (shell_Version < "3.5.5"){
+        if (!Compat.versionCompare(shell_Version,"3.5.5")){
             StatusArea.systemMonitor = tray;
             panel.insert_child_at_index(tray.actor, 1);
             panel.child_set(tray.actor, { y_fill: true } );
@@ -1804,7 +1814,7 @@ var enable = function () {
             }
         });
         tray.menu.addMenuItem(item);
-        if (shell_Version > "3.5.5")
+        if (Compat.versionCompare(shell_Version, "3.5.5"))
             Main.panel.menuManager.addMenu(tray.menu);
         else
             Main.panel._menus.addMenu(tray.menu);
@@ -1817,7 +1827,7 @@ var disable = function () {
     //restore clock
     if (Main.__sm.tray.clockMoved) {
         let dateMenu;
-        if (shell_Version >= "3.5.91"){
+        if (Compat.versionCompare(shell_Version, "3.5.90")){
             dateMenu = Main.panel.statusArea.dateMenu;
             Main.panel._rightBox.remove_actor(dateMenu.container);
             Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
@@ -1832,10 +1842,10 @@ var disable = function () {
     //if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){
     //    Main.__sm.elts.battery.hide_system_icon(false);
     //}
-    for (let i in Main.__sm.elts) {
-        if (Main.__sm.elts[i].elt == 'battery')
-            Main.__sm.elts[i].hide_system_icon(false);
-    }
+    //for (let i in Main.__sm.elts) {
+    //    if (Main.__sm.elts[i].elt == 'battery')
+    //        Main.__sm.elts[i].hide_system_icon(false);
+    //}
 
     MountsMonitor.disconnect();
 
@@ -1844,7 +1854,7 @@ var disable = function () {
         Main.__sm.elts[eltName].destroy();
     }
     
-    if (shell_Version < "3.5"){
+    if (!Compat.versionCompare(shell_Version,"3.5")){
         Main.__sm.tray.destroy();
         StatusArea.systemMonitor = null;
     } else

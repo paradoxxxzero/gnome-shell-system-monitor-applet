@@ -1,19 +1,20 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
 "PO-Revision-Date: \n"
-"Last-Translator: José Luis Segura Lucas <josel.segura@gmx.es>\n"
+"Last-Translator: picodotdev <pico.dev@gmail.com>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
-msgstr ""
+msgstr ":"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -53,32 +54,31 @@ msgstr "Color del fondo"
 
 #: prefs.js:197
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "Mostrar núcleos individuales"
 
 #: prefs.js:193
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "Mostrar velocidad de red en bits"
 
 #: prefs.js:205
 msgid "Sensor"
-msgstr ""
+msgstr "Sensor"
 
 #: prefs.js:207
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "Instale lm-sensors"
 
 #: prefs.js:282
 msgid "Move the clock"
-msgstr ""
+msgstr "Mover el reloj"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #: prefs.js:286
-#, fuzzy
 msgid "Compact Display"
-msgstr "Mostrar"
+msgstr "Visualización compacta"
 
 #: extension.js:746
 msgid "Cpu"
@@ -130,16 +130,16 @@ msgid "Down"
 msgstr "Descarga"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "Errores de subida"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "Errores de descarga"
 
 msgid "collisions"
-msgstr ""
+msgstr "colisiones"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Colisiones"
 
 #: extension.js:836
 msgid "Disk"
@@ -153,11 +153,11 @@ msgstr "Lectura"
 
 #: extension.js:1182
 msgid "R"
-msgstr ""
+msgstr "L"
 
 #: extension.js:1185
 msgid "W"
-msgstr ""
+msgstr "E"
 
 #: prefs.js:185
 msgid "graph"
@@ -172,13 +172,13 @@ msgid "both"
 msgstr "Ambos"
 
 msgid "cpu"
-msgstr ""
+msgstr "cpu"
 
 msgid "mem"
-msgstr ""
+msgstr "mem"
 
 msgid "swap"
-msgstr ""
+msgstr "swap"
 
 msgid "net"
 msgstr "red"
@@ -231,10 +231,10 @@ msgid "down"
 msgstr "descarga"
 
 msgid "uperrors"
-msgstr ""
+msgstr "Errores de subida"
 
 msgid "downerrors"
-msgstr ""
+msgstr "Errores de bajada"
 
 msgid "write"
 msgstr "escritura"
@@ -243,57 +243,54 @@ msgid "read"
 msgstr "lectura"
 
 msgid "KiB/s"
-msgstr ""
+msgstr "KiB/s"
 
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: extension.js:1179
 msgid "Thermal"
-msgstr ""
+msgstr "Temperatura"
 
-#, fuzzy
 msgid "thermal"
-msgstr "Otro"
+msgstr "temperatura"
 
 #: prefs.js:180
 msgid "Show In Menu"
-msgstr ""
+msgstr "Mostrar en el menú"
 
 #: prefs.js:222
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Mostrar tiempo restante"
 
 #: prefs.js:226
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "Monitor del sistema"
+msgstr "Ocultar icono del sistema"
 
 #: prefs.js:230
-#, fuzzy
 msgid "Usage Style"
-msgstr "Estilo mostrado"
+msgstr "Uso de estilo"
 
 #: prefs.js:231
 msgid "pie"
-msgstr ""
+msgstr "tarta"
 
 #: prefs.js:231
 msgid "bar"
-msgstr ""
+msgstr "barras"
 
 #: prefs.js:231
 msgid "none"
-msgstr ""
+msgstr "ninguno"
 
 #: extension.js:6
 msgid ""
@@ -304,40 +301,43 @@ msgid ""
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
+"Faltan dependencias\n"
+"Instale:\n"
+"libgtop, Network Manager y gir bindings \n"
+"\t    en Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
 
 #: extension.js:97
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "Monitor del sistema"
+msgstr "Extensión monitor de sistema"
 
 #: extension.js:113
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: extension.js:601
 msgid "Battery"
-msgstr ""
+msgstr "Batería"
 
 msgid "battery"
-msgstr ""
+msgstr "batería"
 
 #: extension.js:896
 msgid "Freq"
-msgstr ""
+msgstr "Frecuencia"
 
 msgid "freq"
-msgstr ""
+msgstr "frec"
 
 #: extension.js:1540
 msgid "Fan"
-msgstr ""
+msgstr "Ventidador"
 
 msgid "fan"
-msgstr ""
+msgstr "vent"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
-msgstr ""
+msgstr "rpm"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configuración de la extensión monitor de sistema"

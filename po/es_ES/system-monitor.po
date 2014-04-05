@@ -305,10 +305,12 @@ msgstr ""
 "Instale:\n"
 "libgtop, Network Manager y gir bindings \n"
 "\t    en Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    en Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    en Arch: libgtop, networkmanager\n"
 
 #: extension.js:97
 msgid "System Monitor Extension"
-msgstr "Extensión monitor de sistema"
+msgstr "Extensión monitor del sistema"
 
 #: extension.js:113
 msgid "Cancel"
@@ -330,7 +332,7 @@ msgstr "frec"
 
 #: extension.js:1540
 msgid "Fan"
-msgstr "Ventidador"
+msgstr "Ventilador"
 
 msgid "fan"
 msgstr "vent"
@@ -340,4 +342,4 @@ msgid "rpm"
 msgstr "rpm"
 
 #~ msgid "System Monitor Applet Configurator"
-#~ msgstr "Configuración de la extensión monitor de sistema"
+#~ msgstr "Configuración de la extensión monitor del sistema"

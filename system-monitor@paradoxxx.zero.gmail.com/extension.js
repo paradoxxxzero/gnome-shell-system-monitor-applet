@@ -858,7 +858,7 @@ const Battery = new Lang.Class({
         let battery_found = false;
         let isBattery = false;
 	let device_id, device_type, icon, percentage, state, seconds;
-        if (Compat.versionCompare(shell_Version, "3.12") >= 0) {
+        if (this._proxy.GetDevicesRemote == undefined) {
             device_type = this._proxy.Type;
             isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
             if (isBattery) {

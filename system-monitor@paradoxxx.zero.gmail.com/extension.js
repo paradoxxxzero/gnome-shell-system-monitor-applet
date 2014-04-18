@@ -857,51 +857,74 @@ const Battery = new Lang.Class({
         // callback function for when battery stats updated.
         let battery_found = false;
         let isBattery = false;
-        this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
-            if (error) {
-
-                log("SM: Power proxy error: " + error)
+	let device_id, device_type, icon, percentage, state, seconds;
+        if (Compat.versionCompare(shell_Version, "3.12") >= 0) {
+            device_type = this._proxy.Type;
+            isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+            if (isBattery) {
+                battery_found = true;
+                icon = this._proxy.IconName;
+                percentage = this._proxy.Percentage;
+                state = this._proxy.State;
+                seconds = this._proxy.TimeToEmpty;
+            } else {
+                log("SM: No battery found");
                 this.actor.hide();
+
                 this.menu_item.actor.hide();
-                return;
             }
+        } else {
+            this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
+                if (error) {
 
-            let [result] = devices;
-            for (let i = 0; i < result.length; i++) {
-                let [device_id, device_type, icon, percentage, state, seconds] = result[i];
-
-                if (Compat.versionCompare(shell_Version, "3.9"))
-                   isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
-                else
-                   isBattery = (device_type == Power.UPDeviceType.BATTERY);
-
-                if (isBattery && !battery_found) {
-                    battery_found = true;
-                    //grab data
-                    if (seconds > 60){
-                        let time = Math.round(seconds / 60);
-                        let minutes = time % 60;
-                        let hours = Math.floor(time / 60);
-                        this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
-                    } else {
-                        this.timeString = '-- ';
-                    }
-                    this.percentage = Math.ceil(percentage);
-                    this.gicon = Gio.icon_new_for_string(icon);
-
-                    if (Schema.get_boolean(this.elt + '-display'))
-                        this.actor.show()
-                    if (Schema.get_boolean(this.elt + '-show-menu'))
-                        this.menu_item.actor.show();
+                    log("SM: Power proxy error: " + error)
+                    this.actor.hide();
+                    this.menu_item.actor.hide();
+                    return;
                 }
-            }
-            if (!battery_found) {
-                log("SM: No battery found")
-                this.actor.hide();
 
-                this.menu_item.actor.hide();
+                let [result] = devices;
+                for (let i = 0; i < result.length; i++) {
+                    [device_id, device_type, icon, percentage, state, seconds] = result[i];
+
+                    if (Compat.versionCompare(shell_Version, "3.9"))
+                        isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+                    else
+                        isBattery = (device_type == Power.UPDeviceType.BATTERY);
+
+                    if (isBattery) {
+                        battery_found = true;
+		        break;
+                    }
+                }
+
+                if (!battery_found) {
+                    log("SM: No battery found")
+                    this.actor.hide();
+
+                    this.menu_item.actor.hide();
+                }
+            }));
+        }
+
+        if (battery_found) {
+	    //grab data
+            if (seconds > 60){
+                let time = Math.round(seconds / 60);
+                let minutes = time % 60;
+                let hours = Math.floor(time / 60);
+                this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
+            } else {
+                this.timeString = '-- ';
             }
-        }));
+            this.percentage = Math.ceil(percentage);
+            this.gicon = Gio.icon_new_for_string(icon);
+
+            if (Schema.get_boolean(this.elt + '-display'))
+                this.actor.show()
+            if (Schema.get_boolean(this.elt + '-show-menu'))
+                this.menu_item.actor.show();
+	}
     },
     hide_system_icon: function(override) {
         let value = Schema.get_boolean(this.elt + '-hidesystem');

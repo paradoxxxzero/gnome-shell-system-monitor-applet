@@ -14,9 +14,15 @@ This is the recommended install method and offers One Click Install via [extensi
 
 #### Dependencies:
     
-    libgtop and gir bindings
-        on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0
-        on Fedora: libgtop2-devel, NetworkManager-glib-devel
+-   libgtop and gir bindings
+
+On Ubuntu:
+
+    $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0
+
+On Fedora:
+
+    $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
 
 #### Manual Install:
 

@@ -1832,8 +1832,9 @@ var enable = function () {
             if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
                 _gsmPrefs.activate();
             } else {
-                _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
-                                 [metadata.uuid],-1,null);
+                let info = _gsmPrefs.get_app_info();
+                let timestamp = global.display.get_current_time_roundtrip();
+                info.launch_uris([metadata.uuid], global.create_app_launch_context(timestamp, -1));
             }
         });
         tray.menu.addMenuItem(item);

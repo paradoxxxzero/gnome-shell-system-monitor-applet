@@ -857,16 +857,15 @@ const Battery = new Lang.Class({
         // callback function for when battery stats updated.
         let battery_found = false;
         let isBattery = false;
-	let device_id, device_type, icon, percentage, state, seconds;
         if (this._proxy.GetDevicesRemote == undefined) {
-            device_type = this._proxy.Type;
+            let device_type = this._proxy.Type;
             isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
             if (isBattery) {
                 battery_found = true;
-                icon = this._proxy.IconName;
-                percentage = this._proxy.Percentage;
-                state = this._proxy.State;
-                seconds = this._proxy.TimeToEmpty;
+                let icon = this._proxy.IconName;
+                let percentage = this._proxy.Percentage;
+                let seconds = this._proxy.TimeToEmpty;
+	        this.update_battery_value(seconds, percentage, icon);
             } else {
                 log("SM: No battery found");
                 this.actor.hide();
@@ -885,7 +884,7 @@ const Battery = new Lang.Class({
 
                 let [result] = devices;
                 for (let i = 0; i < result.length; i++) {
-                    [device_id, device_type, icon, percentage, state, seconds] = result[i];
+                    let [device_id, device_type, icon, percentage, state, seconds] = result[i];
 
                     if (Compat.versionCompare(shell_Version, "3.9"))
                         isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
@@ -894,6 +893,7 @@ const Battery = new Lang.Class({
 
                     if (isBattery) {
                         battery_found = true;
+	                this.update_battery_value(seconds, percentage, icon);
 		        break;
                     }
                 }
@@ -906,25 +906,23 @@ const Battery = new Lang.Class({
                 }
             }));
         }
+    },
+    update_battery_value: function(seconds, percentage, icon) {
+        if (seconds > 60){
+            let time = Math.round(seconds / 60);
+            let minutes = time % 60;
+            let hours = Math.floor(time / 60);
+            this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
+        } else {
+            this.timeString = '-- ';
+        }
+        this.percentage = Math.ceil(percentage);
+        this.gicon = Gio.icon_new_for_string(icon);
 
-        if (battery_found) {
-	    //grab data
-            if (seconds > 60){
-                let time = Math.round(seconds / 60);
-                let minutes = time % 60;
-                let hours = Math.floor(time / 60);
-                this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
-            } else {
-                this.timeString = '-- ';
-            }
-            this.percentage = Math.ceil(percentage);
-            this.gicon = Gio.icon_new_for_string(icon);
-
-            if (Schema.get_boolean(this.elt + '-display'))
-                this.actor.show()
-            if (Schema.get_boolean(this.elt + '-show-menu'))
-                this.menu_item.actor.show();
-	}
+        if (Schema.get_boolean(this.elt + '-display'))
+            this.actor.show()
+        if (Schema.get_boolean(this.elt + '-show-menu'))
+            this.menu_item.actor.show();
     },
     hide_system_icon: function(override) {
         let value = Schema.get_boolean(this.elt + '-hidesystem');

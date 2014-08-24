@@ -867,7 +867,7 @@ const Battery = new Lang.Class({
                 let seconds = this._proxy.TimeToEmpty;
 	        this.update_battery_value(seconds, percentage, icon);
             } else {
-                log("SM: No battery found");
+                //log("SM: No battery found");
                 this.actor.hide();
 
                 this.menu_item.actor.hide();
@@ -899,7 +899,7 @@ const Battery = new Lang.Class({
                 }
 
                 if (!battery_found) {
-                    log("SM: No battery found")
+                    //log("SM: No battery found")
                     this.actor.hide();
 
                     this.menu_item.actor.hide();

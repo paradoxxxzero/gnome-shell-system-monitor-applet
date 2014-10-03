@@ -657,6 +657,11 @@ const TipBox = new Lang.Class({
         }
     },
     on_enter: function() {
+        let show_tooltip = Schema.get_boolean('show-tooltip');
+
+        if (!show_tooltip)
+            return;
+
         if (this.out_to) {
             Mainloop.source_remove(this.out_to);
             this.out_to = 0;

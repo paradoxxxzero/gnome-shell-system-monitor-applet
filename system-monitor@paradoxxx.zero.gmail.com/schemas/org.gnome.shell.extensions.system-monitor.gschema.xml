@@ -284,6 +284,11 @@
       <summary>Move the clock to the right when center-display is true</summary>
       <description>True: Move the clock to the right, False: Keep it in center</description>
     </key>
+    <key name="show-tooltip" type="b">
+      <default>false</default>
+      <summary>Enable or disable the tooltip</summary>
+      <description>True: show tool tip on mouse hover </description>
+    </key>
     <key name="compact-display" type="b">
       <default>false</default>
       <summary>Optimize view for small displays</summary>

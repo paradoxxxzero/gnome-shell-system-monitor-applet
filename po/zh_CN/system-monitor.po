@@ -7,17 +7,18 @@ msgstr ""
 "Project-Id-Version: 0.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2011-06-06 11:23+ZONE\n"
-"Last-Translator: Yichao Yu <yyc1992@gmail.com>\n"
+"PO-Revision-Date: 2014-07-07 12:17+0800\n"
+"Last-Translator: Star Brilliant <m13253@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: Chinese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110
 msgid ":"
-msgstr ""
+msgstr "："
 
 #: prefs.js:161
 msgid "Display"
@@ -53,28 +54,27 @@ msgstr "背景色"
 
 #: prefs.js:197
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "单独显示每个核心"
 
 #: prefs.js:193
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "以位为单位显示网络速度"
 
 #: prefs.js:205
 msgid "Sensor"
-msgstr ""
+msgstr "传感器"
 
 #: prefs.js:207
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "请安装 lm-sensors"
 
 #: prefs.js:282
 msgid "Move the clock"
-msgstr ""
+msgstr "移走时钟"
 
 #: prefs.js:286
-#, fuzzy
 msgid "Compact Display"
-msgstr "显示"
+msgstr "紧凑显示"
 
 #: extension.js:746
 msgid "Cpu"
@@ -93,7 +93,7 @@ msgid "Nice"
 msgstr "优先级"
 
 msgid "Iowait"
-msgstr "IO等待"
+msgstr "IO 等待"
 
 #: extension.js:941
 msgid "Memory"
@@ -126,16 +126,16 @@ msgid "Down"
 msgstr "下载"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "上传错误"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "下载错误"
 
 msgid "collisions"
-msgstr ""
+msgstr "冲突"
 
 msgid "Collisions"
-msgstr ""
+msgstr "冲突"
 
 #: extension.js:836
 msgid "Disk"
@@ -149,11 +149,11 @@ msgstr "读取"
 
 #: extension.js:1182
 msgid "R"
-msgstr ""
+msgstr "读"
 
 #: extension.js:1185
 msgid "W"
-msgstr ""
+msgstr "写"
 
 #: prefs.js:185
 msgid "graph"
@@ -206,7 +206,7 @@ msgid "nice"
 msgstr "优先级"
 
 msgid "iowait"
-msgstr "IO等待"
+msgstr "IO 等待"
 
 msgid "program"
 msgstr "程序"
@@ -227,10 +227,10 @@ msgid "down"
 msgstr "下载"
 
 msgid "uperrors"
-msgstr ""
+msgstr "上传错误"
 
 msgid "downerrors"
-msgstr ""
+msgstr "下载错误"
 
 msgid "write"
 msgstr "写入"
@@ -239,19 +239,19 @@ msgid "read"
 msgstr "读取"
 
 msgid "KiB/s"
-msgstr ""
+msgstr "KiB/s"
 
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: extension.js:1179
 msgid "Thermal"
@@ -262,33 +262,31 @@ msgstr "温度"
 
 #: prefs.js:180
 msgid "Show In Menu"
-msgstr ""
+msgstr "在菜单中显示"
 
 #: prefs.js:222
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "显示剩余时间"
 
 #: prefs.js:226
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "系统监视器"
+msgstr "隐藏系统图标"
 
 #: prefs.js:230
-#, fuzzy
 msgid "Usage Style"
-msgstr "显示风格"
+msgstr "用量显示风格"
 
 #: prefs.js:231
 msgid "pie"
-msgstr ""
+msgstr "扇形图"
 
 #: prefs.js:231
 msgid "bar"
-msgstr ""
+msgstr "条形图"
 
 #: prefs.js:231
 msgid "none"
-msgstr ""
+msgstr "无"
 
 #: extension.js:6
 msgid ""
@@ -299,40 +297,45 @@ msgid ""
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
+"缺失依赖项\n"
+"请安装：\n"
+"libgtop、Network Manager 及其 gir 绑定\n"
+"\t    于 Ubuntu：gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    于 Fedora：libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    于 Arch：libgtop, networkmanager\n"
 
 #: extension.js:97
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "系统监视器"
+msgstr "系统监视器扩展"
 
 #: extension.js:113
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: extension.js:601
 msgid "Battery"
-msgstr ""
+msgstr "电池"
 
 msgid "battery"
-msgstr ""
+msgstr "电池"
 
 #: extension.js:896
 msgid "Freq"
-msgstr ""
+msgstr "主频"
 
 msgid "freq"
-msgstr ""
+msgstr "主频"
 
 #: extension.js:1540
 msgid "Fan"
-msgstr ""
+msgstr "风扇"
 
 msgid "fan"
-msgstr ""
+msgstr "风扇"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574
 msgid "rpm"
-msgstr ""
+msgstr "rpm"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "面板系统监视器配置"

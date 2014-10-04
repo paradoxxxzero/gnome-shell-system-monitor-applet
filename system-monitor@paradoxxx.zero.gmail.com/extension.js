@@ -93,8 +93,53 @@ function change_style() {
     this.chart.actor.visible = style == 'graph' || style == 'both';
 }
 function change_menu() {
-    this.menu_item.actor.visible = Schema.get_boolean(this.elt + '-show-menu');
+    this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
+    build_menu_info();
 }
+
+function build_menu_info() {
+    let elts = Main.__sm.elts;
+    let tray_menu = Main.__sm.tray.menu;
+
+    if (tray_menu._getMenuItems().length &&
+        typeof tray_menu._getMenuItems()[0].actor.get_last_child() != 'undefined') {
+        tray_menu._getMenuItems()[0].actor.get_last_child().destroy_all_children();
+        for (let elt in elts) {
+            elts[elt].menu_items = elts[elt].create_menu_items();
+        }
+    } else {
+        return;
+    }
+
+    let menu_info_box_table = new St.Table({
+        style: "padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;"
+    });
+
+    // Populate Table
+    let row_index = 0;
+    for (let elt in elts) {
+        if (!elts[elt].menu_visible) {
+            continue;
+        }
+
+        // Add item name to table
+        menu_info_box_table.add(
+            new St.Label({text: elts[elt].item_name, style_class: Style.get("sm-title")}),
+            {row: row_index, col: 0});
+
+        // Add item data to table
+        let col_index = 1;
+        for (let item in elts[elt].menu_items) {
+            menu_info_box_table.add(elts[elt].menu_items[item], {row: row_index, col: col_index});
+
+            col_index++;
+        }
+
+        row_index++;
+    }
+    tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+}
+
 function change_usage(){
     let usage = Schema.get_string('disk-usage-style');
     Main.__sm.pie.show(usage == 'pie');
@@ -321,7 +366,7 @@ const smMountsMonitor = new Lang.Class({
     refresh: function() {
         // try check that number of volumes has changed
         /*try {
-	    let num_mounts = this.manager.getMounts().length;
+            let num_mounts = this.manager.getMounts().length;
             if (num_mounts == this.num_mounts)
                 return;
             this.num_mounts = num_mounts;
@@ -400,7 +445,7 @@ const smMountsMonitor = new Lang.Class({
             this.manager = this._volumeMonitor;
             this.mount_added_id = this.manager.connect('mount-added', Lang.bind(this, this.refresh));
             this.mount_removed_id = this.manager.connect('mount-removed', Lang.bind(this, this.refresh));
-            //need to add the other signals here 
+            //need to add the other signals here
             this.connected = true;
         }
         catch (e) {
@@ -465,7 +510,7 @@ const Bar = new Lang.Class({
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
- 
+
         let x0 = width/8;
         let y0 = this.thickness/2;
         cr.setLineWidth(this.thickness);
@@ -703,9 +748,12 @@ const ElementBase = new Lang.Class({
     Extends: TipBox,
 
     elt: '',
+    item_name: _(""),
     color_name: [],
     text_items: [],
     menu_items: [],
+    menu_visible: true,
+
     _init: function() {
         //            TipBox.prototype._init.apply(this, arguments);
         this.parent(arguments);
@@ -765,7 +813,7 @@ const ElementBase = new Lang.Class({
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
-        change_menu.call(this);
+        this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
         Schema.connect('changed::' + this.elt + '-show-menu', Lang.bind(this, change_menu));
 
         this.actor.add_actor(this.label);
@@ -779,8 +827,6 @@ const ElementBase = new Lang.Class({
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
         this.menu_items = this.create_menu_items();
-        for (let item in this.menu_items)
-            this.menu_item.actor.add(this.menu_items[item]);
     },
     tip_format: function(unit) {
         typeof(unit) == 'undefined' && (unit = '%');
@@ -826,6 +872,7 @@ const Battery = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'battery',
+    item_name: _("Battery"),
     color_name: ['batt0'],
     max: 100,
 
@@ -841,8 +888,6 @@ const Battery = new Lang.Class({
         //need to specify a default icon, since the contructor completes before UPower callback
         this.icon = '. GThemedIcon battery-good-symbolic battery-good';
         this.gicon = Gio.icon_new_for_string(this.icon);
-
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Battery"), {reactive: false});
 
         this.parent()
         this.tip_format('%');
@@ -870,12 +915,12 @@ const Battery = new Lang.Class({
                 let icon = this._proxy.IconName;
                 let percentage = this._proxy.Percentage;
                 let seconds = this._proxy.TimeToEmpty;
-	        this.update_battery_value(seconds, percentage, icon);
+                this.update_battery_value(seconds, percentage, icon);
             } else {
                 //log("SM: No battery found");
                 this.actor.hide();
-
-                this.menu_item.actor.hide();
+                this.menu_visible = false;
+                build_menu_info();
             }
         } else {
             this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
@@ -883,7 +928,8 @@ const Battery = new Lang.Class({
 
                     log("SM: Power proxy error: " + error)
                     this.actor.hide();
-                    this.menu_item.actor.hide();
+                    this.menu_visible = false;
+                    build_menu_info();
                     return;
                 }
 
@@ -898,16 +944,16 @@ const Battery = new Lang.Class({
 
                     if (isBattery) {
                         battery_found = true;
-	                this.update_battery_value(seconds, percentage, icon);
-		        break;
+                        this.update_battery_value(seconds, percentage, icon);
+                        break;
                     }
                 }
 
                 if (!battery_found) {
                     //log("SM: No battery found")
                     this.actor.hide();
-
-                    this.menu_item.actor.hide();
+                    this.menu_visible = false;
+                    build_menu_info();
                 }
             }));
         }
@@ -926,8 +972,10 @@ const Battery = new Lang.Class({
 
         if (Schema.get_boolean(this.elt + '-display'))
             this.actor.show()
-        if (Schema.get_boolean(this.elt + '-show-menu'))
-            this.menu_item.actor.show();
+        if (Schema.get_boolean(this.elt + '-show-menu') && this.menu_visible == false) {
+            this.menu_visible = true;
+            build_menu_info();
+        }
     },
     hide_system_icon: function(override) {
         let value = Schema.get_boolean(this.elt + '-hidesystem');
@@ -995,11 +1043,11 @@ const Battery = new Lang.Class({
                 new St.Label({ text: '%', style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: '%', style_class: Style.get("sm-label")})];
     },
     destroy: function() {
@@ -1025,7 +1073,7 @@ function createCpus()
             numcores = 1;
         }
     }
-    
+
     // there are several cores to display,
     // instantiate each cpu
     if (numcores > 1) {
@@ -1046,6 +1094,7 @@ const Cpu = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'cpu',
+    item_name: _("CPU"),
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     max: 100,
     cpuid: -1, // cpuid is -1 when all cores are displayed in the same graph
@@ -1068,7 +1117,6 @@ const Cpu = new Lang.Class({
         let item_name = _("Cpu");
         if (cpuid != -1)
             item_name += " " + (cpuid + 1); // append cpu number to cpu name in popup
-        this.menu_item = new PopupMenu.PopupMenuItem(item_name, {reactive: false});
         //ElementBase.prototype._init.call(this);
         this.parent()
         this.tip_format();
@@ -1193,21 +1241,23 @@ const Cpu = new Lang.Class({
 
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: '%', style_class: Style.get("sm-label")})];
     }
 });
 
 const Disk = new Lang.Class({
     Name: 'SystemMonitor.Disk',
-    Extends: ElementBase, 
-    
+    Extends: ElementBase,
+
     elt: 'disk',
+    item_name: _("Disk"),
     color_name: ['read', 'write'],
+
     _init: function() {
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
@@ -1217,7 +1267,6 @@ const Disk = new Lang.Class({
         this.last_time = 0;
         GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
         this.block_size = this.gtop.block_size/1024/1024/8;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         this.parent()
         this.tip_format(_('MiB/s'));
         this.update();
@@ -1276,10 +1325,10 @@ const Freq = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'freq',
+    item_name: _("Freq"),
     color_name: ['freq'],
     _init: function() {
         this.freq = 0;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
         this.parent()
         this.tip_format('MHz');
         this.update();
@@ -1306,11 +1355,11 @@ const Freq = new Lang.Class({
 
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: 'MHz', style_class: Style.get("sm-label")})];
     }
 });
@@ -1320,11 +1369,11 @@ const Mem = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'memory',
+    item_name: _("Memory"),
     color_name: ['program', 'buffer', 'cache'],
     max: 1,
 
     _init: function() {
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         this.gtop = new GTop.glibtop_mem();
         this.mem = [0, 0, 0];
         this.parent()
@@ -1357,10 +1406,10 @@ const Mem = new Lang.Class({
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
     }
 });
@@ -1370,8 +1419,10 @@ const Net = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'net',
+    item_name: _("Net"),
     color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
     speed_in_bits: false,
+
     _init: function() {
         this.ifs = [];
         this.client = NMClient.Client.new();
@@ -1393,7 +1444,6 @@ const Net = new Lang.Class({
         this.last = [0, 0, 0, 0, 0];
         this.usage = [0, 0, 0, 0, 0];
         this.last_time = 0;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         this.parent()
         this.tip_format([_('KiB/s'), '/s', _('KiB/s'), '/s', '/s']);
         this.update_units();
@@ -1456,7 +1506,7 @@ const Net = new Lang.Class({
         while (str.length < length) {
             str = '0' + str;
         }
-        return str;   
+        return str;
     },
 
     _apply: function() {
@@ -1527,10 +1577,10 @@ const Net = new Lang.Class({
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
-                new St.Icon({ icon_size: 16 * Style.iconsize(), icon_name:'go-down-symbolic'}),
+                new St.Label({ text:_('Down'), style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
-                new St.Icon({ icon_size: 16 * Style.iconsize(), icon_name:'go-up-symbolic'})];
+                new St.Label({ text:_('Up'), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1539,11 +1589,11 @@ const Swap = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'swap',
+    item_name: _("Swap"),
     color_name: ['used'],
     max: 1,
 
     _init: function() {
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         this.gtop = new GTop.glibtop_swap();
         this.parent()
         this.tip_format();
@@ -1572,10 +1622,10 @@ const Swap = new Lang.Class({
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
     }
 });
@@ -1585,11 +1635,11 @@ const Thermal = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'thermal',
+    item_name: _("Thermal"),
     color_name: ['tz0'],
     max: 100,
     _init: function() {
         this.temperature = '-- ';
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
         this.parent()
         this.tip_format('\u2103');
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1619,11 +1669,11 @@ const Thermal = new Lang.Class({
                 new St.Label({ text: '\u2103', style_class: Style.get("sm-temp-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: '\u2103', style_class: Style.get("sm-label")})];
     }
 });
@@ -1633,10 +1683,11 @@ const Fan = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'fan',
+    item_name: _("Fan"),
     color_name: ['fan0'],
+
     _init: function() {
         this.rpm = 0;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Fan"), {reactive: false});
         this.parent()
         this.tip_format(_("rpm"));
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1665,11 +1716,11 @@ const Fan = new Lang.Class({
                 new St.Label({ text: _("rpm"), style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: _("rpm"), style_class: Style.get("sm-label")})];
     }
 });
@@ -1740,6 +1791,7 @@ var enable = function () {
             elts: new Array(),
         };
 
+        // Items to Monitor
         Main.__sm.elts = createCpus();
         Main.__sm.elts.push(new Freq());
         Main.__sm.elts.push(new Mem());
@@ -1749,10 +1801,11 @@ var enable = function () {
         Main.__sm.elts.push(new Thermal());
         Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());
-        
+
         let tray = Main.__sm.tray;
-        
-        
+        let elts = Main.__sm.elts;
+
+
         if (Schema.get_boolean("move-clock")) {
             let dateMenu;
             if (Compat.versionCompare(shell_Version, "3.5.90")){
@@ -1778,16 +1831,24 @@ var enable = function () {
         } else {
             Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
         }
-        
+
         let box = new St.BoxLayout();
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
-        for (let elt in Main.__sm.elts) {
-            Main.__sm.elts[elt].menu_item.actor.add_style_class_name(Style.get('sm-popup-menu-item'));
-            box.add_actor(Main.__sm.elts[elt].actor);
-            //if (elt == 0)
-            tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
+        // Add items to panel box
+        for (let elt in elts) {
+            box.add_actor(elts[elt].actor);
         }
+
+        // Build Menu Info Box Table
+        let menu_info = new PopupMenu.PopupBaseMenuItem({reactive: false});
+        let menu_info_box = new St.BoxLayout();
+        menu_info.actor.add(menu_info_box);
+        Main.__sm.tray.menu.addMenuItem(menu_info, 0);
+
+        build_menu_info();
+
+        tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         let pie_item = Main.__sm.pie;
         pie_item.create_menu_item();
@@ -1796,7 +1857,7 @@ var enable = function () {
         let bar_item = Main.__sm.bar;
         bar_item.create_menu_item();
         tray.menu.addMenuItem(bar_item.menu_item);
-        
+
         change_usage();
         Schema.connect('changed::' + 'disk-usage-style', change_usage);
 
@@ -1880,7 +1941,7 @@ var disable = function () {
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-    
+
     if (!Compat.versionCompare(shell_Version,"3.5")){
         Main.__sm.tray.destroy();
         StatusArea.systemMonitor = null;

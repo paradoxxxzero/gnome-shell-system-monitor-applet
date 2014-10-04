@@ -1,0 +1,338 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-21 06:49+1000\n"
+"PO-Revision-Date: 2013-08-22 01:55+0200\n"
+"Last-Translator: Muhammad Fawwaz Orabi <mfawwaz93@gmail.com>\n"
+"Language-Team: Arabic <mfawwaz93@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: Arabic\n"
+
+#: prefs.js:69 prefs.js:90 prefs.js:110
+msgid ":"
+msgstr ":"
+
+#: prefs.js:161
+msgid "Display"
+msgstr "اعرضه"
+
+#: prefs.js:166
+msgid "Refresh Time"
+msgstr "حدّثه كلّ"
+
+#: prefs.js:171
+msgid "Graph Width"
+msgstr "عرض المخطط"
+
+#: prefs.js:176
+msgid "Show Text"
+msgstr "اعرض النص"
+
+#: prefs.js:184
+msgid "Display Style"
+msgstr "نمط العرض"
+
+#: prefs.js:267
+msgid "Display Icon"
+msgstr "اعرض الرمز"
+
+#: prefs.js:276
+msgid "Display in the Middle"
+msgstr "اعرضه في المنتصف"
+
+#: prefs.js:288
+msgid "Background Color"
+msgstr "لون الخلفية"
+
+#: prefs.js:197
+msgid "Display Individual Cores"
+msgstr "اعرض الأنوية مفردة"
+
+#: prefs.js:193
+msgid "Show network speed in bits"
+msgstr "اعرض سرعة الشبكة بالبِتّات"
+
+#: prefs.js:205
+msgid "Sensor"
+msgstr "الحساس"
+
+#: prefs.js:207
+msgid "Please install lm-sensors"
+msgstr "(ثبّت lm-sensors أولاً)"
+
+#: prefs.js:282
+msgid "Move the clock"
+msgstr "انقل الساعة"
+
+#: prefs.js:286
+msgid "Compact Display"
+msgstr "عرض مصغّر"
+
+#: extension.js:746
+msgid "Cpu"
+msgstr "معالج"
+
+msgid "User"
+msgstr "المستخدِم"
+
+msgid "System"
+msgstr "النظام"
+
+msgid "Other"
+msgstr "غيرهما"
+
+msgid "Nice"
+msgstr "Nice"
+
+msgid "Iowait"
+msgstr "lowait"
+
+#: extension.js:941
+msgid "Memory"
+msgstr "الذاكرة"
+
+msgid "Program"
+msgstr "البرنامج"
+
+msgid "Cache"
+msgstr "الخبيئة"
+
+msgid "Buffer"
+msgstr ""
+
+#: extension.js:1134
+msgid "Swap"
+msgstr "التبديل"
+
+msgid "Used"
+msgstr "مستخدَم"
+
+#: extension.js:1010
+msgid "Net"
+msgstr "شبكة"
+
+msgid "Up"
+msgstr "رفع"
+
+msgid "Down"
+msgstr "تنزيل"
+
+msgid "Uperrors"
+msgstr "أخطاء الرفع"
+
+msgid "Downerrors"
+msgstr "أخطاء التنزيل"
+
+msgid "collisions"
+msgstr "التصادمات"
+
+msgid "Collisions"
+msgstr "التصادمات"
+
+#: extension.js:836
+msgid "Disk"
+msgstr "قرص"
+
+msgid "Write"
+msgstr "الكتابة"
+
+msgid "Read"
+msgstr "القراءة"
+
+#: extension.js:1182
+msgid "R"
+msgstr "ك"
+
+#: extension.js:1185
+msgid "W"
+msgstr "ق"
+
+#: prefs.js:185
+msgid "graph"
+msgstr "مخطط"
+
+#: prefs.js:185
+msgid "digit"
+msgstr "رقم"
+
+#: prefs.js:185
+msgid "both"
+msgstr "كلاهما"
+
+msgid "cpu"
+msgstr "معالج"
+
+msgid "mem"
+msgstr "ذاكرة"
+
+msgid "swap"
+msgstr "تبديل"
+
+msgid "net"
+msgstr "شبكة"
+
+msgid "disk"
+msgstr "قرص"
+
+#: extension.js:1346
+msgid "Preferences..."
+msgstr "تفضيلات..."
+
+#: extension.js:1340
+msgid "System Monitor..."
+msgstr "مِرقاب النظام..."
+
+msgid "System monitor"
+msgstr "مرقاب النظام"
+
+msgid "user"
+msgstr "مستخدِم"
+
+msgid "system"
+msgstr "نظام"
+
+msgid "other"
+msgstr "غيرهما"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "برنامج"
+
+msgid "cache"
+msgstr "خبيئة"
+
+msgid "buffer"
+msgstr ""
+
+msgid "used"
+msgstr "مستخدَم"
+
+msgid "up"
+msgstr "رفع"
+
+msgid "down"
+msgstr "تنزيل"
+
+msgid "uperrors"
+msgstr "أخطاء الرفع"
+
+msgid "downerrors"
+msgstr "أخطاء التنزيل"
+
+msgid "write"
+msgstr "كتابة"
+
+msgid "read"
+msgstr "قراءة"
+
+msgid "KiB/s"
+msgstr "ك.ب/ثا"
+
+msgid "MiB/s"
+msgstr "م.ب/ثا"
+
+msgid "MiB"
+msgstr "م.ب"
+
+msgid "kB"
+msgstr "ك.ب"
+
+msgid "MB"
+msgstr "م.ب"
+
+#: extension.js:1179
+msgid "Thermal"
+msgstr "حرارة"
+
+msgid "thermal"
+msgstr "حرارة"
+
+#: prefs.js:180
+msgid "Show In Menu"
+msgstr "أظهره في القائمة"
+
+#: prefs.js:222
+msgid "Show Time Remaining"
+msgstr "اعرض الوقت المتبقي"
+
+#: prefs.js:226
+msgid "Hide System Icon"
+msgstr "أخفِ رمز النظام"
+
+#: prefs.js:230
+msgid "Usage Style"
+msgstr "نمط الاستخدام"
+
+#: prefs.js:231
+msgid "pie"
+msgstr "قرص"
+
+#: prefs.js:231
+msgid "bar"
+msgstr "أشرطة"
+
+#: prefs.js:231
+msgid "none"
+msgstr "لا شيء"
+
+#: extension.js:6
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+msgstr ""
+"لا تتوفر للإضافة كل ما تعتمد عليه\n"
+"رجاء ثبّت ما يلي: \n"
+"مدير الشبكة وlubgtop ومرتبطِات gir \n"
+"\t    في Ubuntu: gir1.2-gtop-2.0 وgir1.2-networkmanager-1.0 \n"
+"\t    في Fedora: libgtop2-devel وNetworkManager-glib-devel \n"
+"\t    في Arch: libgtop وnetworkmanager\n"
+
+#: extension.js:97
+msgid "System Monitor Extension"
+msgstr "ملحق مرقاب النظام"
+
+#: extension.js:113
+msgid "Cancel"
+msgstr "ألغِ"
+
+#: extension.js:601
+msgid "Battery"
+msgstr "البطارية"
+
+msgid "battery"
+msgstr "بطارية"
+
+#: extension.js:896
+msgid "Freq"
+msgstr "التردد"
+
+msgid "freq"
+msgstr "تردد"
+
+#: extension.js:1540
+msgid "Fan"
+msgstr "المروحة"
+
+msgid "fan"
+msgstr "مروحة"
+
+#: extension.js:1542 extension.js:1566 extension.js:1574
+msgid "rpm"
+msgstr "دورة/د"

@@ -2,13 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Guillaume Ayoub <guillaume.ayoub@kozea.fr>, 2011.
+#
 #: extension.js:751
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-10-08 12:21+0200\n"
-"PO-Revision-Date: 2012-09-05 07:22+0200\n"
+"PO-Revision-Date: 2014-10-08 12:29+0100\n"
 "Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -350,11 +351,8 @@ msgstr "tr/min"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Afficher les infos-bulles"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
-
-#~ msgid "System Monitor Applet Configurator"
-#~ msgstr "Configuration de l’applet moniteur système"
+msgstr "CPU"

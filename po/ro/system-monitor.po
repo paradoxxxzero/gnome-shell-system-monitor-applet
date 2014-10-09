@@ -1,8 +1,9 @@
+#: extension.js:751
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome shell system monitor applet\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 06:49+1000\n"
+"POT-Creation-Date: 2014-10-08 12:21+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: zamox <zamox.goo@gmail.com>\n"
 "Language-Team: \n"
@@ -11,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
 msgstr ""
 
@@ -19,55 +20,55 @@ msgstr ""
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#: prefs.js:161
+#: prefs.js:161 prefs.js:159
 msgid "Display"
 msgstr "Afișează"
 
-#: prefs.js:166
+#: prefs.js:166 prefs.js:164
 msgid "Refresh Time"
 msgstr "Perioadă Recitire Date"
 
-#: prefs.js:171
+#: prefs.js:171 prefs.js:169
 msgid "Graph Width"
 msgstr "Lățime Grafic"
 
-#: prefs.js:176
+#: prefs.js:176 prefs.js:174
 msgid "Show Text"
 msgstr "Arată Titlu"
 
-#: prefs.js:184
+#: prefs.js:184 prefs.js:182
 msgid "Display Style"
 msgstr "Tip Afișaj"
 
-#: prefs.js:267
+#: prefs.js:267 prefs.js:274
 msgid "Display Icon"
 msgstr "Afișează Pictogramă"
 
-#: prefs.js:276
+#: prefs.js:276 prefs.js:283
 msgid "Display in the Middle"
 msgstr "Afișează la Centru"
 
-#: prefs.js:288
+#: prefs.js:288 prefs.js:306
 msgid "Background Color"
 msgstr "Culoare Fundal"
 
-#: prefs.js:197
+#: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
 msgstr ""
 
-#: prefs.js:193
+#: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
 msgstr ""
 
-#: prefs.js:205
+#: prefs.js:205 prefs.js:208
 msgid "Sensor"
 msgstr ""
 
-#: prefs.js:207
+#: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
 msgstr ""
 
-#: prefs.js:282
+#: prefs.js:282 prefs.js:300
 msgid "Move the clock"
 msgstr ""
 
@@ -75,12 +76,12 @@ msgstr ""
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#: prefs.js:286
+#: prefs.js:286 prefs.js:289
 #, fuzzy
 msgid "Compact Display"
 msgstr "Afișează"
 
-#: extension.js:746
+#: extension.js:746 extension.js:1117
 msgid "Cpu"
 msgstr "Cpu"
 
@@ -99,7 +100,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "Iowait"
 
-#: extension.js:941
+#: extension.js:941 extension.js:1378
 msgid "Memory"
 msgstr "Memorie"
 
@@ -112,20 +113,22 @@ msgstr "Cache"
 msgid "Buffer"
 msgstr "Buffer"
 
-#: extension.js:1134
+#: extension.js:1134 extension.js:1598
 msgid "Swap"
 msgstr "Swap"
 
 msgid "Used"
 msgstr "Folosit"
 
-#: extension.js:1010
+#: extension.js:1010 extension.js:1428
 msgid "Net"
 msgstr "Net"
 
+#: extension.js:1589
 msgid "Up"
 msgstr "Incărcare"
 
+#: extension.js:1586
 msgid "Down"
 msgstr "Descărcare"
 
@@ -141,7 +144,7 @@ msgstr ""
 msgid "Collisions"
 msgstr ""
 
-#: extension.js:836
+#: extension.js:836 extension.js:1264
 msgid "Disk"
 msgstr "Disc"
 
@@ -151,29 +154,30 @@ msgstr "Scriere"
 msgid "Read"
 msgstr "Citire"
 
-#: extension.js:1182
+#: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
 msgstr ""
 
-#: extension.js:1185
+#: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
 msgstr ""
 
-#: prefs.js:185
+#: prefs.js:185 prefs.js:183
 msgid "graph"
 msgstr "grafic"
 
-#: prefs.js:185
+#: prefs.js:185 prefs.js:183
 msgid "digit"
 msgstr "cifre"
 
-#: prefs.js:185
+#: prefs.js:185 prefs.js:183
 msgid "both"
 msgstr "ambele"
 
 msgid "cpu"
 msgstr "cpu"
 
+#: extension.js:811
 msgid "mem"
 msgstr "mem"
 
@@ -186,11 +190,11 @@ msgstr "net"
 msgid "disk"
 msgstr "disc"
 
-#: extension.js:1346
+#: extension.js:1346 extension.js:1900
 msgid "Preferences..."
 msgstr "Preferințe..."
 
-#: extension.js:1340
+#: extension.js:1340 extension.js:1894
 msgid "System Monitor..."
 msgstr "Monitor Sistem..."
 
@@ -243,22 +247,29 @@ msgstr "scriere"
 msgid "read"
 msgstr "citire"
 
+#: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
+#: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
 msgid "KiB/s"
 msgstr ""
 
+#: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
+#: extension.js:1324 extension.js:1549 extension.js:1558
 msgid "MiB/s"
 msgstr ""
 
+#: extension.js:1419 extension.js:1635
 msgid "MiB"
 msgstr ""
 
+#: extension.js:184
 msgid "kB"
 msgstr ""
 
+#: extension.js:183 extension.js:185
 msgid "MB"
 msgstr ""
 
-#: extension.js:1179
+#: extension.js:1179 extension.js:1644
 msgid "Thermal"
 msgstr ""
 
@@ -266,36 +277,36 @@ msgstr ""
 msgid "thermal"
 msgstr "Altele"
 
-#: prefs.js:180
+#: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
 msgstr ""
 
-#: prefs.js:222
+#: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
 msgstr ""
 
-#: prefs.js:226
+#: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
 msgstr ""
 
-#: prefs.js:230
+#: prefs.js:230 prefs.js:237
 #, fuzzy
 msgid "Usage Style"
 msgstr "Tip Afișaj"
 
-#: prefs.js:231
+#: prefs.js:231 prefs.js:238
 msgid "pie"
 msgstr ""
 
-#: prefs.js:231
+#: prefs.js:231 prefs.js:238
 msgid "bar"
 msgstr ""
 
-#: prefs.js:231
+#: prefs.js:231 prefs.js:238
 msgid "none"
 msgstr ""
 
-#: extension.js:6
+#: extension.js:6 extension.js:68
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -305,38 +316,47 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
 
-#: extension.js:97
+#: extension.js:97 extension.js:255
 #, fuzzy
 msgid "System Monitor Extension"
 msgstr "Monitor Sistem..."
 
-#: extension.js:113
+#: extension.js:113 extension.js:271
 msgid "Cancel"
 msgstr ""
 
-#: extension.js:601
+#: extension.js:601 extension.js:875
 msgid "Battery"
 msgstr ""
 
 msgid "battery"
 msgstr ""
 
-#: extension.js:896
+#: extension.js:896 extension.js:1334
 msgid "Freq"
 msgstr ""
 
 msgid "freq"
 msgstr ""
 
-#: extension.js:1540
+#: extension.js:1540 extension.js:1692
 msgid "Fan"
 msgstr ""
 
 msgid "fan"
 msgstr ""
 
-#: extension.js:1542 extension.js:1566 extension.js:1574
+#: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
+#: extension.js:1722 extension.js:1730
 msgid "rpm"
+msgstr ""
+
+#: prefs.js:294
+msgid "Show tooltip"
+msgstr ""
+
+#: extension.js:1097
+msgid "CPU"
 msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"

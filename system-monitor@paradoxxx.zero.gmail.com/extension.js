@@ -433,7 +433,7 @@ const smMountsMonitor = new Lang.Class({
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
             let result = info.get_attribute_string(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-            return (result == 'nfs' || result == 'smbfs' || result == 'cifs' || result == 'ftp');
+            return (result == 'sftp' || result == 'mtp' || || result == 'mtpfs' || result == 'nfs' || result == 'smbfs' || result == 'cifs' || result == 'ftp');
         } catch(e) {
             return false;
         }

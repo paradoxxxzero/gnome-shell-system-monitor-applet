@@ -858,6 +858,8 @@ const ElementBase = new Lang.Class({
               }
               },*/
     update: function() {
+        if (!this.menu_visible || !this.actor.visible)
+            return;
         this.refresh();
         this._apply();
         this.chart.update();

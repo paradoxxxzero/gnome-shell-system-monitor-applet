@@ -392,7 +392,10 @@ const smMountsMonitor = new Lang.Class({
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
-            if ((!this.is_ro_mount(mount)) && (!ENABLE_NETWORK_DISK_USAGE && !this.is_net_mount(mount))){
+            if ( !this.is_ro_mount(mount) &&
+                 !this.is_sys_mount(mount) &&
+                (!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE)) {
+
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
                 if (mpath)
                     this.mounts.push(mpath);
@@ -433,7 +436,7 @@ const smMountsMonitor = new Lang.Class({
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
             let result = info.get_attribute_string(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-            return (result == 'nfs' || result == 'smbfs' || result == 'cifs' || result == 'ftp');
+            return (result == 'nfs' || result == 'smbfs' || result == 'cifs' || result == 'ftp' || result == 'sshfs');
         } catch(e) {
             return false;
         }
@@ -855,6 +858,8 @@ const ElementBase = new Lang.Class({
               }
               },*/
     update: function() {
+        if (!this.menu_visible || !this.actor.visible)
+            return;
         this.refresh();
         this._apply();
         this.chart.update();

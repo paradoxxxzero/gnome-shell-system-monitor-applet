@@ -393,7 +393,6 @@ const smMountsMonitor = new Lang.Class({
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
             if ( !this.is_ro_mount(mount) &&
-                 !this.is_sys_mount(mount) &&
                 (!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE)) {
 
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();

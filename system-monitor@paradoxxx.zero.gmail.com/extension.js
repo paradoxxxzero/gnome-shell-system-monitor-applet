@@ -1433,8 +1433,6 @@ const Net = new Lang.Class({
         this.ifs = [];
         this.client = NMClient.Client.new();
         this.update_iface_list_nm();
-        this.update_iface_list_static();
-
         this.gtop = new GTop.glibtop_netload();
         this.last = [0, 0, 0, 0, 0];
         this.usage = [0, 0, 0, 0, 0];
@@ -1461,6 +1459,7 @@ const Net = new Lang.Class({
         }
         catch(e) {
             global.logError('NetworkManager not running or introspection bindings not present');
+            this.update_iface_list_static();
         }
     },
     register_iface_state_nm: function(){
@@ -1476,19 +1475,25 @@ const Net = new Lang.Class({
         }
     },
     update_iface_list_static: function() {
+        global.logError("Looking for interfaces directly");
         if(!this.ifs.length){
             let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             for(let i = 2; i < net_lines.length - 1 ; i++) {
                 let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
                 if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
-                   .replace(/\s/g, "") == "up" &&
-                   ifc.indexOf("br") < 0 &&
-                   ifc.indexOf("lo") < 0) {
-                    this.ifs.push(ifc);
-                    global.logError("Found interface " +ifc);
+                  .replace(/\s/g, "") == "up" &&
+                  ifc.indexOf("br") < 0 &&
+                  ifc.indexOf("lo") < 0) {
+                      this.ifs.push(ifc);
+                      global.logError("Found interface " +ifc);
+                  }
                 }
-            }
         }
+        if(!this.ifs.length){
+            global.logError("No active network interfaces found; trying again in 3s");
+            Mainloop.timeout_add_seconds(3, Lang.bind(this, this.update_iface_list_static));
+        }
+        return false
     },
     refresh: function() {
         let accum = [0, 0, 0, 0, 0];

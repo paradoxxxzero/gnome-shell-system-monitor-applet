@@ -1651,6 +1651,7 @@ const Thermal = new Lang.Class({
     max: 100,
     _init: function() {
         this.temperature = '-- ';
+        this.display_error = true;
         this.parent()
         this.tip_format('\u2103');
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1665,7 +1666,10 @@ const Thermal = new Lang.Class({
                 this.temperature = Math.round(parseInt(as_r[1]) / 1000);
             }));
         } else {
-            global.logError("error reading: " + sfile);
+            if (this.display_error) {
+                global.logError("error reading: " + sfile);
+                this.display_error = false;
+            }
         }
     },
     _apply: function() {

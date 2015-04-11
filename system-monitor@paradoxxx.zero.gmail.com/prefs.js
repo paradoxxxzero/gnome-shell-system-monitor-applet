@@ -37,26 +37,26 @@ function check_sensors(sensor_type){
     let sensor_list = [];
     let string_list = [];
     let test;
-    for (let j=0; j <5; j++){
-            for (let k=0; k < inputs.length; k++){
-                test = sensor_path + 'hwmon' + j + '/' + inputs[k];
+    for (let j=0; j < 6; j++){
+        for (let k=0; k < inputs.length; k++){
+            test = sensor_path + 'hwmon' + j + '/' + inputs[k];
+            if(!GLib.file_test(test,1<<4)){
+                test = sensor_path + 'hwmon' + j + '/device/' + inputs[k];
                 if(!GLib.file_test(test,1<<4)){
-                    test = sensor_path + 'hwmon' + j + '/device/' + inputs[k];
-                    if(!GLib.file_test(test,1<<4)){
-                       continue;
+                   continue;
                 }
             }
             let sensor = test.substr(0, test.lastIndexOf('/'));
             let result = GLib.file_get_contents(sensor + '/name');
             let label;
-	     if (result[0]){
+            if (result[0]){
                 label = N_('' + result[1]).split('\n')[0];
             }
             string_list.push(label.capitalize() + ' - ' + inputs[k].split('_')[0].capitalize());
-            sensor_list.push(test);   
-            }
+            sensor_list.push(test);
+        }
     }
-    return [sensor_list, string_list];  
+    return [sensor_list, string_list];
 };
 
 
@@ -290,6 +290,12 @@ const App = new Lang.Class({
                 this.items.push(item)
                 this.hbox1.add(item)
  		Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);		
+            } else if (key == 'show-tooltip'){
+                let item = new Gtk.CheckButton({label:_('Show tooltip')})
+                item.set_active(Schema.get_boolean(key))
+                this.items.push(item)
+                this.hbox1.add(item)
+                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key == 'move-clock'){
                 let item = new Gtk.CheckButton({label:_('Move the clock')})
                 //item.set_active(Schema.get_boolean(key))

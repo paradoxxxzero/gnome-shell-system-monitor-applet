@@ -93,8 +93,53 @@ function change_style() {
     this.chart.actor.visible = style == 'graph' || style == 'both';
 }
 function change_menu() {
-    this.menu_item.actor.visible = Schema.get_boolean(this.elt + '-show-menu');
+    this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
+    build_menu_info();
 }
+
+function build_menu_info() {
+    let elts = Main.__sm.elts;
+    let tray_menu = Main.__sm.tray.menu;
+
+    if (tray_menu._getMenuItems().length &&
+        typeof tray_menu._getMenuItems()[0].actor.get_last_child() != 'undefined') {
+        tray_menu._getMenuItems()[0].actor.get_last_child().destroy_all_children();
+        for (let elt in elts) {
+            elts[elt].menu_items = elts[elt].create_menu_items();
+        }
+    } else {
+        return;
+    }
+
+    let menu_info_box_table = new St.Table({
+        style: "padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;"
+    });
+
+    // Populate Table
+    let row_index = 0;
+    for (let elt in elts) {
+        if (!elts[elt].menu_visible) {
+            continue;
+        }
+
+        // Add item name to table
+        menu_info_box_table.add(
+            new St.Label({text: elts[elt].item_name, style_class: Style.get("sm-title")}),
+            {row: row_index, col: 0});
+
+        // Add item data to table
+        let col_index = 1;
+        for (let item in elts[elt].menu_items) {
+            menu_info_box_table.add(elts[elt].menu_items[item], {row: row_index, col: col_index});
+
+            col_index++;
+        }
+
+        row_index++;
+    }
+    tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+}
+
 function change_usage(){
     let usage = Schema.get_string('disk-usage-style');
     Main.__sm.pie.show(usage == 'pie');
@@ -284,7 +329,7 @@ const Chart = new Lang.Class({
             Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
             cr.fill();
         }
-        if (shell_Version >= "3.7.4") {
+        if (Compat.versionCompare(shell_Version, "3.7.4")) {
             cr.$dispose();
         }
     },
@@ -321,7 +366,7 @@ const smMountsMonitor = new Lang.Class({
     refresh: function() {
         // try check that number of volumes has changed
         /*try {
-	    let num_mounts = this.manager.getMounts().length;
+            let num_mounts = this.manager.getMounts().length;
             if (num_mounts == this.num_mounts)
                 return;
             this.num_mounts = num_mounts;
@@ -347,7 +392,9 @@ const smMountsMonitor = new Lang.Class({
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function(mount) {
-            if ((!this.is_ro_mount(mount)) && (!ENABLE_NETWORK_DISK_USAGE && !this.is_net_mount(mount))){
+            if ( !this.is_ro_mount(mount) &&
+                (!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE)) {
+
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
                 if (mpath)
                     this.mounts.push(mpath);
@@ -388,7 +435,8 @@ const smMountsMonitor = new Lang.Class({
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
             let result = info.get_attribute_string(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-            return (result == 'nfs' || result == 'smbfs' || result == 'cifs' || result == 'ftp');
+            let net_fs = ['nfs', 'smbfs', 'cifs', 'ftp', 'sshfs', 'sftp', 'mtp', 'mtpfs'];
+            return !file.is_native() || net_fs.indexOf(result) > -1;
         } catch(e) {
             return false;
         }
@@ -442,7 +490,7 @@ const Graph = new Lang.Class({
     },
     create_menu_item: function(){
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        this.menu_item.addActor(this.actor, {span: -1, expand: true});
+        this.menu_item.actor.add(this.actor, {span: -1, expand: true});
         //tray.menu.addMenuItem(this.menu_item);
     },
     show: function(visible){
@@ -484,7 +532,7 @@ const Bar = new Lang.Class({
             cr.stroke();
             y0 += (3 * this.thickness) / 2;
         }
-        if (shell_Version >= "3.7.4") {
+        if (Compat.versionCompare(shell_Version, "3.7.4")) {
             cr.$dispose();
         }
     },
@@ -530,7 +578,7 @@ const Pie = new Lang.Class({
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
-        if (shell_Version >= "3.7.4") {
+        if (Compat.versionCompare(shell_Version, "3.7.4")) {
             cr.$dispose();
         }
     },
@@ -567,8 +615,8 @@ const TipMenu = new Lang.Class({
         this.actor.add_actor(this.box);
     },
     _boxGetPreferredWidth: function (actor, forHeight, alloc) {
-        let columnWidths = this.getColumnWidths();
-        this.setColumnWidths(columnWidths);
+        //let columnWidths = this.getColumnWidths();
+        //this.setColumnWidths(columnWidths);
 
         [alloc.min_size, alloc.natural_size] = this.box.get_preferred_width(forHeight);
     },
@@ -657,6 +705,11 @@ const TipBox = new Lang.Class({
         }
     },
     on_enter: function() {
+        let show_tooltip = Schema.get_boolean('show-tooltip');
+
+        if (!show_tooltip)
+            return;
+
         if (this.out_to) {
             Mainloop.source_remove(this.out_to);
             this.out_to = 0;
@@ -698,9 +751,12 @@ const ElementBase = new Lang.Class({
     Extends: TipBox,
 
     elt: '',
+    item_name: _(""),
     color_name: [],
     text_items: [],
     menu_items: [],
+    menu_visible: true,
+
     _init: function() {
         //            TipBox.prototype._init.apply(this, arguments);
         this.parent(arguments);
@@ -760,7 +816,7 @@ const ElementBase = new Lang.Class({
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
 
-        change_menu.call(this);
+        this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
         Schema.connect('changed::' + this.elt + '-show-menu', Lang.bind(this, change_menu));
 
         this.actor.add_actor(this.label);
@@ -774,8 +830,6 @@ const ElementBase = new Lang.Class({
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', Lang.bind(this, change_style));
         this.menu_items = this.create_menu_items();
-        for (let item in this.menu_items)
-            this.menu_item.addActor(this.menu_items[item]);
     },
     tip_format: function(unit) {
         typeof(unit) == 'undefined' && (unit = '%');
@@ -789,12 +843,12 @@ const ElementBase = new Lang.Class({
         for (let i = 0;i < this.color_name.length;i++) {
             let tipline = new TipItem();
             this.tipmenu.addMenuItem(tipline);
-            tipline.addActor(new St.Label({ text: _(this.color_name[i]) }));
+            tipline.actor.add(new St.Label({ text: _(this.color_name[i]) }));
             this.tip_labels[i] = new St.Label();
-            tipline.addActor(this.tip_labels[i]);
+            tipline.actor.add(this.tip_labels[i]);
 
             this.tip_unit_labels[i] = new St.Label({ text: unit[i] });
-            tipline.addActor(this.tip_unit_labels[i]);
+            tipline.actor.add(this.tip_unit_labels[i]);
             this.tip_vals[i] = 0;
         }
     },
@@ -804,6 +858,8 @@ const ElementBase = new Lang.Class({
               }
               },*/
     update: function() {
+        if (!this.menu_visible && !this.actor.visible)
+            return;
         this.refresh();
         this._apply();
         this.chart.update();
@@ -821,6 +877,7 @@ const Battery = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'battery',
+    item_name: _("Battery"),
     color_name: ['batt0'],
     max: 100,
 
@@ -828,24 +885,24 @@ const Battery = new Lang.Class({
         this.icon_hidden = false;
         this.percentage = 0;
         this.timeString = '-- ';
-        this._proxy = StatusArea['battery']._proxy;
+        this._proxy = StatusArea.aggregateMenu['_power']._proxy
+        if (this._proxy == undefined)
+            this._proxy = StatusArea['battery']._proxy;
         this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
 
         //need to specify a default icon, since the contructor completes before UPower callback
         this.icon = '. GThemedIcon battery-good-symbolic battery-good';
         this.gicon = Gio.icon_new_for_string(this.icon);
 
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Battery"), {reactive: false});
-
         this.parent()
         this.tip_format('%');
 
         this.update_battery();
         this.update_tips();
-        this.hide_system_icon();
+        //this.hide_system_icon();
         this.update();
 
-        Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
+        //Schema.connect('changed::' + this.elt + '-hidesystem', Lang.bind(this, this.hide_system_icon));
         Schema.connect('changed::' + this.elt + '-time', Lang.bind(this, this.update_tips));
     },
     refresh: function() {
@@ -854,45 +911,76 @@ const Battery = new Lang.Class({
     update_battery: function(){
         // callback function for when battery stats updated.
         let battery_found = false;
-        this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
-            if (error) {
-
-                log("SM: Power proxy error: " + error)
+        let isBattery = false;
+        if (this._proxy.GetDevicesRemote == undefined) {
+            let device_type = this._proxy.Type;
+            isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+            if (isBattery) {
+                battery_found = true;
+                let icon = this._proxy.IconName;
+                let percentage = this._proxy.Percentage;
+                let seconds = this._proxy.TimeToEmpty;
+                this.update_battery_value(seconds, percentage, icon);
+            } else {
+                //log("SM: No battery found");
                 this.actor.hide();
-                this.menu_item.actor.hide();
-                return;
+                this.menu_visible = false;
+                build_menu_info();
             }
+        } else {
+            this._proxy.GetDevicesRemote(Lang.bind(this, function(devices, error) {
+                if (error) {
 
-            let [result] = devices;
-            for (let i = 0; i < result.length; i++) {
-                let [device_id, device_type, icon, percentage, state, seconds] = result[i];
-                if (device_type == Power.UPDeviceType.BATTERY && !battery_found) {
-                    battery_found = true;
-                    //grab data
-                    if (seconds > 60){
-                        let time = Math.round(seconds / 60);
-                        let minutes = time % 60;
-                        let hours = Math.floor(time / 60);
-                        this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
-                    } else {
-                        this.timeString = '-- ';
-                    }
-                    this.percentage = Math.ceil(percentage);
-                    this.gicon = Gio.icon_new_for_string(icon);
-
-                    if (Schema.get_boolean(this.elt + '-display'))
-                        this.actor.show()
-                    if (Schema.get_boolean(this.elt + '-show-menu'))
-                        this.menu_item.actor.show();
+                    log("SM: Power proxy error: " + error)
+                    this.actor.hide();
+                    this.menu_visible = false;
+                    build_menu_info();
+                    return;
                 }
-            }
-            if (!battery_found) {
-                log("SM: No battery found")
-                this.actor.hide();
 
-                this.menu_item.actor.hide();
-            }
-        }));
+                let [result] = devices;
+                for (let i = 0; i < result.length; i++) {
+                    let [device_id, device_type, icon, percentage, state, seconds] = result[i];
+
+                    if (Compat.versionCompare(shell_Version, "3.9"))
+                        isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+                    else
+                        isBattery = (device_type == Power.UPDeviceType.BATTERY);
+
+                    if (isBattery) {
+                        battery_found = true;
+                        this.update_battery_value(seconds, percentage, icon);
+                        break;
+                    }
+                }
+
+                if (!battery_found) {
+                    //log("SM: No battery found")
+                    this.actor.hide();
+                    this.menu_visible = false;
+                    build_menu_info();
+                }
+            }));
+        }
+    },
+    update_battery_value: function(seconds, percentage, icon) {
+        if (seconds > 60){
+            let time = Math.round(seconds / 60);
+            let minutes = time % 60;
+            let hours = Math.floor(time / 60);
+            this.timeString = C_("battery time remaining","%d:%02d").format(hours,minutes);
+        } else {
+            this.timeString = '-- ';
+        }
+        this.percentage = Math.ceil(percentage);
+        this.gicon = Gio.icon_new_for_string(icon);
+
+        if (Schema.get_boolean(this.elt + '-display'))
+            this.actor.show()
+        if (Schema.get_boolean(this.elt + '-show-menu') && this.menu_visible == false) {
+            this.menu_visible = true;
+            build_menu_info();
+        }
     },
     hide_system_icon: function(override) {
         let value = Schema.get_boolean(this.elt + '-hidesystem');
@@ -929,6 +1017,7 @@ const Battery = new Lang.Class({
 
         }
     },
+
     update_tips: function(){
         let value = Schema.get_boolean(this.elt + '-time');
         if (value) {
@@ -959,11 +1048,11 @@ const Battery = new Lang.Class({
                 new St.Label({ text: '%', style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: '%', style_class: Style.get("sm-label")})];
     },
     destroy: function() {
@@ -1010,6 +1099,7 @@ const Cpu = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'cpu',
+    item_name: _("CPU"),
     color_name: ['user', 'system', 'nice', 'iowait', 'other'],
     max: 100,
     cpuid: -1, // cpuid is -1 when all cores are displayed in the same graph
@@ -1032,7 +1122,6 @@ const Cpu = new Lang.Class({
         let item_name = _("Cpu");
         if (cpuid != -1)
             item_name += " " + (cpuid + 1); // append cpu number to cpu name in popup
-        this.menu_item = new PopupMenu.PopupMenuItem(item_name, {reactive: false});
         //ElementBase.prototype._init.call(this);
         this.parent()
         this.tip_format();
@@ -1083,6 +1172,7 @@ const Cpu = new Lang.Class({
                 this.last_total = 0;
                 this.usage = [0,0,0,1,0];
             }
+
         }
 
         /*
@@ -1162,11 +1252,11 @@ const Cpu = new Lang.Class({
 
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: '%', style_class: Style.get("sm-label")})];
     }
 });
@@ -1176,7 +1266,9 @@ const Disk = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'disk',
+    item_name: _("Disk"),
     color_name: ['read', 'write'],
+
     _init: function() {
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
@@ -1186,7 +1278,6 @@ const Disk = new Lang.Class({
         this.last_time = 0;
         GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
         this.block_size = this.gtop.block_size/1024/1024/8;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Disk"), {reactive: false});
         this.parent()
         this.tip_format(_('MiB/s'));
         this.update();
@@ -1245,10 +1336,10 @@ const Freq = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'freq',
+    item_name: _("Freq"),
     color_name: ['freq'],
     _init: function() {
         this.freq = 0;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Freq"), {reactive: false});
         this.parent()
         this.tip_format('MHz');
         this.update();
@@ -1275,11 +1366,11 @@ const Freq = new Lang.Class({
 
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: 'MHz', style_class: Style.get("sm-label")})];
     }
 });
@@ -1289,11 +1380,11 @@ const Mem = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'memory',
+    item_name: _("Memory"),
     color_name: ['program', 'buffer', 'cache'],
     max: 1,
 
     _init: function() {
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Memory"), {reactive: false});
         this.gtop = new GTop.glibtop_mem();
         this.mem = [0, 0, 0];
         this.parent()
@@ -1326,10 +1417,10 @@ const Mem = new Lang.Class({
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
     }
 });
@@ -1339,8 +1430,10 @@ const Net = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'net',
+    item_name: _("Net"),
     color_name: ['down', 'downerrors', 'up', 'uperrors', 'collisions'],
     speed_in_bits: false,
+
     _init: function() {
         this.ifs = [];
         this.client = NMClient.Client.new();
@@ -1362,7 +1455,6 @@ const Net = new Lang.Class({
         this.last = [0, 0, 0, 0, 0];
         this.usage = [0, 0, 0, 0, 0];
         this.last_time = 0;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Net"), {reactive: false});
         this.parent()
         this.tip_format([_('KiB/s'), '/s', _('KiB/s'), '/s', '/s']);
         this.update_units();
@@ -1496,10 +1588,10 @@ const Net = new Lang.Class({
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
-                new St.Icon({ icon_size: 16 * Style.iconsize(), icon_name:'go-down-symbolic'}),
+                new St.Label({ text:_('Down'), style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label({ text:_('KiB/s'), style_class: Style.get("sm-label")}),
-                new St.Icon({ icon_size: 16 * Style.iconsize(), icon_name:'go-up-symbolic'})];
+                new St.Label({ text:_('Up'), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1508,11 +1600,11 @@ const Swap = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'swap',
+    item_name: _("Swap"),
     color_name: ['used'],
     max: 1,
 
     _init: function() {
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Swap"), {reactive: false});
         this.gtop = new GTop.glibtop_swap();
         this.parent()
         this.tip_format();
@@ -1541,10 +1633,10 @@ const Swap = new Lang.Class({
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
     }
 });
@@ -1554,11 +1646,12 @@ const Thermal = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'thermal',
+    item_name: _("Thermal"),
     color_name: ['tz0'],
     max: 100,
     _init: function() {
         this.temperature = '-- ';
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Thermal"), {reactive: false});
+        this.display_error = true;
         this.parent()
         this.tip_format('\u2103');
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1573,7 +1666,10 @@ const Thermal = new Lang.Class({
                 this.temperature = Math.round(parseInt(as_r[1]) / 1000);
             }));
         } else {
-            global.logError("error reading: " + sfile);
+            if (this.display_error) {
+                global.logError("error reading: " + sfile);
+                this.display_error = false;
+            }
         }
     },
     _apply: function() {
@@ -1588,11 +1684,11 @@ const Thermal = new Lang.Class({
                 new St.Label({ text: '\u2103', style_class: Style.get("sm-temp-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: '\u2103', style_class: Style.get("sm-label")})];
     }
 });
@@ -1602,10 +1698,11 @@ const Fan = new Lang.Class({
     Extends: ElementBase,
 
     elt: 'fan',
+    item_name: _("Fan"),
     color_name: ['fan0'],
+
     _init: function() {
         this.rpm = 0;
-        this.menu_item = new PopupMenu.PopupMenuItem(_("Fan"), {reactive: false});
         this.parent()
         this.tip_format(_("rpm"));
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1634,11 +1731,11 @@ const Fan = new Lang.Class({
                 new St.Label({ text: _("rpm"), style_class: Style.get("sm-unit-label")})];
     },
     create_menu_items: function() {
-        return [new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+        return [new St.Label(),
+                new St.Label(),
+                new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ style_class: Style.get("sm-void")}),
+                new St.Label(),
                 new St.Label({ text: _("rpm"), style_class: Style.get("sm-label")})];
     }
 });
@@ -1709,6 +1806,7 @@ var enable = function () {
             elts: new Array(),
         };
 
+        // Items to Monitor
         Main.__sm.elts = createCpus();
         Main.__sm.elts.push(new Freq());
         Main.__sm.elts.push(new Mem());
@@ -1720,11 +1818,12 @@ var enable = function () {
         Main.__sm.elts.push(new Battery());
 
         let tray = Main.__sm.tray;
+        let elts = Main.__sm.elts;
 
 
         if (Schema.get_boolean("move-clock")) {
             let dateMenu;
-            if (shell_Version >= "3.5.91"){
+            if (Compat.versionCompare(shell_Version, "3.5.90")){
                 dateMenu = Main.panel.statusArea.dateMenu;
                 Main.panel._centerBox.remove_actor(dateMenu.container);
                 Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
@@ -1740,7 +1839,7 @@ var enable = function () {
             this, function (schema, key) {
                 Background = color_from_string(Schema.get_string(key));
             }));
-        if (shell_Version < "3.5.5"){
+        if (!Compat.versionCompare(shell_Version,"3.5.5")){
             StatusArea.systemMonitor = tray;
             panel.insert_child_at_index(tray.actor, 1);
             panel.child_set(tray.actor, { y_fill: true } );
@@ -1751,12 +1850,20 @@ var enable = function () {
         let box = new St.BoxLayout();
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
-        for (let elt in Main.__sm.elts) {
-            Main.__sm.elts[elt].menu_item.actor.add_style_class_name(Style.get('sm-popup-menu-item'));
-            box.add_actor(Main.__sm.elts[elt].actor);
-            //if (elt == 0)
-            tray.menu.addMenuItem(Main.__sm.elts[elt].menu_item);
+        // Add items to panel box
+        for (let elt in elts) {
+            box.add_actor(elts[elt].actor);
         }
+
+        // Build Menu Info Box Table
+        let menu_info = new PopupMenu.PopupBaseMenuItem({reactive: false});
+        let menu_info_box = new St.BoxLayout();
+        menu_info.actor.add(menu_info_box);
+        Main.__sm.tray.menu.addMenuItem(menu_info, 0);
+
+        build_menu_info();
+
+        tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         let pie_item = Main.__sm.pie;
         pie_item.create_menu_item();
@@ -1804,12 +1911,13 @@ var enable = function () {
             if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
                 _gsmPrefs.activate();
             } else {
-                _gsmPrefs.launch(global.display.get_current_time_roundtrip(),
-                                 [metadata.uuid],-1,null);
+                let info = _gsmPrefs.get_app_info();
+                let timestamp = global.display.get_current_time_roundtrip();
+                info.launch_uris([metadata.uuid], global.create_app_launch_context(timestamp, -1));
             }
         });
         tray.menu.addMenuItem(item);
-        if (shell_Version > "3.5.5")
+        if (Compat.versionCompare(shell_Version, "3.5.5"))
             Main.panel.menuManager.addMenu(tray.menu);
         else
             Main.panel._menus.addMenu(tray.menu);
@@ -1822,7 +1930,7 @@ var disable = function () {
     //restore clock
     if (Main.__sm.tray.clockMoved) {
         let dateMenu;
-        if (shell_Version >= "3.5.91"){
+        if (Compat.versionCompare(shell_Version, "3.5.90")){
             dateMenu = Main.panel.statusArea.dateMenu;
             Main.panel._rightBox.remove_actor(dateMenu.container);
             Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
@@ -1837,10 +1945,10 @@ var disable = function () {
     //if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){
     //    Main.__sm.elts.battery.hide_system_icon(false);
     //}
-    for (let i in Main.__sm.elts) {
-        if (Main.__sm.elts[i].elt == 'battery')
-            Main.__sm.elts[i].hide_system_icon(false);
-    }
+    //for (let i in Main.__sm.elts) {
+    //    if (Main.__sm.elts[i].elt == 'battery')
+    //        Main.__sm.elts[i].hide_system_icon(false);
+    //}
 
     MountsMonitor.disconnect();
 
@@ -1849,7 +1957,7 @@ var disable = function () {
         Main.__sm.elts[eltName].destroy();
     }
 
-    if (shell_Version < "3.5"){
+    if (!Compat.versionCompare(shell_Version,"3.5")){
         Main.__sm.tray.destroy();
         StatusArea.systemMonitor = null;
     } else

@@ -1,20 +1,21 @@
 #: extension.js:751
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome shell system monitor applet\n"
+"Project-Id-Version: gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-08 12:21+0200\n"
+"POT-Creation-Date: 2014-11-30 14:21+0200\n"
 "PO-Revision-Date: \n"
-"Last-Translator: zamox <zamox.goo@gmail.com>\n"
+"Last-Translator: Ecron\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.4\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
-msgstr ""
+msgstr ":"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -22,157 +23,156 @@ msgstr ""
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #: prefs.js:161 prefs.js:159
 msgid "Display"
-msgstr "Afișează"
+msgstr "Mostra"
 
 #: prefs.js:166 prefs.js:164
 msgid "Refresh Time"
-msgstr "Perioadă Recitire Date"
+msgstr "Freqüència d'actualització"
 
 #: prefs.js:171 prefs.js:169
 msgid "Graph Width"
-msgstr "Lățime Grafic"
+msgstr "Amplada del gràfic"
 
 #: prefs.js:176 prefs.js:174
 msgid "Show Text"
-msgstr "Arată Titlu"
+msgstr "Mostra el text"
 
 #: prefs.js:184 prefs.js:182
 msgid "Display Style"
-msgstr "Tip Afișaj"
+msgstr "Estil de visualització"
 
 #: prefs.js:267 prefs.js:274
 msgid "Display Icon"
-msgstr "Afișează Pictogramă"
+msgstr "Mostra la icona"
 
 #: prefs.js:276 prefs.js:283
 msgid "Display in the Middle"
-msgstr "Afișează la Centru"
+msgstr "Mostra al centre"
 
 #: prefs.js:288 prefs.js:306
 msgid "Background Color"
-msgstr "Culoare Fundal"
+msgstr "Color del fons"
 
 #: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "Mostra els nuclis individuals"
 
 #: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "Mostra la velocitat de la xarxa en bits"
 
 #: prefs.js:205 prefs.js:208
 msgid "Sensor"
-msgstr ""
+msgstr "Sensor"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "Instaŀleu lm-sensors"
 
 #: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr ""
+msgstr "Mou el rellotge"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #: prefs.js:286 prefs.js:289
-#, fuzzy
 msgid "Compact Display"
-msgstr "Afișează"
+msgstr "Visualització compacta"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
-msgstr "Cpu"
+msgstr "CPU"
 
 msgid "User"
-msgstr "Utilizator"
+msgstr "Usuari"
 
 msgid "System"
-msgstr "Sistem"
+msgstr "Sistema"
 
 msgid "Other"
-msgstr "Altele"
+msgstr "Altre"
 
 msgid "Nice"
-msgstr "Nice"
+msgstr ""
 
 msgid "Iowait"
-msgstr "Iowait"
+msgstr "Espera E/S"
 
 #: extension.js:941 extension.js:1378
 msgid "Memory"
-msgstr "Memorie"
+msgstr "Memòria"
 
 msgid "Program"
-msgstr "Aplicații"
+msgstr "Programa"
 
 msgid "Cache"
-msgstr "Cache"
+msgstr "Memòria cau"
 
 msgid "Buffer"
-msgstr "Buffer"
+msgstr "Memòria intermèdia"
 
 #: extension.js:1134 extension.js:1598
 msgid "Swap"
-msgstr "Swap"
+msgstr "Intercanvi"
 
 msgid "Used"
-msgstr "Folosit"
+msgstr "Usat"
 
 #: extension.js:1010 extension.js:1428
 msgid "Net"
-msgstr "Net"
+msgstr "Xarxa"
 
 #: extension.js:1589
 msgid "Up"
-msgstr "Incărcare"
+msgstr "Pujada"
 
 #: extension.js:1586
 msgid "Down"
-msgstr "Descărcare"
+msgstr "Baixada"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "Errors de pujada"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "Errors de baixada"
 
 msgid "collisions"
-msgstr ""
+msgstr "col·lisions"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Col·lisions"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
 msgstr "Disc"
 
 msgid "Write"
-msgstr "Scriere"
+msgstr "Escriptura"
 
 msgid "Read"
-msgstr "Citire"
+msgstr "Lectura"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
-msgstr ""
+msgstr "L"
 
 #: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
-msgstr ""
+msgstr "E"
 
 #: prefs.js:185 prefs.js:183
 msgid "graph"
-msgstr "grafic"
+msgstr "Gràfic"
 
 #: prefs.js:185 prefs.js:183
 msgid "digit"
-msgstr "cifre"
+msgstr "Numèric"
 
 #: prefs.js:185 prefs.js:183
 msgid "both"
-msgstr "ambele"
+msgstr "Ambdós"
 
 msgid "cpu"
 msgstr "cpu"
@@ -182,129 +182,126 @@ msgid "mem"
 msgstr "mem"
 
 msgid "swap"
-msgstr "swap"
+msgstr "interc"
 
 msgid "net"
-msgstr "net"
+msgstr "xarxa"
 
 msgid "disk"
 msgstr "disc"
 
 #: extension.js:1346 extension.js:1900
 msgid "Preferences..."
-msgstr "Preferințe..."
+msgstr "Configuració..."
 
 #: extension.js:1340 extension.js:1894
 msgid "System Monitor..."
-msgstr "Monitor Sistem..."
+msgstr "Monitor del sistema..."
 
-#, fuzzy
 msgid "System monitor"
-msgstr "Monitor Sistem..."
+msgstr "Monitor del sistema"
 
 msgid "user"
-msgstr "utilizator"
+msgstr "usuari"
 
 msgid "system"
-msgstr "sistem"
+msgstr "sistema"
 
 msgid "other"
-msgstr "altele"
+msgstr "altre"
 
 msgid "nice"
-msgstr "nice"
+msgstr ""
 
 msgid "iowait"
-msgstr "iowait"
+msgstr "espera e/s"
 
 msgid "program"
-msgstr "aplicații"
+msgstr "programa"
 
 msgid "cache"
-msgstr "cache"
+msgstr "memòria cau"
 
 msgid "buffer"
-msgstr "buffer"
+msgstr "intermèdia"
 
 msgid "used"
-msgstr "folosit"
+msgstr "usat"
 
 msgid "up"
-msgstr "incărcare"
+msgstr "pujada"
 
 msgid "down"
-msgstr "descărcare"
+msgstr "baixada"
 
 msgid "uperrors"
-msgstr ""
+msgstr "errors de pujada"
 
 msgid "downerrors"
-msgstr ""
+msgstr "errors de baixada"
 
 msgid "write"
-msgstr "scriere"
+msgstr "escriptura"
 
 msgid "read"
-msgstr "citire"
+msgstr "lectura"
 
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
 msgid "KiB/s"
-msgstr ""
+msgstr "KiB/s"
 
 #: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
 #: extension.js:1324 extension.js:1549 extension.js:1558
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 #: extension.js:1419 extension.js:1635
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
 #: extension.js:184
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
 #: extension.js:183 extension.js:185
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: extension.js:1179 extension.js:1644
 msgid "Thermal"
-msgstr ""
+msgstr "Temperatura"
 
-#, fuzzy
 msgid "thermal"
-msgstr "Altele"
+msgstr "temperatura"
 
 #: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
-msgstr ""
+msgstr "Mostra al menú"
 
 #: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Mostra el temps restant"
 
 #: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
-msgstr ""
+msgstr "Oculta la icona del sistema"
 
 #: prefs.js:230 prefs.js:237
-#, fuzzy
 msgid "Usage Style"
-msgstr "Tip Afișaj"
+msgstr "Estil d'ús"
 
 #: prefs.js:231 prefs.js:238
 msgid "pie"
-msgstr ""
+msgstr "tarta"
 
 #: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr ""
+msgstr "barres"
 
 #: prefs.js:231 prefs.js:238
 msgid "none"
-msgstr ""
+msgstr "cap"
 
 #: extension.js:6 extension.js:68
 msgid ""
@@ -315,49 +312,54 @@ msgid ""
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
+"Hi falten dependències\n"
+"Instaŀleu:\n"
+"libgtop, Network Manager i gir bindings \n"
+"\t    a Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    a Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    a Arch: libgtop, networkmanager\n"
 
 #: extension.js:97 extension.js:255
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "Monitor Sistem..."
+msgstr "Extensió Monitor del Sistema"
 
 #: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr ""
+msgstr "Canceŀla"
 
 #: extension.js:601 extension.js:875
 msgid "Battery"
-msgstr ""
+msgstr "Bateria"
 
 msgid "battery"
-msgstr ""
+msgstr "bateria"
 
 #: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr ""
+msgstr "Freqüència"
 
 msgid "freq"
-msgstr ""
+msgstr "freq"
 
 #: extension.js:1540 extension.js:1692
 msgid "Fan"
-msgstr ""
+msgstr "Ventilador"
 
 msgid "fan"
-msgstr ""
+msgstr "vent"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730
 msgid "rpm"
-msgstr ""
+msgstr "rpm"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Mostra l'indicador de funció"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #~ msgid "System Monitor Applet Configurator"
-#~ msgstr "Configurator al Monitorului de Sistem"
+#~ msgstr "Configuració de l'extensió Monitor del Sistema"

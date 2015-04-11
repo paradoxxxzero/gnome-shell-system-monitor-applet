@@ -2,81 +2,82 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#: extension.js:751
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 06:49+1000\n"
-"PO-Revision-Date: 2011-06-06 11:23+ZONE\n"
-"Last-Translator: Yichao Yu <yyc1992@gmail.com>\n"
+"POT-Creation-Date: 2014-10-08 12:21+0200\n"
+"PO-Revision-Date: 2014-07-07 12:17+0800\n"
+"Last-Translator: Star Brilliant <m13253@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: Chinese\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.5\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110
+#: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
-msgstr ""
+msgstr "："
 
-#: prefs.js:161
+#: prefs.js:161 prefs.js:159
 msgid "Display"
 msgstr "显示"
 
-#: prefs.js:166
+#: prefs.js:166 prefs.js:164
 msgid "Refresh Time"
 msgstr "刷新时间"
 
-#: prefs.js:171
+#: prefs.js:171 prefs.js:169
 msgid "Graph Width"
 msgstr "图形宽度"
 
-#: prefs.js:176
+#: prefs.js:176 prefs.js:174
 msgid "Show Text"
 msgstr "显示文字"
 
-#: prefs.js:184
+#: prefs.js:184 prefs.js:182
 msgid "Display Style"
 msgstr "显示风格"
 
-#: prefs.js:267
+#: prefs.js:267 prefs.js:274
 msgid "Display Icon"
 msgstr "显示图标"
 
-#: prefs.js:276
+#: prefs.js:276 prefs.js:283
 msgid "Display in the Middle"
 msgstr "居中显示"
 
-#: prefs.js:288
+#: prefs.js:288 prefs.js:306
 msgid "Background Color"
 msgstr "背景色"
 
-#: prefs.js:197
+#: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "单独显示每个核心"
 
-#: prefs.js:193
+#: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "以位为单位显示网络速度"
 
-#: prefs.js:205
+#: prefs.js:205 prefs.js:208
 msgid "Sensor"
-msgstr ""
+msgstr "传感器"
 
-#: prefs.js:207
+#: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "请安装 lm-sensors"
 
-#: prefs.js:282
+#: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr ""
+msgstr "移走时钟"
 
-#: prefs.js:286
-#, fuzzy
+#: prefs.js:286 prefs.js:289
 msgid "Compact Display"
-msgstr "显示"
+msgstr "紧凑显示"
 
-#: extension.js:746
+#: extension.js:746 extension.js:1117
 msgid "Cpu"
 msgstr "处理器"
 
@@ -93,9 +94,9 @@ msgid "Nice"
 msgstr "优先级"
 
 msgid "Iowait"
-msgstr "IO等待"
+msgstr "IO 等待"
 
-#: extension.js:941
+#: extension.js:941 extension.js:1378
 msgid "Memory"
 msgstr "内存"
 
@@ -108,36 +109,38 @@ msgstr "缓存"
 msgid "Buffer"
 msgstr "缓冲"
 
-#: extension.js:1134
+#: extension.js:1134 extension.js:1598
 msgid "Swap"
 msgstr "交换分区"
 
 msgid "Used"
 msgstr "已用"
 
-#: extension.js:1010
+#: extension.js:1010 extension.js:1428
 msgid "Net"
 msgstr "网络"
 
+#: extension.js:1589
 msgid "Up"
 msgstr "上传"
 
+#: extension.js:1586
 msgid "Down"
 msgstr "下载"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "上传错误"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "下载错误"
 
 msgid "collisions"
-msgstr ""
+msgstr "冲突"
 
 msgid "Collisions"
-msgstr ""
+msgstr "冲突"
 
-#: extension.js:836
+#: extension.js:836 extension.js:1264
 msgid "Disk"
 msgstr "硬盘"
 
@@ -147,29 +150,30 @@ msgstr "写入"
 msgid "Read"
 msgstr "读取"
 
-#: extension.js:1182
+#: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
-msgstr ""
+msgstr "读"
 
-#: extension.js:1185
+#: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
-msgstr ""
+msgstr "写"
 
-#: prefs.js:185
+#: prefs.js:185 prefs.js:183
 msgid "graph"
 msgstr "图形"
 
-#: prefs.js:185
+#: prefs.js:185 prefs.js:183
 msgid "digit"
 msgstr "数字"
 
-#: prefs.js:185
+#: prefs.js:185 prefs.js:183
 msgid "both"
 msgstr "同时"
 
 msgid "cpu"
 msgstr "处理器"
 
+#: extension.js:811
 msgid "mem"
 msgstr "内存"
 
@@ -182,11 +186,11 @@ msgstr "网络"
 msgid "disk"
 msgstr "硬盘"
 
-#: extension.js:1346
+#: extension.js:1346 extension.js:1900
 msgid "Preferences..."
 msgstr "首选项..."
 
-#: extension.js:1340
+#: extension.js:1340 extension.js:1894
 msgid "System Monitor..."
 msgstr "系统监视器..."
 
@@ -206,7 +210,7 @@ msgid "nice"
 msgstr "优先级"
 
 msgid "iowait"
-msgstr "IO等待"
+msgstr "IO 等待"
 
 msgid "program"
 msgstr "程序"
@@ -227,10 +231,10 @@ msgid "down"
 msgstr "下载"
 
 msgid "uperrors"
-msgstr ""
+msgstr "上传错误"
 
 msgid "downerrors"
-msgstr ""
+msgstr "下载错误"
 
 msgid "write"
 msgstr "写入"
@@ -238,59 +242,64 @@ msgstr "写入"
 msgid "read"
 msgstr "读取"
 
+#: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
+#: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
 msgid "KiB/s"
-msgstr ""
+msgstr "KiB/s"
 
+#: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
+#: extension.js:1324 extension.js:1549 extension.js:1558
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
+#: extension.js:1419 extension.js:1635
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
+#: extension.js:184
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
+#: extension.js:183 extension.js:185
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
-#: extension.js:1179
+#: extension.js:1179 extension.js:1644
 msgid "Thermal"
 msgstr "温度"
 
 msgid "thermal"
 msgstr "温度"
 
-#: prefs.js:180
+#: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
-msgstr ""
+msgstr "在菜单中显示"
 
-#: prefs.js:222
+#: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "显示剩余时间"
 
-#: prefs.js:226
-#, fuzzy
+#: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
-msgstr "系统监视器"
+msgstr "隐藏系统图标"
 
-#: prefs.js:230
-#, fuzzy
+#: prefs.js:230 prefs.js:237
 msgid "Usage Style"
-msgstr "显示风格"
+msgstr "用量显示风格"
 
-#: prefs.js:231
+#: prefs.js:231 prefs.js:238
 msgid "pie"
-msgstr ""
+msgstr "扇形图"
 
-#: prefs.js:231
+#: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr ""
+msgstr "条形图"
 
-#: prefs.js:231
+#: prefs.js:231 prefs.js:238
 msgid "none"
-msgstr ""
+msgstr "无"
 
-#: extension.js:6
+#: extension.js:6 extension.js:68
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -299,39 +308,53 @@ msgid ""
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
 msgstr ""
+"缺失依赖项\n"
+"请安装：\n"
+"libgtop、Network Manager 及其 gir 绑定\n"
+"\t    于 Ubuntu：gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    于 Fedora：libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    于 Arch：libgtop, networkmanager\n"
 
-#: extension.js:97
-#, fuzzy
+#: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
-msgstr "系统监视器"
+msgstr "系统监视器扩展"
 
-#: extension.js:113
+#: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
-#: extension.js:601
+#: extension.js:601 extension.js:875
 msgid "Battery"
-msgstr ""
+msgstr "电池"
 
 msgid "battery"
-msgstr ""
+msgstr "电池"
 
-#: extension.js:896
+#: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr ""
+msgstr "主频"
 
 msgid "freq"
-msgstr ""
+msgstr "主频"
 
-#: extension.js:1540
+#: extension.js:1540 extension.js:1692
 msgid "Fan"
-msgstr ""
+msgstr "风扇"
 
 msgid "fan"
+msgstr "风扇"
+
+#: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
+#: extension.js:1722 extension.js:1730
+msgid "rpm"
+msgstr "rpm"
+
+#: prefs.js:294
+msgid "Show tooltip"
 msgstr ""
 
-#: extension.js:1542 extension.js:1566 extension.js:1574
-msgid "rpm"
+#: extension.js:1097
+msgid "CPU"
 msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"

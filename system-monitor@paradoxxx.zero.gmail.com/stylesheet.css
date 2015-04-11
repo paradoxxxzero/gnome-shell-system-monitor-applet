@@ -1,6 +1,16 @@
+.sm-title {
+    font-size: 16px;
+    padding: 0px 25px 0px 0px;
+}
+
 .sm-label {
     color: #bbb;
     font-size: 12px;
+}
+
+.sm-value {
+    text-align: right;
+    min-width: 40px;
 }
 
 .sm-status-label {
@@ -23,7 +33,7 @@
 }
 
 .sm-net-unit-label {
-    min-width: 25px; 
+    min-width: 25px;
 }
 
 .sm-perc-label {
@@ -58,15 +68,6 @@
     text-align: right;
 }
 
-.sm-value {
-    text-align: right;
-    min-width: 45px;
-}
-
-.sm-void {
-    width: 0px;
-}
-
 .sm-chart {
     padding: 0 2px;
 }
@@ -95,6 +96,10 @@
 
 /* style definition when 'compact-display' option is activated */
 
+.sm-title-compact {
+    font-size: 12px;
+}
+
 .sm-label-compact {
     color: #bbb;
     font-size: 11px;
@@ -103,7 +108,6 @@
 .sm-value-compact {
     font-size: 11px;
     text-align: right;
-    width: 30px;
 } /* Values in menu items */
 
 .sm-status-label-compact {
@@ -166,11 +170,6 @@
     min-width: 38px;
     text-align: right;
 } /* freq in text_items */
-
-.sm-void-compact {
-    width: 0px;
-    padding: 0 0 0 0;
-}
 
 .sm-chart-compact {
     padding: 0 2px;

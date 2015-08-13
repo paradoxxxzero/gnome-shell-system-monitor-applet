@@ -20,6 +20,7 @@
 
 let smDepsGtop = true;
 let smDepsNM = true;
+let smCompiled = true;
 
 const Config = imports.misc.config;
 const Clutter = imports.gi.Clutter;

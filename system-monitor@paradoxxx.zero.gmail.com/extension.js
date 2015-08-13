@@ -1878,6 +1878,9 @@ var enable = function () {
         }
 
         MountsMonitor.connect();
+        if (GTop.glibtop_init) {
+            GTop.glibtop_init();
+        }
 
         //Debug
         Main.__sm = {

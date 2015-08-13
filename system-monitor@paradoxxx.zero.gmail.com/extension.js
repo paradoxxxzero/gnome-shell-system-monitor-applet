@@ -66,12 +66,30 @@ const Mainloop = imports.mainloop;
 const Util = imports.misc.util;
 const _ = Gettext.gettext;
 
-const MESSAGE = _("Dependencies Missing\n\
+const MESSAGE_DEPS_LINUX = _("Dependencies Missing\n\
 Please install: \n\
 libgtop, Network Manager and gir bindings \n\
 \t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
 \t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
 \t    on Arch: libgtop, networkmanager\n");
+
+const MESSAGE_DEPS_FREEBSD = _("Dependencies Missing\n\
+Please install: \n\
+libgtop and its gir binding \n\
+\t    on FreeBSD: libgtop (package) or devel/libgtop (port) \n");
+
+const MESSAGE_NOT_COMPILED = _("Not Compiled\n\
+Some system informations on your OS is not available through \n\
+GObject-introspected libraries, so some code is written in C \n\
+and it must be compiled before this extension can use it.\n\
+Please run: \n\
+\t    make -C '@EXTENSION_DIR@'\n");
+
+const MESSAGE_UNSUPPORTED_OS = _("Unsupported OS\n\
+Command 'uname' reports that your OS is '@KERNEL@', \n\
+which is currently not supported. \n\
+If you think the detection is wrong, please check whether \n\
+your PATH contains 'uname' program and it works properly.\n");
 
 //stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;
@@ -251,7 +269,7 @@ const smDialog = Lang.Class({
     Name: 'SystemMonitor.smDialog',
     Extends: ModalDialog.ModalDialog,
 
-    _init : function() {
+    _init : function(message) {
         this.parent({ styleClass: 'prompt-dialog' });
         let mainContentBox = new St.BoxLayout({ style_class: 'prompt-dialog-main-layout',
                                                 vertical: false });
@@ -272,7 +290,7 @@ const smDialog = Lang.Class({
                          y_align: St.Align.START });
 
         this._descriptionLabel = new St.Label({ style_class: 'prompt-dialog-description',
-                                                text: MESSAGE });
+                                                text: message });
 
         messageBox.add(this._descriptionLabel,
                        { y_fill:  true,
@@ -1786,9 +1804,10 @@ var init = function () {
 
 var enable = function () {
     log("System monitor applet enabling");
-    if (!(smDepsGtop && smDepsNM)) {
+
+    function show_dialog(message) {
         Main.__sm = {
-            smdialog: new smDialog()
+            smdialog: new smDialog(message)
         }
 
         let dialog_timeout = Mainloop.timeout_add_seconds(
@@ -1798,7 +1817,33 @@ var enable = function () {
                 Mainloop.source_remove(dialog_timeout);
                 return true;
             });
-    } else {
+    }
+
+    if (!smCompiled) {
+        show_dialog(MESSAGE_NOT_COMPILED.replace(
+            '@EXTENSION_DIR@', extension.dir.get_path()));
+        return;
+    }
+
+    switch (kernel) {
+        case 'Linux':
+            if (!(smDepsGtop && smDepsNM)) {
+                show_dialog(MESSAGE_DEPS_LINUX);
+                return;
+            }
+            break;
+        case 'FreeBSD':
+            if (!smDepsGtop) {
+                show_dialog(MESSAGE_DEPS_FREEBSD);
+                return;
+            }
+            break;
+        default:
+            show_dialog(MESSAGE_UNSUPPORTED_OS.replace('@KERNEL@', kernel));
+            return;
+    }
+
+    {
         let panel = Main.panel._rightBox;
         StatusArea = Main.panel._statusArea;
         if (StatusArea == undefined){

@@ -77,6 +77,14 @@ const ENABLE_NETWORK_DISK_USAGE = false;
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
+let kernel = false;
+
+try {
+    kernel = GLib.spawn_command_line_sync('uname')[1].toString().trim();
+} catch(e) {
+    log(e);
+    kernel = 'Linux';
+}
 
 let Schema, Background, IconSize, Style, MountsMonitor, StatusArea;
 let menu_timeout, gc_timeout;

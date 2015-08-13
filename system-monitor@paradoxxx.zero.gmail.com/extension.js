@@ -97,12 +97,26 @@ const ENABLE_NETWORK_DISK_USAGE = false;
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 let kernel = false;
+let kernel_sysdeps = ['FreeBSD'];
 
 try {
     kernel = GLib.spawn_command_line_sync('uname')[1].toString().trim();
 } catch(e) {
     log(e);
     kernel = 'Linux';
+}
+
+try {
+    if (kernel_sysdeps.indexOf(kernel) > -1) {
+        let sysdeps_dir = extension.dir.get_child('sysdeps').get_path();
+        const GIRepository = imports.gi.GIRepository;
+        GIRepository.Repository.prepend_search_path(sysdeps_dir);
+        GIRepository.Repository.prepend_library_path(sysdeps_dir);
+        const Sysdeps = imports.gi.SystemMonitorSysdeps;
+    }
+} catch(e) {
+    log(e);
+    smCompiled = false;
 }
 
 let Schema, Background, IconSize, Style, MountsMonitor, StatusArea;
@@ -1372,10 +1386,17 @@ const Freq = new Lang.Class({
     _init: function() {
         this.freq = 0;
         this.parent()
+
+        let refresh_impls = {
+            'Linux': this._refresh_linux,
+            'FreeBSD': this._refresh_freebsd
+        };
+
+        this.refresh = refresh_impls[kernel];
         this.tip_format('MHz');
         this.update();
     },
-    refresh: function() {
+    _refresh_linux: function() {
         let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i];
@@ -1384,6 +1405,9 @@ const Freq = new Lang.Class({
             this.freq = parseInt(line.substring(line.indexOf(':') + 2));
             break;
         }
+    },
+    _refresh_freebsd: function() {
+        this.freq = Sysdeps.sysctl_dev_cpu_0_freq();
     },
     _apply: function() {
         let value = this.freq.toString();

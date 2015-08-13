@@ -1,4 +1,7 @@
 *~
 tmp
+*.gir
 *.pyc
+*.so
 *.swp
+*.typelib

@@ -3,9 +3,14 @@
 # Commands
 INTROSPECTION_SCANNER = g-ir-scanner
 INTROSPECTION_COMPILER = g-ir-compiler
+PKG_CONFIG = pkg-config
 
 # Arguments
-SMSYSDEPS_CFLAGS = -fPIC -shared -Wall -O2
+SMSYSDEPS_PKGS = glib-2.0
+SMSYSDEPS_PKGS_CFLAGS = `$(PKG_CONFIG) --cflags $(SMSYSDEPS_PKGS)`
+SMSYSDEPS_PKGS_LIBS = `$(PKG_CONFIG) --libs $(SMSYSDEPS_PKGS)`
+SMSYSDEPS_CFLAGS = -fPIC -shared -Wall -O2 $(SMSYSDEPS_PKGS_CFLAGS)
+SMSYSDEPS_LIBS = $(SMSYSDEPS_PKGS_LIBS)
 
 # Sources
 CFILES = sysdeps/system-monitor-sysdeps.c
@@ -26,11 +31,13 @@ all: $(TYPELIBFILE)
 distclean: clean
 
 $(SOFILE): $(CFILES) $(HFILES)
-	$(CC) $(SMSYSDEPS_CFLAGS) $(CFLAGS) $(CFILES) -o $(SOFILE) $(LDFLAGS)
+	$(CC) $(SMSYSDEPS_CFLAGS) $(CFLAGS) $(CFILES) -o $(SOFILE) \
+		$(SMSYSDEPS_PKGS_LIBS) $(LDFLAGS)
 $(GIRFILE): $(SOFILE)
 	LD_LIBRARY_PATH=./sysdeps:${LD_LIBRARY_PATH} $(INTROSPECTION_SCANNER) \
 		$(CFILES) $(HFILES) \
 		-Lsysdeps \
+		--include=GLib-2.0 \
 		--library=$(SOLIB) \
 		--namespace=$(NAMESPACE) \
 		--nsversion=$(NSVERSION) \

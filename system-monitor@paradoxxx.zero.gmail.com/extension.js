@@ -1491,20 +1491,32 @@ const Net = new Lang.Class({
 
     _init: function() {
         this.ifs = [];
-        this.client = NMClient.Client.new();
-        this.update_iface_list();
 
+        let update_iface_list_impls = {
+            'Linux': this._update_iface_list_linux,
+            'FreeBSD': this._update_iface_list_freebsd
+        };
+        let update_iface_fallback_impls = {
+            'Linux': this._update_iface_fallback_linux,
+            'FreeBSD': function() { }
+        };
+        let setup_state_monitor_impls = {
+            'Linux': this._setup_state_monitor_linux,
+            'FreeBSD': this._setup_state_monitor_freebsd
+        };
+        let check_state_changes_impls = {
+            'Linux': function() { },
+            'FreeBSD': this._check_state_changes_freebsd
+        };
+
+        this.update_iface_list = update_iface_list_impls[kernel];
+        this.update_iface_fallback = update_iface_fallback_impls[kernel];
+        this.setup_state_monitor = setup_state_monitor_impls[kernel];
+        this.check_state_changes = check_state_changes_impls[kernel];
+
+        this.update_iface_list();
         if(!this.ifs.length){
-            let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
-            for(let i = 2; i < net_lines.length - 1 ; i++) {
-                let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
-                if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
-                   .replace(/\s/g, "") == "up" &&
-                   ifc.indexOf("br") < 0 &&
-                   ifc.indexOf("lo") < 0) {
-                    this.ifs.push(ifc);
-                }
-            }
+            this.update_iface_fallback();
         }
         this.gtop = new GTop.glibtop_netload();
         this.last = [0, 0, 0, 0, 0];
@@ -1514,24 +1526,16 @@ const Net = new Lang.Class({
         this.tip_format([_('KiB/s'), '/s', _('KiB/s'), '/s', '/s']);
         this.update_units();
         Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
-        try {
-            let iface_list = this.client.get_devices();
-            this.NMsigID = []
-            for(let j = 0; j < iface_list.length; j++) {
-                this.NMsigID[j] = iface_list[j].connect('state-changed' , Lang.bind(this, this.update_iface_list));
-            }
-        }
-        catch(e) {
-            global.logError("Please install Network Manager Gobject Introspection Bindings: " + e);
-        }
+        this.setup_state_monitor();
         this.update();
     },
     update_units: function() {
         this.speed_in_bits = Schema.get_boolean(this.elt + '-speed-in-bits');
     },
-    update_iface_list: function() {
+    _update_iface_list_linux: function() {
         try {
             this.ifs = []
+            this.client = NMClient.Client.new();
             let iface_list = this.client.get_devices();
             for(let j = 0; j < iface_list.length; j++){
                 if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
@@ -1543,8 +1547,69 @@ const Net = new Lang.Class({
             global.logError("Please install Network Manager Gobject Introspection Bindings");
         }
     },
+    _update_iface_list_freebsd: function() {
+        this.ifs = Sysdeps.getifaddrs_up_not_loopback_or_bridge();
+    },
+    _update_iface_fallback_linux: function() {
+        let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
+        for(let i = 2; i < net_lines.length - 1 ; i++) {
+            let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
+            if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
+               .replace(/\s/g, "") == "up" &&
+               ifc.indexOf("br") < 0 &&
+               ifc.indexOf("lo") < 0) {
+                this.ifs.push(ifc);
+            }
+        }
+    },
+    _setup_state_monitor_linux: function() {
+        try {
+            let iface_list = this.client.get_devices();
+            this.NMsigID = []
+            for(let j = 0; j < iface_list.length; j++) {
+                this.NMsigID[j] = iface_list[j].connect('state-changed' , Lang.bind(this, this.update_iface_list));
+            }
+        }
+        catch(e) {
+            global.logError("Please install Network Manager Gobject Introspection Bindings: " + e);
+        }
+    },
+    _setup_state_monitor_freebsd: function() {
+        let devd_socket_client = new Gio.SocketClient();
+        let devd_address = new Gio.UnixSocketAddress({ path: '/var/run/devd.seqpacket.pipe' });
+        devd_socket_client.set_family(Gio.SocketFamily.UNIX);
+        devd_socket_client.set_socket_type(Gio.SocketType.SEQPACKET);
+        try {
+            let devd_conn = devd_socket_client.connect(devd_address, null);
+            let istream = devd_conn.get_input_stream();
+            let distream = new Gio.DataInputStream({ base_stream: istream });
+            distream.set_newline_type(Gio.DataStreamNewlineType.LF);
+            this.devd_socket = devd_conn.get_socket();
+            this.devd_data_stream = distream;
+        }
+        catch(e) {
+            global.logError("Cannot connect to FreeBSD devd: " + e);
+        }
+    },
+    _check_state_changes_freebsd: function() {
+        let changed = false;
+        while (this.devd_socket.condition_check(GLib.IOCondition.IN)) {
+            let devctl_msg = this.devd_data_stream.read_line_utf8(null);
+            if (devctl_msg.toString().startsWith('!system=IFNET')) {
+                changed = true;
+            }
+        }
+        return changed;
+    },
     refresh: function() {
         let accum = [0, 0, 0, 0, 0];
+
+        if (this.check_state_changes()) {
+            this.update_iface_list();
+            if (!this.ifs.length) {
+                this.update_iface_fallback();
+            }
+        }
 
         for (let ifn in this.ifs) {
             GTop.glibtop_get_netload(this.gtop, this.ifs[ifn]);

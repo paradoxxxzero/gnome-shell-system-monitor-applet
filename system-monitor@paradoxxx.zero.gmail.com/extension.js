@@ -111,9 +111,11 @@ function build_menu_info() {
         return;
     }
 
-    let menu_info_box_table = new St.Table({
-        style: "padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;"
+    let menu_info_box_table = new St.Widget({
+        style: "padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;",
+        layout_manager: new Clutter.TableLayout()
     });
+    let menu_info_box_table_layout = menu_info_box_table.layout_manager;
 
     // Populate Table
     let row_index = 0;
@@ -123,14 +125,16 @@ function build_menu_info() {
         }
 
         // Add item name to table
-        menu_info_box_table.add(
-            new St.Label({text: elts[elt].item_name, style_class: Style.get("sm-title")}),
-            {row: row_index, col: 0});
+        menu_info_box_table_layout.pack(
+            new St.Label({
+                text: elts[elt].item_name, 
+                style_class: Style.get("sm-title")}), 0, row_index);
 
         // Add item data to table
         let col_index = 1;
         for (let item in elts[elt].menu_items) {
-            menu_info_box_table.add(elts[elt].menu_items[item], {row: row_index, col: col_index});
+            menu_info_box_table_layout.pack(
+                elts[elt].menu_items[item], col_index, row_index);
 
             col_index++;
         }

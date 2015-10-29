@@ -1,7 +1,7 @@
 # Traduzione italiana per il pacchetto system-monitor.
 # Copyright (C) 2012 THE system-monitor'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the system-monitor package.
-# Federico Piazza fede.piazza92@gmail.com, 2012.
+# Paolo Paterna paolo.paterna@gmail.com, 2015
 #: extension.js:751
 #, fuzzy
 msgid ""
@@ -135,10 +135,10 @@ msgid "Downerrors"
 msgstr "Errori in download"
 
 msgid "collisions"
-msgstr ""
+msgstr "collisioni"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Collisioni"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
@@ -207,7 +207,7 @@ msgid "other"
 msgstr "altro"
 
 msgid "nice"
-msgstr "nice"
+msgstr "particolare"
 
 msgid "iowait"
 msgstr "iowait"
@@ -311,9 +311,9 @@ msgstr ""
 "Dipendenze Mancanti\n"
 "Si prega di installare: \n"
 "libgtop, Network Manager e gir bindings \n"
-"\t su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t su Arch: libgtop, networkmanager\n"
+"\t    su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    su Arch: libgtop, networkmanager\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
@@ -352,8 +352,8 @@ msgstr "giri/min"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Mostra Tooltip"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "Processore"

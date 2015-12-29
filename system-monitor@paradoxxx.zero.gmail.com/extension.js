@@ -1568,7 +1568,7 @@ const Thermal = new Lang.Class({
                 this.temperature = Math.round(parseInt(as_r[1]) / 1000);
             }));
         } else {
-            global.logError("error reading: " + sfile);
+            //global.logError("error reading: " + sfile);
         }
     },
     _apply: function() {
@@ -1615,7 +1615,7 @@ const Fan = new Lang.Class({
                 this.rpm = parseInt(as_r[1]);
             }));
         } else {
-            global.logError("error reading: " + sfile);
+            //global.logError("error reading: " + sfile);
         }
     },
     _apply: function() {

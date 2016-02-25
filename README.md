@@ -35,6 +35,7 @@ Then:
     mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
+    gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com
 
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 

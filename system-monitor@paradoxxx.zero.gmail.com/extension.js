@@ -440,7 +440,7 @@ const smMountsMonitor = new Lang.Class({
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
             let result = info.get_attribute_string(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE);
             let net_fs = ['nfs', 'smbfs', 'cifs', 'ftp', 'sshfs', 'sftp', 'mtp', 'mtpfs'];
-            return !file.is_native() || net_fs.indexOf(result) > -1; 
+            return !file.is_native() || net_fs.indexOf(result) > -1;
         } catch(e) {
             return false;
         }

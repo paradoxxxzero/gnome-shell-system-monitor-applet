@@ -208,7 +208,7 @@ msgid "other"
 msgstr "altro"
 
 msgid "nice"
-msgstr "particolare"
+msgstr "nice"
 
 msgid "iowait"
 msgstr "iowait"

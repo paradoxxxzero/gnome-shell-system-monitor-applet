@@ -1342,6 +1342,7 @@ const Freq = new Lang.Class({
     elt: 'freq',
     item_name: _("Freq"),
     color_name: ['freq'],
+
     _init: function() {
         this.freq = 0;
         this.parent()
@@ -1352,7 +1353,7 @@ const Freq = new Lang.Class({
         let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i];
-            if(line.search(/cpu mhz/i) < 0)
+            if(line.search(/^cpu MHz/) < 0)
                 continue;
             this.freq = parseInt(line.substring(line.indexOf(':') + 2));
             break;
@@ -1360,6 +1361,7 @@ const Freq = new Lang.Class({
     },
     _apply: function() {
         let value = this.freq.toString();
+        this.vals[0] = this.freq;
         this.text_items[0].text = value + ' ';
         this.tip_vals[0] = value;
         this.menu_items[3].text = value;

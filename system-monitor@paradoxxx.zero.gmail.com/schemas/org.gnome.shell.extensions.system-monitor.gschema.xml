@@ -7,7 +7,7 @@
   <enum id="org.gnome.shell.extensions.system-monitor.disk-usage-style">
     <value value="0" nick="pie"/>
     <value value="1" nick="bar"/>
-    <value value="2" nick="none"/>       
+    <value value="2" nick="none"/>
   </enum>
   <schema id="org.gnome.shell.extensions.system-monitor" path="/org/gnome/shell/extensions/system-monitor/">
     <key name="icon-display" type="b">
@@ -347,8 +347,20 @@
       <summary>Color of other cpu in the chart</summary>
     </key>
     <key name="freq-freq-color" type="s">
-      <default>'#001d26'</default>
+      <default>'#75507b'</default>
       <summary>Color of freq in the chart</summary>
+    </key>
+    <key name="freq-freqmin-color" type="s">
+      <default>'#5c3566'</default>
+      <summary>Color of freq min in the chart</summary>
+    </key>
+    <key name="freq-freqavg-color" type="s">
+      <default>'#75507b'</default>
+      <summary>Color of freq avg in the chart</summary>
+    </key>
+    <key name="freq-freqmax-color" type="s">
+      <default>'#ad7fa8'</default>
+      <summary>Color of freq max in the chart</summary>
     </key>
     <key name="swap-used-color" type="s">
       <default>'#8b00c3'</default>

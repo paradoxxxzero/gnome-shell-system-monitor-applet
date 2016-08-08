@@ -127,7 +127,7 @@ function build_menu_info() {
         // Add item name to table
         menu_info_box_table_layout.pack(
             new St.Label({
-                text: elts[elt].item_name, 
+                text: elts[elt].item_name,
                 style_class: Style.get("sm-title")}), 0, row_index);
 
         // Add item data to table
@@ -440,7 +440,7 @@ const smMountsMonitor = new Lang.Class({
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
             let result = info.get_attribute_string(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE);
             let net_fs = ['nfs', 'smbfs', 'cifs', 'ftp', 'sshfs', 'sftp', 'mtp', 'mtpfs'];
-            return !file.is_native() || net_fs.indexOf(result) > -1; 
+            return !file.is_native() || net_fs.indexOf(result) > -1;
         } catch(e) {
             return false;
         }
@@ -1341,30 +1341,48 @@ const Freq = new Lang.Class({
 
     elt: 'freq',
     item_name: _("Freq"),
-    color_name: ['freq'],
+    color_name: ['freqmin', 'freqavg', 'freqmax'],
 
     _init: function() {
-        this.freq = 0;
+        this.freq = [0, 0, 0];
         this.parent()
         this.tip_format('MHz');
         this.update();
     },
     refresh: function() {
         let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
+        let freq_max = 0;
+        let freq_min = 100000;
+        let freq_avg = 0;
+        let cpu_count = 0;
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i];
             if(line.search(/^cpu MHz/) < 0)
                 continue;
-            this.freq = parseInt(line.substring(line.indexOf(':') + 2));
-            break;
+            let this_freq = parseInt(line.substring(line.indexOf(':') + 2));
+            freq_avg += this_freq;
+            if(this_freq < freq_min)
+                freq_min = this_freq;
+            if(this_freq > freq_max)
+                freq_max = this_freq;
+            cpu_count++;
         }
+        this.freq[0] = freq_min;
+        this.freq[1] = Math.round(freq_avg / cpu_count);
+        this.freq[2] = freq_max;
     },
     _apply: function() {
-        let value = this.freq.toString();
-        this.vals[0] = this.freq;
-        this.text_items[0].text = value + ' ';
-        this.tip_vals[0] = value;
-        this.menu_items[3].text = value;
+        let value_min = this.freq[0].toString();
+        let value_avg = this.freq[1].toString();
+        let value_max = this.freq[2].toString();
+        this.vals[0] = this.freq[0];
+        this.vals[1] = this.freq[1] - this.freq[0];
+        this.vals[2] = this.freq[2] - this.freq[0] - this.freq[1];
+        this.text_items[0].text = value_avg + ' ';
+        this.tip_vals[0] = value_min;
+        this.tip_vals[1] = value_avg;
+        this.tip_vals[2] = value_max;
+        this.menu_items[3].text = value_avg;
     },
     create_text_items: function() {
         return [new St.Label({ style_class: Style.get("sm-big-status-value")}),

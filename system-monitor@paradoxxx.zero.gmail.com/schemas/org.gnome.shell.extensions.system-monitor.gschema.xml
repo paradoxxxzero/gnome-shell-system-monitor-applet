@@ -346,10 +346,6 @@
       <default>'#001d26'</default>
       <summary>Color of other cpu in the chart</summary>
     </key>
-    <key name="freq-freq-color" type="s">
-      <default>'#75507b'</default>
-      <summary>Color of freq in the chart</summary>
-    </key>
     <key name="freq-freqmin-color" type="s">
       <default>'#5c3566'</default>
       <summary>Color of freq min in the chart</summary>

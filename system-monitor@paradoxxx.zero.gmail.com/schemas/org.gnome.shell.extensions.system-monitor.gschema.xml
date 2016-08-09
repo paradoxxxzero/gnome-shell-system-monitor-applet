@@ -347,7 +347,7 @@
       <summary>Color of other cpu in the chart</summary>
     </key>
     <key name="freq-freqmin-color" type="s">
-      <default>'#5c3566'</default>
+      <default>'#ad7fa8'</default>
       <summary>Color of freq min in the chart</summary>
     </key>
     <key name="freq-freqavg-color" type="s">
@@ -355,7 +355,7 @@
       <summary>Color of freq avg in the chart</summary>
     </key>
     <key name="freq-freqmax-color" type="s">
-      <default>'#ad7fa8'</default>
+      <default>'#5c3566'</default>
       <summary>Color of freq max in the chart</summary>
     </key>
     <key name="swap-used-color" type="s">

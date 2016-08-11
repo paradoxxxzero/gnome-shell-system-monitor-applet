@@ -1394,13 +1394,32 @@ const Mem = new Lang.Class({
         this.parent()
         this.tip_format();
         this.update();
+
+        GTop.glibtop_get_mem(this.gtop);
+        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let threshold = 4*1024; // In MiB
+        this.useGiB = false;
+        if (this.total > threshold)
+            this.useGiB = true;
     },
     refresh: function() {
         GTop.glibtop_get_mem(this.gtop);
-        this.mem[0] = Math.round(this.gtop.user / 1024 / 1024);
-        this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024);
-        this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024);
-        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let decimals = 100;
+        if (this.useGiB) {
+            this.mem[0] = Math.round(this.gtop.user / 1024 / 1024 /1024 * decimals);
+            this.mem[0] /= decimals;
+            this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024 /1024 * decimals);
+            this.mem[1] /= decimals;
+            this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024 / 1024 * decimals);
+            this.mem[2] /= decimals;
+            this.total = Math.round(this.gtop.total / 1024 / 1024 / 1024 * decimals);
+            this.total /= decimals;
+        } else {
+            this.mem[0] = Math.round(this.gtop.user / 1024 / 1024);
+            this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024);
+            this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024);
+            this.total = Math.round(this.gtop.total / 1024 / 1024);
+        }
     },
     _apply: function() {
         if (this.total == 0) {
@@ -1420,12 +1439,15 @@ const Mem = new Lang.Class({
                 new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
     },
     create_menu_items: function() {
+        let unit = 'MiB';
+        if (this.useGiB)
+            unit = 'GiB';
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
-                new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
+                new St.Label({ text: _(unit), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1613,11 +1635,26 @@ const Swap = new Lang.Class({
         this.parent()
         this.tip_format();
         this.update();
+
+        GTop.glibtop_get_swap(this.gtop);
+        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let threshold = 4*1024; // In MiB
+        this.useGiB = false;
+        if (this.total > threshold)
+            this.useGiB = true;
     },
     refresh: function() {
         GTop.glibtop_get_swap(this.gtop);
-        this.swap = Math.round(this.gtop.used / 1024 / 1024);
-        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let decimals = 100;
+        if (this.useGiB) {
+            this.swap = Math.round(this.gtop.used / 1024 / 1024 / 1024 * decimals);
+            this.swap /= decimals;
+            this.total = Math.round(this.gtop.total / 1024 / 1024 /1024 * decimals);
+            this.total /= decimals;
+        } else {
+            this.swap = Math.round(this.gtop.used / 1024 / 1024);
+            this.total = Math.round(this.gtop.total / 1024 / 1024);
+        }
     },
     _apply: function() {
         if (this.total == 0) {
@@ -1636,12 +1673,15 @@ const Swap = new Lang.Class({
                 new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
     },
     create_menu_items: function() {
+        let unit = 'MiB';
+        if (this.useGiB)
+            unit = 'GiB';
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
-                new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
+                new St.Label({ text: _(unit), style_class: Style.get("sm-label")})];
     }
 });
 

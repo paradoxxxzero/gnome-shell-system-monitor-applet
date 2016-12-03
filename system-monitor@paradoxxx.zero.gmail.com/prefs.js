@@ -163,7 +163,7 @@ const SettingFrame = new Lang.Class({
         };
 
         [this.hbox0, this.hbox1].forEach(box => {
-            const sortedChildren = box.get_children()
+            box.get_children()
                 .sort((c1, c2) => labelOf(c1).localeCompare(labelOf(c2)))
                 .forEach((child, index) => box.reorder_child(child, index));
         });

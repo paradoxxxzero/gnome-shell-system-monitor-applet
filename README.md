@@ -23,6 +23,11 @@ On Ubuntu:
 On Fedora:
 
     $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
+    
+On openSUSE (Leap 42.1):
+
+    $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
+
 
 #### Manual Install:
 

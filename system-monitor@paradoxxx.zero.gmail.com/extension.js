@@ -1751,6 +1751,7 @@ const Fan = new Lang.Class({
 
     _init: function() {
         this.rpm = 0;
+        this.display_error = true;
         this.parent()
         this.tip_format(_("rpm"));
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1765,7 +1766,10 @@ const Fan = new Lang.Class({
                 this.rpm = parseInt(as_r[1]);
             }));
         } else {
-            global.logError("error reading: " + sfile);
+            if (this.display_error) {
+                global.logError("error reading: " + sfile);
+                this.display_error = false;
+            }
         }
     },
     _apply: function() {

@@ -70,7 +70,8 @@ Please install: \n\
 libgtop, Network Manager and gir bindings \n\
 \t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
 \t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
-\t    on Arch: libgtop, networkmanager\n");
+\t    on Arch: libgtop, networkmanager\n\
+\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n");
 
 //stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;

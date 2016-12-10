@@ -1,7 +1,8 @@
 # Traduzione italiana per il pacchetto system-monitor.
 # Copyright (C) 2012 THE system-monitor'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the system-monitor package.
-# Federico Piazza fede.piazza92@gmail.com, 2012.
+# Federico Piazza fede.piazza92@gmail.com, 2012
+# Paolo Paterna paolo.paterna@gmail.com, 2015
 #: extension.js:751
 #, fuzzy
 msgid ""
@@ -10,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-10-08 12:21+0200\n"
 "PO-Revision-Date: 2013-11-26 14:15+0100\n"
-"Last-Translator: Federico Piazza <fede.piazza92@gmail.com>\n"
+"Last-Translator: Paolo Paterna <paolo.paterna@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -135,10 +136,10 @@ msgid "Downerrors"
 msgstr "Errori in download"
 
 msgid "collisions"
-msgstr ""
+msgstr "collisioni"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Collisioni"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
@@ -311,9 +312,9 @@ msgstr ""
 "Dipendenze Mancanti\n"
 "Si prega di installare: \n"
 "libgtop, Network Manager e gir bindings \n"
-"\t su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t su Arch: libgtop, networkmanager\n"
+"\t    su Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    su Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    su Arch: libgtop, networkmanager\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
@@ -352,8 +353,8 @@ msgstr "giri/min"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Mostra Tooltip"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "Processore"

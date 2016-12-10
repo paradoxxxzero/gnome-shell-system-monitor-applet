@@ -2,10 +2,14 @@
 
 UUID = system-monitor@paradoxxx.zero.gmail.com
 BASE_MODULES = $(UUID)/extension.js $(UUID)/README* $(UUID)/metadata.json $(UUID)/prefs.js $(UUID)/stylesheet.css $(UUID)/convenience.js $(UUID)/compat.js
-INSTALLBASE = ~/.local/share/gnome-shell/extensions
+ifeq ($(strip $(DESTDIR)),)
+	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
+else
+	INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
+endif
 INSTALLNAME = system-monitor@paradoxxx.zero.gmail.com
 
-# The command line passed variable VERSION is used to set the version string 
+# The command line passed variable VERSION is used to set the version string
 # in the metadata and in the generated zip-file. If no VERSION is passed, the
 # current commit SHA1 is used as version number in the metadata while the
 # generated zip file has no string attached.

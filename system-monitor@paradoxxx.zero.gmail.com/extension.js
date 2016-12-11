@@ -1699,9 +1699,10 @@ const Thermal = new Lang.Class({
     max: 100,
     _init: function() {
         this.temperature = '-- ';
+        this.fahrenheit_unit = false;
         this.display_error = true;
         this.parent()
-        this.tip_format('\u2103');
+        this.tip_format(this.temperature_symbol());
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
         this.update();
     },
@@ -1719,17 +1720,21 @@ const Thermal = new Lang.Class({
                 this.display_error = false;
             }
         }
+
+        this.fahrenheit_unit = Schema.get_boolean(this.elt + '-fahrenheit-unit');
     },
     _apply: function() {
-        this.text_items[0].text = this.menu_items[3].text = this.temperature.toString();
+        this.text_items[0].text = this.menu_items[3].text = this.temperature_text();
         //Making it looks better in chart.
         //this.vals = [this.temperature / 100];
         this.vals = [this.temperature];
-        this.tip_vals[0] = this.temperature;
+        this.tip_vals[0] = this.temperature_text();
+        this.menu_items[5].text = this.temperature_symbol();
+        this.tip_unit_labels[0].text = _(this.temperature_symbol());
     },
     create_text_items: function() {
         return [new St.Label({ style_class: Style.get("sm-status-value")}),
-                new St.Label({ text: '\u2103', style_class: Style.get("sm-temp-label")})];
+                new St.Label({ text: this.temperature_symbol(), style_class: Style.get("sm-temp-label")})];
     },
     create_menu_items: function() {
         return [new St.Label(),
@@ -1737,7 +1742,13 @@ const Thermal = new Lang.Class({
                 new St.Label(),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
-                new St.Label({ text: '\u2103', style_class: Style.get("sm-label")})];
+                new St.Label({ text: this.temperature_symbol(), style_class: Style.get("sm-label")})];
+    },
+    temperature_text: function() {
+        return this.fahrenheit_unit ? Math.round(this.temperature * 1.8 + 32).toString() : this.temperature.toString();
+    },
+    temperature_symbol: function() {
+        return this.fahrenheit_unit ? '\u2109' : '\u2103';
     }
 });
 

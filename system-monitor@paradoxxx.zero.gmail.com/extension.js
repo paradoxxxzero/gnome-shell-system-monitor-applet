@@ -70,7 +70,8 @@ Please install: \n\
 libgtop, Network Manager and gir bindings \n\
 \t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
 \t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
-\t    on Arch: libgtop, networkmanager\n");
+\t    on Arch: libgtop, networkmanager\n\
+\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n");
 
 //stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;
@@ -863,7 +864,7 @@ const ElementBase = new Lang.Class({
               },*/
     update: function() {
         if (!this.menu_visible && !this.actor.visible)
-            return;
+            return false;
         this.refresh();
         this._apply();
         this.chart.update();
@@ -1276,12 +1277,9 @@ const Disk = new Lang.Class({
     _init: function() {
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
-        this.gtop = new GTop.glibtop_fsusage();
         this.last = [0,0];
         this.usage = [0,0];
         this.last_time = 0;
-        GTop.glibtop_get_fsusage(this.gtop, this.mounts[0]);
-        this.block_size = this.gtop.block_size/1024/1024/8;
         this.parent()
         this.tip_format(_('MiB/s'));
         this.update();
@@ -1291,16 +1289,22 @@ const Disk = new Lang.Class({
     },
     refresh: function() {
         let accum = [0, 0];
-        for(let mount in this.mounts) {
-            GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
-            accum[0] += this.gtop.read;
-            accum[1] += this.gtop.write;
+        let lines = Shell.get_file_contents_utf8_sync('/proc/diskstats').split("\n");
+
+        for(let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            let entry = line.trim().split(/[\s]+/);
+            if(entry[1] == undefined)
+                break;
+            accum[0] += parseInt(entry[5]);
+            accum[1] += parseInt(entry[9]);
         }
+
         let time = GLib.get_monotonic_time() / 1000;
         let delta = (time - this.last_time) / 1000;
         if (delta > 0)
             for (let i = 0;i < 2;i++) {
-                this.usage[i] =(this.block_size* (accum[i] - this.last[i]) / delta) ;
+                this.usage[i] =((accum[i] - this.last[i]) / delta / 1024 / 8);
                 this.last[i] = accum[i];
             }
         this.last_time = time;
@@ -1327,10 +1331,10 @@ const Disk = new Lang.Class({
     },
     create_menu_items: function() {
         return [new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label")}),
+                new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label-left")}),
                 new St.Label({ text:_('R'), style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
-                new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label")}),
+                new St.Label({ text:_('MiB/s'), style_class: Style.get("sm-label-left")}),
                 new St.Label({ text:_('W'), style_class: Style.get("sm-label")})];
     },
 });
@@ -1396,13 +1400,32 @@ const Mem = new Lang.Class({
         this.parent()
         this.tip_format();
         this.update();
+
+        GTop.glibtop_get_mem(this.gtop);
+        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let threshold = 4*1024; // In MiB
+        this.useGiB = false;
+        if (this.total > threshold)
+            this.useGiB = true;
     },
     refresh: function() {
         GTop.glibtop_get_mem(this.gtop);
-        this.mem[0] = Math.round(this.gtop.user / 1024 / 1024);
-        this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024);
-        this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024);
-        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let decimals = 100;
+        if (this.useGiB) {
+            this.mem[0] = Math.round(this.gtop.user / 1024 / 1024 /1024 * decimals);
+            this.mem[0] /= decimals;
+            this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024 /1024 * decimals);
+            this.mem[1] /= decimals;
+            this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024 / 1024 * decimals);
+            this.mem[2] /= decimals;
+            this.total = Math.round(this.gtop.total / 1024 / 1024 / 1024 * decimals);
+            this.total /= decimals;
+        } else {
+            this.mem[0] = Math.round(this.gtop.user / 1024 / 1024);
+            this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024);
+            this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024);
+            this.total = Math.round(this.gtop.total / 1024 / 1024);
+        }
     },
     _apply: function() {
         if (this.total == 0) {
@@ -1422,12 +1445,15 @@ const Mem = new Lang.Class({
                 new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
     },
     create_menu_items: function() {
+        let unit = 'MiB';
+        if (this.useGiB)
+            unit = 'GiB';
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
-                new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
+                new St.Label({ text: _(unit), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1615,11 +1641,26 @@ const Swap = new Lang.Class({
         this.parent()
         this.tip_format();
         this.update();
+
+        GTop.glibtop_get_swap(this.gtop);
+        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let threshold = 4*1024; // In MiB
+        this.useGiB = false;
+        if (this.total > threshold)
+            this.useGiB = true;
     },
     refresh: function() {
         GTop.glibtop_get_swap(this.gtop);
-        this.swap = Math.round(this.gtop.used / 1024 / 1024);
-        this.total = Math.round(this.gtop.total / 1024 / 1024);
+        let decimals = 100;
+        if (this.useGiB) {
+            this.swap = Math.round(this.gtop.used / 1024 / 1024 / 1024 * decimals);
+            this.swap /= decimals;
+            this.total = Math.round(this.gtop.total / 1024 / 1024 /1024 * decimals);
+            this.total /= decimals;
+        } else {
+            this.swap = Math.round(this.gtop.used / 1024 / 1024);
+            this.total = Math.round(this.gtop.total / 1024 / 1024);
+        }
     },
     _apply: function() {
         if (this.total == 0) {
@@ -1638,12 +1679,15 @@ const Swap = new Lang.Class({
                 new St.Label({ text: '%', style_class: Style.get("sm-perc-label")})];
     },
     create_menu_items: function() {
+        let unit = 'MiB';
+        if (this.useGiB)
+            unit = 'GiB';
         return [new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
                 new St.Label({ text: "/", style_class: Style.get("sm-label")}),
                 new St.Label({ style_class: Style.get("sm-value")}),
                 new St.Label(),
-                new St.Label({ text: _('MiB'), style_class: Style.get("sm-label")})];
+                new St.Label({ text: _(unit), style_class: Style.get("sm-label")})];
     }
 });
 
@@ -1709,6 +1753,7 @@ const Fan = new Lang.Class({
 
     _init: function() {
         this.rpm = 0;
+        this.display_error = true;
         this.parent()
         this.tip_format(_("rpm"));
         Schema.connect('changed::' + this.elt + '-sensor-file', Lang.bind(this, this.refresh));
@@ -1723,7 +1768,10 @@ const Fan = new Lang.Class({
                 this.rpm = parseInt(as_r[1]);
             }));
         } else {
-            global.logError("error reading: " + sfile);
+            if (this.display_error) {
+                global.logError("error reading: " + sfile);
+                this.display_error = false;
+            }
         }
     },
     _apply: function() {

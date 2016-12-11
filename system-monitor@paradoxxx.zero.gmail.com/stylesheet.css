@@ -6,11 +6,19 @@
 .sm-label {
     color: #bbb;
     font-size: 12px;
+    padding-top: 5px;
+}
+
+.sm-label-left {
+    color: #bbb;
+    font-size: 12px;
+    padding: 5px 5px 0 0;
 }
 
 .sm-value {
     text-align: right;
     min-width: 40px;
+    padding: 2px 5px 0 0;
 }
 
 .sm-status-label {

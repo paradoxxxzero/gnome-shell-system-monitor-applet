@@ -487,7 +487,7 @@ const Graph = new Lang.Class({
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.gtop = new GTop.glibtop_fsusage();
         // FIXME Handle colors correctly
-        this.colors = ["#444", "#666", "#888", "#aaa", "#ccc", "#eee"];
+        this.colors = ["#888", "#aaa", "#ccc"];
         for(let color in this.colors) {
             this.colors[color] = color_from_string(this.colors[color]);
         }

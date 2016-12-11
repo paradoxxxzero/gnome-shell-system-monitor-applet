@@ -263,6 +263,10 @@ const SettingFrame = new Lang.Class({
             item.selector.connect('changed', function(style){
                 set_enum(style, Schema, key);
             });
+        } else if (config == 'fahrenheit-unit') {
+            let item = new Gtk.CheckButton({label:_('Display temperature in Fahrenheit')});
+            this.hbox3.add(item);
+            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         }
         this._reorder();
     }

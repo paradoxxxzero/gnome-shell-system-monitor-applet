@@ -1,0 +1,11 @@
+{
+  "esversion": 6,
+  "loopfunc": true,
+  "unused": true,
+  "undef": true,
+  "globals": {
+    "imports": true,
+    "log": true,
+    "global": true
+  }
+}

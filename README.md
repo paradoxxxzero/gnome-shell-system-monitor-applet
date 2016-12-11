@@ -6,14 +6,10 @@
 ![](http://i.imgur.com/X7Sss.png)
 
 ### Install:
-Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2)) if you are using an older version of gnome-shell.
 
-#### extensions.gnome.org
-This is the recommended install method and offers One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
+Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2) if you are using an older version of gnome-shell.
 
-#### Dependencies:
-    
--   libgtop and gir bindings
+It's recommended you install via the Gnome Shell Extensions website. However, before you do so, ensure you have the appropriate system packages installed.
 
 On Ubuntu:
 
@@ -26,6 +22,10 @@ On Fedora:
 On openSUSE (Leap 42.1):
 
     $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
+
+Then, visit [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/), preferrably in Firefox, and install by clicking the toggle button next to the extension's name. If the install was success, the toggle button should now show "ON".
+
+If it failed, ensure you installed all the necessary dependencies, and that you granted the browser permission to install extensions when prompted. Additionally, try rebooting gnome-shell (Alt + F2 -> r).
 
 #### Manual Install:
 

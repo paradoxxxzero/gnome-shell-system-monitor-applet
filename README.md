@@ -13,7 +13,7 @@ Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/g
 This is the recommended install method and offers One Click Install via [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/)
 
 #### Dependencies:
-    
+
 -   libgtop and gir bindings
 
 On Ubuntu:
@@ -23,7 +23,7 @@ On Ubuntu:
 On Fedora:
 
     $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
-    
+
 On openSUSE (Leap 42.1):
 
     $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
@@ -69,4 +69,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-

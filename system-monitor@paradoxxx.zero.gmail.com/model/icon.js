@@ -1,16 +1,21 @@
+(exports => {
+    const Lang = imports.lang;
+    const St = imports.gi.St;
+    const local = imports.misc.extensionUtils.getCurrentExtension().imports;
+    const Schema = local.convenience.getSettings();
 
-const Icon = new Lang.Class({
-    Name: 'SystemMonitor.Icon',
-
-    _init: function() {
-        this.actor = new St.Icon({ icon_name: 'utilities-system-monitor-symbolic',
-                                   style_class: 'system-status-icon'});
-        this.actor.visible = Schema.get_boolean("icon-display");
-        Schema.connect(
-            'changed::icon-display',
-            Lang.bind(this,
-                      function () {
-                          this.actor.visible = Schema.get_boolean("icon-display");
-                      }));
-    }
-});
+    exports.constructor = new Lang.Class({
+        Name: 'SystemMonitor.Icon',
+        _init: function() {
+            this.actor = new St.Icon({
+                icon_name: 'utilities-system-monitor-symbolic',
+                style_class: 'system-status-icon'
+            });
+            this.refreshVisibility();
+            Schema.connect('changed::icon-display', () => this.refreshVisibility());
+        },
+        refreshVisibility: function() {
+            this.actor.visible = Schema.get_boolean("icon-display");
+        }
+    });
+})(this);

@@ -1,14 +1,12 @@
-const Config = imports.misc.config;
 const Clutter = imports.gi.Clutter;
-
 
 /** Compare two dotted version strings (like '10.2.3').
  * @returns {Integer} 0: v1 == v2, -1: v1 < v2, 1: v1 > v2
  */
-function versionCompare(v1, v2) {
-    let v1parts = ("" + v1).split(".")
-    let v2parts = ("" + v2).split(".")
-    let minLength = Math.min(v1parts.length, v2parts.length)
+this.versionCompare = (v1, v2) => {
+    let v1parts = ("" + v1).split(".");
+    let v2parts = ("" + v2).split(".");
+    let minLength = Math.min(v1parts.length, v2parts.length);
     let p1, p2, i;
     // Compare tuple pair-by-pair.
     for(i = 0; i < minLength; i++) {
@@ -34,19 +32,15 @@ function versionCompare(v1, v2) {
         return 0;
     }
     return (v1parts.length < v2parts.length) ? -1 : 1;
-}
+};
 
-function color_from_string(color){
-    let clutterColor, res;
-
-
-    if (!Clutter.Color.from_string){
+this.color_from_string = color => {
+    let clutterColor;
+    if (!Clutter.Color.from_string) {
         clutterColor = new Clutter.Color();
         clutterColor.from_string(color);
     } else {
-        [res, clutterColor] = Clutter.Color.from_string(color);
+        [, clutterColor] = Clutter.Color.from_string(color);
     }
-  
     return clutterColor;
-
-}
+};

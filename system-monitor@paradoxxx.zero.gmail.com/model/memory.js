@@ -36,6 +36,7 @@
                 this.useGiB = true;
         },
         refresh: function() {
+            GTop.glibtop_get_mem(this.gtop);
             let decimals = 100;
             if (this.useGiB) {
                 this.mem[0] = Math.round(this.gtop.user / 1024 / 1024 /1024 * decimals);

@@ -1,21 +1,22 @@
-# Portuguese (Brazil) translation for system-monitor-applet.
-# Copyright (C) 2011 darkxst
+# Brazilian Portuguese translation for system-monitor-applet.
+# Copyright (C) 2017 darkxst
 # This file is distributed under the same license as the system-monitor-applet package.
-# Rafael Ferreira <rafael.f.f1@gmail.com>, 2012.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2012, 2017.
 #: extension.js:751
 msgid ""
 msgstr ""
 "Project-Id-Version: system-monitor\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-22 15:04+0100\n"
-"PO-Revision-Date: 2012-11-17 22:28-0300\n"
-"Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
-"Language-Team: pt_BR\n"
-"Language: Portuguese (Brazil)\n"
+"PO-Revision-Date: 2017-01-31 02:54-0200\n"
+"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Virtaal 1.0.0-beta1\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
@@ -190,11 +191,11 @@ msgstr "disco"
 
 #: extension.js:1346 extension.js:1900
 msgid "Preferences..."
-msgstr "Preferências..."
+msgstr "Preferências…"
 
 #: extension.js:1340 extension.js:1894
 msgid "System Monitor..."
-msgstr "Monitor do Sistema..."
+msgstr "Monitor do Sistema…"
 
 msgid "System monitor"
 msgstr "Monitor do sistema"
@@ -283,7 +284,7 @@ msgstr "Mostrar tempo restante"
 
 #: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
-msgstr "Esconder ícone de sistema"
+msgstr "Ocultar ícone de sistema"
 
 #: prefs.js:230 prefs.js:237
 msgid "Usage Style"
@@ -302,7 +303,6 @@ msgid "none"
 msgstr "nenhum"
 
 #: extension.js:68
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -318,6 +318,7 @@ msgstr ""
 "\t    no Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
 "\t    no Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    no Arch: libgtop, networkmanager\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
@@ -355,12 +356,12 @@ msgstr "rpm"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Mostrar dicas da ferramenta"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Exibir temperatura em Fahrenheit"

@@ -1510,7 +1510,10 @@ const Net = new Lang.Class({
             let iface_list = this.client.get_devices();
             for(let j = 0; j < iface_list.length; j++){
                 if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
-                    this.ifs.push(iface_list[j].get_ip_iface() || iface_list[j].get_iface());
+                  ifc = iface_list[j].get_ip_iface() || iface_list[j].get_iface();
+                  if (ifc.indexOf("br") < 0){
+                     this.ifs.push(ifc);
+                   }
                 }
             }
         }

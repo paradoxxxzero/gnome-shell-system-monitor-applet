@@ -1,3 +1,4 @@
+/* eslint-disable */
 const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
 const Gdk = imports.gi.Gdk;
@@ -6,32 +7,35 @@ const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 
 const Gettext = imports.gettext.domain('system-monitor');
-const _ = Gettext.gettext;
-const N_ = function(e) { return e; };
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
 let Compat = extension.imports.compat;
+/* eslint-enable */
+
+const _ = Gettext.gettext;
+const N_ = function (e) {
+    return e;
+};
 
 let Schema;
 
 function init() {
     convenience.initTranslations();
     Schema = convenience.getSettings();
-
 }
 
 String.prototype.capitalize = function() {
-   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2) { return p1+p2.toUpperCase(); } );
+    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2) { return p1+p2.toUpperCase(); } );
 };
 
 function color_to_hex(color) {
-    output = N_("#%02x%02x%02x%02x").format(color.red * 255, color.green * 255,
+    var output = N_("#%02x%02x%02x%02x").format(color.red * 255, color.green * 255,
                                             color.blue * 255, color.alpha * 255);
     return output;
 }
 
-function check_sensors(sensor_type) {
+function check_sensors (sensor_type) {
     let inputs = [sensor_type+'1_input',sensor_type+'2_input',sensor_type+'3_input'];
     let sensor_path = '/sys/class/hwmon/';
     let sensor_list = [];
@@ -57,11 +61,11 @@ function check_sensors(sensor_type) {
         }
     }
     return [sensor_list, string_list];
-};
+}
 
 
 const ColorSelect = new Lang.Class({
-	Name: 'SystemMonitor.ColorSelect',
+    Name: 'SystemMonitor.ColorSelect',
 
     _init: function(name) {
         this.label = new Gtk.Label({label: name + _(":")});
@@ -81,7 +85,7 @@ const ColorSelect = new Lang.Class({
 });
 
 const IntSelect = new Lang.Class({
-	Name: 'SystemMonitor.IntSelect',
+    Name: 'SystemMonitor.IntSelect',
 
     _init: function(name) {
         this.label = new Gtk.Label({label: name + _(":")});
@@ -101,7 +105,7 @@ const IntSelect = new Lang.Class({
 });
 
 const Select = new Lang.Class({
-	Name: 'SystemMonitor.Select',
+    Name: 'SystemMonitor.Select',
 
     _init: function(name) {
         this.label = new Gtk.Label({label: name + _(":")});
@@ -134,7 +138,7 @@ function set_string(combo, schema, name, _slist) {
 }
 
 const SettingFrame = new Lang.Class({
-	Name: 'SystemMonitor.SettingFrame',
+    Name: 'SystemMonitor.SettingFrame',
 
     _init: function(name, schema) {
         this.schema = schema;
@@ -158,7 +162,9 @@ const SettingFrame = new Lang.Class({
     _reorder: function() {
         /** @return {string} label of/inside component */
         const labelOf = el => {
-            if (el.get_children) return labelOf(el.get_children()[0]);
+            if (el.get_children) {
+                return labelOf(el.get_children()[0]);
+            }
             return el && el.label || '';
         };
 
@@ -274,7 +280,7 @@ const SettingFrame = new Lang.Class({
 });
 
 const App = new Lang.Class({
-	Name: 'SystemMonitor.App',
+    Name: 'SystemMonitor.App',
 
     _init: function() {
 
@@ -291,9 +297,11 @@ const App = new Lang.Class({
         this.main_vbox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL,
                                        spacing: 10,
                                        border_width: 10});
-        this.hbox1 = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL,
-                                  spacing: 20,
-                                  border_width: 10});
+        this.hbox1 = new Gtk.Box({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            spacing: 20,
+            border_width: 10
+        });
         this.main_vbox.pack_start(this.hbox1, false, false, 0);
 
         keys.forEach(Lang.bind(this, function(key) {
@@ -305,18 +313,18 @@ const App = new Lang.Class({
                 /*item.connect('toggled', function(check) {
                     set_boolean(check, Schema, key);
                 });*/
-				Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key === 'center-display') {
                 let item = new Gtk.CheckButton({label: _('Display in the Middle')})
                 //item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
- 				Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+                 Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key === 'compact-display') {
                 let item = new Gtk.CheckButton({label: _('Compact Display')})
                 this.items.push(item)
                 this.hbox1.add(item)
- 		Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key === 'show-tooltip') {
                 let item = new Gtk.CheckButton({label:_('Show tooltip')})
                 item.set_active(Schema.get_boolean(key))

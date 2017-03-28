@@ -15,7 +15,8 @@
     //place settings for globals here, such as
     "exampleGlobalVariable": true,
     "log": true,
-    "imports": true
+    "imports": true,
+    "C_": true
   },
   "rules": {
     "comma-dangle": 0,//[2, "always-multiline"],
@@ -56,7 +57,7 @@
     "dot-notation": 1,
     "dot-location": [2, "property"],
     "eqeqeq": 2,
-    "guard-for-in": 2,
+    //"guard-for-in": 2,
     "no-alert": 1,
     "no-caller": 2,
     "no-div-regex": 2,
@@ -73,9 +74,9 @@
     "no-iterator": 2,
     "no-labels": 2,
     "no-lone-blocks": 2,
-    "no-loop-func": 2,
+    //"no-loop-func": 2,
     "no-multi-spaces": 1,
-    "no-multi-str": 2,
+    //"no-multi-str": 2,
     "no-native-reassign": 2,
     "no-new-func": 2,
     "no-new-wrappers": 2,
@@ -147,7 +148,7 @@
     "newline-after-var": 0,
     "no-array-constructor": 2,
     //"no-continue": 2,
-    "no-inline-comments": 1,
+    //"no-inline-comments": 1,
     "no-lonely-if": 2,
     "no-mixed-spaces-and-tabs": 1,
     "no-multiple-empty-lines": [1, {"max": 2}],

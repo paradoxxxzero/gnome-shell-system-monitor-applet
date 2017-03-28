@@ -40,7 +40,8 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Compat = Me.imports.compat;
 
-let GTop;
+let Background, GTop, IconSize, MountsMonitor, NMClient, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
+
 try {
     GTop = imports.gi.GTop;
 } catch (e) {
@@ -48,8 +49,6 @@ try {
     smDepsGtop = false;
 }
 
-let NMClient;
-let NetworkManager;
 try {
     NMClient = imports.gi.NMClient;
     NetworkManager = imports.gi.NetworkManager;
@@ -81,24 +80,20 @@ const ENABLE_NETWORK_DISK_USAGE = false;
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
-
-let Schema, Background, IconSize, Style, MountsMonitor, StatusArea;
-let menu_timeout, gc_timeout;
 let shell_Version = Config.PACKAGE_VERSION;
+
 function l_limit(t) {
     return (t > 0) ? t : 1000;
 }
+
 function change_text() {
     this.label.visible = Schema.get_boolean(this.elt + '-show-text');
 }
+
 function change_style() {
     let style = Schema.get_string(this.elt + '-style');
     this.text_box.visible = style === 'digit' || style === 'both';
     this.chart.actor.visible = style === 'graph' || style === 'both';
-}
-function change_menu() {
-    this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
-    build_menu_info();
 }
 
 function build_menu_info() {
@@ -146,6 +141,11 @@ function build_menu_info() {
         row_index++;
     }
     tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+}
+
+function change_menu() {
+    this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
+    build_menu_info();
 }
 
 function change_usage() {
@@ -368,9 +368,9 @@ const Chart = new Lang.Class({
 // Class to deal with volumes insertion / ejection
 const smMountsMonitor = new Lang.Class({
     Name: 'SystemMonitor.smMountsMonitor',
-    files: new Array(),
+    files: [],
     num_mounts: -1,
-    listeners: new Array(),
+    listeners: [],
     connected: false,
     _init: function () {
         this._volumeMonitor = Gio.VolumeMonitor.get();
@@ -502,7 +502,6 @@ const Graph = new Lang.Class({
         this.actor.set_height(this.height);
         this.actor.connect('repaint', Lang.bind(this, this._draw));
         this.gtop = new GTop.glibtop_fsusage();
-        // FIXME Handle colors correctly
         this.colors = ['#888', '#aaa', '#ccc'];
         for (let color in this.colors) {
             this.colors[color] = color_from_string(this.colors[color]);
@@ -864,7 +863,7 @@ const ElementBase = new Lang.Class({
         this.menu_items = this.create_menu_items();
     },
     tip_format: function (unit) {
-        typeof (unit) === 'undefined' && (unit = '%');
+        // typeof (unit) === 'undefined' && (unit = '%');
         if (typeof (unit) === 'string') {
             let all_unit = unit;
             unit = [];
@@ -920,7 +919,7 @@ const Battery = new Lang.Class({
         this.percentage = 0;
         this.timeString = '-- ';
         this._proxy = StatusArea.aggregateMenu._power._proxy
-        if (this._proxy === undefined) {
+        if (typeof (this._proxy) === 'undefined') {
             this._proxy = StatusArea.battery._proxy;
         }
         this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
@@ -947,7 +946,7 @@ const Battery = new Lang.Class({
         // callback function for when battery stats updated.
         let battery_found = false;
         let isBattery = false;
-        if (this._proxy.GetDevicesRemote === undefined) {
+        if (typeof (this._proxy.GetDevicesRemote) === 'undefined') {
             let device_type = this._proxy.Type;
             isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
             if (isBattery) {
@@ -1095,39 +1094,6 @@ const Battery = new Lang.Class({
     }
 });
 
-/* Check if one graph per core must be displayed and create the
-   appropriate number of cpu items */
-function createCpus() {
-    let array = new Array();
-    let numcores = 1;
-
-    if (Schema.get_boolean('cpu-individual-cores')) {
-        // get number of cores
-        let gtop = new GTop.glibtop_cpu();
-        try {
-            numcores = GTop.glibtop_get_sysinfo().ncpu;
-        } catch (e) {
-            global.logError(e);
-            numcores = 1;
-        }
-    }
-
-    // there are several cores to display,
-    // instantiate each cpu
-    if (numcores > 1) {
-        for (let i = 0; i < numcores; i++) {
-            array.push(new Cpu(i));
-        }
-    }
-    // individual cores option is not set or we failed to
-    // get the number of cores, create a global cpu item
-    else {
-        array.push(new Cpu(-1));
-    }
-
-    return array;
-}
-
 const Cpu = new Lang.Class({
     Name: 'SystemMonitor.Cpu',
     Extends: ElementBase,
@@ -1186,9 +1152,8 @@ const Cpu = new Lang.Class({
                 this.last_total = 0;
                 this.usage = [0, 0, 0, 1, 0];
             }
-        }
-        // display per cpu data
-        else {
+        } else {
+            // display per cpu data
             this.current[0] = this.gtop.xcpu_user[this.cpuid];
             this.current[1] = this.gtop.xcpu_sys[this.cpuid];
             this.current[2] = this.gtop.xcpu_nice[this.cpuid];
@@ -1213,17 +1178,14 @@ const Cpu = new Lang.Class({
         /*
         GTop.glibtop_get_cpu(this.gtop);
         // display global cpu usage on 1 graph
-        if (this.cpuid == -1)
-        {
+        if (this.cpuid == -1) {
             this.current[0] = this.gtop.user;
             this.current[1] = this.gtop.sys;
             this.current[2] = this.gtop.nice;
             this.current[3] = this.gtop.idle;
             this.current[4] = this.gtop.iowait;
-        }
-        // display cpu usage for given core
-        else
-        {
+        } else {
+            // display cpu usage for given core
             this.current[0] = this.gtop.xcpu_user[this.cpuid];
             this.current[1] = this.gtop.xcpu_sys[this.cpuid];
             this.current[2] = this.gtop.xcpu_nice[this.cpuid];
@@ -1298,6 +1260,38 @@ const Cpu = new Lang.Class({
     }
 });
 
+/* Check if one graph per core must be displayed and create the
+   appropriate number of cpu items */
+function createCpus() {
+    let array = [];
+    let numcores = 1;
+
+    if (Schema.get_boolean('cpu-individual-cores')) {
+        // get number of cores
+        let gtop = new GTop.glibtop_cpu();
+        try {
+            numcores = GTop.glibtop_get_sysinfo().ncpu;
+        } catch (e) {
+            global.logError(e);
+            numcores = 1;
+        }
+    }
+
+    // there are several cores to display,
+    // instantiate each cpu
+    if (numcores > 1) {
+        for (let i = 0; i < numcores; i++) {
+            array.push(new Cpu(i));
+        }
+    } else {
+        // individual cores option is not set or we failed to
+        // get the number of cores, create a global cpu item
+        array.push(new Cpu(-1));
+    }
+
+    return array;
+}
+
 const Disk = new Lang.Class({
     Name: 'SystemMonitor.Disk',
     Extends: ElementBase,
@@ -1326,11 +1320,11 @@ const Disk = new Lang.Class({
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i];
             let entry = line.trim().split(/[\s]+/);
-            if (entry[1] === undefined) {
+            if (typeof (entry[1]) === 'undefined') {
                 break;
             }
-            accum[0] += parseInt(entry[5]);
-            accum[1] += parseInt(entry[9]);
+            accum[0] += parseInt(entry[5], 10);
+            accum[1] += parseInt(entry[9], 10);
         }
 
         let time = GLib.get_monotonic_time() / 1000;
@@ -1394,7 +1388,7 @@ const Freq = new Lang.Class({
             if (line.search(/cpu mhz/i) < 0) {
                 continue;
             }
-            this.freq = parseInt(line.substring(line.indexOf(':') + 2));
+            this.freq = parseInt(line.substring(line.indexOf(':') + 2), 10);
             break;
         }
     },
@@ -1743,7 +1737,7 @@ const Thermal = new Lang.Class({
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = Math.round(parseInt(as_r[1]) / 1000);
+                this.temperature = Math.round(parseInt(as_r[1], 10) / 1000);
             }));
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -1803,7 +1797,7 @@ const Fan = new Lang.Class({
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
-                this.rpm = parseInt(as_r[1]);
+                this.rpm = parseInt(as_r[1], 10);
             }));
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -1878,7 +1872,7 @@ var enable = function () {
     } else {
         let panel = Main.panel._rightBox;
         StatusArea = Main.panel._statusArea;
-        if (StatusArea === undefined) {
+        if (typeof (StatusArea) === 'undefined') {
             StatusArea = Main.panel.statusArea;
         }
         if (Schema.get_boolean('center-display')) {
@@ -1893,7 +1887,7 @@ var enable = function () {
             icon: new Icon(),
             pie: new Pie(Style.pie_width(), Style.pie_height()), // 300, 300
             bar: new Bar(Style.bar_width(), Style.bar_height()),  // 300, 150
-            elts: new Array(),
+            elts: [],
         };
 
         // Items to Monitor
@@ -1964,7 +1958,7 @@ var enable = function () {
         tray.menu.addMenuItem(bar_item.menu_item);
 
         change_usage();
-        Schema.connect('changed::' + 'disk-usage-style', change_usage);
+        Schema.connect('changed::disk-usage-style', change_usage);
 
         tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 

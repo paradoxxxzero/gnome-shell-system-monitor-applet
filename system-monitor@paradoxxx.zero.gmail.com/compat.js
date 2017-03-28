@@ -19,7 +19,7 @@ function versionCompare(v1, v2) {
             p1 = v1parts[i];
         if (isNaN(p2))
             p2 = v2parts[i];
-        if (p1 == p2) {
+        if (p1 === p2) {
             continue;
         }else if (p1 > p2) {
             return 1;

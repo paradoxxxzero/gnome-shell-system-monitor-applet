@@ -21,35 +21,35 @@ function init() {
 
 }
 
-String.prototype.capitalize = function(){
-   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+String.prototype.capitalize = function() {
+   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2) { return p1+p2.toUpperCase(); } );
 };
 
-function color_to_hex(color){
+function color_to_hex(color) {
     output = N_("#%02x%02x%02x%02x").format(color.red * 255, color.green * 255,
                                             color.blue * 255, color.alpha * 255);
     return output;
 }
 
-function check_sensors(sensor_type){
+function check_sensors(sensor_type) {
     let inputs = [sensor_type+'1_input',sensor_type+'2_input',sensor_type+'3_input'];
     let sensor_path = '/sys/class/hwmon/';
     let sensor_list = [];
     let string_list = [];
     let test;
-    for (let j=0; j < 6; j++){
-        for (let k=0; k < inputs.length; k++){
+    for (let j=0; j < 6; j++) {
+        for (let k=0; k < inputs.length; k++) {
             test = sensor_path + 'hwmon' + j + '/' + inputs[k];
-            if(!GLib.file_test(test,1<<4)){
+            if(!GLib.file_test(test,1<<4)) {
                 test = sensor_path + 'hwmon' + j + '/device/' + inputs[k];
-                if(!GLib.file_test(test,1<<4)){
+                if(!GLib.file_test(test,1<<4)) {
                    continue;
                 }
             }
             let sensor = test.substr(0, test.lastIndexOf('/'));
             let result = GLib.file_get_contents(sensor + '/name');
             let label;
-            if (result[0]){
+            if (result[0]) {
                 label = N_('' + result[1]).split('\n')[0];
             }
             string_list.push(label.capitalize() + ' - ' + inputs[k].split('_')[0].capitalize());
@@ -71,7 +71,7 @@ const ColorSelect = new Lang.Class({
         this.actor.add(this.picker);
         this.picker.set_use_alpha(true);
     },
-    set_value: function(value){
+    set_value: function(value) {
         let clutterColor = Compat.color_from_string(value);
         let color = new Gdk.RGBA();
         let ctemp = [clutterColor.red,clutterColor.green,clutterColor.blue,clutterColor.alpha/255];
@@ -91,11 +91,11 @@ const IntSelect = new Lang.Class({
         this.actor.add(this.spin);
         this.spin.set_numeric(true);
     },
-    set_args: function(minv, maxv, incre, page){
+    set_args: function(minv, maxv, incre, page) {
         this.spin.set_range(minv, maxv);
         this.spin.set_increments(incre, page);
     },
-    set_value: function(value){
+    set_value: function(value) {
         this.spin.set_value(value);
     }
 });
@@ -111,32 +111,32 @@ const Select = new Lang.Class({
         this.actor.add(this.label);
         this.actor.add(this.selector);
     },
-    set_value: function(value){
+    set_value: function(value) {
         this.selector.set_active(value);
     },
-    add: function(items){
-        items.forEach(Lang.bind(this, function(item){
+    add: function(items) {
+        items.forEach(Lang.bind(this, function(item) {
             this.selector.append_text(item);
         }));
     }
 });
 
-function set_enum(combo, schema, name){
+function set_enum(combo, schema, name) {
     Schema.set_enum(name, combo.get_active());
 }
 
-function set_color(color, schema, name){
+function set_color(color, schema, name) {
     Schema.set_string(name, color_to_hex(color.get_rgba()))
 }
 
-function set_string(combo, schema, name, _slist){
+function set_string(combo, schema, name, _slist) {
     Schema.set_string(name, _slist[combo.get_active()]);
 }
 
 const SettingFrame = new Lang.Class({
 	Name: 'SystemMonitor.SettingFrame',
 
-    _init: function(name, schema){
+    _init: function(name, schema) {
         this.schema = schema;
         this.label = new Gtk.Label({label: name});
         this.frame = new Gtk.Frame({border_width: 10});
@@ -174,35 +174,35 @@ const SettingFrame = new Lang.Class({
         const config = key.substring(configParent.length + 1);
 
         // hbox0
-        if (config == 'display') {
+        if (config === 'display') {
             let item = new Gtk.CheckButton({label:_('Display')});
             this.hbox0.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'show-text') {
+        } else if (config === 'show-text') {
             let item = new Gtk.CheckButton({label:_('Show Text')});
             this.hbox0.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'show-menu') {
+        } else if (config === 'show-menu') {
             let item = new Gtk.CheckButton({label:_('Show In Menu')});
             this.hbox0.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         // hbox1
-        } else if (config == 'refresh-time') {
+        } else if (config === 'refresh-time') {
             let item = new IntSelect(_('Refresh Time'));
             item.set_args(50, 100000, 1000, 5000);
             this.hbox1.add(item.actor);
             Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'graph-width') {
+        } else if (config === 'graph-width') {
             let item = new IntSelect(_('Graph Width'));
             item.set_args(1, 1000, 1, 10);
             this.hbox1.add(item.actor);
             Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'style') {
+        } else if (config === 'style') {
             let item = new Select(_('Display Style'));
             item.add([_('digit'), _('graph'), _('both')]);
             item.set_value(this.schema.get_enum(key));
             this.hbox1.add(item.actor);
-            item.selector.connect('changed', function(style){
+            item.selector.connect('changed', function(style) {
                 set_enum(style, Schema, key);
             });
             //Schema.bind(key, item.selector, 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -211,16 +211,16 @@ const SettingFrame = new Lang.Class({
             let item = new ColorSelect(_(config.split('-')[0].capitalize()));
             item.set_value(this.schema.get_string(key));
             this.hbox2.pack_end(item.actor, true, false, 0);
-            item.picker.connect('color-set', function(color){
+            item.picker.connect('color-set', function(color) {
                 set_color(color, Schema, key);
             });
         } else if (config.match(/sensor/)) {
-            let sensor_type = configParent == 'fan' ? 'fan' : 'temp';
+            let sensor_type = configParent === 'fan' ? 'fan' : 'temp';
             let [_slist, _strlist] = check_sensors(sensor_type);
             let item = new Select(_('Sensor'));
-            if (_slist.length == 0){
+            if (_slist.length === 0) {
                 item.add([_('Please install lm-sensors')]);
-            } else if (_slist.length == 1){
+            } else if (_slist.length === 1) {
                 this.schema.set_string(key, _slist[0]);
             }
             item.add(_strlist);
@@ -230,40 +230,41 @@ const SettingFrame = new Lang.Class({
                 item.set_value(0);
             }
             //this.hbox3.add(item.actor);
-            if (configParent == 'fan')
+            if (configParent === 'fan') {
                 this.hbox2.pack_end(item.actor, true, false, 0);
-            else
+            } else {
                 this.hbox2.pack_start(item.actor, true, false, 0);
-            item.selector.connect('changed', function(combo){
+            }
+            item.selector.connect('changed', function(combo) {
                 set_string(combo, Schema, key, _slist);
             });
         // hbox3
-        } else if (config == 'speed-in-bits') {
+        } else if (config === 'speed-in-bits') {
             let item = new Gtk.CheckButton({label:_('Show network speed in bits')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'individual-cores') {
+        } else if (config === 'individual-cores') {
             let item = new Gtk.CheckButton({label:_('Display Individual Cores')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'time'){
+        } else if (config === 'time') {
             let item = new Gtk.CheckButton({label:_('Show Time Remaining')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'hidesystem'){
+        } else if (config === 'hidesystem') {
             let item = new Gtk.CheckButton({label:_('Hide System Icon')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config == 'usage-style'){
+        } else if (config === 'usage-style') {
             let item = new Select(_('Usage Style'));
             item.add([_('pie'), _('bar'), _('none')]);
             item.set_value(this.schema.get_enum(key));
             this.hbox3.pack_end(item.actor,false,false,20);
 
-            item.selector.connect('changed', function(style){
+            item.selector.connect('changed', function(style) {
                 set_enum(style, Schema, key);
             });
-        } else if (config == 'fahrenheit-unit') {
+        } else if (config === 'fahrenheit-unit') {
             let item = new Gtk.CheckButton({label:_('Display temperature in Fahrenheit')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -275,7 +276,7 @@ const SettingFrame = new Lang.Class({
 const App = new Lang.Class({
 	Name: 'SystemMonitor.App',
 
-    _init: function(){
+    _init: function() {
 
         let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal','fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
@@ -283,7 +284,7 @@ const App = new Lang.Class({
         this.items = [];
         this.settings = [];
 
-        setting_items.forEach(Lang.bind(this, function(setting){
+        setting_items.forEach(Lang.bind(this, function(setting) {
             this.settings[setting] = new SettingFrame(_(setting.capitalize()), Schema);
         }));
 
@@ -295,65 +296,65 @@ const App = new Lang.Class({
                                   border_width: 10});
         this.main_vbox.pack_start(this.hbox1, false, false, 0);
 
-        keys.forEach(Lang.bind(this, function(key){
-            if (key == 'icon-display'){
+        keys.forEach(Lang.bind(this, function(key) {
+            if (key === 'icon-display') {
                 let item = new Gtk.CheckButton({label: _('Display Icon')});
                 //item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
-                /*item.connect('toggled', function(check){
+                /*item.connect('toggled', function(check) {
                     set_boolean(check, Schema, key);
                 });*/
 				Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key == 'center-display'){
+            } else if (key === 'center-display') {
                 let item = new Gtk.CheckButton({label: _('Display in the Middle')})
                 //item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
  				Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key == 'compact-display'){
+            } else if (key === 'compact-display') {
                 let item = new Gtk.CheckButton({label: _('Compact Display')})
                 this.items.push(item)
                 this.hbox1.add(item)
  		Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key == 'show-tooltip'){
+            } else if (key === 'show-tooltip') {
                 let item = new Gtk.CheckButton({label:_('Show tooltip')})
                 item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
                 Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key == 'move-clock'){
+            } else if (key === 'move-clock') {
                 let item = new Gtk.CheckButton({label:_('Move the clock')})
                 //item.set_active(Schema.get_boolean(key))
                 this.items.push(item)
                 this.hbox1.add(item)
                 Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key == 'background'){
+            } else if (key === 'background') {
                 let item = new ColorSelect(_('Background Color'))
                 item.set_value(Schema.get_string(key))
                 this.items.push(item)
                 this.hbox1.pack_start(item.actor, true, false, 0)
-                item.picker.connect('color-set', function(color){
+                item.picker.connect('color-set', function(color) {
                     set_color(color, Schema, key);
                 });
             } else {
                 let sections = key.split('-');
-                if (setting_items.indexOf(sections[0]) >= 0){
+                if (setting_items.indexOf(sections[0]) >= 0) {
                     this.settings[sections[0]].add(key);
                 }
             }
         }));
         this.notebook = new Gtk.Notebook()
-        setting_items.forEach(Lang.bind(this, function(setting){
+        setting_items.forEach(Lang.bind(this, function(setting) {
             this.notebook.append_page(this.settings[setting].frame, this.settings[setting].label)
             this.main_vbox.pack_start(this.notebook, true, true, 0)
             this.main_vbox.show_all();
         }));
-    this.main_vbox.show_all();
+        this.main_vbox.show_all();
     }
 });
 
-function buildPrefsWidget(){
+function buildPrefsWidget() {
     let widget = new App();
     return widget.main_vbox;
-};
+}

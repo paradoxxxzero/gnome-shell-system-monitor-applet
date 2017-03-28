@@ -93,8 +93,8 @@ function change_text() {
 }
 function change_style() {
     let style = Schema.get_string(this.elt + '-style');
-    this.text_box.visible = style == 'digit' || style == 'both';
-    this.chart.actor.visible = style == 'graph' || style == 'both';
+    this.text_box.visible = style === 'digit' || style === 'both';
+    this.chart.actor.visible = style === 'graph' || style === 'both';
 }
 function change_menu() {
     this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
@@ -106,7 +106,7 @@ function build_menu_info() {
     let tray_menu = Main.__sm.tray.menu;
 
     if (tray_menu._getMenuItems().length &&
-        typeof tray_menu._getMenuItems()[0].actor.get_last_child() != 'undefined') {
+        typeof tray_menu._getMenuItems()[0].actor.get_last_child() !== 'undefined') {
         tray_menu._getMenuItems()[0].actor.get_last_child().destroy_all_children();
         for (let elt in elts) {
             elts[elt].menu_items = elts[elt].create_menu_items();
@@ -148,21 +148,21 @@ function build_menu_info() {
     tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
 }
 
-function change_usage(){
+function change_usage() {
     let usage = Schema.get_string('disk-usage-style');
-    Main.__sm.pie.show(usage == 'pie');
-    Main.__sm.bar.show(usage == 'bar');
+    Main.__sm.pie.show(usage === 'pie');
+    Main.__sm.bar.show(usage === 'bar');
 }
 let color_from_string = Compat.color_from_string;
 
-function interesting_mountpoint(mount){
+function interesting_mountpoint(mount) {
     if (mount.length < 3)
         return false;
 
-    return ((mount[0].indexOf("/dev/") == 0 || mount[2].toLowerCase() == "nfs") && mount[2].toLowerCase() != "udf");
+    return ((mount[0].indexOf("/dev/") === 0 || mount[2].toLowerCase() === "nfs") && mount[2].toLowerCase() !== "udf");
 }
 
-Number.prototype.toLocaleFixed = function(dots){
+Number.prototype.toLocaleFixed = function(dots) {
     return this.toFixed(dots).toLocaleString();
 }
 
@@ -302,10 +302,10 @@ const Chart = new Lang.Class({
     },
     update: function() {
         let data_a = this.parentC.vals;
-        if (data_a.length != this.parentC.colors.length) return;
+        if (data_a.length !== this.parentC.colors.length) return;
         let accdata = [];
         for (let l = 0 ; l < data_a.length ; l++) {
-            accdata[l] = (l == 0) ? data_a[0] : accdata[l - 1] + ((data_a[l] > 0) ? data_a[l] : 0);
+            accdata[l] = (l === 0) ? data_a[0] : accdata[l - 1] + ((data_a[l] > 0) ? data_a[l] : 0);
             this.data[l].push(accdata[l]);
             if (this.data[l].length > this.width)
                 this.data[l].shift();
@@ -344,7 +344,7 @@ const Chart = new Lang.Class({
     resize: function(schema, key) {
         let old_width = this.width;
         this.width = Schema.get_int(key);
-        if (old_width == this.width)
+        if (old_width === this.width)
             return;
         this.actor.set_width(this.width);
         if (this.width < this.data[0].length)
@@ -364,7 +364,7 @@ const smMountsMonitor = new Lang.Class({
         this._volumeMonitor = Gio.VolumeMonitor.get();
         let sys_mounts = ['/home','/tmp','/boot','/usr','/usr/local'];
         this.base_mounts = ['/'];
-        sys_mounts.forEach(Lang.bind(this,function(sMount){
+        sys_mounts.forEach(Lang.bind(this,function(sMount) {
             if (this.is_sys_mount(sMount+'/'))
                 this.base_mounts.push(sMount);
         }));
@@ -394,7 +394,7 @@ const smMountsMonitor = new Lang.Class({
         }
         log("old mounts: " + this.mounts);*/
         this.mounts = [];
-        for (let base in this.base_mounts){
+        for (let base in this.base_mounts) {
             //log(this.base_mounts[base]);
             this.mounts.push(this.base_mounts[base]);
         }
@@ -410,7 +410,7 @@ const smMountsMonitor = new Lang.Class({
         }));
         //log("base: " + this.base_mounts);
         //log("mounts: " + this.mounts);
-        for (let i in this.listeners){
+        for (let i in this.listeners) {
             this.listeners[i](this.mounts);
         }
     },
@@ -496,12 +496,12 @@ const Graph = new Lang.Class({
         }
 
     },
-    create_menu_item: function(){
+    create_menu_item: function() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
         this.menu_item.actor.add(this.actor, {span: -1, expand: true});
         //tray.menu.addMenuItem(this.menu_item);
     },
-    show: function(visible){
+    show: function(visible) {
         this.menu_item.actor.visible = visible;
     }
 });
@@ -516,7 +516,7 @@ const Bar = new Lang.Class({
         this.parent(arguments);
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
     },
-    _draw: function(){
+    _draw: function() {
         if (!this.actor.visible) return;
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2 );
         let [width, height] = this.actor.get_surface_size();
@@ -566,7 +566,7 @@ const Pie = new Lang.Class({
         let rc = Math.min(xc, yc);
         let pi = Math.PI;
         function arc(r, value, max, angle) {
-            if(max == 0) return angle;
+            if(max === 0) return angle;
             let new_angle = angle + (value * 2 * pi / max);
             cr.arc(xc, yc, r, angle, new_angle);
             return new_angle;
@@ -590,7 +590,7 @@ const Pie = new Lang.Class({
             cr.$dispose();
         }
     },
-    update_mounts: function(mounts){
+    update_mounts: function(mounts) {
         this.mounts = mounts;
         this.actor.queue_repaint();
     }
@@ -611,7 +611,7 @@ const TipMenu = new Lang.Class({
     Name: 'SystemMonitor.TipMenu',
     Extends: PopupMenu.PopupMenuBase,
 
-    _init: function(sourceActor){
+    _init: function(sourceActor) {
         //PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
         this.parent(sourceActor, 'sm-tooltip-box');
         this.actor = new Shell.GenericContainer();
@@ -819,7 +819,7 @@ const ElementBase = new Lang.Class({
         Schema.connect('changed::' + this.elt + '-graph-width',
                        Lang.bind(this.chart, this.chart.resize));
 
-        this.label = new St.Label({ text: this.elt == "memory" ? _("mem") : _(this.elt),
+        this.label = new St.Label({ text: this.elt === "memory" ? _("mem") : _(this.elt),
                                     style_class: Style.get("sm-status-label")});
         change_text.call(this);
         Schema.connect('changed::' + this.elt + '-show-text', Lang.bind(this, change_text));
@@ -840,8 +840,8 @@ const ElementBase = new Lang.Class({
         this.menu_items = this.create_menu_items();
     },
     tip_format: function(unit) {
-        typeof(unit) == 'undefined' && (unit = '%');
-        if(typeof(unit) == 'string') {
+        typeof(unit) === 'undefined' && (unit = '%');
+        if(typeof(unit) === 'string') {
             let all_unit = unit;
             unit = [];
             for (let i = 0;i < this.color_name.length;i++) {
@@ -894,7 +894,7 @@ const Battery = new Lang.Class({
         this.percentage = 0;
         this.timeString = '-- ';
         this._proxy = StatusArea.aggregateMenu['_power']._proxy
-        if (this._proxy == undefined)
+        if (this._proxy === undefined)
             this._proxy = StatusArea['battery']._proxy;
         this.powerSigID = this._proxy.connect('g-properties-changed', Lang.bind(this, this.update_battery));
 
@@ -916,13 +916,13 @@ const Battery = new Lang.Class({
     refresh: function() {
         //do nothing here?
     },
-    update_battery: function(){
+    update_battery: function() {
         // callback function for when battery stats updated.
         let battery_found = false;
         let isBattery = false;
-        if (this._proxy.GetDevicesRemote == undefined) {
+        if (this._proxy.GetDevicesRemote === undefined) {
             let device_type = this._proxy.Type;
-            isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+            isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
             if (isBattery) {
                 battery_found = true;
                 let icon = this._proxy.IconName;
@@ -951,9 +951,9 @@ const Battery = new Lang.Class({
                     let [device_id, device_type, icon, percentage, state, seconds] = result[i];
 
                     if (Compat.versionCompare(shell_Version, "3.9"))
-                        isBattery = (device_type == Power.UPower.DeviceKind.BATTERY);
+                        isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
                     else
-                        isBattery = (device_type == Power.UPDeviceType.BATTERY);
+                        isBattery = (device_type === Power.UPDeviceType.BATTERY);
 
                     if (isBattery) {
                         battery_found = true;
@@ -972,7 +972,7 @@ const Battery = new Lang.Class({
         }
     },
     update_battery_value: function(seconds, percentage, icon) {
-        if (seconds > 60){
+        if (seconds > 60) {
             let time = Math.round(seconds / 60);
             let minutes = time % 60;
             let hours = Math.floor(time / 60);
@@ -985,17 +985,17 @@ const Battery = new Lang.Class({
 
         if (Schema.get_boolean(this.elt + '-display'))
             this.actor.show()
-        if (Schema.get_boolean(this.elt + '-show-menu') && this.menu_visible == false) {
+        if (Schema.get_boolean(this.elt + '-show-menu') && !this.menu_visible) {
             this.menu_visible = true;
             build_menu_info();
         }
     },
     hide_system_icon: function(override) {
         let value = Schema.get_boolean(this.elt + '-hidesystem');
-        if (override == false ){
+        if (!override) {
             value = false;
         }
-        if (value && Schema.get_boolean(this.elt + '-display')){
+        if (value && Schema.get_boolean(this.elt + '-display')) {
             if (shell_Version > "3.5") {
                 if (StatusArea.battery.actor.visible) {
                     StatusArea.battery.destroy();
@@ -1003,8 +1003,8 @@ const Battery = new Lang.Class({
                 }
             }
             else {
-                for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++){
-                    if(StatusArea['battery'] == Main.panel._rightBox.get_children()[Index]._delegate){
+                for (let Index = 0; Index < Main.panel._rightBox.get_children().length; Index++) {
+                    if(StatusArea['battery'] === Main.panel._rightBox.get_children()[Index]._delegate) {
                         Main.panel._rightBox.get_children()[Index].destroy();
                         StatusArea['battery'] = null;
                         this.icon_hidden = true;
@@ -1012,7 +1012,7 @@ const Battery = new Lang.Class({
                     }
                 }
             }
-        } else if(this.icon_hidden){
+        } else if(this.icon_hidden) {
             if (shell_Version < "3.5") {
                 let Indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION['battery'];
                 Main.panel.addToStatusArea('battery', Indicator, Panel.STANDARD_STATUS_AREA_ORDER.indexOf('battery'));
@@ -1026,7 +1026,7 @@ const Battery = new Lang.Class({
         }
     },
 
-    update_tips: function(){
+    update_tips: function() {
         let value = Schema.get_boolean(this.elt + '-time');
         if (value) {
             this.text_items[2].text = this.menu_items[5].text = 'h';
@@ -1039,7 +1039,7 @@ const Battery = new Lang.Class({
     _apply: function() {
         let displayString;
         let value = Schema.get_boolean(this.elt + '-time');
-        if (value){
+        if (value) {
             displayString = this.timeString;
         } else {
             displayString = this.percentage.toString()
@@ -1119,7 +1119,7 @@ const Cpu = new Lang.Class({
         this.current = [0,0,0,0,0];
         try {
             this.total_cores = GTop.glibtop_get_sysinfo().ncpu;
-            if (cpuid == -1)
+            if (cpuid === -1)
                 this.max *= this.total_cores;
         } catch(e) {
             this.total_cores = this.get_cores();
@@ -1128,7 +1128,7 @@ const Cpu = new Lang.Class({
         this.last_total = 0;
         this.usage = [0,0,0,1,0];
         let item_name = _("Cpu");
-        if (cpuid != -1)
+        if (cpuid !== -1)
             item_name += " " + (cpuid + 1); // append cpu number to cpu name in popup
         //ElementBase.prototype._init.call(this);
         this.parent()
@@ -1138,7 +1138,7 @@ const Cpu = new Lang.Class({
     refresh: function() {
         GTop.glibtop_get_cpu(this.gtop);
         // display global cpu usage on 1 graph
-        if (this.cpuid == -1) {
+        if (this.cpuid === -1) {
             this.current[0] = this.gtop.user;
             this.current[1] = this.gtop.sys;
             this.current[2] = this.gtop.nice;
@@ -1146,8 +1146,8 @@ const Cpu = new Lang.Class({
             this.current[4] = this.gtop.iowait;
             let delta = (this.gtop.total - this.last_total)/(100*this.total_cores);
 
-            if (delta > 0){
-                for (let i = 0;i < 5;i++){
+            if (delta > 0) {
+                for (let i = 0;i < 5;i++) {
                     this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
                     this.last[i] = this.current[i];
                 }
@@ -1168,8 +1168,8 @@ const Cpu = new Lang.Class({
             this.current[4] = this.gtop.xcpu_iowait[this.cpuid];
             let delta = (this.gtop.xcpu_total[this.cpuid] - this.last_total)/100;
 
-            if (delta > 0){
-                for (let i = 0;i < 5;i++){
+            if (delta > 0) {
+                for (let i = 0;i < 5;i++) {
                     this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
                     this.last[i] = this.current[i];
                 }
@@ -1210,8 +1210,8 @@ const Cpu = new Lang.Class({
         else
             delta = (this.gtop.xcpu_total[this.cpuid] - this.last_total)/100;
 
-        if (delta > 0){
-            for (let i = 0;i < 5;i++){
+        if (delta > 0) {
+            for (let i = 0;i < 5;i++) {
                 this.usage[i] = Math.round((this.current[i] - this.last[i])/delta);
                 this.last[i] = this.current[i];
             }
@@ -1224,7 +1224,7 @@ const Cpu = new Lang.Class({
     },
     _apply: function() {
         let percent = 0;
-        if (this.cpuid == -1)
+        if (this.cpuid === -1)
             percent = Math.round(((100 * this.total_cores) - this.usage[3])
                                  / this.total_cores);
         else
@@ -1242,12 +1242,12 @@ const Cpu = new Lang.Class({
             this.tip_vals[i] = Math.round(this.vals[i]);
     },
 
-    get_cores: function(){
+    get_cores: function() {
         // Getting xcpu_total makes gjs 1.29.18 segfault
         // let cores = 0;
         // GTop.glibtop_get_cpu(this.gtop);
         // let gtop_total = this.gtop.xcpu_total
-        // for (let i = 0; i < gtop_total.length;i++){
+        // for (let i = 0; i < gtop_total.length;i++) {
         //     if (gtop_total[i] > 0)
         //         cores++;
         // }
@@ -1287,7 +1287,7 @@ const Disk = new Lang.Class({
         this.tip_format(_('MiB/s'));
         this.update();
     },
-    update_mounts : function(mounts){
+    update_mounts : function(mounts) {
         this.mounts = mounts;
     },
     refresh: function() {
@@ -1297,7 +1297,7 @@ const Disk = new Lang.Class({
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i];
             let entry = line.trim().split(/[\s]+/);
-            if(entry[1] == undefined)
+            if(entry[1] === undefined)
                 break;
             accum[0] += parseInt(entry[5]);
             accum[1] += parseInt(entry[9]);
@@ -1429,7 +1429,7 @@ const Mem = new Lang.Class({
         }
     },
     _apply: function() {
-        if (this.total == 0) {
+        if (this.total === 0) {
             this.vals = this.tip_vals = [0,0,0];
         } else {
             for (let i = 0;i < 3;i++) {
@@ -1472,12 +1472,12 @@ const Net = new Lang.Class({
         this.client = NMClient.Client.new();
         this.update_iface_list();
 
-        if(!this.ifs.length){
+        if(!this.ifs.length) {
             let net_lines = Shell.get_file_contents_utf8_sync('/proc/net/dev').split("\n");
             for(let i = 2; i < net_lines.length - 1 ; i++) {
                 let ifc = net_lines[i].replace(/^\s+/g, '').split(":")[0];
                 if(Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
-                   .replace(/\s/g, "") == "up" &&
+                   .replace(/\s/g, "") === "up" &&
                    ifc.indexOf("br") < 0 &&
                    ifc.indexOf("lo") < 0) {
                     this.ifs.push(ifc);
@@ -1511,8 +1511,8 @@ const Net = new Lang.Class({
         try {
             this.ifs = []
             let iface_list = this.client.get_devices();
-            for(let j = 0; j < iface_list.length; j++){
-                if (iface_list[j].state == NetworkManager.DeviceState.ACTIVATED){
+            for(let j = 0; j < iface_list.length; j++) {
+                if (iface_list[j].state === NetworkManager.DeviceState.ACTIVATED) {
                     this.ifs.push(iface_list[j].get_ip_iface() || iface_list[j].get_iface());
                 }
             }
@@ -1598,7 +1598,7 @@ const Net = new Lang.Class({
             }
         }
 
-        if (Style.get('') != '-compact') {
+        if (Style.get('') !== '-compact') {
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
         }
@@ -1664,7 +1664,7 @@ const Swap = new Lang.Class({
         }
     },
     _apply: function() {
-        if (this.total == 0) {
+        if (this.total === 0) {
             this.vals = this.tip_vals = [0];
         } else {
             this.vals[0] = this.swap / this.total;
@@ -1854,7 +1854,7 @@ var enable = function () {
     } else {
         let panel = Main.panel._rightBox;
         StatusArea = Main.panel._statusArea;
-        if (StatusArea == undefined){
+        if (StatusArea === undefined) {
             StatusArea = Main.panel.statusArea;
         }
         if (Schema.get_boolean("center-display")) {
@@ -1889,7 +1889,7 @@ var enable = function () {
 
         if (Schema.get_boolean("move-clock")) {
             let dateMenu;
-            if (Compat.versionCompare(shell_Version, "3.5.90")){
+            if (Compat.versionCompare(shell_Version, "3.5.90")) {
                 dateMenu = Main.panel.statusArea.dateMenu;
                 Main.panel._centerBox.remove_actor(dateMenu.container);
                 Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
@@ -1905,7 +1905,7 @@ var enable = function () {
             this, function (schema, key) {
                 Background = color_from_string(Schema.get_string(key));
             }));
-        if (!Compat.versionCompare(shell_Version,"3.5.5")){
+        if (!Compat.versionCompare(shell_Version,"3.5.5")) {
             StatusArea.systemMonitor = tray;
             panel.insert_child_at_index(tray.actor, 1);
             panel.child_set(tray.actor, { y_fill: true } );
@@ -1974,7 +1974,7 @@ var enable = function () {
 
         item = new PopupMenu.PopupMenuItem(_("Preferences..."));
         item.connect('activate', function () {
-            if (_gsmPrefs.get_state() == _gsmPrefs.SHELL_APP_STATE_RUNNING){
+            if (_gsmPrefs.get_state() === _gsmPrefs.SHELL_APP_STATE_RUNNING) {
                 _gsmPrefs.activate();
             } else {
                 let info = _gsmPrefs.get_app_info();
@@ -1996,7 +1996,7 @@ var disable = function () {
     //restore clock
     if (Main.__sm.tray.clockMoved) {
         let dateMenu;
-        if (Compat.versionCompare(shell_Version, "3.5.90")){
+        if (Compat.versionCompare(shell_Version, "3.5.90")) {
             dateMenu = Main.panel.statusArea.dateMenu;
             Main.panel._rightBox.remove_actor(dateMenu.container);
             Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
@@ -2008,7 +2008,7 @@ var disable = function () {
     }
     //restore system power icon if necessary
     // workaround bug introduced by multiple cpus init :
-    //if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden){
+    //if (Schema.get_boolean('battery-hidesystem') && Main.__sm.elts.battery.icon_hidden) {
     //    Main.__sm.elts.battery.hide_system_icon(false);
     //}
     //for (let i in Main.__sm.elts) {
@@ -2023,7 +2023,7 @@ var disable = function () {
         Main.__sm.elts[eltName].destroy();
     }
 
-    if (!Compat.versionCompare(shell_Version,"3.5")){
+    if (!Compat.versionCompare(shell_Version,"3.5")) {
         Main.__sm.tray.destroy();
         StatusArea.systemMonitor = null;
     } else

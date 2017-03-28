@@ -1,0 +1,17 @@
+
+install:
+-   sudo apt-key update
+-   sudo apt-get -yq update
+#-   sudo apt-get -yq purge postgr*
+#-   sudo apt-get -yq purge virtualbox*
+# The Oracle Java install routinely times out, and we're not using it, so uninstall it.
+#-   sudo apt-get -yq purge oracle-java*
+#-   sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+-   DEBIAN_FRONTEND=noninteractive apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
+-   sudo npm install -g jshint
+# Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
+-   [ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true
+
+script:
+-   set -e
+-   ./checkjs.sh

@@ -863,7 +863,7 @@ const ElementBase = new Lang.Class({
         this.menu_items = this.create_menu_items();
     },
     tip_format: function (unit) {
-        // typeof (unit) === 'undefined' && (unit = '%');
+        typeof (unit) === 'undefined' && (unit = '%'); // eslint-disable-line no-unused-expressions
         if (typeof (unit) === 'string') {
             let all_unit = unit;
             unit = [];
@@ -1323,8 +1323,8 @@ const Disk = new Lang.Class({
             if (typeof (entry[1]) === 'undefined') {
                 break;
             }
-            accum[0] += parseInt(entry[5], 10);
-            accum[1] += parseInt(entry[9], 10);
+            accum[0] += parseInt(entry[5]);
+            accum[1] += parseInt(entry[9]);
         }
 
         let time = GLib.get_monotonic_time() / 1000;
@@ -1388,7 +1388,7 @@ const Freq = new Lang.Class({
             if (line.search(/cpu mhz/i) < 0) {
                 continue;
             }
-            this.freq = parseInt(line.substring(line.indexOf(':') + 2), 10);
+            this.freq = parseInt(line.substring(line.indexOf(':') + 2));
             break;
         }
     },
@@ -1737,7 +1737,7 @@ const Thermal = new Lang.Class({
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = Math.round(parseInt(as_r[1], 10) / 1000);
+                this.temperature = Math.round(parseInt(as_r[1]) / 1000);
             }));
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -1797,7 +1797,7 @@ const Fan = new Lang.Class({
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
-                this.rpm = parseInt(as_r[1], 10);
+                this.rpm = parseInt(as_r[1]);
             }));
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);

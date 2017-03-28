@@ -10,10 +10,12 @@
   },
   "parserOptions": {
     "ecmaVersion": 6
-   },
+  },
   "globals": {
     //place settings for globals here, such as
-    "exampleGlobalVariable": true
+    "exampleGlobalVariable": true,
+    "log": true,
+    "imports": true
   },
   "rules": {
     "comma-dangle": 0,//[2, "always-multiline"],

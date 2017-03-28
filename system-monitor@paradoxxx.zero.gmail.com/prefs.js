@@ -1,4 +1,3 @@
-/* eslint-disable */
 const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
 const Gdk = imports.gi.Gdk;
@@ -11,7 +10,6 @@ const Gettext = imports.gettext.domain('system-monitor');
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
 let Compat = extension.imports.compat;
-/* eslint-enable */
 
 const _ = Gettext.gettext;
 const N_ = function (e) {

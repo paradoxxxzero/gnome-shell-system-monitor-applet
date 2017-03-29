@@ -1,4 +1,12 @@
-
+# https://docs.travis-ci.com/user/multi-os/
+# https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
+matrix:
+    include:
+        # Ubuntu 14.04
+        -   os: linux
+            dist: trusty
+            sudo: required
+            python: 2.7
 install:
 -   sudo apt-key update
 -   sudo apt-get -yq update
@@ -11,6 +19,7 @@ install:
 # Fails.
 #-   DEBIAN_FRONTEND=noninteractive sudo apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
 #-   sudo npm install
+-   sudo apt-get -yq install nodejs
 
 # Install NPM from upstream.
 -   git clone git://github.com/npm/npm.git

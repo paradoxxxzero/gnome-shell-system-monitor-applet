@@ -34,4 +34,8 @@ install:
 
 script:
 -   set -e
+-   echo $TRAVIS_BUILD_DIR
+-   ls -lah $TRAVIS_BUILD_DIR
+-   echo `pwd`
+-   ls -lah `pwd`
 -   ./checkjs.sh

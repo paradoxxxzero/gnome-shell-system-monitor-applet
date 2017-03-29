@@ -863,7 +863,9 @@ const ElementBase = new Lang.Class({
         this.menu_items = this.create_menu_items();
     },
     tip_format: function (unit) {
-        typeof (unit) === 'undefined' && (unit = '%'); // eslint-disable-line no-unused-expressions
+        if (typeof (unit) === 'undefined') {
+            unit = '%';
+        }
         if (typeof (unit) === 'string') {
             let all_unit = unit;
             unit = [];

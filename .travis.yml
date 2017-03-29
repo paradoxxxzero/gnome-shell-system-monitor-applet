@@ -10,7 +10,7 @@ install:
 -   DEBIAN_FRONTEND=noninteractive apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
 -   sudo npm install -g jshint
 # Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
--   [ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true
+-   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
 
 script:
 -   set -e

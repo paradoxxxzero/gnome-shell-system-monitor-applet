@@ -26,16 +26,13 @@ install:
 -   cd npm/scripts
 -   chmod +x install.sh
 -   sudo ./install.sh
--   cd ..
+-   cd ../..
 
--   sudo npm install -g jshint
+-   sudo npm install -g eslint
 # Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
 -   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
 
 script:
 -   set -e
--   echo $TRAVIS_BUILD_DIR
--   ls -lah $TRAVIS_BUILD_DIR
--   echo `pwd`
--   ls -lah `pwd`
+-   cd $TRAVIS_BUILD_DIR
 -   ./checkjs.sh

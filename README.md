@@ -1,4 +1,7 @@
 ## Gnome shell system monitor extension
+
+[![Build Status](https://img.shields.io/travis/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.org/paradoxxxzero/gnome-shell-system-monitor-applet)
+
 ![](http://i.imgur.com/ka9OA.png)
 
 ![](http://i.imgur.com/mmRTu.png)

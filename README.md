@@ -48,6 +48,10 @@ Alternately, if you plan on doing development on the extension, or testing modif
 
 And restart gnome-shell (Alt + F2 -> r) or reboot.
 
+On openSUSE you need to install a devel package that provides the gnome-shell-extension-tool command:
+
+    $ sudo zypper install gnome-shell-devel
+
 ### Development:
 
 #### Translation:

@@ -180,7 +180,7 @@ const smStyleManager = new Lang.Class({
     _bar_height: 150,
     _bar_fontsize: 14,
 
-    _init: function() {
+    _init: function () {
         this._compact = Schema.get_boolean('compact-display');
         if (this._compact) {
             this._extension = '-compact';
@@ -1357,8 +1357,9 @@ const Freq = new Lang.Class({
         let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split("\n");
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i];
-            if(line.search(/^cpu MHz/) < 0)
+            if (line.search(/^cpu MHz/) < 0) {
                 continue;
+            }
             this.freq = parseInt(line.substring(line.indexOf(':') + 2));
             break;
         }

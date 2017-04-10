@@ -1084,9 +1084,9 @@ const Battery = new Lang.Class({
     update_tips: function () {
         let value = Schema.get_boolean(this.elt + '-time');
         if (value) {
-            this.text_items[2].text = this.menu_items[5].text = 'h';
+            this.text_items[2].text = this.menu_items[1].text = 'h';
         } else {
-            this.text_items[2].text = this.menu_items[5].text = '%';
+            this.text_items[2].text = this.menu_items[1].text = '%';
         }
 
         this.update();
@@ -1114,11 +1114,7 @@ const Battery = new Lang.Class({
                 y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
-        return [new St.Label(),
-            new St.Label(),
-            new St.Label(),
-            new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
+        return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: '%', style_class: Style.get('sm-label')})];
     },
     destroy: function () {
@@ -1253,7 +1249,7 @@ const Cpu = new Lang.Class({
             percent = Math.round((100 - this.usage[3]));
         }
 
-        this.text_items[0].text = this.menu_items[3].text = percent.toString();
+        this.text_items[0].text = this.menu_items[0].text = percent.toString();
         let other = 100;
         for (let i = 0; i < this.usage.length; i++) {
             other -= this.usage[i];
@@ -1286,11 +1282,7 @@ const Cpu = new Lang.Class({
                 y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
-        return [new St.Label(),
-            new St.Label(),
-            new St.Label(),
-            new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
+        return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: '%', style_class: Style.get('sm-label')})];
     }
 });
@@ -1437,7 +1429,7 @@ const Freq = new Lang.Class({
         let value = this.freq.toString();
         this.text_items[0].text = value + ' ';
         this.tip_vals[0] = value;
-        this.menu_items[3].text = value;
+        this.menu_items[0].text = value;
     },
     create_text_items: function () {
         return [new St.Label({style_class: Style.get('sm-big-status-value'),
@@ -1446,11 +1438,7 @@ const Freq = new Lang.Class({
                 y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
-        return [new St.Label(),
-            new St.Label(),
-            new St.Label(),
-            new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
+        return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: 'MHz', style_class: Style.get('sm-label')})];
     }
 });
@@ -1529,7 +1517,6 @@ const Mem = new Lang.Class({
             new St.Label(),
             new St.Label({text: '/', style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
             new St.Label({text: unit, style_class: Style.get('sm-label')})];
     }
 });
@@ -1769,7 +1756,6 @@ const Swap = new Lang.Class({
             new St.Label(),
             new St.Label({text: '/', style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
             new St.Label({text: _(unit), style_class: Style.get('sm-label')})];
     }
 });
@@ -1811,13 +1797,13 @@ const Thermal = new Lang.Class({
         this.fahrenheit_unit = Schema.get_boolean(this.elt + '-fahrenheit-unit');
     },
     _apply: function () {
-        this.text_items[0].text = this.menu_items[3].text = this.temperature_text();
+        this.text_items[0].text = this.menu_items[0].text = this.temperature_text();
         // Making it looks better in chart.
         // this.vals = [this.temperature / 100];
         this.temp_over_threshold = this.temperature > Schema.get_int('thermal-threshold');
         this.vals = [this.temperature];
         this.tip_vals[0] = this.temperature_text();
-        this.menu_items[5].text = this.temperature_symbol();
+        this.menu_items[1].text = this.temperature_symbol();
         this.tip_unit_labels[0].text = _(this.temperature_symbol());
     },
     create_text_items: function () {
@@ -1828,11 +1814,7 @@ const Thermal = new Lang.Class({
                 y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
-        return [new St.Label(),
-            new St.Label(),
-            new St.Label(),
-            new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
+        return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: this.temperature_symbol(), style_class: Style.get('sm-label')})];
     },
     temperature_text: function () {
@@ -1875,7 +1857,7 @@ const Fan = new Lang.Class({
     },
     _apply: function () {
         this.text_items[0].text = this.rpm.toString();
-        this.menu_items[3].text = this.rpm.toString();
+        this.menu_items[0].text = this.rpm.toString();
         this.vals = [this.rpm / 10];
         this.tip_vals[0] = this.rpm;
     },
@@ -1886,11 +1868,7 @@ const Fan = new Lang.Class({
                 y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
-        return [new St.Label(),
-            new St.Label(),
-            new St.Label(),
-            new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label(),
+        return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: _('rpm'), style_class: Style.get('sm-label')})];
     }
 });

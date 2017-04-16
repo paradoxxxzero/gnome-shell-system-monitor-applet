@@ -1479,16 +1479,16 @@ const Mem = new Lang.Class({
             new St.Label({text: '%', style_class: Style.get('sm-perc-label')})];
     },
     create_menu_items: function () {
-        let unit = 'MiB';
+        let unit = _('MiB');
         if (this.useGiB) {
-            unit = 'GiB';
+            unit = _('GiB');
         }
         return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label(),
             new St.Label({text: '/', style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
             new St.Label(),
-            new St.Label({text: _(unit), style_class: Style.get('sm-label')})];
+            new St.Label({text: unit, style_class: Style.get('sm-label')})];
     }
 });
 

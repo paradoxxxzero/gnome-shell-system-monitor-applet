@@ -254,9 +254,13 @@ msgstr "Kio/s"
 msgid "MiB/s"
 msgstr "Mio/s"
 
-#: extension.js:1419 extension.js:1635
+#: extension.js:1419 extension.js:1482 extension.js:1635
 msgid "MiB"
 msgstr "Mio"
+
+#: extension.js:1484
+msgid "GiB"
+msgstr "Gio"
 
 #: extension.js:184
 msgid "kB"

@@ -1369,14 +1369,14 @@ const Disk = new Lang.Class({
         this.vals = this.usage.slice();
         for (let i = 0; i < 2; i++) {
             if (this.usage[i] < 10) {
-                this.usage[i] = this.usage[i].toLocaleFixed(1);
+                this.usage[i] = Math.round(10*this.usage[i])/10;
             } else {
                 this.usage[i] = Math.round(this.usage[i]);
             }
         }
         this.tip_vals = [this.usage[0], this.usage[1]];
-        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString();
     },
     create_text_items: function () {
         return [new St.Label({text: _('R'), style_class: Style.get('sm-status-label')}),
@@ -1511,13 +1511,13 @@ const Mem = new Lang.Class({
             }
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.tip_vals[0].toLocaleString();
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.mem[0]).toString() +
-                '  /  ' + this._pad(this.total).toString();
+            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString() +
+                '  /  ' + this._pad(this.total).toLocaleString();
         } else {
-            this.menu_items[3].text = this._pad(this.mem[0]).toString() +
-                '/' + this._pad(this.total).toString();
+            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString() +
+                '/' + this._pad(this.total).toLocaleString();
         }
     },
     create_text_items: function () {
@@ -1769,11 +1769,11 @@ const Swap = new Lang.Class({
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.tip_vals[0].toString();
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.swap).toString() +
-                '  /  ' + this._pad(this.total).toString();
+            this.menu_items[3].text = this._pad(this.swap).toLocaleString() +
+                '  /  ' + this._pad(this.total).toLocaleString();
         } else {
-            this.menu_items[3].text = this._pad(this.swap).toString() +
-                '/' + this._pad(this.total).toString();
+            this.menu_items[3].text = this._pad(this.swap).toLocaleString() +
+                '/' + this._pad(this.total).toLocaleString();
         }
     },
 

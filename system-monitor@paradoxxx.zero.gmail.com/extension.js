@@ -175,8 +175,8 @@ const smStyleManager = new Lang.Class({
     _diskunits: _('MiB/s'),
     _netunits_kbytes: _('KiB/s'),
     _netunits_mbytes: _('MiB/s'),
-    _netunits_kbits: 'kbps',
-    _netunits_mbits: 'Mbps',
+    _netunits_kbits: _('kbit/s'),
+    _netunits_mbits: _('Mbit/s'),
     _pie_width: 300,
     _pie_height: 300,
     _pie_fontsize: 14,
@@ -1594,18 +1594,18 @@ const Net = new Lang.Class({
             this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
             if (this.tip_vals[0] < 1000) {
                 this.text_items[2].text = Style.netunits_kbits();
-                this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('kbit/s');
             } else {
                 this.text_items[2].text = Style.netunits_mbits();
-                this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('Mbit/s');
                 this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
             }
             if (this.tip_vals[2] < 1000) {
                 this.text_items[5].text = Style.netunits_kbits();
-                this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('kbit/s');
             } else {
                 this.text_items[5].text = Style.netunits_mbits();
-                this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('Mbit/s');
                 this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
             }
         } else {

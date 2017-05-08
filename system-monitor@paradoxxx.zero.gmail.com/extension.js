@@ -181,6 +181,12 @@ const smStyleManager = new Lang.Class({
     _bar_fontsize: 14,
 
     _init: function () {
+        // Get locale, needed as an argument for toLocaleString() since GNOME Shell 3.24
+        // See: mozjs library bug https://bugzilla.mozilla.org/show_bug.cgi?id=999003
+        this.locale = GLib.get_language_names()[0];
+        if (this.locale.indexOf('_') != -1)
+            this.locale = this.locale.split("_")[0];
+        
         this._compact = Schema.get_boolean('compact-display');
         if (this._compact) {
             this._extension = '-compact';
@@ -1347,8 +1353,8 @@ const Disk = new Lang.Class({
             }
         }
         this.tip_vals = [this.usage[0], this.usage[1]];
-        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString();
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString(this.locale);
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString(this.locale);
     },
     create_text_items: function () {
         return [new St.Label({text: _('R'), style_class: Style.get('sm-status-label')}),
@@ -1467,8 +1473,8 @@ const Mem = new Lang.Class({
             }
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.mem[0].toLocaleString();
-        this.menu_items[3].text = this.total.toLocaleString();
+        this.menu_items[0].text = this.mem[0].toLocaleString(this.locale);
+        this.menu_items[3].text = this.total.toLocaleString(this.locale);
     },
     create_text_items: function () {
         return [new St.Label({style_class: Style.get('sm-status-value')}),
@@ -1696,8 +1702,8 @@ const Swap = new Lang.Class({
             this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.swap.toLocaleString();
-        this.menu_items[3].text = this.total.toLocaleString();
+        this.menu_items[0].text = this.swap.toLocaleString(this.locale);
+        this.menu_items[3].text = this.total.toLocaleString(this.locale);
     },
 
     create_text_items: function () {

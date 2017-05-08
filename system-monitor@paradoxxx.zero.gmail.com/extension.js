@@ -917,6 +917,7 @@ const Battery = new Lang.Class({
     max: 100,
 
     _init: function () {
+        this.item_name = _('Battery');
         this.icon_hidden = false;
         this.percentage = 0;
         this.timeString = '-- ';
@@ -1122,9 +1123,9 @@ const Cpu = new Lang.Class({
         }
         this.last_total = 0;
         this.usage = [0, 0, 0, 1, 0];
-        let item_name = _('Cpu');
+        this.item_name = _('Cpu');
         if (cpuid !== -1) {
-            item_name += ' ' + (cpuid + 1);
+            this.item_name += ' ' + (cpuid + 1);
         } // append cpu number to cpu name in popup
         // ElementBase.prototype._init.call(this);
         this.parent()
@@ -1303,6 +1304,7 @@ const Disk = new Lang.Class({
     color_name: ['read', 'write'],
 
     _init: function () {
+        this.item_name = _('Disk');
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
         this.last = [0, 0];
@@ -1378,6 +1380,7 @@ const Freq = new Lang.Class({
     item_name: _('Freq'),
     color_name: ['freq'],
     _init: function () {
+        this.item_name = _('Freq');
         this.freq = 0;
         this.parent()
         this.tip_format('MHz');
@@ -1424,6 +1427,7 @@ const Mem = new Lang.Class({
     max: 1,
 
     _init: function () {
+        this.item_name = _('Memory');
         this.gtop = new GTop.glibtop_mem();
         this.mem = [0, 0, 0];
         this.parent()
@@ -1475,16 +1479,16 @@ const Mem = new Lang.Class({
             new St.Label({text: '%', style_class: Style.get('sm-perc-label')})];
     },
     create_menu_items: function () {
-        let unit = 'MiB';
+        let unit = _('MiB');
         if (this.useGiB) {
-            unit = 'GiB';
+            unit = _('GiB');
         }
         return [new St.Label({style_class: Style.get('sm-value')}),
             new St.Label(),
             new St.Label({text: '/', style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
             new St.Label(),
-            new St.Label({text: _(unit), style_class: Style.get('sm-label')})];
+            new St.Label({text: unit, style_class: Style.get('sm-label')})];
     }
 });
 
@@ -1498,6 +1502,7 @@ const Net = new Lang.Class({
     speed_in_bits: false,
 
     _init: function () {
+        this.item_name = _('Net');
         this.ifs = [];
         this.client = NMClient.Client.new();
         this.update_iface_list();
@@ -1660,6 +1665,7 @@ const Swap = new Lang.Class({
     max: 1,
 
     _init: function () {
+        this.item_name = _('Swap');
         this.gtop = new GTop.glibtop_swap();
         this.parent()
         this.tip_format();
@@ -1725,8 +1731,9 @@ const Thermal = new Lang.Class({
     color_name: ['tz0'],
     max: 100,
     _init: function () {
+        this.item_name = _('Thermal');
         this.temperature = '-- ';
-        this.fahrenheit_unit = false;
+        this.fahrenheit_unit = Schema.get_boolean(this.elt + '-fahrenheit-unit');
         this.display_error = true;
         this.parent()
         this.tip_format(this.temperature_symbol());
@@ -1786,6 +1793,7 @@ const Fan = new Lang.Class({
     color_name: ['fan0'],
 
     _init: function () {
+        this.item_name = _('Fan');
         this.rpm = 0;
         this.display_error = true;
         this.parent()

@@ -1,21 +1,23 @@
 # French translation.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) 2011 Florian Mounier aka paradoxxxzero
+# This file is distributed under the same license as the
+# GNOME shell system monitor extension.
 # Guillaume Ayoub <guillaume.ayoub@kozea.fr>, 2011.
 #
 #: extension.js:751
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-22 15:04+0100\n"
-"PO-Revision-Date: 2014-10-08 12:29+0100\n"
-"Last-Translator: Nicolas Viéville <nicolas.vieville@univ-valenciennes.fr>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2017-04-16 13:37+0200\n"
+"Last-Translator: Davy Defaud <davy@defaud.net>\n"
+"Language-Team: French <fr@li.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n >= 2;\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
@@ -35,7 +37,7 @@ msgstr "Largeur du graphe"
 
 #: prefs.js:176 prefs.js:174
 msgid "Show Text"
-msgstr "Montrer le texte"
+msgstr "Afficher le texte"
 
 #: prefs.js:184 prefs.js:182
 msgid "Display Style"
@@ -55,7 +57,7 @@ msgstr "Couleur de fond"
 
 #: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr "Afficher tous les coeurs"
+msgstr "Afficher tous les cœurs"
 
 #: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
@@ -67,19 +69,19 @@ msgstr "Capteur"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr "Veuillez installer lm-sensors, s'il vous plaît"
+msgstr "Veuillez installer lm-sensors"
 
 #: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr "Déplacer l'horloge"
+msgstr "Déplacer l’horloge"
 
 #: prefs.js:286 prefs.js:289
 msgid "Compact Display"
-msgstr "Affichage Compact"
+msgstr "Affichage compact"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
-msgstr "CPU"
+msgstr "Processeur"
 
 msgid "User"
 msgstr "Utilisateur"
@@ -91,10 +93,10 @@ msgid "Other"
 msgstr "Autre"
 
 msgid "Nice"
-msgstr "Nice"
+msgstr "Politesse"
 
 msgid "Iowait"
-msgstr "IOwait"
+msgstr "Latence d’E‐S"
 
 #: extension.js:941 extension.js:1378
 msgid "Memory"
@@ -111,7 +113,7 @@ msgstr "Tampon"
 
 #: extension.js:1134 extension.js:1598
 msgid "Swap"
-msgstr "Swap"
+msgstr "Échange (swap)"
 
 msgid "Used"
 msgstr "Utilisé"
@@ -152,11 +154,11 @@ msgstr "Lecture"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
-msgstr ""
+msgstr "en lecture"
 
 #: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
-msgstr ""
+msgstr "en écriture"
 
 #: prefs.js:185 prefs.js:183
 msgid "graph"
@@ -164,21 +166,21 @@ msgstr "graphe"
 
 #: prefs.js:185 prefs.js:183
 msgid "digit"
-msgstr "chiffre"
+msgstr "chiffres"
 
 #: prefs.js:185 prefs.js:183
 msgid "both"
 msgstr "les deux"
 
 msgid "cpu"
-msgstr "CPU"
+msgstr "processeur"
 
 #: extension.js:811
 msgid "mem"
 msgstr "mém."
 
 msgid "swap"
-msgstr "swap"
+msgstr "échange"
 
 msgid "net"
 msgstr "réseau"
@@ -207,10 +209,10 @@ msgid "other"
 msgstr "autre"
 
 msgid "nice"
-msgstr "nice"
+msgstr "politesse"
 
 msgid "iowait"
-msgstr "iowait"
+msgstr "latence d’E‐S"
 
 msgid "program"
 msgstr "programme"
@@ -252,9 +254,13 @@ msgstr "Kio/s"
 msgid "MiB/s"
 msgstr "Mio/s"
 
-#: extension.js:1419 extension.js:1635
+#: extension.js:1419 extension.js:1482 extension.js:1635
 msgid "MiB"
 msgstr "Mio"
+
+#: extension.js:1484
+msgid "GiB"
+msgstr "Gio"
 
 #: extension.js:184
 msgid "kB"
@@ -266,10 +272,10 @@ msgstr "Mo"
 
 #: extension.js:1179 extension.js:1644
 msgid "Thermal"
-msgstr "Thermique"
+msgstr "Température"
 
 msgid "thermal"
-msgstr "thermique"
+msgstr "température"
 
 #: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
@@ -281,7 +287,7 @@ msgstr "Afficher le temps restant"
 
 #: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
-msgstr "Cacher l'icône système"
+msgstr "Cacher l’icône système"
 
 #: prefs.js:230 prefs.js:237
 msgid "Usage Style"
@@ -293,7 +299,7 @@ msgstr "circulaire"
 
 #: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr "barre"
+msgstr "en barres"
 
 #: prefs.js:231 prefs.js:238
 msgid "none"
@@ -309,13 +315,13 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 "\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 msgstr ""
-"Dépendances manquantes\n"
-"S'il vous plaît, veuillez installer : \n"
-"libgtop, Network Manager et les bibliothèques de liaisons gir \n"
-"\t sur Ubuntu : gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t sur Fedora : libgtop2-devel, NetworkManager-glib-devel \n"
-"\t sur Arch : libgtop, networkmanager\n"
-"\t sur openSUSE : typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+"Dépendances manquantes\n\n"
+"Veuillez installer libgtop, Network Manager et les bibliothèques de "
+"liaisons gir :\n"
+"\t- sur Ubuntu : gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 ;\n"
+"\t- sur Fedora : libgtop2-devel, NetworkManager-glib-devel ;\n"
+"\t- sur Arch : libgtop, networkmanager ;\n"
+"\t- sur openSUSE : typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0.\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
@@ -334,10 +340,10 @@ msgstr "batterie"
 
 #: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr "Fréq."
+msgstr "Fréquence"
 
 msgid "freq"
-msgstr "fréq."
+msgstr "fréquence"
 
 #: extension.js:1540 extension.js:1692
 msgid "Fan"
@@ -353,11 +359,11 @@ msgstr "tr/min"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr "Afficher les infos-bulles"
+msgstr "Afficher les infos‐bulles"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr "CPU"
+msgstr "Processeur"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"

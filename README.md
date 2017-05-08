@@ -16,7 +16,7 @@ It's recommended you install via the Gnome Shell Extensions website. However, be
 
 On Ubuntu:
 
-    $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0
+    $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0  gir1.2-clutter-1.0
 
 On Fedora:
 
@@ -62,7 +62,13 @@ If we do not have the translation of your language and you want to translate by 
     
 To create a zip file with the specified version number, ready to upload to [Gnome Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
 
-    make zip-file VERSION=31
+    make zip-file VERSION=<version>
+
+To determine the version number to use, check the extensions site and increment from the largest published version.
+
+The specified version number is just for documentation and isn't strictly necessary in the uploaded file, since the extensions website will dynamically set this and override whatever we enter.
+
+Once uploaded, [create a Github release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
 
 ### Authors:
 

@@ -163,10 +163,6 @@ function interesting_mountpoint(mount) {
     return ((mount[0].indexOf('/dev/') === 0 || mount[2].toLowerCase() === 'nfs') && mount[2].toLowerCase() !== 'udf');
 }
 
-Number.prototype.toLocaleFixed = function (dots) {
-    return this.toFixed(dots).toLocaleString();
-}
-
 
 const smStyleManager = new Lang.Class({
     Name: 'SystemMonitor.smStyleManager',
@@ -175,8 +171,8 @@ const smStyleManager = new Lang.Class({
     _diskunits: _('MiB/s'),
     _netunits_kbytes: _('KiB/s'),
     _netunits_mbytes: _('MiB/s'),
-    _netunits_kbits: 'kbps',
-    _netunits_mbits: 'Mbps',
+    _netunits_kbits: _('kbit/s'),
+    _netunits_mbits: _('Mbit/s'),
     _pie_width: 300,
     _pie_height: 300,
     _pie_fontsize: 14,
@@ -1345,14 +1341,14 @@ const Disk = new Lang.Class({
         this.vals = this.usage.slice();
         for (let i = 0; i < 2; i++) {
             if (this.usage[i] < 10) {
-                this.usage[i] = this.usage[i].toLocaleFixed(1);
+                this.usage[i] = Math.round(10*this.usage[i])/10;
             } else {
                 this.usage[i] = Math.round(this.usage[i]);
             }
         }
         this.tip_vals = [this.usage[0], this.usage[1]];
-        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toString();
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString();
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString();
     },
     create_text_items: function () {
         return [new St.Label({text: _('R'), style_class: Style.get('sm-status-label')}),
@@ -1471,8 +1467,8 @@ const Mem = new Lang.Class({
             }
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.mem[0].toString();
-        this.menu_items[3].text = this.total.toString();
+        this.menu_items[0].text = this.mem[0].toLocaleString();
+        this.menu_items[3].text = this.total.toLocaleString();
     },
     create_text_items: function () {
         return [new St.Label({style_class: Style.get('sm-status-value')}),
@@ -1594,18 +1590,18 @@ const Net = new Lang.Class({
             this.tip_vals[2] = Math.round(this.tip_vals[2] * 8.192);
             if (this.tip_vals[0] < 1000) {
                 this.text_items[2].text = Style.netunits_kbits();
-                this.menu_items[1].text = this.tip_unit_labels[0].text = 'kbps';
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('kbit/s');
             } else {
                 this.text_items[2].text = Style.netunits_mbits();
-                this.menu_items[1].text = this.tip_unit_labels[0].text = 'Mbps';
+                this.menu_items[1].text = this.tip_unit_labels[0].text = _('Mbit/s');
                 this.tip_vals[0] = (this.tip_vals[0] / 1000).toPrecision(3);
             }
             if (this.tip_vals[2] < 1000) {
                 this.text_items[5].text = Style.netunits_kbits();
-                this.menu_items[4].text = this.tip_unit_labels[2].text = 'kbps';
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('kbit/s');
             } else {
                 this.text_items[5].text = Style.netunits_mbits();
-                this.menu_items[4].text = this.tip_unit_labels[2].text = 'Mbps';
+                this.menu_items[4].text = this.tip_unit_labels[2].text = _('Mbit/s');
                 this.tip_vals[2] = (this.tip_vals[2] / 1000).toPrecision(3);
             }
         } else {
@@ -1700,8 +1696,8 @@ const Swap = new Lang.Class({
             this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.swap.toString();
-        this.menu_items[3].text = this.total.toString();
+        this.menu_items[0].text = this.swap.toLocaleString();
+        this.menu_items[3].text = this.total.toLocaleString();
     },
 
     create_text_items: function () {

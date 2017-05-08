@@ -40,7 +40,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Compat = Me.imports.compat;
 
-let Background, GTop, IconSize, MountsMonitor, NMClient, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
+let Background, GTop, IconSize, Locale, MountsMonitor, NMClient, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
 
 try {
     GTop = imports.gi.GTop;
@@ -161,10 +161,6 @@ function interesting_mountpoint(mount) {
     }
 
     return ((mount[0].indexOf('/dev/') === 0 || mount[2].toLowerCase() === 'nfs') && mount[2].toLowerCase() !== 'udf');
-}
-
-Number.prototype.toLocaleFixed = function (dots) {
-    return this.toFixed(dots).toLocaleString();
 }
 
 
@@ -1369,14 +1365,14 @@ const Disk = new Lang.Class({
         this.vals = this.usage.slice();
         for (let i = 0; i < 2; i++) {
             if (this.usage[i] < 10) {
-                this.usage[i] = Math.round(10*this.usage[i])/10;
+                this.usage[i] = Math.round(10 * this.usage[i]) / 10;
             } else {
                 this.usage[i] = Math.round(this.usage[i]);
             }
         }
         this.tip_vals = [this.usage[0], this.usage[1]];
-        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString();
-        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString();
+        this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString(Locale);
+        this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString(Locale);
     },
     create_text_items: function () {
         return [new St.Label({text: _('R'), style_class: Style.get('sm-status-label')}),
@@ -1511,13 +1507,13 @@ const Mem = new Lang.Class({
             }
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.tip_vals[0].toLocaleString();
+        this.menu_items[0].text = this.tip_vals[0].toLocaleString(Locale);
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString() +
-                '  /  ' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString(Locale) +
+                '  /  ' + this._pad(this.total).toLocaleString(Locale);
         } else {
-            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString() +
-                '/' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString(Locale) +
+                '/' + this._pad(this.total).toLocaleString(Locale);
         }
     },
     create_text_items: function () {
@@ -1769,11 +1765,11 @@ const Swap = new Lang.Class({
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.tip_vals[0].toString();
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.swap).toLocaleString() +
-                '  /  ' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
+                '  /  ' + this._pad(this.total).toLocaleString(Locale);
         } else {
-            this.menu_items[3].text = this._pad(this.swap).toLocaleString() +
-                '/' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
+                '/' + this._pad(this.total).toLocaleString(Locale);
         }
     },
 
@@ -1930,6 +1926,13 @@ var init = function () {
     log('System monitor applet init from ' + extension.path);
 
     Convenience.initTranslations();
+    // Get locale, needed as an argument for toLocaleString() since GNOME Shell 3.24
+    // See: mozjs library bug https://bugzilla.mozilla.org/show_bug.cgi?id=999003
+    Locale = GLib.get_language_names()[0];
+    if (Locale.indexOf('_') !== -1) {
+        Locale = Locale.split('_')[0];
+    }
+
     Schema = Convenience.getSettings();
 
     Style = new smStyleManager();

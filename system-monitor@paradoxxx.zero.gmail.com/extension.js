@@ -1796,8 +1796,11 @@ const Thermal = new Lang.Class({
         this.tip_unit_labels[0].text = _(this.temperature_symbol());
     },
     create_text_items: function () {
-        return [new St.Label({style_class: Style.get('sm-status-value')}),
-            new St.Label({text: this.temperature_symbol(), style_class: Style.get('sm-temp-label')})];
+        return [new St.Label({style_class: Style.get('sm-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: this.temperature_symbol(),
+                style_class: Style.get('sm-temp-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label(),

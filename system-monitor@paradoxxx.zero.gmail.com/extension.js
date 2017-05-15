@@ -1107,8 +1107,11 @@ const Battery = new Lang.Class({
     create_text_items: function () {
         return [new St.Icon({gicon: Gio.icon_new_for_string(this.icon),
             style_class: Style.get('sm-status-icon')}),
-            new St.Label({style_class: Style.get('sm-status-value')}),
-            new St.Label({text: '%', style_class: Style.get('sm-unit-label')})];
+            new St.Label({style_class: Style.get('sm-status-value'),
+                y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: '%',
+                style_class: Style.get('sm-perc-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label(),

@@ -1388,11 +1388,15 @@ const Disk = new Lang.Class({
     },
     create_text_items: function () {
         return [new St.Label({text: _('R'), style_class: Style.get('sm-status-label')}),
-            new St.Label({style_class: Style.get('sm-disk-value')}),
-            new St.Label({text: Style.diskunits(), style_class: Style.get('sm-disk-unit-label')}),
+            new St.Label({style_class: Style.get('sm-disk-value'),
+                y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: Style.diskunits(), style_class: Style.get('sm-disk-unit-label'),
+                y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({text: _('W'), style_class: Style.get('sm-status-label')}),
-            new St.Label({style_class: Style.get('sm-disk-value')}),
-            new St.Label({text: Style.diskunits(), style_class: Style.get('sm-disk-unit-label')})];
+            new St.Label({style_class: Style.get('sm-disk-value'),
+                y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: Style.diskunits(), style_class: Style.get('sm-disk-unit-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label({style_class: Style.get('sm-value')}),

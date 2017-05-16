@@ -1440,8 +1440,10 @@ const Freq = new Lang.Class({
         this.menu_items[3].text = value;
     },
     create_text_items: function () {
-        return [new St.Label({style_class: Style.get('sm-big-status-value')}),
-            new St.Label({text: 'MHz', style_class: Style.get('sm-perc-label')})];
+        return [new St.Label({style_class: Style.get('sm-big-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: 'MHz', style_class: Style.get('sm-perc-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label(),
@@ -1874,8 +1876,10 @@ const Fan = new Lang.Class({
         this.tip_vals[0] = this.rpm;
     },
     create_text_items: function () {
-        return [new St.Label({style_class: Style.get('sm-status-value')}),
-            new St.Label({text: _('rpm'), style_class: Style.get('sm-unit-label')})];
+        return [new St.Label({style_class: Style.get('sm-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: _('rpm'), style_class: Style.get('sm-unit-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label(),

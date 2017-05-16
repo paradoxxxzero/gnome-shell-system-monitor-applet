@@ -127,20 +127,20 @@
 .sm-unit-label-compact,
 .sm-net-unit-label-compact {
     color: #aaa;
-    padding: 9px 3px 0px 1px;
+    padding: 0 3px 0px 1px;
     text-align: right;
     font-size: 7px;
 } /* Bat, Net... units in text items */
 
 .sm-disk-unit-label-compact {
     color: #aaa;
-    padding: 9px 3px 0px 0px;
+    padding: 0 3px 0px 0px;
     text-align: right;
     font-size: 7px;
 } /* Disk units in text items */
 
 .sm-perc-label-compact {
-    padding: 9px 3px 0 0px;
+    padding: 0 3px 0 0px;
     color: #aaa;
     font-size: 8px;
 } /* Cpu, Mem ... % sign in text items */
@@ -148,32 +148,32 @@
 .sm-temp-label-compact {
     font-size: 10px;
     color: #aaa;
-    padding: 3px 1px 0 1px;
+    padding: 0 1px 0 1px;
 } /* Thermal °C sign in text items */
 
 .sm-status-value-compact {
-    padding:6px 0px 0 1px;
+    padding:0 0px 0 1px;
     font-size:11px;
     text-align: right;
     min-width:16px;
 } /* Cpu, Mem... value in text items */
 
 .sm-net-value-compact {
-    padding:6px 0px 0 1px;
+    padding:0 0px 0 1px;
     font-size:11px;
     text-align: right;
     min-width:24px;
 } /* Net value in text items */
 
 .sm-disk-value-compact {
-    padding: 6px 1px 0 1px;
+    padding: 0 1px 0 1px;
     font-size: 11px;
     text-align: right;
     min-width: 20px;
 } /* Disk value in text items */
 
 .sm-big-status-value-compact {
-    padding: 6px 0px 0px 1px;
+    padding: 0 0px 0px 1px;
     font-size: 11px;
     min-width: 38px;
     text-align: right;

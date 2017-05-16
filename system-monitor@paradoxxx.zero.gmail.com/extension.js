@@ -841,6 +841,18 @@ const ElementBase = new Lang.Class({
         Schema.connect('changed::' + this.elt + '-graph-width',
                        Lang.bind(this.chart, this.chart.resize));
 
+        if (this.elt === 'thermal') {
+            Schema.connect('changed::thermal-threshold',
+                Lang.bind(this,
+                          function () {
+                              Mainloop.source_remove(this.timeout);
+                              this.timeout = 0;
+                              this.reset_style();
+                              this.timeout = Mainloop.timeout_add(
+                                  this.interval, Lang.bind(this, this.update));
+                          }));
+        }
+
         this.label = new St.Label({text: this.elt === 'memory' ? _('mem') : _(this.elt),
             style_class: Style.get('sm-status-label')});
         change_text.call(this);
@@ -896,11 +908,26 @@ const ElementBase = new Lang.Class({
         }
         this.refresh();
         this._apply();
+        if (this.elt === 'thermal') {
+            this.threshold();
+        }
         this.chart.update();
         for (let i = 0; i < this.tip_vals.length; i++) {
             this.tip_labels[i].text = this.tip_vals[i].toString();
         }
         return true;
+    },
+    reset_style: function () {
+        this.text_items[0].set_style('color: rgba(255, 255, 255, 1)');
+    },
+    threshold: function () {
+        if (Schema.get_int('thermal-threshold')) {
+            if (this.temp_over_threshold) {
+                this.text_items[0].set_style('color: rgba(255, 0, 0, 1)');
+            } else {
+                this.text_items[0].set_style('color: rgba(255, 255, 255, 1)');
+            }
+        }
     },
     destroy: function () {
         TipBox.prototype.destroy.call(this);
@@ -1747,6 +1774,9 @@ const Thermal = new Lang.Class({
             file.load_contents_async(null, Lang.bind(this, function (source, result) {
                 let as_r = source.load_contents_finish(result)
                 this.temperature = Math.round(parseInt(as_r[1]) / 1000);
+                if (this.fahrenheit_unit) {
+                    this.temperature = Math.round(this.temperature * 1.8 + 32);
+                }
             }));
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -1759,6 +1789,7 @@ const Thermal = new Lang.Class({
         this.text_items[0].text = this.menu_items[3].text = this.temperature_text();
         // Making it looks better in chart.
         // this.vals = [this.temperature / 100];
+        this.temp_over_threshold = this.temperature > Schema.get_int('thermal-threshold');
         this.vals = [this.temperature];
         this.tip_vals[0] = this.temperature_text();
         this.menu_items[5].text = this.temperature_symbol();
@@ -1777,7 +1808,7 @@ const Thermal = new Lang.Class({
             new St.Label({text: this.temperature_symbol(), style_class: Style.get('sm-label')})];
     },
     temperature_text: function () {
-        return this.fahrenheit_unit ? Math.round(this.temperature * 1.8 + 32).toString() : this.temperature.toString();
+        return this.temperature.toString();
     },
     temperature_symbol: function () {
         return this.fahrenheit_unit ? '\u2109' : '\u2103';

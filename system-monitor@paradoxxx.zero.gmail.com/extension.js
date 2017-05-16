@@ -1280,8 +1280,10 @@ const Cpu = new Lang.Class({
         return 1;
     },
     create_text_items: function () {
-        return [new St.Label({style_class: Style.get('sm-status-value')}),
-            new St.Label({text: '%', style_class: Style.get('sm-perc-label')})];
+        return [new St.Label({style_class: Style.get('sm-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: '%', style_class: Style.get('sm-perc-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label(),
@@ -1505,8 +1507,10 @@ const Mem = new Lang.Class({
         this.menu_items[3].text = this.total.toString();
     },
     create_text_items: function () {
-        return [new St.Label({style_class: Style.get('sm-status-value')}),
-            new St.Label({text: '%', style_class: Style.get('sm-perc-label')})];
+        return [new St.Label({style_class: Style.get('sm-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: '%', style_class: Style.get('sm-perc-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         let unit = _('MiB');
@@ -1735,8 +1739,10 @@ const Swap = new Lang.Class({
     },
 
     create_text_items: function () {
-        return [new St.Label({style_class: Style.get('sm-status-value')}),
-            new St.Label({text: '%', style_class: Style.get('sm-perc-label')})];
+        return [new St.Label({style_class: Style.get('sm-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: '%', style_class: Style.get('sm-perc-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         let unit = 'MiB';

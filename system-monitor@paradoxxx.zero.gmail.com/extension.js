@@ -1672,12 +1672,18 @@ const Net = new Lang.Class({
     create_text_items: function () {
         return [new St.Icon({icon_size: 2 * IconSize / 3 * Style.iconsize(),
             icon_name: 'go-down-symbolic'}),
-            new St.Label({style_class: Style.get('sm-net-value')}),
-            new St.Label({text: _('KiB/s'), style_class: Style.get('sm-net-unit-label')}),
+            new St.Label({style_class: Style.get('sm-net-value'),
+                y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: _('KiB/s'),
+                style_class: Style.get('sm-net-unit-label'),
+                y_align: Clutter.ActorAlign.CENTER}),
             new St.Icon({icon_size: 2 * IconSize / 3 * Style.iconsize(),
                 icon_name: 'go-up-symbolic'}),
-            new St.Label({style_class: Style.get('sm-net-value')}),
-            new St.Label({text: _('KiB/s'), style_class: Style.get('sm-net-unit-label')})];
+            new St.Label({style_class: Style.get('sm-net-value'),
+                y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: _('KiB/s'),
+                style_class: Style.get('sm-net-unit-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
     },
     create_menu_items: function () {
         return [new St.Label({style_class: Style.get('sm-value')}),

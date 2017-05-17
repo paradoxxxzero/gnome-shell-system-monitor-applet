@@ -4,3 +4,4 @@ tmp
 *.swp
 /.project
 /*.zip
+/*.geany

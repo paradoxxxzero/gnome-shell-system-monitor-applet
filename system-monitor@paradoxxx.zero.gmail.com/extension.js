@@ -2002,7 +2002,9 @@ var enable = function () {
             Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
         }
 
-        let box = new St.BoxLayout();
+        // The spacing adds a distance between the graphs/text on the top bar
+        let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
+        let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
         // Add items to panel box

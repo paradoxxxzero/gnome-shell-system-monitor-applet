@@ -1733,7 +1733,7 @@ const Thermal = new Lang.Class({
     _init: function () {
         this.item_name = _('Thermal');
         this.temperature = '-- ';
-        this.fahrenheit_unit = false;
+        this.fahrenheit_unit = Schema.get_boolean(this.elt + '-fahrenheit-unit');
         this.display_error = true;
         this.parent()
         this.tip_format(this.temperature_symbol());

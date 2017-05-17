@@ -1476,27 +1476,29 @@ const Mem = new Lang.Class({
         this.total = Math.round(this.gtop.total / 1024 / 1024);
         let threshold = 4 * 1024; // In MiB
         this.useGiB = false;
+        this._unitConversion = 1024 * 1024;
+        this._decimals = 100;
         if (this.total > threshold) {
             this.useGiB = true;
+            this._unitConversion *= 1024 / this._decimals;
         }
     },
     refresh: function () {
         GTop.glibtop_get_mem(this.gtop);
-        let decimals = 100;
         if (this.useGiB) {
-            this.mem[0] = Math.round(this.gtop.user / 1024 / 1024 / 1024 * decimals);
-            this.mem[0] /= decimals;
-            this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024 / 1024 * decimals);
-            this.mem[1] /= decimals;
-            this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024 / 1024 * decimals);
-            this.mem[2] /= decimals;
-            this.total = Math.round(this.gtop.total / 1024 / 1024 / 1024 * decimals);
-            this.total /= decimals;
+            this.mem[0] = Math.round(this.gtop.user / this._unitConversion);
+            this.mem[0] /= this._decimals;
+            this.mem[1] = Math.round(this.gtop.buffer / this._unitConversion);
+            this.mem[1] /= this._decimals;
+            this.mem[2] = Math.round(this.gtop.cached / this._unitConversion);
+            this.mem[2] /= this._decimals;
+            this.total = Math.round(this.gtop.total / this._unitConversion);
+            this.total /= this._decimals;
         } else {
-            this.mem[0] = Math.round(this.gtop.user / 1024 / 1024);
-            this.mem[1] = Math.round(this.gtop.buffer / 1024 / 1024);
-            this.mem[2] = Math.round(this.gtop.cached / 1024 / 1024);
-            this.total = Math.round(this.gtop.total / 1024 / 1024);
+            this.mem[0] = Math.round(this.gtop.user / this._unitConversion);
+            this.mem[1] = Math.round(this.gtop.buffer / this._unitConversion);
+            this.mem[2] = Math.round(this.gtop.cached / this._unitConversion);
+            this.total = Math.round(this.gtop.total / this._unitConversion);
         }
     },
     _apply: function () {
@@ -1721,21 +1723,23 @@ const Swap = new Lang.Class({
         this.total = Math.round(this.gtop.total / 1024 / 1024);
         let threshold = 4 * 1024; // In MiB
         this.useGiB = false;
+        this._unitConversion = 1024 * 1024;
+        this._decimals = 100;
         if (this.total > threshold) {
             this.useGiB = true;
+            this._unitConversion *= 1024 / this._decimals;
         }
     },
     refresh: function () {
         GTop.glibtop_get_swap(this.gtop);
-        let decimals = 100;
         if (this.useGiB) {
-            this.swap = Math.round(this.gtop.used / 1024 / 1024 / 1024 * decimals);
-            this.swap /= decimals;
-            this.total = Math.round(this.gtop.total / 1024 / 1024 / 1024 * decimals);
-            this.total /= decimals;
+            this.swap = Math.round(this.gtop.used / this._unitConversion);
+            this.swap /= this._decimals;
+            this.total = Math.round(this.gtop.total / this._unitConversion);
+            this.total /= this._decimals;
         } else {
-            this.swap = Math.round(this.gtop.used / 1024 / 1024);
-            this.total = Math.round(this.gtop.total / 1024 / 1024);
+            this.swap = Math.round(this.gtop.used / this._unitConversion);
+            this.total = Math.round(this.gtop.total / this._unitConversion);
         }
     },
     _apply: function () {

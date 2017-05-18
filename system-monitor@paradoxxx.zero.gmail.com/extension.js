@@ -1499,8 +1499,8 @@ const Mem = new Lang.Class({
             }
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.mem[0].toString();
-        this.menu_items[3].text = this.total.toString();
+        this.menu_items[0].text = Math.round(this.mem[0] / this.total * 100).toString();
+        this.menu_items[3].text = this.mem[0].toString() + '  /  ' + this.total.toString();
     },
     create_text_items: function () {
         return [new St.Label({style_class: Style.get('sm-status-value'),
@@ -1514,8 +1514,8 @@ const Mem = new Lang.Class({
             unit = _('GiB');
         }
         return [new St.Label({style_class: Style.get('sm-value')}),
+            new St.Label({text: '%', style_class: Style.get('sm-label')}),
             new St.Label(),
-            new St.Label({text: '/', style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: unit, style_class: Style.get('sm-label')})];
     }
@@ -1737,8 +1737,8 @@ const Swap = new Lang.Class({
             this.tip_vals[0] = Math.round(this.vals[0] * 100);
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.swap.toString();
-        this.menu_items[3].text = this.total.toString();
+        this.menu_items[0].text = Math.round(this.swap / this.total * 100).toString();
+        this.menu_items[3].text = this.swap.toString() + '  /  ' + this.total.toString();
     },
 
     create_text_items: function () {
@@ -1753,8 +1753,8 @@ const Swap = new Lang.Class({
             unit = 'GiB';
         }
         return [new St.Label({style_class: Style.get('sm-value')}),
+            new St.Label({text: '%', style_class: Style.get('sm-label')}),
             new St.Label(),
-            new St.Label({text: '/', style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
             new St.Label({text: _(unit), style_class: Style.get('sm-label')})];
     }

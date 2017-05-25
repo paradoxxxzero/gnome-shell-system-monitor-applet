@@ -830,6 +830,7 @@ const ElementBase = new Lang.Class({
             Lang.bind(this,
                       function (schema, key) {
                           Mainloop.source_remove(this.timeout);
+                          this.timeout = 0;
                           this.interval = l_limit(Schema.get_int(key));
                           this.timeout = Mainloop.timeout_add(
                               this.interval, Lang.bind(this, this.update));
@@ -900,6 +901,7 @@ const ElementBase = new Lang.Class({
               },*/
     update: function () {
         if (!this.menu_visible && !this.actor.visible) {
+            this.timeout = 0;
             return false;
         }
         this.refresh();
@@ -927,7 +929,10 @@ const ElementBase = new Lang.Class({
     },
     destroy: function () {
         TipBox.prototype.destroy.call(this);
-        Mainloop.source_remove(this.timeout);
+        if (this.timeout) {
+            Mainloop.source_remove(this.timeout);
+            this.timeout = 0;
+        }
     }
 });
 const Battery = new Lang.Class({

@@ -256,6 +256,11 @@ msgstr "م.ب/ثا"
 msgid "MiB"
 msgstr "م.ب"
 
+#: extension.js:1714
+#, fuzzy
+msgid "GiB"
+msgstr "م.ب"
+
 #: extension.js:184
 msgid "kB"
 msgstr "ك.ب"
@@ -361,4 +366,8 @@ msgstr ""
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
+msgstr ""
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
 msgstr ""

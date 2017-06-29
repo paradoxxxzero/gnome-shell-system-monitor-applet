@@ -1393,10 +1393,10 @@ const Disk = new Lang.Class({
     },
     create_menu_items: function () {
         return [new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label({text: _('MiB/s'), style_class: Style.get('sm-label-left')}),
+            new St.Label({text: Style.diskunits(), style_class: Style.get('sm-label')}),
             new St.Label({text: _('R'), style_class: Style.get('sm-label')}),
             new St.Label({style_class: Style.get('sm-value')}),
-            new St.Label({text: _('MiB/s'), style_class: Style.get('sm-label-left')}),
+            new St.Label({text: Style.diskunits(), style_class: Style.get('sm-label')}),
             new St.Label({text: _('W'), style_class: Style.get('sm-label')})];
     },
 });

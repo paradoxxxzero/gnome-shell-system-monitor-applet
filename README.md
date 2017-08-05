@@ -2,37 +2,57 @@
 
 [![Build Status](https://img.shields.io/travis/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.org/paradoxxxzero/gnome-shell-system-monitor-applet)
 
-![](http://i.imgur.com/ka9OA.png)
+![screenshot-small](http://i.imgur.com/ka9OA.png)
 
-![](http://i.imgur.com/mmRTu.png)
+![screenshot-mid](http://i.imgur.com/mmRTu.png)
 
-![](http://i.imgur.com/X7Sss.png)
+![screenshot-large](http://i.imgur.com/X7Sss.png)
 
-### Install:
+### Installation
 
-Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2) if you are using an older version of gnome-shell.
+#### Prerequisites
 
-It's recommended you install via the Gnome Shell Extensions website. However, before you do so, ensure you have the appropriate system packages installed.
+This extension [requires GNOME Shell v3.4 or later](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/blob/master/system-monitor%40paradoxxx.zero.gmail.com/metadata.json#L2).
+Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2) if you are using an older version of GNOME Shell (check with `gnome-shell --version`).
 
-On Ubuntu:
+Before installing this extension, ensure you have the necessary system packages installed:
 
-    $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0  gir1.2-clutter-1.0
+* On Ubuntu:
 
-On Fedora:
+      $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0  gir1.2-clutter-1.0
 
-    $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
+* On Fedora:
+
+      $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
     
-On openSUSE (Leap 42.1):
+* On openSUSE (Leap 42.1):
 
-    $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
+      $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
 
-Then, visit [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/), preferrably in Firefox, and install by clicking the toggle button next to the extension's name. If the install was success, the toggle button should now show "ON".
+For the browser installation (recommended), you will need the GNOME Shell integration browser extension for
+[Chrome](https://chrome.google.com/webstore/detail/gnome-shell-integration/gphhapmejobijbbhgpjhcjognlahblep),
+[Firefox](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) or
+[Opera](https://addons.opera.com/en/extensions/details/gnome-shell-integration/).
 
-If it failed, ensure you installed all the necessary dependencies, and that you granted the browser permission to install extensions when prompted. Additionally, try rebooting gnome-shell (Alt + F2 -> r).
+Note: If you're using Firefox 52 or later, [you will also need to install `chrome-gnome-shell`](https://blogs.gnome.org/ne0sight/2016/12/25/how-to-install-gnome-shell-extensions-with-firefox-52/).
+The instructions are available [on the GNOME wiki](https://wiki.gnome.org/Projects/GnomeShellIntegrationForChrome/Installation#Ubuntu_Linux).
 
-#### Manual Install:
+#### Browser installation
 
-Download and extract the ZIP/Tarball, open a shell into its directory, and run:
+It's recommended you install the extension via the Gnome Shell Extensions website.
+
+Visit [This extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
+and install by clicking the toggle button next to the extension's name.
+
+If the install was successful, the toggle button should now show "ON".
+If it failed, ensure that you installed all the [necessary dependencies](#prerequisites),
+and that you granted the browser permission to install extensions when prompted.
+Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt).
+
+#### Manual installation
+
+[Download the ZIP/Tarball](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases),
+extract the archive, open a shell into its directory, and run:
 
     make install
 
@@ -46,19 +66,19 @@ Alternately, if you plan on doing development on the extension, or testing modif
     ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
     gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com
 
-And restart gnome-shell (Alt + F2 -> r) or reboot.
+And restart gnome-shell (`Alt + F2`, then `r`) or reboot the machine.
 
-On openSUSE you need to install a devel package that provides the gnome-shell-extension-tool command:
+On openSUSE you need to install a devel package that provides the `gnome-shell-extension-tool` command:
 
     $ sudo zypper install gnome-shell-devel
 
-### Development:
+### Development
 
-#### Translation:
+#### Translation
 
 If we do not have the translation of your language and you want to translate by yourself, please make a fork, add your po/YOUR_LANG/system-monitor-applet.po file, and make a pull request.
 
-#### Deployment:
+#### Deployment
     
 To create a zip file with the specified version number, ready to upload to [Gnome Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
 
@@ -70,14 +90,14 @@ The specified version number is just for documentation and isn't strictly necess
 
 Once uploaded, [create a Github release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
 
-### Authors:
+### Authors
 
 [paradoxxxzero](https://github.com/paradoxxxzero)
 [yuyichao](https://github.com/yuyichao)
 [darkxst](https://github.com/darkxst)
 And [many contributors](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/contributors)
 
-### License:
+### License
 
 Copyright (C) 2011 Florian Mounier aka paradoxxxzero
 

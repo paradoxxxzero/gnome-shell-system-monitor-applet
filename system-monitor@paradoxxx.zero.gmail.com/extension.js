@@ -1932,21 +1932,22 @@ const Gpu = new Lang.Class({
             } while (out);
         }
 
-        let total = parseInt(usage[0]);
-        let used = parseInt(usage[1]);
+        let memTotal = parseInt(usage[0]);
+        let memUsed = parseInt(usage[1]);
+        this.percentage = parseInt(usage[2]);
 
         if (typeof this.useGiB === 'undefined') {
-            this._unit(total);
+            this._unit(memTotal);
         }
 
         if (this.useGiB) {
-            this.mem = Math.round(used / this._unitConversion);
+            this.mem = Math.round(memUsed / this._unitConversion);
             this.mem /= this._decimals;
-            this.total = Math.round(total / this._unitConversion);
+            this.total = Math.round(memTotal / this._unitConversion);
             this.total /= this._decimals;
         } else {
-            this.mem = Math.round(used / this._unitConversion);
-            this.total = Math.round(total / this._unitConversion);
+            this.mem = Math.round(memUsed / this._unitConversion);
+            this.total = Math.round(memTotal / this._unitConversion);
         }
 
         this._endProcess();
@@ -1973,8 +1974,8 @@ const Gpu = new Lang.Class({
         if (this.total === 0) {
             this.vals = this.tip_vals = 0;
         } else {
-            this.vals = this.mem / this.total;
-            this.tip_vals = Math.round(this.vals * 100);
+            this.vals = this.percentage;
+            this.tip_vals = Math.round(this.vals);
         }
         this.text_items[0].text = this.tip_vals.toString();
         this.menu_items[0].text = this.tip_vals.toLocaleString();

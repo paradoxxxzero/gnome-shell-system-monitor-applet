@@ -287,7 +287,7 @@ const App = new Lang.Class({
     Name: 'SystemMonitor.App',
 
     _init: function () {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
 
         this.items = [];

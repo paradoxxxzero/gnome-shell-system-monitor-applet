@@ -108,7 +108,7 @@
       <description>Set to true to display one graph per cpu core</description>
     </key>
     <key name="gpu-display" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Display gpu usage</summary>
       <description>Set to false to remove gpu display in status bar</description>
     </key>
@@ -128,7 +128,7 @@
       <description>Set to true to show 'gpu' before gpu display</description>
     </key>
     <key name="gpu-show-menu" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Display Gpu In Menu</summary>
       <description>Set to true to show gpu in pop-up menu</description>
     </key>

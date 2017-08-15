@@ -1872,7 +1872,7 @@ const Gpu = new Lang.Class({
     elt: 'gpu',
     item_name: _('GPU'),
     color_name: ['used'],
-    max: 1,
+    max: 100,
 
     _init: function () {
         this.item_name = _('GPU');
@@ -1972,10 +1972,11 @@ const Gpu = new Lang.Class({
     },
     _apply: function () {
         if (this.total === 0) {
-            this.vals = this.tip_vals = 0;
+            this.vals = [0];
+            this.tip_vals = [0];
         } else {
-            this.vals = this.percentage;
-            this.tip_vals = Math.round(this.vals);
+            this.vals = [this.percentage];
+            this.tip_vals = [Math.round(this.vals[0])];
         }
         this.text_items[0].text = this.tip_vals.toString();
         this.menu_items[0].text = this.tip_vals.toLocaleString();

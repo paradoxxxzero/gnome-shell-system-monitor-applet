@@ -5,3 +5,4 @@ tmp
 /.project
 /*.zip
 /*.geany
+*.out

@@ -20,6 +20,7 @@ install:
 #-   DEBIAN_FRONTEND=noninteractive sudo apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
 #-   sudo npm install
 -   sudo apt-get -yq install nodejs
+-	which nodejs
 
 # Install NPM from upstream.
 -   git clone git://github.com/npm/npm.git

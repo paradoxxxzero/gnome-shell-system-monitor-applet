@@ -19,7 +19,10 @@ install:
 #-   DEBIAN_FRONTEND=noninteractive sudo apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
 #-   sudo npm install
 -   sudo apt-get -yq install nodejs
+# Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
+-   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
 -   which nodejs
+-   which node
 
 # Install NPM from upstream.
 -   git clone git://github.com/npm/npm.git
@@ -29,8 +32,6 @@ install:
 -   cd ../..
 
 -   sudo npm install -g eslint
-# Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
--   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
 
 script:
 -   set -e

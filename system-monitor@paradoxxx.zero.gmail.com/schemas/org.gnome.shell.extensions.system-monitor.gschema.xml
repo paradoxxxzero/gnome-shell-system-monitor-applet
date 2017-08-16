@@ -236,6 +236,11 @@
       <summary>Sensor File</summary>
       <description>Location of the sensor file for cpu temp</description>
     </key>
+    <key name="thermal-threshold" type="i">
+      <default>0</default>
+      <summary>Thermal threshold</summary>
+      <description>When the temprature passes the threshold, the text is set to red as an alert.</description>
+    </key>
     <key name="fan-display" type="b">
       <default>false</default>
       <summary>Display fan</summary>

@@ -273,6 +273,11 @@ const SettingFrame = new Lang.Class({
             let item = new Gtk.CheckButton({label: _('Display temperature in Fahrenheit')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+        } else if (config === 'threshold') {
+            let item = new IntSelect(_('Temperature threshold (0 to disable)'));
+            item.set_args(0, 300, 5, 5);
+            this.hbox3.add(item.actor);
+            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         }
         this._reorder();
     }

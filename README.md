@@ -26,7 +26,7 @@ On openSUSE (Leap 42.1):
 
     $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
 
-Then, visit [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/), preferrably in Firefox, and install by clicking the toggle button next to the extension's name. If the install was success, the toggle button should now show "ON".
+Then, visit [extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/), preferably in Firefox, and install by clicking the toggle button next to the extension's name. If the install was success, the toggle button should now show "ON".
 
 If it failed, ensure you installed all the necessary dependencies, and that you granted the browser permission to install extensions when prompted. Additionally, try rebooting gnome-shell (Alt + F2 -> r).
 

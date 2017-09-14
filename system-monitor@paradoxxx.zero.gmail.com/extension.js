@@ -1429,6 +1429,7 @@ const Freq = new Lang.Class({
     _apply: function () {
         let value = this.freq.toString();
         this.text_items[0].text = value + ' ';
+        this.vals[0] = value;
         this.tip_vals[0] = value;
         this.menu_items[0].text = value;
     },

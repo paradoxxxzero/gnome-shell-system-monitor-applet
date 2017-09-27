@@ -95,7 +95,7 @@ msgid "Other"
 msgstr "Altre"
 
 msgid "Nice"
-msgstr ""
+msgstr "Nice"
 
 msgid "Iowait"
 msgstr "Espera E/S"
@@ -211,7 +211,7 @@ msgid "other"
 msgstr "altre"
 
 msgid "nice"
-msgstr ""
+msgstr "nice"
 
 msgid "iowait"
 msgstr "espera e/s"
@@ -235,10 +235,10 @@ msgid "down"
 msgstr "baixada"
 
 msgid "uperrors"
-msgstr "errors de pujada"
+msgstr "errorspujada"
 
 msgid "downerrors"
-msgstr "errors de baixada"
+msgstr "errorsbaixada"
 
 msgid "write"
 msgstr "escriptura"
@@ -263,7 +263,7 @@ msgstr "MiB"
 #: extension.js:1714
 #, fuzzy
 msgid "GiB"
-msgstr "MiB"
+msgstr "GiB"
 
 #: extension.js:184
 msgid "kB"
@@ -370,11 +370,11 @@ msgstr "CPU"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Mostra la temperatura en Fahrenheit"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"
-msgstr ""
+msgstr "Llindar de temperatura (0 per a desactivar)"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configuració de l'extensió Monitor del Sistema"

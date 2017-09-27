@@ -279,6 +279,11 @@ const SettingFrame = new Lang.Class({
             this.hbox3.add(item.actor);
             Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         }
+        if (configParent.indexOf('gpu') !== -1 &&
+            config === 'display') {
+            let item = new Gtk.Label( {label: _('** Only Nvidia GPUs supported so far **')});
+            this.hbox3.add(item);
+        }
         this._reorder();
     }
 });
@@ -287,7 +292,7 @@ const App = new Lang.Class({
     Name: 'SystemMonitor.App',
 
     _init: function () {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
 
         this.items = [];

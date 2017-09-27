@@ -1,7 +1,7 @@
 # Basic Makefile
 
 UUID = system-monitor@paradoxxx.zero.gmail.com
-BASE_MODULES = $(UUID)/extension.js $(UUID)/README* $(UUID)/metadata.json $(UUID)/prefs.js $(UUID)/stylesheet.css $(UUID)/convenience.js $(UUID)/compat.js
+BASE_MODULES = $(UUID)/extension.js $(UUID)/README* $(UUID)/metadata.json $(UUID)/prefs.js $(UUID)/stylesheet.css $(UUID)/convenience.js $(UUID)/compat.js $(UUID)/gpu_usage.sh
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
 else

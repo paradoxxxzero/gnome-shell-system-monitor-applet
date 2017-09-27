@@ -1911,6 +1911,148 @@ const Fan = new Lang.Class({
     }
 });
 
+const Gpu = new Lang.Class({
+    Name: 'SystemMonitor.Gpu',
+    Extends: ElementBase,
+
+    elt: 'gpu',
+    item_name: _('GPU'),
+    color_name: ['used'],
+    max: 100,
+
+    _init: function () {
+        this.item_name = _('GPU');
+        this.mem = 0;
+        this.total = 0;
+        this.parent()
+        this.tip_format();
+        this.update();
+    },
+    _unit: function (total) {
+        this.total = total;
+        let threshold = 4 * 1024; // In MiB
+        this.useGiB = false;
+        this._unitConversion = 1;
+        this._decimals = 100;
+        if (this.total > threshold) {
+            this.useGiB = true;
+            this._unitConversion *= 1024 / this._decimals;
+        }
+    },
+    refresh: function () {
+        // Run asynchronously, to avoid shell freeze
+        try {
+            let path = Me.dir.get_path();
+            let script = ['/bin/bash', path + '/gpu_usage.sh'];
+
+            let [, pid, , out_fd, ] = GLib.spawn_async_with_pipes(null,
+                                                                  script,
+                                                                  null,
+                                                                  GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                                                                  null);
+
+            // Let's buffer the command's output - that's an input for us !
+            this._process_stream = new Gio.DataInputStream({
+                base_stream: new Gio.UnixInputStream({fd: out_fd})
+            });
+
+            // We will process the output at once when it's done
+            this._process_sourceId = GLib.child_watch_add(
+                0,
+                pid,
+                Lang.bind(this, this._readTemperature)
+            );
+        } catch (err) {
+            // TODO: Deal with the error?
+        }
+    },
+    _readTemperature: function () {
+        let usage = [];
+        let out, size;
+        if (this._process_stream) {
+            do {
+                [out, size] = this._process_stream.read_line_utf8(null);
+                if (out) {
+                    usage.push(out);
+                }
+            } while (out);
+        }
+
+        let memTotal = parseInt(usage[0]);
+        let memUsed = parseInt(usage[1]);
+        this.percentage = parseInt(usage[2]);
+
+        if (typeof this.useGiB === 'undefined') {
+            this._unit(memTotal);
+        }
+
+        if (this.useGiB) {
+            this.mem = Math.round(memUsed / this._unitConversion);
+            this.mem /= this._decimals;
+            this.total = Math.round(memTotal / this._unitConversion);
+            this.total /= this._decimals;
+        } else {
+            this.mem = Math.round(memUsed / this._unitConversion);
+            this.total = Math.round(memTotal / this._unitConversion);
+        }
+
+        this._endProcess();
+    },
+    _endProcess: function () {
+        if (this._process_stream) {
+            this._process_stream.close(null);
+            this._process_stream = null;
+        }
+    },
+    _pad: function (number) {
+        if (this.useGiB) {
+            if (number < 1) {
+                // examples: 0.01, 0.10, 0.88
+                return number.toFixed(2);
+            }
+            // examples: 5.85, 16.0, 128
+            return number.toPrecision(3);
+        }
+
+        return number;
+    },
+    _apply: function () {
+        if (this.total === 0) {
+            this.vals = [0];
+            this.tip_vals = [0];
+        } else {
+            this.vals = [this.percentage];
+            this.tip_vals = [Math.round(this.vals[0])];
+        }
+        this.text_items[0].text = this.tip_vals.toString();
+        this.menu_items[0].text = this.tip_vals.toLocaleString();
+        if (Style.get('') !== '-compact') {
+            this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
+                '  /  ' + this._pad(this.total).toLocaleString();
+        } else {
+            this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
+                '/' + this._pad(this.total).toLocaleString();
+        }
+    },
+    create_text_items: function () {
+        return [new St.Label({style_class: Style.get('sm-status-value'),
+            y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({text: '%', style_class: Style.get('sm-perc-label'),
+                y_align: Clutter.ActorAlign.CENTER})];
+    },
+    create_menu_items: function () {
+        let unit = _('MiB');
+        if (this.useGiB) {
+            unit = _('GiB');
+        }
+        return [new St.Label({style_class: Style.get('sm-value')}),
+            new St.Label({text: '%', style_class: Style.get('sm-label')}),
+            new St.Label(),
+            new St.Label({style_class: Style.get('sm-value')}),
+            new St.Label({text: unit, style_class: Style.get('sm-label')})];
+    }
+});
+
 const Icon = new Lang.Class({
     Name: 'SystemMonitor.Icon',
 
@@ -1991,6 +2133,7 @@ var enable = function () {
         Main.__sm.elts.push(new Swap());
         Main.__sm.elts.push(new Net());
         Main.__sm.elts.push(new Disk());
+        Main.__sm.elts.push(new Gpu());
         Main.__sm.elts.push(new Thermal());
         Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());

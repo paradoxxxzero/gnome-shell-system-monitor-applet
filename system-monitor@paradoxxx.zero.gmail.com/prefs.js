@@ -30,8 +30,11 @@ String.prototype.capitalize = function () {
 };
 
 function color_to_hex(color) {
-    var output = N_('#%02x%02x%02x%02x').format(color.red * 255, color.green * 255,
-                                            color.blue * 255, color.alpha * 255);
+    var output = N_('#%02x%02x%02x%02x').format(
+        255 * color.red,
+        255 * color.green,
+        255 * color.blue,
+        255 * color.alpha);
     return output;
 }
 
@@ -281,7 +284,7 @@ const SettingFrame = new Lang.Class({
         }
         if (configParent.indexOf('gpu') !== -1 &&
             config === 'display') {
-            let item = new Gtk.Label( {label: _('** Only Nvidia GPUs supported so far **')});
+            let item = new Gtk.Label({label: _('** Only Nvidia GPUs supported so far **')});
             this.hbox3.add(item);
         }
         this._reorder();

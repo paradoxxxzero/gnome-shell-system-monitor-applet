@@ -823,8 +823,10 @@ const ElementBase = new Lang.Class({
                 }));
 
         this.interval = l_limit(Schema.get_int(this.elt + '-refresh-time'));
-        this.timeout = Mainloop.timeout_add(this.interval,
-                                            Lang.bind(this, this.update));
+        this.timeout = Mainloop.timeout_add(
+            this.interval,
+            Lang.bind(this, this.update)
+        );
         Schema.connect(
             'changed::' + this.elt + '-refresh-time',
             Lang.bind(this,
@@ -1624,10 +1626,10 @@ const Net = new Lang.Class({
             for (let i = 2; i < net_lines.length - 1; i++) {
                 let ifc = net_lines[i].replace(/^\s+/g, '').split(':')[0];
                 if (Shell.get_file_contents_utf8_sync('/sys/class/net/' + ifc + '/operstate')
-                   .replace(/\s/g, '') === 'up' &&
-                   ifc.indexOf('br') < 0 &&
-                   ifc.indexOf('lo') < 0) {
-                       this.ifs.push(ifc);
+                    .replace(/\s/g, '') === 'up' &&
+                    ifc.indexOf('br') < 0 &&
+                    ifc.indexOf('lo') < 0) {
+                    this.ifs.push(ifc);
                 }
             }
         }
@@ -1882,8 +1884,8 @@ const Swap = new Lang.Class({
             new St.Label({
                 style_class: Style.get('sm-value')}),
             new St.Label({
-                text: '%'
-                , style_class: Style.get('sm-label')}),
+                text: '%',
+                style_class: Style.get('sm-label')}),
             new St.Label(),
             new St.Label({
                 style_class: Style.get('sm-value')}),
@@ -2059,11 +2061,12 @@ const Gpu = new Lang.Class({
             let path = Me.dir.get_path();
             let script = ['/bin/bash', path + '/gpu_usage.sh'];
 
-            let [, pid, , out_fd, ] = GLib.spawn_async_with_pipes(null,
-                                                                  script,
-                                                                  null,
-                                                                  GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-                                                                  null);
+            let [, pid, , out_fd, ] = GLib.spawn_async_with_pipes(
+                null,
+                script,
+                null,
+                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+                null);
 
             // Let's buffer the command's output - that's an input for us !
             this._process_stream = new Gio.DataInputStream({
@@ -2077,7 +2080,7 @@ const Gpu = new Lang.Class({
                 Lang.bind(this, this._readTemperature)
             );
         } catch (err) {
-            // TODO: Deal with the error?
+            // Deal with the error
         }
     },
     _readTemperature: function () {
@@ -2190,9 +2193,10 @@ const Icon = new Lang.Class({
         Schema.connect(
             'changed::icon-display',
             Lang.bind(this,
-                      function () {
-                          this.actor.visible = Schema.get_boolean('icon-display');
-                      }));
+                function () {
+                    this.actor.visible = Schema.get_boolean('icon-display');
+                })
+        );
     }
 });
 
@@ -2249,7 +2253,7 @@ var enable = function () {
             tray: new PanelMenu.Button(0.5),
             icon: new Icon(),
             pie: new Pie(Style.pie_width(), Style.pie_height()), // 300, 300
-            bar: new Bar(Style.bar_width(), Style.bar_height()),  // 300, 150
+            bar: new Bar(Style.bar_width(), Style.bar_height()), // 300, 150
             elts: [],
         };
 

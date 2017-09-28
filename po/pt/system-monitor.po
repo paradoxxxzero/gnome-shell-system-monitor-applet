@@ -259,6 +259,10 @@ msgstr ""
 msgid "MiB"
 msgstr ""
 
+#: extension.js:1714
+msgid "GiB"
+msgstr ""
+
 #: extension.js:184
 msgid "kB"
 msgstr ""
@@ -360,6 +364,10 @@ msgstr ""
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
+msgstr ""
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
 msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"

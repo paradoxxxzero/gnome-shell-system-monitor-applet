@@ -41,8 +41,8 @@ The instructions are available [on the GNOME wiki](https://wiki.gnome.org/Projec
 
 It's recommended you install the extension via the Gnome Shell Extensions website.
 
-Visit [This extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
-and install by clicking the toggle button next to the extension's name.
+Visit [this extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
+preferably in Firefox, and install by clicking the toggle button next to the extension's name.
 
 If the install was successful, the toggle button should now show "ON".
 If it failed, ensure that you installed all the [necessary dependencies](#prerequisites),

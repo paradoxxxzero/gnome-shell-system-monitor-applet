@@ -1512,9 +1512,6 @@ const Mem = new Lang.Class({
         this.item_name = _('Memory');
         this.gtop = new GTop.glibtop_mem();
         this.mem = [0, 0, 0];
-        this.parent()
-        this.tip_format();
-        this.update();
 
         GTop.glibtop_get_mem(this.gtop);
         this.total = Math.round(this.gtop.total / 1024 / 1024);
@@ -1526,6 +1523,10 @@ const Mem = new Lang.Class({
             this.useGiB = true;
             this._unitConversion *= 1024 / this._decimals;
         }
+
+        this.parent()
+        this.tip_format();
+        this.update();
     },
     refresh: function () {
         GTop.glibtop_get_mem(this.gtop);
@@ -1807,9 +1808,6 @@ const Swap = new Lang.Class({
     _init: function () {
         this.item_name = _('Swap');
         this.gtop = new GTop.glibtop_swap();
-        this.parent()
-        this.tip_format();
-        this.update();
 
         GTop.glibtop_get_swap(this.gtop);
         this.total = Math.round(this.gtop.total / 1024 / 1024);
@@ -1821,6 +1819,10 @@ const Swap = new Lang.Class({
             this.useGiB = true;
             this._unitConversion *= 1024 / this._decimals;
         }
+
+        this.parent()
+        this.tip_format();
+        this.update();
     },
     refresh: function () {
         GTop.glibtop_get_swap(this.gtop);

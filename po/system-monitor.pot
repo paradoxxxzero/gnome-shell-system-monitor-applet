@@ -253,8 +253,20 @@ msgstr ""
 msgid "MiB/s"
 msgstr ""
 
+#: extension.js:178 extension.js:1597 extension.js:1605
+msgid "kbit/s"
+msgstr ""
+
+#: extension.js:179 extension.js:1600 extension.js:1608
+msgid "Mbit/s"
+msgstr ""
+
 #: extension.js:1419 extension.js:1635
 msgid "MiB"
+msgstr ""
+
+#: extension.js:1714
+msgid "GiB"
 msgstr ""
 
 #: extension.js:184
@@ -355,5 +367,9 @@ msgstr ""
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
+msgstr ""
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
 msgstr ""
 

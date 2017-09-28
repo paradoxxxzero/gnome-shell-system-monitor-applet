@@ -30,8 +30,11 @@ String.prototype.capitalize = function () {
 };
 
 function color_to_hex(color) {
-    var output = N_('#%02x%02x%02x%02x').format(color.red * 255, color.green * 255,
-                                            color.blue * 255, color.alpha * 255);
+    var output = N_('#%02x%02x%02x%02x').format(
+        255 * color.red,
+        255 * color.green,
+        255 * color.blue,
+        255 * color.alpha);
     return output;
 }
 
@@ -273,6 +276,16 @@ const SettingFrame = new Lang.Class({
             let item = new Gtk.CheckButton({label: _('Display temperature in Fahrenheit')});
             this.hbox3.add(item);
             Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+        } else if (config === 'threshold') {
+            let item = new IntSelect(_('Temperature threshold (0 to disable)'));
+            item.set_args(0, 300, 5, 5);
+            this.hbox3.add(item.actor);
+            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+        }
+        if (configParent.indexOf('gpu') !== -1 &&
+            config === 'display') {
+            let item = new Gtk.Label({label: _('** Only Nvidia GPUs supported so far **')});
+            this.hbox3.add(item);
         }
         this._reorder();
     }
@@ -282,7 +295,7 @@ const App = new Lang.Class({
     Name: 'SystemMonitor.App',
 
     _init: function () {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
 
         this.items = [];

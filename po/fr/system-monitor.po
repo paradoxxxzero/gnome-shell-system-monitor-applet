@@ -254,11 +254,11 @@ msgstr "Kio/s"
 msgid "MiB/s"
 msgstr "Mio/s"
 
-#: extension.js:1419 extension.js:1482 extension.js:1635
+#: extension.js:1419 extension.js:1635
 msgid "MiB"
 msgstr "Mio"
 
-#: extension.js:1484
+#: extension.js:1714
 msgid "GiB"
 msgstr "Gio"
 
@@ -315,9 +315,10 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 "\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 msgstr ""
-"Dépendances manquantes\n\n"
-"Veuillez installer libgtop, Network Manager et les bibliothèques de "
-"liaisons gir :\n"
+"Dépendances manquantes\n"
+"\n"
+"Veuillez installer libgtop, Network Manager et les bibliothèques de liaisons "
+"gir :\n"
 "\t- sur Ubuntu : gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 ;\n"
 "\t- sur Fedora : libgtop2-devel, NetworkManager-glib-devel ;\n"
 "\t- sur Arch : libgtop, networkmanager ;\n"
@@ -368,3 +369,7 @@ msgstr "Processeur"
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
 msgstr "Afficher les températures en degrés Fahrenheit"
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
+msgstr "Seuil de température (0 pour désactiver)"

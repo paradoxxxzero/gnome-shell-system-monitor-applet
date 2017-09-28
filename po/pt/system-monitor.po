@@ -255,6 +255,10 @@ msgstr "MiB/s"
 msgid "MiB"
 msgstr "MiB"
 
+#: extension.js:1714
+msgid "GiB"
+msgstr ""
+
 #: extension.js:184
 msgid "kB"
 msgstr "kB"
@@ -361,3 +365,10 @@ msgstr "CPU"
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
 msgstr "Mostrar temperatura em Fahrenheit"
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
+msgstr "Limite de temperature (0 para desativar)"
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "Configurador do System Monitor Applet"

@@ -2,245 +2,246 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#: extension.js:751
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.99\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-22 15:04+0100\n"
-"PO-Revision-Date: 2014-07-07 12:17+0800\n"
-"Last-Translator: Star Brilliant <m13253@hotmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: Chinese\n"
+"POT-Creation-Date: 2017-09-06 21:38+0300\n"
+"PO-Revision-Date: 2017-09-06 21:57+0300\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fi\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
-msgstr "："
+msgstr ":"
 
 #: prefs.js:161 prefs.js:159
 msgid "Display"
-msgstr "显示"
+msgstr "Näytä"
 
 #: prefs.js:166 prefs.js:164
 msgid "Refresh Time"
-msgstr "刷新时间"
+msgstr "Päivitysväli"
 
 #: prefs.js:171 prefs.js:169
 msgid "Graph Width"
-msgstr "图形宽度"
+msgstr "Käyrän leveys"
 
 #: prefs.js:176 prefs.js:174
 msgid "Show Text"
-msgstr "显示文字"
+msgstr "Näytä teksti"
 
 #: prefs.js:184 prefs.js:182
 msgid "Display Style"
-msgstr "显示风格"
+msgstr "Esitystyyli"
 
 #: prefs.js:267 prefs.js:274
 msgid "Display Icon"
-msgstr "显示图标"
+msgstr "Näytä kuvake"
 
 #: prefs.js:276 prefs.js:283
 msgid "Display in the Middle"
-msgstr "居中显示"
+msgstr "Näytä keskellä"
 
 #: prefs.js:288 prefs.js:306
 msgid "Background Color"
-msgstr "背景色"
+msgstr "Taustaväri"
 
 #: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr "单独显示每个核心"
+msgstr "Näytä yksittäiset ytimet"
 
 #: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
-msgstr "以位为单位显示网络速度"
+msgstr "Näytä verkon nopeus biteissä"
 
 #: prefs.js:205 prefs.js:208
 msgid "Sensor"
-msgstr "传感器"
+msgstr "Sensori"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr "请安装 lm-sensors"
+msgstr "Asenna lm-sensors"
 
 #: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr "移走时钟"
+msgstr "Siirrä kello"
 
 #: prefs.js:286 prefs.js:289
 msgid "Compact Display"
-msgstr "紧凑显示"
+msgstr "Kompakti näyttö"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
-msgstr "处理器"
+msgstr "Suoritin"
 
 msgid "User"
-msgstr "用户"
+msgstr "Käyttäjä"
 
 msgid "System"
-msgstr "系统"
+msgstr "Järjestelmä"
 
 msgid "Other"
-msgstr "其他"
+msgstr "Muu"
 
 msgid "Nice"
-msgstr "优先级"
+msgstr "Nice"
 
 msgid "Iowait"
-msgstr "IO 等待"
+msgstr "Iowait"
 
 #: extension.js:941 extension.js:1378
 msgid "Memory"
-msgstr "内存"
+msgstr "Muisti"
 
 msgid "Program"
-msgstr "程序"
+msgstr "Ohjelma"
 
 msgid "Cache"
-msgstr "缓存"
+msgstr "Välimuisti"
 
 msgid "Buffer"
-msgstr "缓冲"
+msgstr "Puskuri"
 
 #: extension.js:1134 extension.js:1598
 msgid "Swap"
-msgstr "交换分区"
+msgstr "Swap"
 
 msgid "Used"
-msgstr "已用"
+msgstr "Käytetty"
 
 #: extension.js:1010 extension.js:1428
 msgid "Net"
-msgstr "网络"
+msgstr "Verkko"
 
 #: extension.js:1589
 msgid "Up"
-msgstr "上传"
+msgstr "Lähetys"
 
 #: extension.js:1586
 msgid "Down"
-msgstr "下载"
+msgstr "Lataus"
 
 msgid "Uperrors"
-msgstr "上传错误"
+msgstr "Lähetysvirheet"
 
 msgid "Downerrors"
-msgstr "下载错误"
+msgstr "Latausvirheet"
 
 msgid "collisions"
-msgstr "冲突"
+msgstr "törmäykset"
 
 msgid "Collisions"
-msgstr "冲突"
+msgstr "Törmäykset"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
-msgstr "硬盘"
+msgstr "Levy"
 
 msgid "Write"
-msgstr "写入"
+msgstr "Kirjoitus"
 
 msgid "Read"
-msgstr "读取"
+msgstr "Luku"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
-msgstr "读"
+msgstr "R"
 
 #: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
-msgstr "写"
+msgstr "W"
 
 #: prefs.js:185 prefs.js:183
 msgid "graph"
-msgstr "图形"
+msgstr "käyrä"
 
 #: prefs.js:185 prefs.js:183
 msgid "digit"
-msgstr "数字"
+msgstr "lukuarvo"
 
 #: prefs.js:185 prefs.js:183
 msgid "both"
-msgstr "同时"
+msgstr "molemmat"
 
 msgid "cpu"
-msgstr "处理器"
+msgstr "cpu"
 
 #: extension.js:811
 msgid "mem"
-msgstr "内存"
+msgstr "mem"
 
 msgid "swap"
-msgstr "交换"
+msgstr "swap"
 
 msgid "net"
-msgstr "网络"
+msgstr "verkko"
 
 msgid "disk"
-msgstr "硬盘"
+msgstr "levy"
 
 #: extension.js:1346 extension.js:1900
 msgid "Preferences..."
-msgstr "首选项..."
+msgstr "Asetukset..."
 
 #: extension.js:1340 extension.js:1894
 msgid "System Monitor..."
-msgstr "系统监视器..."
+msgstr "Järjestelmän valvonta..."
 
 msgid "System monitor"
-msgstr "系统监视器"
+msgstr "Järjestelmän valvonta"
 
 msgid "user"
-msgstr "用户"
+msgstr "käyttäjä"
 
 msgid "system"
-msgstr "系统"
+msgstr "järjestelmä"
 
 msgid "other"
-msgstr "其他"
+msgstr "muu"
 
 msgid "nice"
-msgstr "优先级"
+msgstr "nice"
 
 msgid "iowait"
-msgstr "IO 等待"
+msgstr "iowait"
 
 msgid "program"
-msgstr "程序"
+msgstr "ohjelma"
 
 msgid "cache"
-msgstr "缓存"
+msgstr "välimuisti"
 
 msgid "buffer"
-msgstr "缓冲"
+msgstr "puskuri"
 
 msgid "used"
-msgstr "已用"
+msgstr "käytetty"
 
 msgid "up"
-msgstr "上传"
+msgstr "ulos"
 
 msgid "down"
-msgstr "下载"
+msgstr "sisään"
 
 msgid "uperrors"
-msgstr "上传错误"
+msgstr "lähetysvirheet"
 
 msgid "downerrors"
-msgstr "下载错误"
+msgstr "latausvirheet"
 
 msgid "write"
-msgstr "写入"
+msgstr "kirjoitus"
 
 msgid "read"
-msgstr "读取"
+msgstr "luku"
 
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
@@ -252,60 +253,66 @@ msgstr "KiB/s"
 msgid "MiB/s"
 msgstr "MiB/s"
 
+#: extension.js:178 extension.js:1597 extension.js:1605
+msgid "kbit/s"
+msgstr "kbit/s"
+
+#: extension.js:179 extension.js:1600 extension.js:1608
+msgid "Mbit/s"
+msgstr "Mbit/s"
+
 #: extension.js:1419 extension.js:1635
 msgid "MiB"
 msgstr "MiB"
 
 #: extension.js:1714
-#, fuzzy
 msgid "GiB"
-msgstr "MiB"
+msgstr "GiB"
 
 #: extension.js:184
 msgid "kB"
-msgstr "kB"
+msgstr "kt"
 
 #: extension.js:183 extension.js:185
 msgid "MB"
-msgstr "MB"
+msgstr "Mt"
 
 #: extension.js:1179 extension.js:1644
 msgid "Thermal"
-msgstr "温度"
+msgstr "Lämpötila"
 
 msgid "thermal"
-msgstr "温度"
+msgstr "lämpötila"
 
 #: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
-msgstr "在菜单中显示"
+msgstr "Näytä valikossa"
 
 #: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
-msgstr "显示剩余时间"
+msgstr "Näytä jäljellä oleva aika"
 
 #: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
-msgstr "隐藏系统图标"
+msgstr "Piilota järjestelmäkuvake"
 
 #: prefs.js:230 prefs.js:237
 msgid "Usage Style"
-msgstr "用量显示风格"
+msgstr "Käytön tyyli"
 
 #: prefs.js:231 prefs.js:238
 msgid "pie"
-msgstr "扇形图"
+msgstr "piirakka"
 
 #: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr "条形图"
+msgstr "palkki"
 
 #: prefs.js:231 prefs.js:238
 msgid "none"
-msgstr "无"
+msgstr "ei mitään"
 
 #: extension.js:68
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -315,41 +322,35 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 "\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 msgstr ""
-"缺失依赖项\n"
-"请安装：\n"
-"libgtop、Network Manager 及其 gir 绑定\n"
-"\t    于 Ubuntu：gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    于 Fedora：libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    于 Arch：libgtop, networkmanager\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
-msgstr "系统监视器扩展"
+msgstr "Järjestelmän valvonnan laajennus"
 
 #: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr "取消"
+msgstr "Peru"
 
 #: extension.js:601 extension.js:875
 msgid "Battery"
-msgstr "电池"
+msgstr "Akku"
 
 msgid "battery"
-msgstr "电池"
+msgstr "akku"
 
 #: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr "主频"
+msgstr "Taajuus"
 
 msgid "freq"
-msgstr "主频"
+msgstr "taajuus"
 
 #: extension.js:1540 extension.js:1692
 msgid "Fan"
-msgstr "风扇"
+msgstr "Tuuletin"
 
 msgid "fan"
-msgstr "风扇"
+msgstr "tuuletin"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730
@@ -358,19 +359,16 @@ msgstr "rpm"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Näytä työkaluvihje"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "Suoritin"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Näytä lämpötila Fahrenheiteissa"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"
 msgstr ""
-
-#~ msgid "System Monitor Applet Configurator"
-#~ msgstr "面板系统监视器配置"

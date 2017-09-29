@@ -368,7 +368,7 @@ msgstr "Mostrar temperatura em Fahrenheit"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"
-msgstr "Limite de temperature (0 para desativar)"
+msgstr "Limite de temperatura (0 para desativar)"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configurador do System Monitor Applet"

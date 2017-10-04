@@ -1102,7 +1102,7 @@ const Battery = new Lang.Class({
         } else {
             displayString = this.percentage.toString()
         }
-        this.text_items[1].text = this.menu_items[3].text = displayString;
+        this.text_items[1].text = this.menu_items[0].text = displayString;
         this.text_items[0].gicon = this.gicon;
         this.vals = [this.percentage];
         this.tip_vals[0] = Math.round(this.percentage);

@@ -1,17 +1,17 @@
 .sm-title {
-    font-size: 16px;
+    font-size: 1em;
     padding: 0px 25px 0px 0px;
 }
 
 .sm-label {
     color: #bbb;
-    font-size: 12px;
+    font-size: 0.75em;
     padding-top: 5px;
 }
 
 .sm-label-left {
     color: #bbb;
-    font-size: 12px;
+    font-size: 0.75em;
     padding: 5px 5px 0 0;
 }
 
@@ -23,20 +23,20 @@
 
 .sm-status-label {
     color: #bbb;
-    font-size: 10px;
+    font-size: 0.625em;
     padding: 0 2px 0 5px;
 }
 
 .sm-unit-label,
 .sm-net-unit-label {
     color: #aaa;
-    font-size: 8px;
+    font-size: 0.5em;
     padding: 0 5px 0 2px;
 }
 
 .sm-disk-unit-label {
     color: #aaa;
-    font-size: 10px;
+    font-size: 0.625em;
     padding: 0 5px 0 2px;
 }
 
@@ -46,13 +46,13 @@
 
 .sm-perc-label {
     color: #aaa;
-    font-size: 10px;
+    font-size: 0.625em;
     padding: 0 5px 0 2px;
 }
 
 .sm-temp-label {
     color: #aaa;
-    font-size: 11px;
+    font-size: 0.6875em;
     padding: 0 5px 0 2px;
 }
 
@@ -105,22 +105,22 @@
 /* style definition when 'compact-display' option is activated */
 
 .sm-title-compact {
-    font-size: 12px;
+    font-size: 0.75em;
 }
 
 .sm-label-compact {
     color: #bbb;
-    font-size: 11px;
+    font-size: 0.6875em;
 } /* Bat, Net... units in menu items */
 
 .sm-value-compact {
-    font-size: 11px;
+    font-size: 0.6875em;
     text-align: right;
 } /* Values in menu items */
 
 .sm-status-label-compact {
     color: #bbb;
-    font-size: 8px;
+    font-size: 0.5em;
     padding: 2px 0px 0 0px;
 } /* names and Disk R and W signs in text items */
 
@@ -129,52 +129,52 @@
     color: #aaa;
     padding: 0 3px 0px 1px;
     text-align: right;
-    font-size: 7px;
+    font-size: 0.4375em;
 } /* Bat, Net... units in text items */
 
 .sm-disk-unit-label-compact {
     color: #aaa;
     padding: 0 3px 0px 0px;
     text-align: right;
-    font-size: 7px;
+    font-size: 0.4375em;
 } /* Disk units in text items */
 
 .sm-perc-label-compact {
     padding: 0 3px 0 0px;
     color: #aaa;
-    font-size: 8px;
+    font-size: 0.5em;
 } /* Cpu, Mem ... % sign in text items */
 
 .sm-temp-label-compact {
-    font-size: 10px;
+    font-size: 0.625em;
     color: #aaa;
     padding: 0 1px 0 1px;
 } /* Thermal °C sign in text items */
 
 .sm-status-value-compact {
     padding:0 0px 0 1px;
-    font-size:11px;
+    font-size: 0.6875em;
     text-align: right;
     min-width:16px;
 } /* Cpu, Mem... value in text items */
 
 .sm-net-value-compact {
     padding:0 0px 0 1px;
-    font-size:11px;
+    font-size: 0.6875em;
     text-align: right;
     min-width:24px;
 } /* Net value in text items */
 
 .sm-disk-value-compact {
     padding: 0 1px 0 1px;
-    font-size: 11px;
+    font-size: 0.6875em;
     text-align: right;
     min-width: 20px;
 } /* Disk value in text items */
 
 .sm-big-status-value-compact {
     padding: 0 0px 0px 1px;
-    font-size: 11px;
+    font-size: 0.6875em;
     min-width: 38px;
     text-align: right;
 } /* freq in text_items */
@@ -204,7 +204,7 @@
 } /* BAT icon in text_items */
 
 .sm-popup-menu-item-compact {
-    font-size: 11px;
+    font-size: 0.6875em;
     width: 20px;
     padding: 1px 2px 1px 7px;
 }

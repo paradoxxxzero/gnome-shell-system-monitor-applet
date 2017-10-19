@@ -179,6 +179,7 @@ const smStyleManager = new Lang.Class({
     _bar_width: 300,
     _bar_height: 150,
     _bar_fontsize: 14,
+    _text_scaling: 1,
 
     _init: function () {
         this._compact = Schema.get_boolean('compact-display');
@@ -196,6 +197,14 @@ const smStyleManager = new Lang.Class({
             this._bar_width *= 3 / 5;
             this._bar_height *= 3 / 5;
             this._bar_fontsize = 12;
+        }
+
+        let interfaceSettings = new Gio.Settings({
+            schema: 'org.gnome.desktop.interface'
+        });
+        this._text_scaling = interfaceSettings.get_double('text-scaling-factor');
+        if (!this._text_scaling) {
+            this._text_scaling = 1;
         }
     },
     get: function (style) {
@@ -226,7 +235,7 @@ const smStyleManager = new Lang.Class({
         return this._pie_height;
     },
     pie_fontsize: function () {
-        return this._pie_fontsize;
+        return this._pie_fontsize * this._text_scaling;
     },
     bar_width: function () {
         return this._bar_width;
@@ -235,7 +244,10 @@ const smStyleManager = new Lang.Class({
         return this._bar_height;
     },
     bar_fontsize: function () {
-        return this._bar_fontsize;
+        return this._bar_fontsize * this._text_scaling;
+    },
+    text_scaling: function () {
+        return this._text_scaling;
     },
 });
 
@@ -518,7 +530,7 @@ const Bar = new Lang.Class({
     _init: function () {
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(Lang.bind(this, this.update_mounts));
-        this.thickness = 15;
+        this.thickness = 15 * Style.text_scaling();
         this.fontsize = Style.bar_fontsize();
         this.parent(arguments);
         this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2);
@@ -585,7 +597,10 @@ const Pie = new Lang.Class({
             return new_angle;
         }
         let rings = (this.mounts.length > 7 ? this.mounts.length : 7);
-        let thickness = (2 * rc) / (3 * rings);
+        // If the text is scaled, we need to make more space for it. Hence, we
+        // make the lines thicker.
+        let text_scaling = Style.text_scaling();
+        let thickness = (2 * rc) / (3 * rings) * text_scaling;
         let fontsize = Style.pie_fontsize();
         let r = rc - (thickness / 2);
         cr.setLineWidth(thickness);

@@ -1,0 +1,372 @@
+# Ukrainian translation.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Georgii Iesaulov <esauloff@gmail.com>, 2017.
+msgid ""
+msgstr ""
+"Project-Id-Version: system-monitor-applet\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-07 00:00+0500\n"
+"PO-Revision-Date: 2017-11-07 00:00+0500\n"
+"Last-Translator: Georgii Iesaulov <esauloff@gmail.com>\n"
+"Language-Team: \n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"MIME-Version: 1.0\n"
+"Language: uk\n"
+
+#: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
+msgid ":"
+msgstr ""
+
+#: prefs.js:161 prefs.js:159
+msgid "Display"
+msgstr "Показувати"
+
+#: prefs.js:166 prefs.js:164
+msgid "Refresh Time"
+msgstr "Частота оновлення"
+
+#: prefs.js:171 prefs.js:169
+msgid "Graph Width"
+msgstr "Ширина графіка"
+
+#: prefs.js:176 prefs.js:174
+msgid "Show Text"
+msgstr "Показувати текст"
+
+#: prefs.js:184 prefs.js:182
+msgid "Display Style"
+msgstr "Стиль відображення"
+
+#: prefs.js:267 prefs.js:274
+msgid "Display Icon"
+msgstr "Показувати значок"
+
+#: prefs.js:276 prefs.js:283
+msgid "Display in the Middle"
+msgstr "Показувати у центрі"
+
+#: prefs.js:288 prefs.js:306
+msgid "Background Color"
+msgstr "Колір фону"
+
+#: prefs.js:197 prefs.js:195
+msgid "Display Individual Cores"
+msgstr "Показати окремі ядра"
+
+#: prefs.js:193 prefs.js:191
+msgid "Show network speed in bits"
+msgstr "Видобразити швидкість мережі у бітах"
+
+#: prefs.js:205 prefs.js:208
+msgid "Sensor"
+msgstr "Сенсор"
+
+#: prefs.js:207 prefs.js:210
+msgid "Please install lm-sensors"
+msgstr "Встановіть lm-sensors"
+
+#: prefs.js:282 prefs.js:300
+msgid "Move the clock"
+msgstr "Перемістіти годинник"
+
+#: prefs.js:286 prefs.js:289
+#, fuzzy
+msgid "Compact Display"
+msgstr "Компактний показ"
+
+#: extension.js:746 extension.js:1117
+msgid "Cpu"
+msgstr "Процесор"
+
+msgid "User"
+msgstr "Користувач"
+
+msgid "System"
+msgstr "Система"
+
+msgid "Other"
+msgstr "Інше"
+
+msgid "Nice"
+msgstr "Пріоритет"
+
+msgid "Iowait"
+msgstr "IOwait"
+
+#: extension.js:941 extension.js:1378
+msgid "Memory"
+msgstr "Пам'ять"
+
+msgid "Program"
+msgstr "Програми"
+
+msgid "Cache"
+msgstr "Кеш"
+
+msgid "Buffer"
+msgstr "Буфер"
+
+#: extension.js:1134 extension.js:1598
+msgid "Swap"
+msgstr "Підкачка"
+
+msgid "Used"
+msgstr "Використовується"
+
+#: extension.js:1010 extension.js:1428
+msgid "Net"
+msgstr "Мережа"
+
+#: extension.js:1589
+msgid "Up"
+msgstr "Передача"
+
+#: extension.js:1586
+msgid "Down"
+msgstr "Завантаження"
+
+msgid "Uperrors"
+msgstr "Помилки передачі"
+
+msgid "Downerrors"
+msgstr "Помилки завантаження"
+
+msgid "collisions"
+msgstr "колізії"
+
+msgid "Collisions"
+msgstr "Колізії"
+
+#: extension.js:836 extension.js:1264
+msgid "Disk"
+msgstr "Диск"
+
+msgid "Write"
+msgstr "Запис"
+
+msgid "Read"
+msgstr "Читання"
+
+#: extension.js:1182 extension.js:1312 extension.js:1322
+msgid "R"
+msgstr ""
+
+#: extension.js:1185 extension.js:1315 extension.js:1325
+msgid "W"
+msgstr ""
+
+#: prefs.js:185 prefs.js:183
+msgid "graph"
+msgstr "графік"
+
+#: prefs.js:185 prefs.js:183
+msgid "digit"
+msgstr "цифровий"
+
+#: prefs.js:185 prefs.js:183
+msgid "both"
+msgstr "разом"
+
+msgid "cpu"
+msgstr "процесор"
+
+#: extension.js:811
+msgid "mem"
+msgstr "пам'ять"
+
+msgid "swap"
+msgstr "підкачка"
+
+msgid "net"
+msgstr "мережа"
+
+msgid "disk"
+msgstr "диск"
+
+#: extension.js:1346 extension.js:1900
+msgid "Preferences..."
+msgstr "Налаштування..."
+
+#: extension.js:1340 extension.js:1894
+#, fuzzy
+msgid "System Monitor..."
+msgstr "Системный монітор..."
+
+msgid "System monitor"
+msgstr "Системный монітор"
+
+msgid "user"
+msgstr "користувач"
+
+msgid "system"
+msgstr "система"
+
+msgid "other"
+msgstr "інше"
+
+msgid "nice"
+msgstr "пріоритет"
+
+msgid "iowait"
+msgstr "iowait"
+
+msgid "program"
+msgstr "програми"
+
+msgid "cache"
+msgstr "кеш"
+
+msgid "buffer"
+msgstr "буфер"
+
+msgid "used"
+msgstr "використовується"
+
+msgid "up"
+msgstr "передача"
+
+msgid "down"
+msgstr "завантаження"
+
+msgid "uperrors"
+msgstr "помилки передачі"
+
+msgid "downerrors"
+msgstr "помилки завантаження"
+
+msgid "write"
+msgstr "запис"
+
+msgid "read"
+msgstr "читання"
+
+#: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
+#: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
+msgid "KiB/s"
+msgstr ""
+
+#: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
+#: extension.js:1324 extension.js:1549 extension.js:1558
+msgid "MiB/s"
+msgstr ""
+
+#: extension.js:1419 extension.js:1635
+msgid "MiB"
+msgstr ""
+
+#: extension.js:1714
+msgid "GiB"
+msgstr ""
+
+#: extension.js:184
+msgid "kB"
+msgstr ""
+
+#: extension.js:183 extension.js:185
+msgid "MB"
+msgstr ""
+
+#: extension.js:1179 extension.js:1644
+msgid "Thermal"
+msgstr "Температура"
+
+#, fuzzy
+msgid "thermal"
+msgstr "температура"
+
+#: prefs.js:180 prefs.js:178
+msgid "Show In Menu"
+msgstr "Показувати у меню"
+
+#: prefs.js:222 prefs.js:229
+msgid "Show Time Remaining"
+msgstr "Показати час роботи на батареї"
+
+#: prefs.js:226 prefs.js:233
+#, fuzzy
+msgid "Hide System Icon"
+msgstr "Сховати системний значок"
+
+#: prefs.js:230 prefs.js:237
+#, fuzzy
+msgid "Usage Style"
+msgstr "Стиль"
+
+#: prefs.js:231 prefs.js:238
+msgid "pie"
+msgstr "кругова"
+
+#: prefs.js:231 prefs.js:238
+msgid "bar"
+msgstr "гістограма"
+
+#: prefs.js:231 prefs.js:238
+msgid "none"
+msgstr "немає"
+
+#: extension.js:68
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+msgstr ""
+
+#: extension.js:97 extension.js:255
+#, fuzzy
+msgid "System Monitor Extension"
+msgstr "Розширення системного монитора"
+
+#: extension.js:113 extension.js:271
+msgid "Cancel"
+msgstr "Відміна"
+
+#: extension.js:601 extension.js:875
+msgid "Battery"
+msgstr "Батарея"
+
+msgid "battery"
+msgstr "батарея"
+
+#: extension.js:896 extension.js:1334
+msgid "Freq"
+msgstr "Частота"
+
+msgid "freq"
+msgstr "частота"
+
+#: extension.js:1540 extension.js:1692
+msgid "Fan"
+msgstr "Вентилятор"
+
+msgid "fan"
+msgstr "вентилятор"
+
+#: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
+#: extension.js:1722 extension.js:1730
+msgid "rpm"
+msgstr ""
+
+#: prefs.js:294
+msgid "Show tooltip"
+msgstr "Показувати підказку"
+
+#: extension.js:1097
+msgid "CPU"
+msgstr ""
+
+#: prefs.js:267
+msgid "Display temperature in Fahrenheit"
+msgstr "Видобразити температуру у Фаренгейтах"
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
+msgstr "Температурний поріг (0 щоб вимкнути)"
+
+#~ msgid "System Monitor Applet Configurator"
+#~ msgstr "Конфігуратор аплетів системного монітора"

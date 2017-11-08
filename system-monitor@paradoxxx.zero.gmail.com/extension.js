@@ -40,16 +40,19 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Compat = Me.imports.compat;
 
+var GTop;
 try {
-    const GTop = imports.gi.GTop;
+    GTop = imports.gi.GTop;
 } catch(e) {
     log(e);
     smDepsGtop = false;
 }
 
+var NMClient;
+var NetworkManager;
 try {
-    const NMClient = imports.gi.NMClient;
-    const NetworkManager = imports.gi.NetworkManager;
+    NMClient = imports.gi.NMClient;
+    NetworkManager = imports.gi.NetworkManager;
 } catch(e) {
     log(e);
     smDepsNM = false;

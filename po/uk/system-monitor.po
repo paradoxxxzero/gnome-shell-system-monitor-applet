@@ -61,7 +61,7 @@ msgstr "Видобразити швидкість мережі у бітах"
 
 #: prefs.js:205 prefs.js:208
 msgid "Sensor"
-msgstr "Сенсор"
+msgstr "Датчик"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
@@ -72,7 +72,6 @@ msgid "Move the clock"
 msgstr "Перемістіти годинник"
 
 #: prefs.js:286 prefs.js:289
-#, fuzzy
 msgid "Compact Display"
 msgstr "Компактний показ"
 
@@ -190,12 +189,11 @@ msgid "Preferences..."
 msgstr "Налаштування..."
 
 #: extension.js:1340 extension.js:1894
-#, fuzzy
 msgid "System Monitor..."
-msgstr "Системный монітор..."
+msgstr "Системний монітор..."
 
 msgid "System monitor"
-msgstr "Системный монітор"
+msgstr "Системний монітор"
 
 msgid "user"
 msgstr "користувач"
@@ -272,7 +270,6 @@ msgstr ""
 msgid "Thermal"
 msgstr "Температура"
 
-#, fuzzy
 msgid "thermal"
 msgstr "температура"
 
@@ -285,12 +282,10 @@ msgid "Show Time Remaining"
 msgstr "Показати час роботи на батареї"
 
 #: prefs.js:226 prefs.js:233
-#, fuzzy
 msgid "Hide System Icon"
 msgstr "Сховати системний значок"
 
 #: prefs.js:230 prefs.js:237
-#, fuzzy
 msgid "Usage Style"
 msgstr "Стиль"
 
@@ -318,13 +313,12 @@ msgid ""
 msgstr ""
 
 #: extension.js:97 extension.js:255
-#, fuzzy
 msgid "System Monitor Extension"
 msgstr "Розширення системного монитора"
 
 #: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr "Відміна"
+msgstr "Скасувати"
 
 #: extension.js:601 extension.js:875
 msgid "Battery"

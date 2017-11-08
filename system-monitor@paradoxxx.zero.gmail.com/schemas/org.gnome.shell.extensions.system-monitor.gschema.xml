@@ -374,6 +374,11 @@
       <default>'#f2002e'</default>
       <summary>Color of user thermal in the chart</summary>
     </key>
+    <key name="thermal-fahrenheit-unit" type="b">
+      <default>false</default>
+      <summary>Display temperature in Fahrenheit</summary>
+      <description>Set to true to show temperature in Fahrenheit</description>
+    </key>
     <key name="background" type="s">
       <default>'#ffffff16'</default>
       <summary>Color of background</summary>

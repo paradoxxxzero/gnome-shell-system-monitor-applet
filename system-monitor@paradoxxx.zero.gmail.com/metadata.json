@@ -5,5 +5,6 @@
     "url": "https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet",
     "description": "Display system informations in gnome shell status bar, such as memory usage, cpu usage, network rates…",
     "settings-schema":  "org.gnome.shell.extensions.system-monitor",
-    "gettext-domain": "system-monitor"
+    "gettext-domain": "system-monitor",
+    "version": -1
 }

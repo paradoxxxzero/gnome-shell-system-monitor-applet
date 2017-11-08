@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-08 12:21+0200\n"
+"POT-Creation-Date: 2016-12-22 15:04+0100\n"
 "PO-Revision-Date: 2013-08-22 01:55+0200\n"
 "Last-Translator: Muhammad Fawwaz Orabi <mfawwaz93@gmail.com>\n"
 "Language-Team: Arabic <mfawwaz93@gmail.com>\n"
@@ -299,7 +299,8 @@ msgstr "أشرطة"
 msgid "none"
 msgstr "لا شيء"
 
-#: extension.js:6 extension.js:68
+#: extension.js:68
+#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -307,6 +308,7 @@ msgid ""
 "\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
 "\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    on Arch: libgtop, networkmanager\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 msgstr ""
 "لا تتوفر للإضافة كل ما تعتمد عليه\n"
 "رجاء ثبّت ما يلي: \n"
@@ -355,4 +357,8 @@ msgstr ""
 
 #: extension.js:1097
 msgid "CPU"
+msgstr ""
+
+#: prefs.js:267
+msgid "Display temperature in Fahrenheit"
 msgstr ""

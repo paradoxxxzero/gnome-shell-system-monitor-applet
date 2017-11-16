@@ -18,6 +18,10 @@
 
 // Author: Florian Mounier aka paradoxxxzero
 
+/* Ugly. This is here so that we don't crash old libnm-glib based shells unnecessarily
+ * by loading the new libnm.so. Should go away eventually */
+const libnm_glib = imports.gi.GIRepository.Repository.get_default().is_registered("NMClient", "1.0");
+
 let smDepsGtop = true;
 let smDepsNM = true;
 
@@ -40,7 +44,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Compat = Me.imports.compat;
 
-let Background, GTop, IconSize, Locale, MountsMonitor, NMClient, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
+let Background, GTop, IconSize, Locale, MountsMonitor, NM, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
 
 try {
     GTop = imports.gi.GTop;
@@ -50,8 +54,8 @@ try {
 }
 
 try {
-    NMClient = imports.gi.NMClient;
-    NetworkManager = imports.gi.NetworkManager;
+    NM = libnm_glib ? imports.gi.NMClient : imports.gi.NM;
+    NetworkManager = libnm_glib ? imports.gi.NetworkManager : NM;
 } catch (e) {
     log(e);
     smDepsNM = false;
@@ -1619,7 +1623,7 @@ const Net = new Lang.Class({
     _init: function () {
         this.item_name = _('Net');
         this.ifs = [];
-        this.client = NMClient.Client.new();
+        this.client = libnm_glib ? NM.Client.new() : NM.Client.new(null);
         this.update_iface_list();
 
         if (!this.ifs.length) {

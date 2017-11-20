@@ -1465,15 +1465,12 @@ const Freq = new Lang.Class({
         this.update();
     },
     refresh: function () {
-        let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split('\n');
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            if (line.search(/cpu mhz/i) < 0) {
-                continue;
-            }
-            this.freq = parseInt(line.substring(line.indexOf(':') + 2));
-            break;
+        let total_frequency = 0;
+        let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
+        for (let i = 0; i < num_cpus; i++) {
+          total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
         }
+        this.freq = Math.round(total_frequency / num_cpus / 1000);
     },
     _apply: function () {
         let value = this.freq.toString();

@@ -907,7 +907,7 @@ const ElementBase = new Lang.Class({
             let tipline = new TipItem();
             this.tipmenu.addMenuItem(tipline);
             tipline.actor.add(new St.Label({text: _(this.color_name[i])}));
-            this.tip_labels[i] = new St.Label();
+            this.tip_labels[i] = new St.Label({text: ''});
             tipline.actor.add(this.tip_labels[i]);
 
             this.tip_unit_labels[i] = new St.Label({text: unit[i]});
@@ -1132,6 +1132,7 @@ const Battery = new Lang.Class({
                 gicon: Gio.icon_new_for_string(this.icon),
                 style_class: Style.get('sm-status-icon')}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1143,6 +1144,7 @@ const Battery = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: '%',
@@ -1310,6 +1312,7 @@ const Cpu = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1320,6 +1323,7 @@ const Cpu = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: '%',
@@ -1425,6 +1429,7 @@ const Disk = new Lang.Class({
                 text: _('R'),
                 style_class: Style.get('sm-status-label')}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-disk-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1435,6 +1440,7 @@ const Disk = new Lang.Class({
                 text: _('W'),
                 style_class: Style.get('sm-status-label')}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-disk-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1446,6 +1452,7 @@ const Disk = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: Style.diskunits(),
@@ -1454,6 +1461,7 @@ const Disk = new Lang.Class({
                 text: _('R'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: Style.diskunits(),
@@ -1497,6 +1505,7 @@ const Freq = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-big-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1507,6 +1516,7 @@ const Freq = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: 'MHz',
@@ -1596,6 +1606,7 @@ const Mem = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1610,12 +1621,14 @@ const Mem = new Lang.Class({
         }
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: '%',
                 style_class: Style.get('sm-label')}),
-            new St.Label(),
+            new St.Label({text: ''}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({text: unit,
                 style_class: Style.get('sm-label')})
@@ -1772,6 +1785,7 @@ const Net = new Lang.Class({
                 icon_size: 2 * IconSize / 3 * Style.iconsize(),
                 icon_name: 'go-down-symbolic'}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-net-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1782,6 +1796,7 @@ const Net = new Lang.Class({
                 icon_size: 2 * IconSize / 3 * Style.iconsize(),
                 icon_name: 'go-up-symbolic'}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-net-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1793,6 +1808,7 @@ const Net = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: _('KiB/s'),
@@ -1801,6 +1817,7 @@ const Net = new Lang.Class({
                 text: _('Down'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: _('KiB/s'),
@@ -1885,6 +1902,7 @@ const Swap = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1900,12 +1918,14 @@ const Swap = new Lang.Class({
         }
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: '%',
                 style_class: Style.get('sm-label')}),
-            new St.Label(),
+            new St.Label({text: ''}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: _(unit),
@@ -1963,6 +1983,7 @@ const Thermal = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -1974,6 +1995,7 @@ const Thermal = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: this.temperature_symbol(),
@@ -2027,6 +2049,7 @@ const Fan = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -2037,6 +2060,7 @@ const Fan = new Lang.Class({
     create_menu_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: _('rpm'),
@@ -2172,6 +2196,7 @@ const Gpu = new Lang.Class({
     create_text_items: function () {
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
@@ -2187,12 +2212,14 @@ const Gpu = new Lang.Class({
         }
         return [
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: '%',
                 style_class: Style.get('sm-label')}),
-            new St.Label(),
+            new St.Label({text: ''}),
             new St.Label({
+                text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
                 text: unit,

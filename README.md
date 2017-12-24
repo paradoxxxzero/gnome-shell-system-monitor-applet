@@ -29,6 +29,8 @@ Before installing this extension, ensure you have the necessary system packages 
 
       $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
 
+Additionally, if you have an Nvidia graphics card, and want to monitor its memory usage, you'll need to install `nvidia-smi`.
+
 For the browser installation (recommended), you will need the GNOME Shell integration browser extension for
 [Chrome](https://chrome.google.com/webstore/detail/gnome-shell-integration/gphhapmejobijbbhgpjhcjognlahblep),
 [Firefox](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) or

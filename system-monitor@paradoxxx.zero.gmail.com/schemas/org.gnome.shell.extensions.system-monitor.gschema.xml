@@ -9,6 +9,11 @@
     <value value="1" nick="bar"/>
     <value value="2" nick="none"/>       
   </enum>
+  <enum id="org.gnome.shell.extensions.system-monitor.position">
+    <value value="0" nick="right"/>
+    <value value="1" nick="center"/>
+    <value value="2" nick="left"/>
+  </enum>
   <schema id="org.gnome.shell.extensions.system-monitor" path="/org/gnome/shell/extensions/system-monitor/">
     <key name="icon-display" type="b">
       <default>true</default>
@@ -308,10 +313,9 @@
       <default>'#f2002e'</default>
       <summary>Color of fan in the chart</summary>
     </key>
-    <key name="center-display" type="b">
-      <default>false</default>
-      <summary>Display informations next to the clock</summary>
-      <description>True: Set information at the center, False: Set information in status bar (at top right)</description>
+    <key name="panel-position" enum="org.gnome.shell.extensions.system-monitor.position">
+      <default>'right'</default>
+      <summary>Choose position on top panel.</summary>
     </key>
     <key name="move-clock" type="b">
       <default>false</default>

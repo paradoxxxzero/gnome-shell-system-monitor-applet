@@ -315,12 +315,14 @@ const App = class SystemMonitor_App {
                     set_boolean(check, Schema, key);
                 });*/
                 Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'center-display') {
-                let item = new Gtk.CheckButton({label: _('Display in the Middle')})
-                // item.set_active(Schema.get_boolean(key))
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            } else if (key === 'panel-position') {
+                let item = new Select(_('Panel Position'));
+                item.add([_('Right'), _('Center'), _('Left')]);
+                item.set_value(Schema.get_enum(key));
+                this.hbox1.add(item.actor);
+                item.selector.connect('changed', function (style) {
+                    set_enum(style, Schema, key);
+                });
             } else if (key === 'compact-display') {
                 let item = new Gtk.CheckButton({label: _('Compact Display')})
                 this.items.push(item)

@@ -49,7 +49,14 @@ var Me = ExtensionUtils.getCurrentExtension();
 var Convenience = Me.imports.convenience;
 var Compat = Me.imports.compat;
 
-var Background, GTop, IconSize, Locale, MountsMonitor, NM, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
+var Background, GTop, IconSize, Locale, MountsMonitor, NM, NetworkManager, PanelBox, Schema, StatusArea, Style, gc_timeout, menu_timeout;
+
+const Position = {
+    RIGHT: 0,
+    CENTER: 1,
+    LEFT: 2
+}
+var positionId = 0;
 
 try {
     GTop = imports.gi.GTop;
@@ -2281,6 +2288,22 @@ const Icon = class SystemMonitor_Icon {
     }
 }
 
+function reposition() {
+    switch (Schema.get_enum('panel-position')) {
+    case Position.CENTER:
+        PanelBox = Main.panel._centerBox;
+        break;
+    case Position.LEFT:
+        PanelBox = Main.panel._leftBox;
+        break;
+    default:
+        PanelBox = Main.panel._rightBox;
+        break;
+    }
+
+    Main.panel._addToPanelBox('system-monitor', Main.__sm.tray, 1, PanelBox);
+}
+
 function init() {
     log('[System monitor] applet init from ' + extension.path);
 
@@ -2317,13 +2340,23 @@ function enable() {
                 return true;
             });
     } else {
-        let panel = Main.panel._rightBox;
+        switch (Schema.get_enum('panel-position')) {
+        case Position.CENTER:
+            PanelBox = Main.panel._centerBox;
+            break;
+        case Position.LEFT:
+            PanelBox = Main.panel._leftBox;
+            break;
+        default:
+            PanelBox = Main.panel._rightBox;
+            break;
+        }
+        positionId = Schema.connect('changed::panel-position', function () {
+            reposition();
+        });
         StatusArea = Main.panel._statusArea;
         if (typeof (StatusArea) === 'undefined') {
             StatusArea = Main.panel.statusArea;
-        }
-        if (Schema.get_boolean('center-display')) {
-            panel = Main.panel._centerBox;
         }
 
         MountsMonitor.connect();
@@ -2355,14 +2388,14 @@ function enable() {
         if (Schema.get_boolean('move-clock')) {
             let dateMenu = Main.panel.statusArea.dateMenu;
             Main.panel._centerBox.remove_actor(dateMenu.container);
-            Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
+            Main.panel._addToPanelBox('dateMenu', dateMenu, -1, PanelBox);
             tray.clockMoved = true;
         }
 
         Schema.connect('changed::background', (schema, key) => {
             Background = color_from_string(Schema.get_string(key));
         });
-        Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
+        Main.panel._addToPanelBox('system-monitor', tray, 1, PanelBox);
 
         // The spacing adds a distance between the graphs/text on the top bar
         let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
@@ -2452,7 +2485,7 @@ function disable() {
     // restore clock
     if (Main.__sm.tray.clockMoved) {
         let dateMenu = Main.panel.statusArea.dateMenu;
-        Main.panel._rightBox.remove_actor(dateMenu.container);
+        PanelBox.remove_actor(dateMenu.container);
         Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
     }
     // restore system power icon if necessary
@@ -2474,6 +2507,7 @@ function disable() {
         Style = null;
     }
 
+    Schema.disconnect(positionId);
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();

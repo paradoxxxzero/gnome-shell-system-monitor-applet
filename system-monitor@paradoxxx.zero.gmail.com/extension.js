@@ -1520,8 +1520,11 @@ const Freq = new Lang.Class({
         this.freq = 0;
         if (GLib.file_test('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq', 1 << 4)) {
             this.fixed_freq = -1;
+            let sys_file = '/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq';
+            this.off = parseInt(Shell.get_file_contents_utf8_sync(sys_file)) / 1000;
         } else {
             this.fixed_freq = this.get_freq_from_cpuinfo();
+            this.off = 0;
         }
         this.parent();
         this.tip_format('MHz');
@@ -1551,7 +1554,7 @@ const Freq = new Lang.Class({
     _apply: function () {
         let value = this.freq.toString();
         this.text_items[0].text = value + ' ';
-        this.vals[0] = value;
+        this.vals[0] = Math.max(this.freq - this.off, 0);
         this.tip_vals[0] = value;
         if (Style.get('') !== '-compact') {
             this.menu_items[0].text = value;

@@ -2230,6 +2230,11 @@ var init = function () {
         Locale = Locale.split('_')[0];
     }
 
+    IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
+};
+
+var enable = function () {
+    log('System monitor applet enabling');
     Schema = Convenience.getSettings();
 
     Style = new smStyleManager();
@@ -2237,11 +2242,6 @@ var init = function () {
 
     Background = color_from_string(Schema.get_string('background'));
 
-    IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
-};
-
-var enable = function () {
-    log('System monitor applet enabling');
     if (!(smDepsGtop && smDepsNM)) {
         Main.__sm = {
             smdialog: new smDialog()
@@ -2423,7 +2423,14 @@ var disable = function () {
     //        Main.__sm.elts[i].hide_system_icon(false);
     // }
 
-    MountsMonitor.disconnect();
+    if (MountsMonitor) {
+        MountsMonitor.disconnect();
+        MountsMonitor = null;
+    }
+
+    if (Style) {
+        Style = null;
+    }
 
     Schema.run_dispose();
     for (let eltName in Main.__sm.elts) {

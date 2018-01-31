@@ -20,7 +20,7 @@
 
 /* Ugly. This is here so that we don't crash old libnm-glib based shells unnecessarily
  * by loading the new libnm.so. Should go away eventually */
-const libnm_glib = imports.gi.GIRepository.Repository.get_default().is_registered("NMClient", "1.0");
+const libnm_glib = imports.gi.GIRepository.Repository.get_default().is_registered('NMClient', '1.0');
 
 let smDepsGtop = true;
 let smDepsNM = true;
@@ -1483,7 +1483,7 @@ const Freq = new Lang.Class({
         let total_frequency = 0;
         let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
         for (let i = 0; i < num_cpus; i++) {
-          total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
+            total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
         }
         this.freq = Math.round(total_frequency / num_cpus / 1000);
     },

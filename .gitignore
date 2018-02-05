@@ -3,3 +3,6 @@ tmp
 *.pyc
 *.swp
 /.project
+/*.zip
+/*.geany
+*.out

@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: system-monitor-applet\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-22 15:04+0100\n"
-"PO-Revision-Date: 2011-06-24 HO:MI+ZONE\n"
-"Last-Translator: Viacheslav Dikonov <slava@altlinux.ru>\n"
+"PO-Revision-Date: 2017-11-08 22:30-0500\n"
+"Last-Translator: Georgii Iesaulov <esauloff@gmail.com>\n"
 "Language-Team: Russian <RU@li.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -54,28 +54,27 @@ msgstr "Цвет фона"
 
 #: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "Показать отдельные ядра"
 
 #: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "Скорость сети в битах"
 
 #: prefs.js:205 prefs.js:208
 msgid "Sensor"
-msgstr ""
+msgstr "Датчик"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "Установите lm-sensors"
 
 #: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr ""
+msgstr "Переместить часы"
 
 #: prefs.js:286 prefs.js:289
-#, fuzzy
 msgid "Compact Display"
-msgstr "Показывать"
+msgstr "Компактный"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
@@ -129,16 +128,16 @@ msgid "Down"
 msgstr "Приём"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "Ошибки передачи"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "Ошибки приёма"
 
 msgid "collisions"
-msgstr ""
+msgstr "коллизии"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Коллизии"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
@@ -164,7 +163,7 @@ msgstr "график"
 
 #: prefs.js:185 prefs.js:183
 msgid "digit"
-msgstr "цифры"
+msgstr "цифровой"
 
 #: prefs.js:185 prefs.js:183
 msgid "both"
@@ -191,9 +190,8 @@ msgid "Preferences..."
 msgstr "Настройка..."
 
 #: extension.js:1340 extension.js:1894
-#, fuzzy
 msgid "System Monitor..."
-msgstr "Системный монитор"
+msgstr "Системный монитор..."
 
 msgid "System monitor"
 msgstr "Системный монитор"
@@ -202,7 +200,7 @@ msgid "user"
 msgstr "пользователь"
 
 msgid "system"
-msgstr "Система"
+msgstr "система"
 
 msgid "other"
 msgstr "прочие"
@@ -217,13 +215,13 @@ msgid "program"
 msgstr "процессы"
 
 msgid "cache"
-msgstr "Кэш"
+msgstr "кэш"
 
 msgid "buffer"
-msgstr "Буфер записи"
+msgstr "буфер записи"
 
 msgid "used"
-msgstr "Используется"
+msgstr "используется"
 
 msgid "up"
 msgstr "передача"
@@ -232,16 +230,16 @@ msgid "down"
 msgstr "приём"
 
 msgid "uperrors"
-msgstr ""
+msgstr "ошибки передачи"
 
 msgid "downerrors"
-msgstr ""
+msgstr "ошибки приёма"
 
 msgid "write"
-msgstr "Запись"
+msgstr "запись"
 
 msgid "read"
-msgstr "Чтение"
+msgstr "чтение"
 
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
@@ -257,6 +255,10 @@ msgstr ""
 msgid "MiB"
 msgstr ""
 
+#: extension.js:1714
+msgid "GiB"
+msgstr ""
+
 #: extension.js:184
 msgid "kB"
 msgstr ""
@@ -267,41 +269,38 @@ msgstr ""
 
 #: extension.js:1179 extension.js:1644
 msgid "Thermal"
-msgstr ""
+msgstr "Температура"
 
-#, fuzzy
 msgid "thermal"
-msgstr "Прочие"
+msgstr "температура"
 
 #: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
-msgstr ""
+msgstr "Показывать в меню"
 
 #: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Оставшееся время"
 
 #: prefs.js:226 prefs.js:233
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "Системный монитор"
+msgstr "Скрыть системный значок"
 
 #: prefs.js:230 prefs.js:237
-#, fuzzy
 msgid "Usage Style"
 msgstr "Стиль"
 
 #: prefs.js:231 prefs.js:238
 msgid "pie"
-msgstr ""
+msgstr "круговая"
 
 #: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr ""
+msgstr "гистограмма"
 
 #: prefs.js:231 prefs.js:238
 msgid "none"
-msgstr ""
+msgstr "нет"
 
 #: extension.js:68
 msgid ""
@@ -315,34 +314,33 @@ msgid ""
 msgstr ""
 
 #: extension.js:97 extension.js:255
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "Системный монитор"
+msgstr "Расширение системного монитора"
 
 #: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 #: extension.js:601 extension.js:875
 msgid "Battery"
-msgstr ""
+msgstr "Батарея"
 
 msgid "battery"
-msgstr ""
+msgstr "батарея"
 
 #: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr ""
+msgstr "Частота"
 
 msgid "freq"
-msgstr ""
+msgstr "частота"
 
 #: extension.js:1540 extension.js:1692
 msgid "Fan"
-msgstr ""
+msgstr "Вентилятор"
 
 msgid "fan"
-msgstr ""
+msgstr "вентилятор"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730
@@ -351,7 +349,7 @@ msgstr ""
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Показывать подсказку"
 
 #: extension.js:1097
 msgid "CPU"
@@ -359,7 +357,11 @@ msgstr ""
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Температура в Фаренгейтах"
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
+msgstr "Температурный порог (0 для отключения)"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Настройка апплета системных параметров"

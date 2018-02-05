@@ -107,6 +107,35 @@
       <summary>Display one graph per cpu core</summary>
       <description>Set to true to display one graph per cpu core</description>
     </key>
+    <key name="gpu-display" type="b">
+      <default>false</default>
+      <summary>Display gpu usage</summary>
+      <description>Set to false to remove gpu display in status bar</description>
+    </key>
+    <key name="gpu-refresh-time" type="i">
+      <default>5000</default>
+      <summary>Memory refresh time</summary>
+      <description>Time in ms between 2 refresh of gpu usage</description>
+    </key>
+    <key name="gpu-graph-width" type="i">
+      <default>100</default>
+      <summary>Gpu usage graph width</summary>
+      <description>Graph width in pixel</description>
+    </key>
+    <key name="gpu-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'gpu'</summary>
+      <description>Set to true to show 'gpu' before gpu display</description>
+    </key>
+    <key name="gpu-show-menu" type="b">
+      <default>false</default>
+      <summary>Display Gpu In Menu</summary>
+      <description>Set to true to show gpu in pop-up menu</description>
+    </key>
+    <key name="gpu-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'graph'</default>
+      <summary>Choose the display style.</summary>
+    </key>
     <key name="freq-display" type="b">
       <default>false</default>
       <summary>Display freq</summary>
@@ -236,6 +265,11 @@
       <summary>Sensor File</summary>
       <description>Location of the sensor file for cpu temp</description>
     </key>
+    <key name="thermal-threshold" type="i">
+      <default>0</default>
+      <summary>Thermal threshold</summary>
+      <description>When the temprature passes the threshold, the text is set to red as an alert.</description>
+    </key>
     <key name="fan-display" type="b">
       <default>false</default>
       <summary>Display fan</summary>
@@ -346,6 +380,10 @@
       <default>'#001d26'</default>
       <summary>Color of other cpu in the chart</summary>
     </key>
+    <key name="freq-freq-color" type="s">
+      <default>'#75507b'</default>
+      <summary>Color of freq in the chart</summary>
+    </key>
     <key name="freq-freqmin-color" type="s">
       <default>'#ad7fa8'</default>
       <summary>Color of freq min in the chart</summary>
@@ -369,6 +407,10 @@
     <key name="disk-write-color" type="s">
       <default>'#ff6700'</default>
       <summary>Color of disk writing speed in the chart</summary>
+    </key>
+    <key name="gpu-used-color" type="s">
+      <default>'#00b35b'</default>
+      <summary>Color of program gpu memory in the chart</summary>
     </key>
     <key name="thermal-tz0-color" type="s">
       <default>'#f2002e'</default>

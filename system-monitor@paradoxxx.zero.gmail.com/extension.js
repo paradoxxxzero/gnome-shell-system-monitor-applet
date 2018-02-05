@@ -1481,7 +1481,7 @@ const Freq = new Lang.Class({
     },
     refresh: function () {
         let total_frequency = 0;
-        let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
+        let num_cpus = Math.min(GTop.glibtop_get_sysinfo().ncpu, 4);
         for (let i = 0; i < num_cpus; i++) {
           total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
         }

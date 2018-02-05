@@ -1,7 +1,7 @@
 # Basic Makefile
 
 UUID = system-monitor@paradoxxx.zero.gmail.com
-BASE_MODULES = $(UUID)/extension.js $(UUID)/README* $(UUID)/metadata.json $(UUID)/prefs.js $(UUID)/stylesheet.css $(UUID)/convenience.js $(UUID)/compat.js
+BASE_MODULES = $(UUID)/extension.js $(UUID)/README* $(UUID)/metadata.json $(UUID)/prefs.js $(UUID)/stylesheet.css $(UUID)/convenience.js $(UUID)/compat.js $(UUID)/gpu_usage.sh
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
 else
@@ -45,7 +45,7 @@ zip-file: _build
 	mv _build/$(UUID)$(VSTRING).zip ./
 	-rm -fR _build
 
-_build: all
+_build: update-translation
 	-rm -fR ./_build
 	mkdir -p _build
 	cp $(BASE_MODULES) _build
@@ -55,3 +55,7 @@ _build: all
 	cp $(UUID)/schemas/*.xml _build/schemas/
 	cp $(UUID)/schemas/gschemas.compiled _build/schemas/
 	sed -i 's/"version": -1/"version": "$(VERSION)"/'  _build/metadata.json;
+
+update-translation: all
+	cd po; \
+	./compile.sh ../system-monitor@paradoxxx.zero.gmail.com/locale;

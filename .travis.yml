@@ -1,12 +1,11 @@
 # https://docs.travis-ci.com/user/multi-os/
 # https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
-matrix:
-    include:
-        # Ubuntu 14.04
-        -   os: linux
-            dist: trusty
-            sudo: required
-            python: 2.7
+
+dist: trusty
+sudo: required
+language: python
+python: 2.7
+
 install:
 -   sudo apt-key update
 -   sudo apt-get -yq update
@@ -19,7 +18,17 @@ install:
 # Fails.
 #-   DEBIAN_FRONTEND=noninteractive sudo apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
 #-   sudo npm install
--   sudo apt-get -yq install nodejs
+#-   sudo apt-get -yq install nodejs
+
+# Install NodeJS from upstream, since the version that comes with Ubuntu 14 is ancient.
+# https://askubuntu.com/a/548776/13217
+-   sudo apt-get -yq install curl
+-   curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+-   sudo apt-get install -yq nodejs
+# Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
+-   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
+-   which nodejs
+-   which node
 
 # Install NPM from upstream.
 -   git clone git://github.com/npm/npm.git
@@ -29,8 +38,6 @@ install:
 -   cd ../..
 
 -   sudo npm install -g eslint
-# Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
--   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
 
 script:
 -   set -e

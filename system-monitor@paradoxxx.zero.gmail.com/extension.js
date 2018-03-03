@@ -686,7 +686,7 @@ const TipMenu = new Lang.Class({
         // Hacky condition to determine if the status bar is at the top or at the bottom of the screen
         if (allocation.y1 / monitor.height > 0.3) {
             tipy = allocation.y1 - height; // If it is at the bottom, place the tooltip above instead of below
-		}
+        }
         this.actor.set_position(tipx, tipy);
     },
     open: function (animate) {
@@ -1487,7 +1487,7 @@ const Freq = new Lang.Class({
         let total_frequency = 0;
         let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
         for (let i = 0; i < num_cpus; i++) {
-        	total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
+          total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
         }
         this.freq = Math.round(total_frequency / num_cpus / 1000);
     },

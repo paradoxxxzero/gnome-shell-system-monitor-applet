@@ -1476,25 +1476,40 @@ const Freq = new Lang.Class({
     elt: 'freq',
     item_name: _('Freq'),
     color_name: ['freq'],
-    _init: function () {
-        this.item_name = _('Freq');
+    cpuid: 0,
+    _init: function (cpuid) {
+        this.item_name = _('Freq') + (cpuid < 0 ? '' : ' ' + (cpuid + 1));
+        this.cpuid = cpuid;
         this.freq = 0;
+        if (GLib.file_test('/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq', 1 << 4)) {
+            this.fixed_freq = -1;
+            this.off = this.get_cpufreq('scaling_min_freq', cpuid < 0 ? 0 : cpuid);
+        } else {
+            this.fixed_freq = this.get_freq_from_cpuinfo(cpuid < 0 ? 0 : cpuid);
+            this.off = 0;
+        }
         this.parent()
         this.tip_format('MHz');
         this.update();
     },
     refresh: function () {
-        let total_frequency = 0;
-        let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
-        for (let i = 0; i < num_cpus; i++) {
-          total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
+        if (this.fixed_freq < 0 && this.cpuid < 0) {
+            let total_frequency = 0;
+            let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
+            for (let i = 0; i < num_cpus; i++) {
+                total_frequency += this.get_cpufreq('scaling_cur_freq', i);
+            }
+            this.freq = Math.round(total_frequency / num_cpus);
+        } else if (this.fixed_freq < 0) {
+            this.freq = this.get_cpufreq('scaling_cur_freq', this.cpuid);
+        } else {
+            this.freq = this.fixed_freq;
         }
-        this.freq = Math.round(total_frequency / num_cpus / 1000);
     },
     _apply: function () {
         let value = this.freq.toString();
         this.text_items[0].text = value + ' ';
-        this.vals[0] = value;
+        this.vals[0] = Math.max(this.freq - this.off, 0);
         this.tip_vals[0] = value;
         this.menu_items[0].text = value;
     },
@@ -1516,6 +1531,25 @@ const Freq = new Lang.Class({
                 text: 'MHz',
                 style_class: Style.get('sm-label')})
         ];
+    },
+    get_cpufreq: function (sys_file, cpuid) {
+        sys_file = '/sys/devices/system/cpu/cpu' + cpuid + '/cpufreq/' + sys_file;
+        return parseInt(Shell.get_file_contents_utf8_sync(sys_file)) / 1000;
+    },
+    get_freq_from_cpuinfo: function (cpuid) {
+        let cnt = cpuid;
+        let lines = Shell.get_file_contents_utf8_sync('/proc/cpuinfo').split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            if (line.search(/cpu mhz/i) < 0) {
+                continue;
+            }
+            if (cnt === 0) {
+                return parseInt(line.substring(line.indexOf(':') + 2));
+            }
+            cnt--;
+        }
+        return 0;
     }
 });
 
@@ -2281,7 +2315,14 @@ var enable = function () {
 
         // Items to Monitor
         Main.__sm.elts = createCpus();
-        Main.__sm.elts.push(new Freq());
+        let num_cpus = Main.__sm.elts.length;
+        if (num_cpus === 1) {
+            Main.__sm.elts.push(new Freq(-1));
+        } else {
+            for (let i = 0; i < num_cpus; i++) {
+                Main.__sm.elts.push(new Freq(i));
+            }
+        }
         Main.__sm.elts.push(new Mem());
         Main.__sm.elts.push(new Swap());
         Main.__sm.elts.push(new Net());

@@ -537,13 +537,13 @@ const Bar = new Lang.Class({
         this.thickness = 15 * Style.text_scaling();
         this.fontsize = Style.bar_fontsize();
         this.parent(arguments);
-        this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2);
+        this.actor.set_height(this.mounts.length * (3 * this.thickness));
     },
     _draw: function () {
         if (!this.actor.visible) {
             return;
         }
-        this.actor.set_height(this.mounts.length * (3 * this.thickness) / 2);
+        this.actor.set_height(this.mounts.length * (3 * this.thickness));
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
 
@@ -555,15 +555,21 @@ const Bar = new Lang.Class({
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
-            cr.moveTo(2 * x0, y0)
-            cr.relLineTo(perc_full * 0.6 * width, 0);
+
+            var text = this.mounts[mount];
+            if (text.length > 10) {
+                text = text.split("/").pop();
+            }
             cr.moveTo(0, y0 + this.thickness / 3);
-            cr.showText(this.mounts[mount]);
-            // cr.stroke();
+            cr.showText(text);
             cr.moveTo(width - x0, y0 + this.thickness / 3);
             cr.showText(Math.round(perc_full * 100).toString() + '%');
+            y0 += (5 * this.thickness) / 4;
+
+            cr.moveTo(0, y0)
+            cr.relLineTo(perc_full * width, 0);
             cr.stroke();
-            y0 += (3 * this.thickness) / 2;
+            y0 += (7 * this.thickness) / 4;
         }
         if (Compat.versionCompare(shell_Version, '3.7.4')) {
             cr.$dispose();

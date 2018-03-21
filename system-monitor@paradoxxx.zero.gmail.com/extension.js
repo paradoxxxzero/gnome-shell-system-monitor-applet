@@ -1462,7 +1462,7 @@ const Disk = new Lang.Class({
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _('R'),
+                text: _(' R'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
@@ -1471,7 +1471,7 @@ const Disk = new Lang.Class({
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _('W'),
+                text: _(' W'),
                 style_class: Style.get('sm-label')})
         ];
     },
@@ -1820,16 +1820,16 @@ const Net = new Lang.Class({
                 text: _('KiB/s'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _('Down'),
+                text: _(' Down'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
-                text: _('KiB/s'),
+                text: _(' KiB/s'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _('Up'),
+                text: _(' Up'),
                 style_class: Style.get('sm-label')})
         ];
     }

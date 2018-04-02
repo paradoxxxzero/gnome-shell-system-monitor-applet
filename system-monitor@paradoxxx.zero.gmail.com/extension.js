@@ -1630,7 +1630,9 @@ const Mem = new Lang.Class({
             new St.Label({
                 text: '%',
                 style_class: Style.get('sm-label')}),
-            new St.Label({text: ''}),
+            new St.Label({
+                text: '',
+                style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
                 style_class: Style.get('sm-value')}),
@@ -1927,7 +1929,9 @@ const Swap = new Lang.Class({
             new St.Label({
                 text: '%',
                 style_class: Style.get('sm-label')}),
-            new St.Label({text: ''}),
+            new St.Label({
+                text: '',
+                style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
                 style_class: Style.get('sm-value')}),
@@ -2221,7 +2225,9 @@ const Gpu = new Lang.Class({
             new St.Label({
                 text: '%',
                 style_class: Style.get('sm-label')}),
-            new St.Label({text: ''}),
+            new St.Label({
+                text: '',
+                style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
                 style_class: Style.get('sm-value')}),

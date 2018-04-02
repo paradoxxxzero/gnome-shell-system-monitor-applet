@@ -1504,7 +1504,19 @@ const Freq = new Lang.Class({
         this.text_items[0].text = value + ' ';
         this.vals[0] = value;
         this.tip_vals[0] = value;
-        this.menu_items[0].text = value;
+        if (Style.get('') !== '-compact') {
+            this.menu_items[0].text = value;
+        } else {
+            this.menu_items[0].text = this._pad(value,4);
+        }
+    },
+    // pad a string with leading spaces
+    _pad: function (number, length) {
+        var str = '' + number;
+        while (str.length < length) {
+            str = ' ' + str;
+        }
+        return str;
     },
     create_text_items: function () {
         return [
@@ -1601,7 +1613,7 @@ const Mem = new Lang.Class({
         this.menu_items[0].text = this.tip_vals[0].toLocaleString(Locale);
         if (Style.get('') !== '-compact') {
             this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString(Locale) +
-                '  /  ' + this._pad(this.total).toLocaleString(Locale);
+                ' / ' + this._pad(this.total).toLocaleString(Locale);
         } else {
             this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString(Locale) +
                 '/' + this._pad(this.total).toLocaleString(Locale);
@@ -1728,11 +1740,11 @@ const Net = new Lang.Class({
         this.last_time = time;
     },
 
-    // pad a string with leading 0s
+    // pad a string with leading spaces
     _pad: function (number, length) {
         var str = '' + number;
         while (str.length < length) {
-            str = '0' + str;
+            str = ' ' + str;
         }
         return str;
     },
@@ -1781,8 +1793,8 @@ const Net = new Lang.Class({
             this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toString();
             this.menu_items[3].text = this.text_items[4].text = this.tip_vals[2].toString();
         } else {
-            this.menu_items[0].text = this.text_items[1].text = this._pad(this.tip_vals[0].toString(), 3);
-            this.menu_items[3].text = this.text_items[4].text = this._pad(this.tip_vals[2].toString(), 3);
+            this.menu_items[0].text = this.text_items[1].text = this._pad(this.tip_vals[0].toString(), 4);
+            this.menu_items[3].text = this.text_items[4].text = this._pad(this.tip_vals[2].toString(), 4);
         }
     },
     create_text_items: function () {
@@ -1898,7 +1910,7 @@ const Swap = new Lang.Class({
         this.menu_items[0].text = this.tip_vals[0].toString();
         if (Style.get('') !== '-compact') {
             this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
-                '  /  ' + this._pad(this.total).toLocaleString(Locale);
+                ' / ' + this._pad(this.total).toLocaleString(Locale);
         } else {
             this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
                 '/' + this._pad(this.total).toLocaleString(Locale);

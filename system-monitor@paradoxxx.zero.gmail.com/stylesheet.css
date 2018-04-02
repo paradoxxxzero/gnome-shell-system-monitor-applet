@@ -7,6 +7,7 @@
     color: #bbb;
     font-size: 0.75em;
     padding-top: 5px;
+    font-family: monospace;
 }
 
 .sm-label-left {
@@ -19,6 +20,7 @@
     text-align: right;
     min-width: 40px;
     padding: 2px 5px 0 0;
+    font-family: monospace;
 }
 
 .sm-status-label {
@@ -111,11 +113,13 @@
 .sm-label-compact {
     color: #bbb;
     font-size: 0.6875em;
+    font-family: monospace;
 } /* Bat, Net... units in menu items */
 
 .sm-value-compact {
     font-size: 0.6875em;
     text-align: right;
+    font-family: monospace;
 } /* Values in menu items */
 
 .sm-status-label-compact {

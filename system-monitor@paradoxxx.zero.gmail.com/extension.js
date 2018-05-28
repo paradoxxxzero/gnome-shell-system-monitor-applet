@@ -620,7 +620,11 @@ const Pie = new Lang.Class({
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
             cr.moveTo(0, yc - r + thickness / 2);
-            cr.showText(this.mounts[mount]);
+            var text = this.mounts[mount];
+            if (text.length > 10) {
+                text = text.split("/").pop();
+            }
+            cr.showText(text);
             cr.stroke();
             r -= (3 * thickness) / 2;
         }

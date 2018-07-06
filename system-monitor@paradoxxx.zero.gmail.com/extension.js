@@ -2133,13 +2133,22 @@ const Gpu = new Lang.Class({
             let path = Me.dir.get_path();
             let script = ['/bin/bash', path + '/gpu_usage.sh'];
 
-            let [, pid, , out_fd, ] = GLib.spawn_async_with_pipes(
+            let [, pid, in_fd, out_fd, err_fd] = GLib.spawn_async_with_pipes(
                 null,
                 script,
                 null,
                 GLib.SpawnFlags.DO_NOT_REAP_CHILD,
                 null);
 
+            let _tmp_stream = new Gio.DataInputStream({
+                base_stream: new Gio.UnixInputStream({fd: in_fd})
+            });
+            _tmp_stream.close(null);
+            _tmp_stream = new Gio.DataInputStream({
+                base_stream: new Gio.UnixInputStream({fd: err_fd})
+            });
+            _tmp_stream.close(null);
+            
             // Let's buffer the command's output - that's an input for us !
             this._process_stream = new Gio.DataInputStream({
                 base_stream: new Gio.UnixInputStream({fd: out_fd})

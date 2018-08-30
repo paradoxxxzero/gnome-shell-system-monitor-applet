@@ -31,8 +31,8 @@ install:
 -   which node
 
 # Install NPM from upstream.
--   git clone git://github.com/npm/npm.git
--   cd npm/scripts
+-   git clone git://github.com/npm/cli.git
+-   cd cli/scripts
 -   chmod +x install.sh
 -   sudo ./install.sh
 -   cd ../..

@@ -840,7 +840,11 @@ const ElementBase = new Lang.Class({
             this.colors.push(clutterColor);
         }
 
-        this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), IconSize, this);
+        let element_width = Schema.get_int(this.elt + '-graph-width');
+        if (Style.get('') === '-compact') {
+            element_width = Math.round(element_width / 1.5);
+        }
+        this.chart = new Chart(element_width, IconSize, this);
         Schema.connect('changed::background',
             Lang.bind(this,
                 function () {

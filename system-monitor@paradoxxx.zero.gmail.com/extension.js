@@ -1116,13 +1116,26 @@ const Battery = new Lang.Class({
             // Main.panel._updatePanel('right');
         }
     },
-
-    update_tips: function () {
+    get_battery_unit: function () {
+        let unitString;
         let value = Schema.get_boolean(this.elt + '-time');
+
         if (value) {
-            this.text_items[2].text = this.menu_items[1].text = 'h';
+            unitString = 'h';
         } else {
-            this.text_items[2].text = this.menu_items[1].text = '%';
+            unitString = '%';
+        }
+
+        return unitString;
+    },
+    update_tips: function () {
+        let unitString = this.get_battery_unit();
+
+        if (Schema.get_boolean(this.elt + '-display')) {
+            this.text_items[2].text = unitString;
+        }
+        if (Schema.get_boolean(this.elt + '-show-menu')) {
+            this.menu_items[1].text = unitString;
         }
 
         this.update();
@@ -1135,8 +1148,13 @@ const Battery = new Lang.Class({
         } else {
             displayString = this.percentage.toString()
         }
-        this.text_items[1].text = this.menu_items[0].text = displayString;
-        this.text_items[0].gicon = this.gicon;
+        if (Schema.get_boolean(this.elt + '-display')) {
+            this.text_items[0].gicon = this.gicon;
+            this.text_items[1].text  = displayString;
+        }
+        if (Schema.get_boolean(this.elt + '-show-menu')) {
+            this.menu_items[0].text = displayString;
+        }
         this.vals = [this.percentage];
         this.tip_vals[0] = Math.round(this.percentage);
     },
@@ -1150,7 +1168,7 @@ const Battery = new Lang.Class({
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
-                text: '%',
+                text: this.get_battery_unit(),
                 style_class: Style.get('sm-perc-label'),
                 y_align: Clutter.ActorAlign.CENTER})
         ];
@@ -1161,7 +1179,7 @@ const Battery = new Lang.Class({
                 text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
-                text: '%',
+                text: this.get_battery_unit(),
                 style_class: Style.get('sm-label')})
         ];
     },

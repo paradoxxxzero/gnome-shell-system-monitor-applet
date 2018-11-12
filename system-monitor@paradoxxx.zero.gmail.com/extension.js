@@ -865,7 +865,7 @@ const ElementBase = new Lang.Class({
             Lang.bind(this,
                 function (schema, key) {
                     Mainloop.source_remove(this.timeout);
-                    this.timeout = 0;
+                    this.timeout = null;
                     this.interval = l_limit(Schema.get_int(key));
                     this.timeout = Mainloop.timeout_add(
                         this.interval, Lang.bind(this, this.update));
@@ -878,7 +878,7 @@ const ElementBase = new Lang.Class({
                 Lang.bind(this,
                     function () {
                         Mainloop.source_remove(this.timeout);
-                        this.timeout = 0;
+                        this.timeout = null;
                         this.reset_style();
                         this.timeout = Mainloop.timeout_add(
                             this.interval, Lang.bind(this, this.update));
@@ -936,7 +936,6 @@ const ElementBase = new Lang.Class({
               },*/
     update: function () {
         if (!this.menu_visible && !this.actor.visible) {
-            this.timeout = 0;
             return false;
         }
         this.refresh();
@@ -966,7 +965,7 @@ const ElementBase = new Lang.Class({
         TipBox.prototype.destroy.call(this);
         if (this.timeout) {
             Mainloop.source_remove(this.timeout);
-            this.timeout = 0;
+            this.timeout = null;
         }
     }
 });
@@ -2166,7 +2165,7 @@ const Gpu = new Lang.Class({
                 base_stream: new Gio.UnixInputStream({fd: err_fd})
             });
             _tmp_stream.close(null);
-            
+
             // Let's buffer the command's output - that's an input for us !
             this._process_stream = new Gio.DataInputStream({
                 base_stream: new Gio.UnixInputStream({fd: out_fd})

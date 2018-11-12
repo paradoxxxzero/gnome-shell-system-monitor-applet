@@ -558,7 +558,7 @@ const Bar = new Lang.Class({
 
             var text = this.mounts[mount];
             if (text.length > 10) {
-                text = text.split("/").pop();
+                text = text.split('/').pop();
             }
             cr.moveTo(0, y0 + this.thickness / 3);
             cr.showText(text);
@@ -622,7 +622,7 @@ const Pie = new Lang.Class({
             cr.moveTo(0, yc - r + thickness / 2);
             var text = this.mounts[mount];
             if (text.length > 10) {
-                text = text.split("/").pop();
+                text = text.split('/').pop();
             }
             cr.showText(text);
             cr.stroke();
@@ -1149,7 +1149,7 @@ const Battery = new Lang.Class({
         }
         if (Schema.get_boolean(this.elt + '-display')) {
             this.text_items[0].gicon = this.gicon;
-            this.text_items[1].text  = displayString;
+            this.text_items[1].text = displayString;
         }
         if (Schema.get_boolean(this.elt + '-show-menu')) {
             this.menu_items[0].text = displayString;
@@ -1534,7 +1534,7 @@ const Freq = new Lang.Class({
         if (Style.get('') !== '-compact') {
             this.menu_items[0].text = value;
         } else {
-            this.menu_items[0].text = this._pad(value,4);
+            this.menu_items[0].text = this._pad(value, 4);
         }
     },
     // pad a string with leading spaces

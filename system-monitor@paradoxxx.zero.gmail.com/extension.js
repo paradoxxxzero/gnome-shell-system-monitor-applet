@@ -656,7 +656,8 @@ const TipMenu = new Lang.Class({
     _init: function (sourceActor) {
         // PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
         this.parent(sourceActor, 'sm-tooltip-box');
-        this.actor = new Shell.GenericContainer();
+        //this.actor = new Shell.GenericContainer();
+        this.actor = new Clutter.Actor(); // <<< Fix deprecated Shell.GenericContainer 
         this.actor.connect('get-preferred-width',
             Lang.bind(this, this._boxGetPreferredWidth));
         this.actor.connect('get-preferred-height',

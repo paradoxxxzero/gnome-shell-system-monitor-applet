@@ -424,8 +424,8 @@ const smMountsMonitor = new Lang.Class({
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function (mount) {
-            if (!this.is_ro_mount(mount) &&
-                (!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE)) {
+            if ((!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE) &&
+                 !this.is_ro_mount(mount)) {
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
                 if (mpath) {
                     this.mounts.push(mpath);
@@ -454,6 +454,10 @@ const smMountsMonitor = new Lang.Class({
         return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
     },
     is_ro_mount: function (mount) {
+        // FIXME: running this function after "login after waking from suspend"
+        // can make login hang. Actual issue seems to occur when a former net
+        // mount got broken (e.g. due to a VPN connection terminated or
+        // otherwise broken connection)
         try {
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY, null);

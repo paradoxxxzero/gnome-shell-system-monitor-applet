@@ -49,7 +49,7 @@ let Background, GTop, IconSize, Locale, MountsMonitor, NM, NetworkManager, Schem
 try {
     GTop = imports.gi.GTop;
 } catch (e) {
-    log(e);
+    log('[System monitor] catched error: ' + e);
     smDepsGtop = false;
 }
 
@@ -57,7 +57,7 @@ try {
     NM = libnm_glib ? imports.gi.NMClient : imports.gi.NM;
     NetworkManager = libnm_glib ? imports.gi.NetworkManager : NM;
 } catch (e) {
-    log(e);
+    log('[System monitor] catched error: ' + e);
     smDepsNM = false;
 }
 
@@ -416,24 +416,24 @@ const smMountsMonitor = new Lang.Class({
                 this.mounts.push(mount[1]);
             }
         }
-        log("old mounts: " + this.mounts);*/
+        log("[System monitor] old mounts: " + this.mounts);*/
         this.mounts = [];
         for (let base in this.base_mounts) {
-            // log(this.base_mounts[base]);
+            // log("[System monitor] " + this.base_mounts[base]);
             this.mounts.push(this.base_mounts[base]);
         }
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach(Lang.bind(this, function (mount) {
-            if (!this.is_ro_mount(mount) &&
-                (!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE)) {
+            if ((!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE) &&
+                 !this.is_ro_mount(mount)) {
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
                 if (mpath) {
                     this.mounts.push(mpath);
                 }
             }
         }));
-        // log("base: " + this.base_mounts);
-        // log("mounts: " + this.mounts);
+        // log("[System monitor] base: " + this.base_mounts);
+        // log("[System monitor] mounts: " + this.mounts);
         for (let i in this.listeners) {
             this.listeners[i](this.mounts);
         }
@@ -454,6 +454,10 @@ const smMountsMonitor = new Lang.Class({
         return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
     },
     is_ro_mount: function (mount) {
+        // FIXME: running this function after "login after waking from suspend"
+        // can make login hang. Actual issue seems to occur when a former net
+        // mount got broken (e.g. due to a VPN connection terminated or
+        // otherwise broken connection)
         try {
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_READONLY, null);
@@ -484,8 +488,8 @@ const smMountsMonitor = new Lang.Class({
             // need to add the other signals here
             this.connected = true;
         } catch (e) {
-            log('Failed to register on placesManager notifications');
-            log('Got exception : ' + e);
+            log('[System monitor] Failed to register on placesManager notifications');
+            log('[System monitor] Got exception : ' + e);
         }
         this.refresh();
     },
@@ -1022,7 +1026,7 @@ const Battery = new Lang.Class({
                 let seconds = this._proxy.TimeToEmpty;
                 this.update_battery_value(seconds, percentage, icon);
             } else {
-                // log("SM: No battery found");
+                // log("[System monitor] No battery found");
                 this.actor.hide();
                 this.menu_visible = false;
                 build_menu_info();
@@ -1030,7 +1034,7 @@ const Battery = new Lang.Class({
         } else {
             this._proxy.GetDevicesRemote(Lang.bind(this, function (devices, error) {
                 if (error) {
-                    log('SM: Power proxy error: ' + error)
+                    log('[System monitor] Power proxy error: ' + error);
                     this.actor.hide();
                     this.menu_visible = false;
                     build_menu_info();
@@ -1055,7 +1059,7 @@ const Battery = new Lang.Class({
                 }
 
                 if (!battery_found) {
-                    // log("SM: No battery found")
+                    // log("[System monitor] No battery found");
                     this.actor.hide();
                     this.menu_visible = false;
                     build_menu_info();
@@ -2288,7 +2292,7 @@ const Icon = new Lang.Class({
 
 
 var init = function () {
-    log('System monitor applet init from ' + extension.path);
+    log('[System monitor] applet init from ' + extension.path);
 
     Convenience.initTranslations();
     // Get locale, needed as an argument for toLocaleString() since GNOME Shell 3.24
@@ -2302,7 +2306,7 @@ var init = function () {
 };
 
 var enable = function () {
-    log('System monitor applet enabling');
+    log('[System monitor] applet enabling');
     Schema = Convenience.getSettings();
 
     Style = new smStyleManager();
@@ -2464,7 +2468,7 @@ var enable = function () {
         }
     }
 
-    log('System monitor applet enabling done');
+    log('[System monitor] applet enabling done');
 };
 
 var disable = function () {
@@ -2512,5 +2516,5 @@ var disable = function () {
         Main.__sm.tray.actor.destroy();
     }
     Main.__sm = null;
-    log('System monitor applet disable');
+    log('[System monitor] applet disable');
 };

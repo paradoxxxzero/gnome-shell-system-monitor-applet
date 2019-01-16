@@ -562,7 +562,7 @@ const Bar = new Lang.Class({
 
             var text = this.mounts[mount];
             if (text.length > 10) {
-                text = text.split("/").pop();
+                text = text.split('/').pop();
             }
             cr.moveTo(0, y0 + this.thickness / 3);
             cr.showText(text);
@@ -626,7 +626,7 @@ const Pie = new Lang.Class({
             cr.moveTo(0, yc - r + thickness / 2);
             var text = this.mounts[mount];
             if (text.length > 10) {
-                text = text.split("/").pop();
+                text = text.split('/').pop();
             }
             cr.showText(text);
             cr.stroke();
@@ -869,7 +869,7 @@ const ElementBase = new Lang.Class({
             Lang.bind(this,
                 function (schema, key) {
                     Mainloop.source_remove(this.timeout);
-                    this.timeout = 0;
+                    this.timeout = null;
                     this.interval = l_limit(Schema.get_int(key));
                     this.timeout = Mainloop.timeout_add(
                         this.interval, Lang.bind(this, this.update));
@@ -882,7 +882,7 @@ const ElementBase = new Lang.Class({
                 Lang.bind(this,
                     function () {
                         Mainloop.source_remove(this.timeout);
-                        this.timeout = 0;
+                        this.timeout = null;
                         this.reset_style();
                         this.timeout = Mainloop.timeout_add(
                             this.interval, Lang.bind(this, this.update));
@@ -940,7 +940,6 @@ const ElementBase = new Lang.Class({
               },*/
     update: function () {
         if (!this.menu_visible && !this.actor.visible) {
-            this.timeout = 0;
             return false;
         }
         this.refresh();
@@ -970,7 +969,7 @@ const ElementBase = new Lang.Class({
         TipBox.prototype.destroy.call(this);
         if (this.timeout) {
             Mainloop.source_remove(this.timeout);
-            this.timeout = 0;
+            this.timeout = null;
         }
     }
 });
@@ -1120,13 +1119,26 @@ const Battery = new Lang.Class({
             // Main.panel._updatePanel('right');
         }
     },
-
-    update_tips: function () {
+    get_battery_unit: function () {
+        let unitString;
         let value = Schema.get_boolean(this.elt + '-time');
+
         if (value) {
-            this.text_items[2].text = this.menu_items[1].text = 'h';
+            unitString = 'h';
         } else {
-            this.text_items[2].text = this.menu_items[1].text = '%';
+            unitString = '%';
+        }
+
+        return unitString;
+    },
+    update_tips: function () {
+        let unitString = this.get_battery_unit();
+
+        if (Schema.get_boolean(this.elt + '-display')) {
+            this.text_items[2].text = unitString;
+        }
+        if (Schema.get_boolean(this.elt + '-show-menu')) {
+            this.menu_items[1].text = unitString;
         }
 
         this.update();
@@ -1139,8 +1151,13 @@ const Battery = new Lang.Class({
         } else {
             displayString = this.percentage.toString()
         }
-        this.text_items[1].text = this.menu_items[0].text = displayString;
-        this.text_items[0].gicon = this.gicon;
+        if (Schema.get_boolean(this.elt + '-display')) {
+            this.text_items[0].gicon = this.gicon;
+            this.text_items[1].text = displayString;
+        }
+        if (Schema.get_boolean(this.elt + '-show-menu')) {
+            this.menu_items[0].text = displayString;
+        }
         this.vals = [this.percentage];
         this.tip_vals[0] = Math.round(this.percentage);
     },
@@ -1154,7 +1171,7 @@ const Battery = new Lang.Class({
                 style_class: Style.get('sm-status-value'),
                 y_align: Clutter.ActorAlign.CENTER}),
             new St.Label({
-                text: '%',
+                text: this.get_battery_unit(),
                 style_class: Style.get('sm-perc-label'),
                 y_align: Clutter.ActorAlign.CENTER})
         ];
@@ -1165,7 +1182,7 @@ const Battery = new Lang.Class({
                 text: '',
                 style_class: Style.get('sm-value')}),
             new St.Label({
-                text: '%',
+                text: this.get_battery_unit(),
                 style_class: Style.get('sm-label')})
         ];
     },
@@ -1521,7 +1538,7 @@ const Freq = new Lang.Class({
         if (Style.get('') !== '-compact') {
             this.menu_items[0].text = value;
         } else {
-            this.menu_items[0].text = this._pad(value,4);
+            this.menu_items[0].text = this._pad(value, 4);
         }
     },
     // pad a string with leading spaces
@@ -2152,7 +2169,7 @@ const Gpu = new Lang.Class({
                 base_stream: new Gio.UnixInputStream({fd: err_fd})
             });
             _tmp_stream.close(null);
-            
+
             // Let's buffer the command's output - that's an input for us !
             this._process_stream = new Gio.DataInputStream({
                 base_stream: new Gio.UnixInputStream({fd: out_fd})

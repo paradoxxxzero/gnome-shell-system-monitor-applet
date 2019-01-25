@@ -570,7 +570,7 @@ const Bar = new Lang.Class({
             cr.showText(Math.round(perc_full * 100).toString() + '%');
             y0 += (5 * this.thickness) / 4;
 
-            cr.moveTo(0, y0)
+            cr.moveTo(0, y0);
             cr.relLineTo(perc_full * width, 0);
             cr.stroke();
             y0 += (7 * this.thickness) / 4;
@@ -685,7 +685,7 @@ const TipMenu = new Lang.Class({
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
         let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
-        let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor)
+        let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor);
         let [x, y] = [allocation.x1 + contentbox.x1,
             allocation.y1 + contentbox.y1];
         let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
@@ -727,7 +727,7 @@ const TipBox = new Lang.Class({
     _init: function () {
         this.actor = new St.BoxLayout({reactive: true});
         this.actor._delegate = this;
-        this.set_tip(new TipMenu(this.actor))
+        this.set_tip(new TipMenu(this.actor));
         this.in_to = this.out_to = 0;
         this.actor.connect('enter-event', Lang.bind(this, this.on_enter));
         this.actor.connect('leave-event', Lang.bind(this, this.on_leave));
@@ -987,7 +987,7 @@ const Battery = new Lang.Class({
         this.icon_hidden = false;
         this.percentage = 0;
         this.timeString = '-- ';
-        this._proxy = StatusArea.aggregateMenu._power._proxy
+        this._proxy = StatusArea.aggregateMenu._power._proxy;
         if (typeof (this._proxy) === 'undefined') {
             this._proxy = StatusArea.battery._proxy;
         }
@@ -997,7 +997,7 @@ const Battery = new Lang.Class({
         this.icon = '. GThemedIcon battery-good-symbolic battery-good';
         this.gicon = Gio.icon_new_for_string(this.icon);
 
-        this.parent()
+        this.parent();
         this.tip_format('%');
 
         this.update_battery();
@@ -1518,7 +1518,7 @@ const Freq = new Lang.Class({
     _init: function () {
         this.item_name = _('Freq');
         this.freq = 0;
-        this.parent()
+        this.parent();
         this.tip_format('MHz');
         this.update();
     },
@@ -1597,7 +1597,7 @@ const Mem = new Lang.Class({
             this._unitConversion *= 1024 / this._decimals;
         }
 
-        this.parent()
+        this.parent();
         this.tip_format();
         this.update();
     },
@@ -1716,13 +1716,13 @@ const Net = new Lang.Class({
         this.last = [0, 0, 0, 0, 0];
         this.usage = [0, 0, 0, 0, 0];
         this.last_time = 0;
-        this.parent()
+        this.parent();
         this.tip_format([_('KiB/s'), '/s', _('KiB/s'), '/s', '/s']);
         this.update_units();
         Schema.connect('changed::' + this.elt + '-speed-in-bits', Lang.bind(this, this.update_units));
         try {
             let iface_list = this.client.get_devices();
-            this.NMsigID = []
+            this.NMsigID = [];
             for (let j = 0; j < iface_list.length; j++) {
                 this.NMsigID[j] = iface_list[j].connect('state-changed', Lang.bind(this, this.update_iface_list));
             }
@@ -1736,7 +1736,7 @@ const Net = new Lang.Class({
     },
     update_iface_list: function () {
         try {
-            this.ifs = []
+            this.ifs = [];
             let iface_list = this.client.get_devices();
             for (let j = 0; j < iface_list.length; j++) {
                 if (iface_list[j].state === NetworkManager.DeviceState.ACTIVATED) {
@@ -2334,12 +2334,12 @@ var enable = function () {
     if (!(smDepsGtop && smDepsNM)) {
         Main.__sm = {
             smdialog: new smDialog()
-        }
+        };
 
         let dialog_timeout = Mainloop.timeout_add_seconds(
             1,
             function () {
-                Main.__sm.smdialog.open()
+                Main.__sm.smdialog.open();
                 Mainloop.source_remove(dialog_timeout);
                 return true;
             });

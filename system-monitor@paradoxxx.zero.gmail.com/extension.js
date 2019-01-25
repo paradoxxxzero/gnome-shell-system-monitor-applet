@@ -1525,10 +1525,19 @@ const Freq = new Lang.Class({
     refresh: function () {
         let total_frequency = 0;
         let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
-        for (let i = 0; i < num_cpus; i++) {
-            total_frequency += parseInt(Shell.get_file_contents_utf8_sync('/sys/devices/system/cpu/cpu' + i + '/cpufreq/scaling_cur_freq'));
-        }
-        this.freq = Math.round(total_frequency / num_cpus / 1000);
+        let i = 0;
+        let file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
+        file.load_contents_async(null, Lang.bind(this, function cb (source, result) {
+            let as_r = source.load_contents_finish(result);
+            total_frequency += parseInt(as_r[1]);
+
+            if (++i >= num_cpus) {
+                this.freq = Math.round(total_frequency / num_cpus / 1000);
+            } else {
+                file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
+                file.load_contents_async(null, Lang.bind(this, cb));
+            }
+        }));
     },
     _apply: function () {
         let value = this.freq.toString();

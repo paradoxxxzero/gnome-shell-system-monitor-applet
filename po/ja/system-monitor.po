@@ -1,0 +1,417 @@
+# Japanese translations for system-monitor package.
+# Copyright (C) 2017 Listed translators
+# This file is distributed under the same license as the system-monitor package.
+# Shinichirou Yamada <yamada_strong_yamada_nice_64bit@yahoo.co.jp>, 2017.
+# sicklylife <translation@sicklylife.jp>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: system-monitor\n"
+"Report-Msgid-Bugs-To: https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/issues\n"
+"POT-Creation-Date: 2019-02-10 18:58+0900\n"
+"PO-Revision-Date: 2019-02-10 19:21+0900\n"
+"Last-Translator: sicklylife <translation@sicklylife.jp>\n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: extension.js:74
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-"
+"NetworkManager-1_0\n"
+msgstr ""
+"依存関係が見つかりません\n"
+"必要なパッケージをインストールして下さい: \n"
+"libgtop, Network Manager, gir bindings \n"
+"\t    Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    Arch: libgtop, networkmanager\n"
+"\t    openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+
+#: extension.js:175 extension.js:177 extension.js:1397 extension.js:1789
+#: extension.js:1797
+msgid "MiB/s"
+msgstr "MiB/s"
+
+#: extension.js:176 extension.js:1699 extension.js:1786 extension.js:1794
+#: extension.js:1820 extension.js:1831 extension.js:1842
+msgid "KiB/s"
+msgstr "KiB/s"
+
+#: extension.js:178 extension.js:1769 extension.js:1777
+msgid "kbit/s"
+msgstr "kbit/s"
+
+#: extension.js:179 extension.js:1772 extension.js:1780
+msgid "Mbit/s"
+msgstr "Mbit/s"
+
+#: extension.js:193 extension.js:195
+msgid "MB"
+msgstr "MB"
+
+#: extension.js:194
+msgid "kB"
+msgstr "kB"
+
+#: extension.js:276
+msgid "System Monitor Extension"
+msgstr "システムモニター拡張機能"
+
+#: extension.js:292
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: extension.js:888
+msgid "mem"
+msgstr ""
+
+#: extension.js:978 extension.js:983
+msgid "Battery"
+msgstr "バッテリー"
+
+#: extension.js:1179
+msgid "CPU"
+msgstr "CPU"
+
+#: extension.js:1200
+msgid "Cpu"
+msgstr "CPU"
+
+#: extension.js:1386 extension.js:1390
+msgid "Disk"
+msgstr "ディスク"
+
+#: extension.js:1443
+msgid "R"
+msgstr "R"
+
+#: extension.js:1454
+msgid "W"
+msgstr "W"
+
+#: extension.js:1475
+msgid " R"
+msgstr " R"
+
+#: extension.js:1484
+msgid " W"
+msgstr " W"
+
+#: extension.js:1495 extension.js:1498
+msgid "Freq"
+msgstr ""
+
+#: extension.js:1559 extension.js:1564
+msgid "Memory"
+msgstr "メモリ"
+
+#: extension.js:1644 extension.js:2239
+msgid "MiB"
+msgstr "MiB"
+
+#: extension.js:1646 extension.js:2241
+msgid "GiB"
+msgstr "GiB"
+
+#: extension.js:1672 extension.js:1677
+msgid "Net"
+msgstr "ネット"
+
+#: extension.js:1845
+msgid " Down"
+msgstr " Down"
+
+#: extension.js:1851
+msgid " KiB/s"
+msgstr " KiB/s"
+
+#: extension.js:1854
+msgid " Up"
+msgstr " Up"
+
+#: extension.js:1865 extension.js:1870
+msgid "Swap"
+msgstr "スワップ"
+
+#: extension.js:1972 extension.js:1976
+msgid "Thermal"
+msgstr "温度"
+
+#: extension.js:2048 extension.js:2052
+msgid "Fan"
+msgstr "ファン"
+
+#: extension.js:2056 extension.js:2086 extension.js:2096
+msgid "rpm"
+msgstr "rpm"
+
+#: extension.js:2107 extension.js:2112
+msgid "GPU"
+msgstr "GPU"
+
+#: extension.js:2434
+msgid "System Monitor..."
+msgstr "システムモニター..."
+
+#: extension.js:2440
+msgid "Preferences..."
+msgstr "設定..."
+
+#: prefs.js:74 prefs.js:94 prefs.js:114
+msgid ":"
+msgstr ":"
+
+#: prefs.js:186
+msgid "Display"
+msgstr "表示"
+
+#: prefs.js:190
+msgid "Show Text"
+msgstr "テキストを表示"
+
+#: prefs.js:194
+msgid "Show In Menu"
+msgstr "メニュー内に表示"
+
+#: prefs.js:199
+msgid "Refresh Time"
+msgstr "更新間隔"
+
+#: prefs.js:204
+msgid "Graph Width"
+msgstr "グラフの幅"
+
+#: prefs.js:209
+msgid "Display Style"
+msgstr "表示スタイル"
+
+#: prefs.js:210
+msgid "digit"
+msgstr "数値"
+
+#: prefs.js:210
+msgid "graph"
+msgstr "グラフ"
+
+#: prefs.js:210
+msgid "both"
+msgstr "両方"
+
+#: prefs.js:228
+msgid "Sensor"
+msgstr "センサー"
+
+#: prefs.js:230
+msgid "Please install lm-sensors"
+msgstr "lm-sensors をインストールしてください"
+
+#: prefs.js:251
+msgid "Show network speed in bits"
+msgstr "ネットワークの速度をビット単位で表示"
+
+#: prefs.js:255
+msgid "Display Individual Cores"
+msgstr "各コアを表示"
+
+#: prefs.js:259
+msgid "Show Time Remaining"
+msgstr "残り時間を表示"
+
+#: prefs.js:263
+msgid "Hide System Icon"
+msgstr "システムアイコンを隠す"
+
+#: prefs.js:267
+msgid "Usage Style"
+msgstr "使用量の表示スタイル"
+
+#: prefs.js:268
+msgid "pie"
+msgstr "円"
+
+#: prefs.js:268
+msgid "bar"
+msgstr "バー"
+
+#: prefs.js:268
+msgid "none"
+msgstr "なし"
+
+#: prefs.js:276
+msgid "Display temperature in Fahrenheit"
+msgstr "華氏で温度を表示"
+
+#: prefs.js:280
+msgid "Temperature threshold (0 to disable)"
+msgstr "温度のしきい値 (0 で無効)"
+
+#: prefs.js:287
+msgid "** Only Nvidia GPUs supported so far **"
+msgstr "** 今のところ Nvidia の GPU のみサポートしています **"
+
+#: prefs.js:320
+msgid "Display Icon"
+msgstr "アイコンを表示"
+
+#: prefs.js:329
+msgid "Display in the Middle"
+msgstr "中央に表示"
+
+#: prefs.js:335
+msgid "Compact Display"
+msgstr "コンパクト表示"
+
+#: prefs.js:340
+msgid "Show tooltip"
+msgstr "ツールチップを表示"
+
+#: prefs.js:346
+msgid "Move the clock"
+msgstr "時計を移動"
+
+#: prefs.js:352
+msgid "Background Color"
+msgstr "背景色"
+
+#
+
+msgid "System monitor"
+msgstr "システムモニター"
+
+msgid "battery time remaining"
+msgstr "バッテリーの残り時間"
+
+msgid "User"
+msgstr "ユーザー"
+
+msgid "System"
+msgstr "システム"
+
+msgid "Nice"
+msgstr ""
+
+msgid "Iowait"
+msgstr ""
+
+msgid "Other"
+msgstr "その他"
+
+msgid "Write"
+msgstr "書き込み"
+
+msgid "Read"
+msgstr "読み込み"
+
+msgid "Program"
+msgstr "プログラム"
+
+msgid "Cache"
+msgstr "キャッシュ"
+
+msgid "Buffer"
+msgstr "バッファ"
+
+msgid "Uperrors"
+msgstr "Up エラー"
+
+msgid "Downerrors"
+msgstr "Down エラー"
+
+msgid "Collisions"
+msgstr "コリジョン"
+
+msgid "Used"
+msgstr "使用済み"
+
+msgid "Gpu"
+msgstr "GPU"
+
+# グラフのラベル
+
+# msgid "cpu"
+# msgstr "C"
+
+# msgid "swap"
+# msgstr "S"
+
+# msgid "net"
+# msgstr "N"
+
+# msgid "disk"
+# msgstr "D"
+
+# msgid "gpu"
+# msgstr "G"
+
+# msgid "thermal"
+# msgstr "T"
+
+# msgid "fan"
+# msgstr "F"
+
+# ツールチップの文字列と被る
+# msgid "freq"
+# msgstr "Q"
+
+# msgid "battery"
+# msgstr "B"
+
+# ツールチップの文字列
+
+# msgid "user"
+# msgstr "ユーザー"
+
+# msgid "system"
+# msgstr "システム"
+
+# msgid "nice"
+# msgstr ""
+
+# msgid "iowait"
+# msgstr ""
+
+# msgid "other"
+# msgstr "その他"
+
+# msgid "program"
+# msgstr "プログラム"
+
+# msgid "cache"
+# msgstr "キャッシュ"
+
+# msgid "buffer"
+# msgstr "バッファ"
+
+# msgid "used"
+# msgstr "使用中"
+
+# msgid "up"
+# msgstr ""
+
+# msgid "down"
+# msgstr ""
+
+# msgid "uperrors"
+# msgstr "up エラー"
+
+# msgid "downerrors"
+# msgstr "down エラー"
+
+# msgid "collisions"
+# msgstr "コリジョン"
+
+# msgid "write"
+# msgstr "書き込み"
+
+# msgid "read"
+# msgstr "読み込み"

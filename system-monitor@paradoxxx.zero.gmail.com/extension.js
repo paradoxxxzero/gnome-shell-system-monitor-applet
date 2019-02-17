@@ -2186,9 +2186,9 @@ const Gpu = new Lang.Class({
         let memTotal = parseInt(usage[0]);
         let memUsed = parseInt(usage[1]);
         this.percentage = parseInt(usage[2]);
-
         if (typeof this.useGiB === 'undefined') {
             this._unit(memTotal);
+            this._update_unit();
         }
 
         if (this.useGiB) {
@@ -2212,6 +2212,13 @@ const Gpu = new Lang.Class({
         }
 
         return number;
+    },
+    _update_unit: function() {
+      let unit = _('MiB');
+      if (this.useGiB) {
+          unit = _('GiB');
+      }
+      this.menu_items[4].text = unit;
     },
     _apply: function () {
         if (this.total === 0) {

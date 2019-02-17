@@ -2163,49 +2163,26 @@ const Gpu = new Lang.Class({
             let path = Me.dir.get_path();
             let script = ['/bin/bash', path + '/gpu_usage.sh'];
 
-            let [, pid, in_fd, out_fd, err_fd] = GLib.spawn_async_with_pipes(
-                null,
-                script,
-                null,
-                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-                null);
+            // Create subprocess and capture STDOUT
+            let proc = new Gio.Subprocess({argv: script, flags: Gio.SubprocessFlags.STDOUT_PIPE});
+            proc.init(null);
+            // Asynchronously call the output handler when script output is ready
+            proc.communicate_utf8_async(null, null, Lang.bind(this, this._handleOutput));
 
-            let _tmp_stream = new Gio.DataInputStream({
-                base_stream: new Gio.UnixInputStream({fd: in_fd})
-            });
-            _tmp_stream.close(null);
-            _tmp_stream = new Gio.DataInputStream({
-                base_stream: new Gio.UnixInputStream({fd: err_fd})
-            });
-            _tmp_stream.close(null);
-
-            // Let's buffer the command's output - that's an input for us !
-            this._process_stream = new Gio.DataInputStream({
-                base_stream: new Gio.UnixInputStream({fd: out_fd})
-            });
-
-            // We will process the output at once when it's done
-            this._process_sourceId = GLib.child_watch_add(
-                0,
-                pid,
-                Lang.bind(this, this._readTemperature)
-            );
         } catch (err) {
-            // Deal with the error
+            global.logError(err.message);
         }
     },
-    _readTemperature: function () {
-        let usage = [];
-        let out, size;
-        if (this._process_stream) {
-            do {
-                [out, size] = this._process_stream.read_line_utf8(null);
-                if (out) {
-                    usage.push(out);
-                }
-            } while (out);
-        }
-
+    _handleOutput: function(proc, result) {
+      let [ok, output,] = proc.communicate_utf8_finish(result);
+      if (ok) {
+        this._readTemperature(output);
+      } else {
+        global.logError('gpu_usage.sh invocation failed');
+      }
+    },
+    _readTemperature: function (procOutput) {
+        let usage = procOutput.split('\n');
         let memTotal = parseInt(usage[0]);
         let memUsed = parseInt(usage[1]);
         this.percentage = parseInt(usage[2]);
@@ -2222,14 +2199,6 @@ const Gpu = new Lang.Class({
         } else {
             this.mem = Math.round(memUsed / this._unitConversion);
             this.total = Math.round(memTotal / this._unitConversion);
-        }
-
-        this._endProcess();
-    },
-    _endProcess: function () {
-        if (this._process_stream) {
-            this._process_stream.close(null);
-            this._process_stream = null;
         }
     },
     _pad: function (number) {

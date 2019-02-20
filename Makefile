@@ -39,6 +39,9 @@ install-local: _build
 	-rm -fR _build
 	echo done
 
+reload:
+	gnome-shell-extension-tool -r $(UUID)
+
 zip-file: _build
 	cd _build ; \
 	zip -qr "$(UUID)$(VSTRING).zip" .

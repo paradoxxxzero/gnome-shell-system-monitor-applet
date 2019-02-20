@@ -19,11 +19,11 @@ BASE_MODULES = \
 # variables
 # ---------
 
-INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
-
 ifeq ($(strip $(DESTDIR)),$(HOME))
+  INSTALLBASE = $(DESTDIR)/.local/share/gnome-shell/extensions
   SUDO=
 else
+INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
   SUDO=sudo
 endif
 

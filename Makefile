@@ -82,7 +82,7 @@ help:
 	@echo  '  zip-file  - build and zip ./$(UUID).zip'
 	@echo  '  reload    - reload extension $(UUID)'
 	@echo  '  clean     - remove most generated files'
-	@echo  '  extension - remove most generated files'
+	@echo  '  extension - rebuild schemas/gschemas.compiled'
 	@echo  '  translate - generate translation from po/ files'
 	@echo  ''
 	@echo  'control verbosity:'

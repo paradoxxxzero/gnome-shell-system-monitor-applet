@@ -3,7 +3,7 @@
 
 UUID = system-monitor@paradoxxx.zero.gmail.com
 INSTALLNAME = $(UUID)
-DESTDIR ?=
+DESTDIR ?= $(HOME)
 
 BASE_MODULES = \
   $(UUID)/extension.js \
@@ -19,11 +19,11 @@ BASE_MODULES = \
 # variables
 # ---------
 
-ifeq ($(strip $(DESTDIR)),)
-  INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
+INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
+
+ifeq ($(strip $(DESTDIR)),$(HOME))
   SUDO=
 else
-  INSTALLBASE = $(DESTDIR)usr/share/gnome-shell/extensions
   SUDO=sudo
 endif
 

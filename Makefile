@@ -97,7 +97,7 @@ install: remove build
 	$(call msg,$@,$(SUDO) $(INSTALLBASE)/$(INSTALLNAME))
 	$(Q) $(SUDO) mkdir -p $(INSTALLBASE)/$(INSTALLNAME)
 	$(Q) $(SUDO) cp $(VV) -r ./_build/* $(INSTALLBASE)/$(INSTALLNAME)/
-	$(Q) $(MAKE) reload -s
+	$(Q) $(MAKE) -s reload
 	$(call msg,$@,OK)
 
 remove:

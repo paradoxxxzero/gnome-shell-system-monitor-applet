@@ -107,7 +107,7 @@ remove:
 	$(call msg,$@,OK)
 
 reload:
-	$(call reload-extension $(UUID))
+	$(call reload-extension,$(UUID))
 	$(call msg,$@,OK)
 
 

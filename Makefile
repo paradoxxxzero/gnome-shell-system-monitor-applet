@@ -3,7 +3,6 @@
 
 UUID = system-monitor@paradoxxx.zero.gmail.com
 INSTALLNAME = $(UUID)
-DESTDIR ?=
 
 BASE_MODULES = \
   $(UUID)/extension.js \

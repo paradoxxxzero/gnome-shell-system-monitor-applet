@@ -169,8 +169,7 @@ function interesting_mountpoint(mount) {
 
 
 const smStyleManager = class SystemMonitor_smStyleManager {
-
-    constructor () {
+    constructor() {
         this._extension = '';
         this._iconsize = 1;
         this._diskunits = _('MiB/s');
@@ -211,53 +210,52 @@ const smStyleManager = class SystemMonitor_smStyleManager {
             this._text_scaling = 1;
         }
     }
-    get (style) {
+    get(style) {
         return style + this._extension;
     }
-    iconsize () {
+    iconsize() {
         return this._iconsize;
     }
-    diskunits () {
+    diskunits() {
         return this._diskunits;
     }
-    netunits_kbytes () {
+    netunits_kbytes() {
         return this._netunits_kbytes;
     }
-    netunits_mbytes () {
+    netunits_mbytes() {
         return this._netunits_mbytes;
     }
-    netunits_kbits () {
+    netunits_kbits() {
         return this._netunits_kbits;
     }
-    netunits_mbits () {
+    netunits_mbits() {
         return this._netunits_mbits;
     }
-    pie_width () {
+    pie_width() {
         return this._pie_width;
     }
-    pie_height () {
+    pie_height() {
         return this._pie_height;
     }
-    pie_fontsize () {
+    pie_fontsize() {
         return this._pie_fontsize * this._text_scaling;
     }
-    bar_width () {
+    bar_width() {
         return this._bar_width;
     }
-    bar_height () {
+    bar_height() {
         return this._bar_height;
     }
-    bar_fontsize () {
+    bar_fontsize() {
         return this._bar_fontsize * this._text_scaling;
     }
-    text_scaling () {
+    text_scaling() {
         return this._text_scaling;
     }
 }
 
 const smDialog = class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
-
-    constructor () {
+    constructor() {
         super({styleClass: 'prompt-dialog'});
         let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
             vertical: false});
@@ -295,12 +293,10 @@ const smDialog = class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
             }
         ]);
     }
-
 }
 
 const Chart = class SystemMonitor_Chart {
-
-    constructor (width, height, parent) {
+    constructor(width, height, parent) {
         this.actor = new St.DrawingArea({style_class: Style.get('sm-chart'), reactive: false});
         this.parentC = parent;
         this.actor.set_width(this.width = width);
@@ -311,7 +307,7 @@ const Chart = class SystemMonitor_Chart {
             this.data[i] = [];
         }
     }
-    update () {
+    update() {
         let data_a = this.parentC.vals;
         if (data_a.length !== this.parentC.colors.length) {
             return;
@@ -329,7 +325,7 @@ const Chart = class SystemMonitor_Chart {
         }
         this.actor.queue_repaint();
     }
-    _draw () {
+    _draw() {
         if (!this.actor.visible) {
             return;
         }
@@ -359,7 +355,7 @@ const Chart = class SystemMonitor_Chart {
             cr.$dispose();
         }
     }
-    resize (schema, key) {
+    resize(schema, key) {
         let old_width = this.width;
         this.width = Schema.get_int(key);
         if (old_width === this.width) {
@@ -376,8 +372,7 @@ const Chart = class SystemMonitor_Chart {
 
 // Class to deal with volumes insertion / ejection
 const smMountsMonitor = class SystemMonitor_smMountsMonitor {
-
-    constructor () {
+    constructor() {
         this.files = [];
         this.num_mounts = -1;
         this.listeners = [];
@@ -386,14 +381,14 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
         this._volumeMonitor = Gio.VolumeMonitor.get();
         let sys_mounts = ['/home', '/tmp', '/boot', '/usr', '/usr/local'];
         this.base_mounts = ['/'];
-        sys_mounts.forEach( (sMount) => {
+        sys_mounts.forEach((sMount) => {
             if (this.is_sys_mount(sMount + '/')) {
                 this.base_mounts.push(sMount);
             }
         });
         this.connect();
     }
-    refresh () {
+    refresh() {
         // try check that number of volumes has changed
         // try {
         //     let num_mounts = this.manager.getMounts().length;
@@ -421,7 +416,7 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
             this.mounts.push(this.base_mounts[base]);
         }
         let mount_lines = this._volumeMonitor.get_mounts();
-        mount_lines.forEach( (mount) => {
+        mount_lines.forEach((mount) => {
             if ((!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE) &&
                  !this.is_ro_mount(mount)) {
                 let mpath = mount.get_root().get_path() || mount.get_default_location().get_path();
@@ -436,22 +431,22 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
             this.listeners[i](this.mounts);
         }
     }
-    add_listener (cb) {
+    add_listener(cb) {
         this.listeners.push(cb);
     }
-    remove_listener (cb) {
+    remove_listener(cb) {
         this.listeners.pop(cb);
     }
-    get_mounts () {
+    get_mounts() {
         return this.mounts;
     }
-    is_sys_mount (mpath) {
+    is_sys_mount(mpath) {
         let file = Gio.file_new_for_path(mpath);
         let info = file.query_info(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT,
             Gio.FileQueryInfoFlags.NONE, null);
         return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
     }
-    is_ro_mount (mount) {
+    is_ro_mount(mount) {
         // FIXME: running this function after "login after waking from suspend"
         // can make login hang. Actual issue seems to occur when a former net
         // mount got broken (e.g. due to a VPN connection terminated or
@@ -464,7 +459,7 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
             return false;
         }
     }
-    is_net_mount (mount) {
+    is_net_mount(mount) {
         try {
             let file = mount.get_default_location();
             let info = file.query_filesystem_info(Gio.FILE_ATTRIBUTE_FILESYSTEM_TYPE, null);
@@ -475,7 +470,7 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
             return false;
         }
     }
-    connect () {
+    connect() {
         if (this.connected) {
             return;
         }
@@ -491,7 +486,7 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
         }
         this.refresh();
     }
-    disconnect () {
+    disconnect() {
         if (!this.connected) {
             return;
         }
@@ -499,14 +494,13 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
         this.manager.disconnect(this.mount_removed_id);
         this.connected = false;
     }
-    destroy () {
+    destroy() {
         this.disconnect();
     }
 }
 
 const Graph = class SystemMonitor_Graph {
-
-    constructor (width, height) {
+    constructor(width, height) {
         this.menu_item = '';
         this.actor = new St.DrawingArea({style_class: Style.get('sm-chart'), reactive: false});
         this.width = width;
@@ -520,19 +514,18 @@ const Graph = class SystemMonitor_Graph {
             this.colors[color] = color_from_string(this.colors[color]);
         }
     }
-    create_menu_item () {
+    create_menu_item() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
         this.menu_item.actor.add(this.actor, {span: -1, expand: true});
         // tray.menu.addMenuItem(this.menu_item);
     }
-    show (visible) {
+    show(visible) {
         this.menu_item.actor.visible = visible;
     }
 }
 
 const Bar = class SystemMonitor_Bar extends Graph {
-
-    constructor (width, height) {
+    constructor(width, height) {
         super(width, height);
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
@@ -540,7 +533,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
         this.fontsize = Style.bar_fontsize();
         this.actor.set_height(this.mounts.length * (3 * this.thickness));
     }
-    _draw () {
+    _draw() {
         if (!this.actor.visible) {
             return;
         }
@@ -576,21 +569,20 @@ const Bar = class SystemMonitor_Bar extends Graph {
             cr.$dispose();
         }
     }
-    update_mounts (mounts) {
+    update_mounts(mounts) {
         this.mounts = mounts;
         this.actor.queue_repaint();
     }
 }
 
 const Pie = class SystemMonitor_Pie extends Graph {
-
-    constructor (width, height) {
+    constructor(width, height) {
         super(width, height);
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
     }
 
-    _draw () {
+    _draw() {
         if (!this.actor.visible) {
             return;
         }
@@ -635,15 +627,14 @@ const Pie = class SystemMonitor_Pie extends Graph {
         }
     }
 
-    update_mounts (mounts) {
+    update_mounts(mounts) {
         this.mounts = mounts;
         this.actor.queue_repaint();
     }
 }
 
 const TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
-
-    constructor () {
+    constructor() {
         super();
         // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
         this.actor.remove_style_class_name('popup-menu-item');
@@ -652,8 +643,7 @@ const TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem 
 }
 
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
-
-    constructor (sourceActor) {
+    constructor(sourceActor) {
         // PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
         super(sourceActor, 'sm-tooltip-box');
         this.actor = new Clutter.Actor();
@@ -675,7 +665,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     // _boxAllocate (actor, box, flags) {
     //     this.box.allocate(box, flags);
     // }
-    _shift () {
+    _shift() {
         // Probably old but works
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
@@ -698,7 +688,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         }
         this.actor.set_position(tipx, tipy);
     }
-    open (animate) {
+    open(animate) {
         if (this.isOpen) {
             return;
         }
@@ -709,7 +699,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         this.actor.raise_top();
         this.emit('open-state-changed', true);
     }
-    close (animate) {
+    close(animate) {
         this.isOpen = false;
         this.actor.hide();
         this.emit('open-state-changed', false);
@@ -717,8 +707,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
 }
 
 const TipBox = class SystemMonitor_TipBox {
-
-    constructor () {
+    constructor() {
         this.actor = new St.BoxLayout({reactive: true});
         this.actor._delegate = this;
         this.set_tip(new TipMenu(this.actor));
@@ -726,7 +715,7 @@ const TipBox = class SystemMonitor_TipBox {
         this.actor.connect('enter-event', this.on_enter.bind(this));
         this.actor.connect('leave-event', this.on_leave.bind(this));
     }
-    set_tip (tipmenu) {
+    set_tip(tipmenu) {
         if (this.tipmenu) {
             this.tipmenu.destroy();
         }
@@ -736,7 +725,7 @@ const TipBox = class SystemMonitor_TipBox {
             this.hide_tip();
         }
     }
-    show_tip () {
+    show_tip() {
         if (!this.tipmenu) {
             return;
         }
@@ -746,7 +735,7 @@ const TipBox = class SystemMonitor_TipBox {
             this.in_to = 0;
         }
     }
-    hide_tip () {
+    hide_tip() {
         if (!this.tipmenu) {
             return;
         }
@@ -760,7 +749,7 @@ const TipBox = class SystemMonitor_TipBox {
             this.in_to = 0;
         }
     }
-    on_enter () {
+    on_enter() {
         let show_tooltip = Schema.get_boolean('show-tooltip');
 
         if (!show_tooltip) {
@@ -776,7 +765,7 @@ const TipBox = class SystemMonitor_TipBox {
                 this.show_tip.bind(this));
         }
     }
-    on_leave () {
+    on_leave() {
         if (this.in_to) {
             Mainloop.source_remove(this.in_to);
             this.in_to = 0;
@@ -786,7 +775,7 @@ const TipBox = class SystemMonitor_TipBox {
                 this.hide_tip.bind(this));
         }
     }
-    destroy () {
+    destroy() {
         if (this.in_to) {
             Mainloop.source_remove(this.in_to);
             this.in_to = 0;
@@ -802,17 +791,16 @@ const TipBox = class SystemMonitor_TipBox {
 }
 
 const ElementBase = class SystemMonitor_ElementBase extends TipBox {
-
-    constructor (properties) {
+    constructor(properties) {
         super();
-    	this.elt = '';
+        this.elt = '';
         this.item_name = _('');
         this.color_name = [];
         this.text_items = [];
         this.menu_items = [];
         this.menu_visible = true;
 
-    	Object.assign(this, properties);
+        Object.assign(this, properties);
 
         //            TipBox.prototype._init.apply(this, arguments);
         this.vals = [];
@@ -825,24 +813,24 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
             let name = this.elt + '-' + this.color_name[color] + '-color';
             let clutterColor = color_from_string(Schema.get_string(name));
             Schema.connect('changed::' + name, (schema, key) => {
-                    this.clutterColor = color_from_string(Schema.get_string(key));
-                });
+                this.clutterColor = color_from_string(Schema.get_string(key));
+            });
             Schema.connect('changed::' + name, () => {
-                    this.chart.actor.queue_repaint();
-                });
+                this.chart.actor.queue_repaint();
+            });
             this.colors.push(clutterColor);
         }
 
         this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), IconSize, this);
         Schema.connect('changed::background', () => {
-                    this.chart.actor.queue_repaint();
-                });
+            this.chart.actor.queue_repaint();
+        });
 
         this.actor.visible = Schema.get_boolean(this.elt + '-display');
         Schema.connect(
             'changed::' + this.elt + '-display', (schema, key) => {
-                    this.actor.visible = Schema.get_boolean(key);
-                });
+                this.actor.visible = Schema.get_boolean(key);
+            });
 
         this.interval = l_limit(Schema.get_int(this.elt + '-refresh-time'));
         this.timeout = Mainloop.timeout_add(
@@ -851,25 +839,25 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         );
         Schema.connect(
             'changed::' + this.elt + '-refresh-time',
-                (schema, key) => {
-                    Mainloop.source_remove(this.timeout);
-                    this.timeout = null;
-                    this.interval = l_limit(Schema.get_int(key));
-                    this.timeout = Mainloop.timeout_add(
-                        this.interval, this.update.bind(this));
-                });
+            (schema, key) => {
+                Mainloop.source_remove(this.timeout);
+                this.timeout = null;
+                this.interval = l_limit(Schema.get_int(key));
+                this.timeout = Mainloop.timeout_add(
+                    this.interval, this.update.bind(this));
+            });
         Schema.connect('changed::' + this.elt + '-graph-width',
             this.chart.resize.bind(this.chart));
 
         if (this.elt === 'thermal') {
             Schema.connect('changed::thermal-threshold',
-                    () => {
-                        Mainloop.source_remove(this.timeout);
-                        this.timeout = null;
-                        this.reset_style();
-                        this.timeout = Mainloop.timeout_add(
-                            this.interval, this.update.bind(this));
-                    });
+                () => {
+                    Mainloop.source_remove(this.timeout);
+                    this.timeout = null;
+                    this.reset_style();
+                    this.timeout = Mainloop.timeout_add(
+                        this.interval, this.update.bind(this));
+                });
         }
 
         this.label = new St.Label({text: this.elt === 'memory' ? _('mem') : _(this.elt),
@@ -893,7 +881,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         Schema.connect('changed::' + this.elt + '-style', change_style.bind(this));
         this.menu_items = this.create_menu_items();
     }
-    tip_format (unit) {
+    tip_format(unit) {
         if (typeof (unit) === 'undefined') {
             unit = '%';
         }
@@ -921,7 +909,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
     //           this.tip_unit_labels[i].text = unit[i];
     //           }
     //           }
-    update () {
+    update() {
         if (!this.menu_visible && !this.actor.visible) {
             return false;
         }
@@ -936,10 +924,10 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         }
         return true;
     }
-    reset_style () {
+    reset_style() {
         this.text_items[0].set_style('color: rgba(255, 255, 255, 1)');
     }
-    threshold () {
+    threshold() {
         if (Schema.get_int('thermal-threshold')) {
             if (this.temp_over_threshold) {
                 this.text_items[0].set_style('color: rgba(255, 0, 0, 1)');
@@ -948,7 +936,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
             }
         }
     }
-    destroy () {
+    destroy() {
         TipBox.prototype.destroy.call(this);
         if (this.timeout) {
             Mainloop.source_remove(this.timeout);
@@ -958,14 +946,13 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
 }
 
 const Battery = class SystemMonitor_Battery extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
-    		elt: 'battery',
-    		item_name: _('Battery'),
-    		color_name: ['batt0'],
+            elt: 'battery',
+            item_name: _('Battery'),
+            color_name: ['batt0'],
             icon: '. GThemedIcon battery-good-symbolic battery-good'
-    	});
+        });
 
         this.max = 100;
         this.icon_hidden = false;
@@ -990,10 +977,10 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
         // Schema.connect('changed::' + this.elt + '-hidesystem', this.hide_system_icon.bind(this));
         Schema.connect('changed::' + this.elt + '-time', this.update_tips.bind(this));
     }
-    refresh () {
+    refresh() {
         // do nothing here?
     }
-    update_battery () {
+    update_battery() {
         // callback function for when battery stats updated.
         let battery_found = false;
         let isBattery = false;
@@ -1048,7 +1035,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
             });
         }
     }
-    update_battery_value (seconds, percentage, icon) {
+    update_battery_value(seconds, percentage, icon) {
         if (seconds > 60) {
             let time = Math.round(seconds / 60);
             let minutes = time % 60;
@@ -1068,7 +1055,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
             build_menu_info();
         }
     }
-    hide_system_icon (override) {
+    hide_system_icon(override) {
         let value = Schema.get_boolean(this.elt + '-hidesystem');
         if (!override) {
             value = false;
@@ -1101,7 +1088,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
             // Main.panel._updatePanel('right');
         }
     }
-    get_battery_unit () {
+    get_battery_unit() {
         let unitString;
         let value = Schema.get_boolean(this.elt + '-time');
 
@@ -1113,7 +1100,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
 
         return unitString;
     }
-    update_tips () {
+    update_tips() {
         let unitString = this.get_battery_unit();
 
         if (Schema.get_boolean(this.elt + '-display')) {
@@ -1125,7 +1112,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
 
         this.update();
     }
-    _apply () {
+    _apply() {
         let displayString;
         let value = Schema.get_boolean(this.elt + '-time');
         if (value) {
@@ -1143,7 +1130,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
         this.vals = [this.percentage];
         this.tip_vals[0] = Math.round(this.percentage);
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Icon({
                 gicon: Gio.icon_new_for_string(this.icon),
@@ -1158,7 +1145,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -1168,21 +1155,20 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 style_class: Style.get('sm-label')})
         ];
     }
-    destroy () {
+    destroy() {
         ElementBase.prototype.destroy.call(this);
         this._proxy.disconnect(this.powerSigID);
     }
 }
 
 const Cpu = class SystemMonitor_Cpu extends ElementBase {
-
-    constructor (cpuid) {
+    constructor(cpuid) {
         super({
             elt: 'cpu',
             item_name: _('CPU'),
             color_name: ['user', 'system', 'nice', 'iowait', 'other'],
             cpuid: -1 // cpuid is -1 when all cores are displayed in the same graph
-    	});
+        });
         this.max = 100;
 
         this.cpuid = cpuid;
@@ -1208,7 +1194,7 @@ const Cpu = class SystemMonitor_Cpu extends ElementBase {
         this.tip_format();
         this.update();
     }
-    refresh () {
+    refresh() {
         GTop.glibtop_get_cpu(this.gtop);
         // display global cpu usage on 1 graph
         if (this.cpuid === -1) {
@@ -1288,7 +1274,7 @@ const Cpu = class SystemMonitor_Cpu extends ElementBase {
         //         this.last_total = this.gtop.xcpu_total[this.cpuid];
         // }
     }
-    _apply () {
+    _apply() {
         let percent = 0;
         if (this.cpuid === -1) {
             percent = Math.round(((100 * this.total_cores) - this.usage[3]) /
@@ -1311,7 +1297,7 @@ const Cpu = class SystemMonitor_Cpu extends ElementBase {
         }
     }
 
-    get_cores () {
+    get_cores() {
         // Getting xcpu_total makes gjs 1.29.18 segfault
         // let cores = 0;
         // GTop.glibtop_get_cpu(this.gtop);
@@ -1323,7 +1309,7 @@ const Cpu = class SystemMonitor_Cpu extends ElementBase {
         // return cores;
         return 1;
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -1334,7 +1320,7 @@ const Cpu = class SystemMonitor_Cpu extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -1379,10 +1365,9 @@ function createCpus() {
 }
 
 const Disk = class SystemMonitor_Disk extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
-        	elt: 'disk',
+            elt: 'disk',
             item_name: _('Disk'),
             color_name: ['read', 'write']
         });
@@ -1394,10 +1379,10 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         this.tip_format(_('MiB/s'));
         this.update();
     }
-    update_mounts (mounts) {
+    update_mounts(mounts) {
         this.mounts = mounts;
     }
-    refresh () {
+    refresh() {
         let accum = [0, 0];
         let lines = Shell.get_file_contents_utf8_sync('/proc/diskstats').split('\n');
 
@@ -1421,7 +1406,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         }
         this.last_time = time;
     }
-    _apply () {
+    _apply() {
         this.vals = this.usage.slice();
         for (let i = 0; i < 2; i++) {
             if (this.usage[i] < 10) {
@@ -1434,7 +1419,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         this.menu_items[0].text = this.text_items[1].text = this.tip_vals[0].toLocaleString(Locale);
         this.menu_items[3].text = this.text_items[4].text = this.tip_vals[1].toLocaleString(Locale);
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: _('R'),
@@ -1460,7 +1445,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -1485,8 +1470,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
 }
 
 const Freq = class SystemMonitor_Freq extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
             elt: 'freq',
             item_name: _('Freq'),
@@ -1496,7 +1480,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         this.tip_format('MHz');
         this.update();
     }
-    refresh () {
+    refresh() {
         let total_frequency = 0;
         let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
         let i = 0;
@@ -1509,11 +1493,11 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
                 this.freq = Math.round(total_frequency / num_cpus / 1000);
             } else {
                 file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
-                file.load_contents_async(null, cb.bind(this));
+                file.load_contents_async(null, this.cb.bind(this));
             }
         });
     }
-    _apply () {
+    _apply() {
         let value = this.freq.toString();
         this.text_items[0].text = value + ' ';
         this.vals[0] = value;
@@ -1525,14 +1509,14 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         }
     }
     // pad a string with leading spaces
-    _pad (number, length) {
+    _pad(number, length) {
         var str = '' + number;
         while (str.length < length) {
             str = ' ' + str;
         }
         return str;
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -1543,7 +1527,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -1555,9 +1539,8 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
     }
 }
 
-const Mem = class SystemMonitor_Mem extends ElementBase{
-
-    constructor () {
+const Mem = class SystemMonitor_Mem extends ElementBase {
+    constructor() {
         super({
             elt: 'memory',
             item_name: _('Memory'),
@@ -1582,7 +1565,7 @@ const Mem = class SystemMonitor_Mem extends ElementBase{
         this.tip_format();
         this.update();
     }
-    refresh () {
+    refresh() {
         GTop.glibtop_get_mem(this.gtop);
         if (this.useGiB) {
             this.mem[0] = Math.round(this.gtop.user / this._unitConversion);
@@ -1600,7 +1583,7 @@ const Mem = class SystemMonitor_Mem extends ElementBase{
             this.total = Math.round(this.gtop.total / this._unitConversion);
         }
     }
-    _pad (number) {
+    _pad(number) {
         if (this.useGiB) {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
@@ -1612,7 +1595,7 @@ const Mem = class SystemMonitor_Mem extends ElementBase{
 
         return number;
     }
-    _apply () {
+    _apply() {
         if (this.total === 0) {
             this.vals = this.tip_vals = [0, 0, 0];
         } else {
@@ -1631,7 +1614,7 @@ const Mem = class SystemMonitor_Mem extends ElementBase{
                 '/' + this._pad(this.total).toLocaleString(Locale);
         }
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -1642,7 +1625,7 @@ const Mem = class SystemMonitor_Mem extends ElementBase{
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         let unit = _('MiB');
         if (this.useGiB) {
             unit = _('GiB');
@@ -1667,8 +1650,7 @@ const Mem = class SystemMonitor_Mem extends ElementBase{
 }
 
 const Net = class SystemMonitor_Net extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
             elt: 'net',
             item_name: _('Net'),
@@ -1709,10 +1691,10 @@ const Net = class SystemMonitor_Net extends ElementBase {
         }
         this.update();
     }
-    update_units () {
+    update_units() {
         this.speed_in_bits = Schema.get_boolean(this.elt + '-speed-in-bits');
     }
-    update_iface_list () {
+    update_iface_list() {
         try {
             this.ifs = [];
             let iface_list = this.client.get_devices();
@@ -1725,7 +1707,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
             global.logError('Please install Network Manager Gobject Introspection Bindings');
         }
     }
-    refresh () {
+    refresh() {
         let accum = [0, 0, 0, 0, 0];
 
         for (let ifn in this.ifs) {
@@ -1750,7 +1732,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
     }
 
     // pad a string with leading spaces
-    _pad (number, length) {
+    _pad(number, length) {
         var str = '' + number;
         while (str.length < length) {
             str = ' ' + str;
@@ -1758,7 +1740,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
         return str;
     }
 
-    _apply () {
+    _apply() {
         this.tip_vals = this.usage;
         if (this.speed_in_bits) {
             this.tip_vals[0] = Math.round(this.tip_vals[0] * 8.192);
@@ -1806,7 +1788,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
             this.menu_items[3].text = this.text_items[4].text = this._pad(this.tip_vals[2].toString(), 4);
         }
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Icon({
                 icon_size: 2 * IconSize / 3 * Style.iconsize(),
@@ -1832,7 +1814,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -1857,8 +1839,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
 }
 
 const Swap = class SystemMonitor_Swap extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
             elt: 'swap',
             item_name: _('Swap'),
@@ -1881,7 +1862,7 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
         this.tip_format();
         this.update();
     }
-    refresh () {
+    refresh() {
         GTop.glibtop_get_swap(this.gtop);
         if (this.useGiB) {
             this.swap = Math.round(this.gtop.used / this._unitConversion);
@@ -1893,7 +1874,7 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
             this.total = Math.round(this.gtop.total / this._unitConversion);
         }
     }
-    _pad (number) {
+    _pad(number) {
         if (this.useGiB) {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
@@ -1905,7 +1886,7 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
 
         return number;
     }
-    _apply () {
+    _apply() {
         if (this.total === 0) {
             this.vals = this.tip_vals = [0];
         } else {
@@ -1923,7 +1904,7 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
         }
     }
 
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -1935,7 +1916,7 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         let unit = 'MiB';
         if (this.useGiB) {
             unit = 'GiB';
@@ -1961,8 +1942,7 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
 }
 
 const Thermal = class SystemMonitor_Thermal extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
             elt: 'thermal',
             item_name: _('Thermal'),
@@ -1978,7 +1958,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         Schema.connect('changed::' + this.elt + '-sensor-file', this.refresh.bind(this));
         this.update();
     }
-    refresh () {
+    refresh() {
         let sfile = Schema.get_string(this.elt + '-sensor-file');
         if (GLib.file_test(sfile, 1 << 4)) {
             let file = Gio.file_new_for_path(sfile);
@@ -1996,7 +1976,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
 
         this.fahrenheit_unit = Schema.get_boolean(this.elt + '-fahrenheit-unit');
     }
-    _apply () {
+    _apply() {
         this.text_items[0].text = this.menu_items[0].text = this.temperature_text();
         // Making it looks better in chart.
         // this.vals = [this.temperature / 100];
@@ -2006,7 +1986,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         this.menu_items[1].text = this.temperature_symbol();
         this.tip_unit_labels[0].text = _(this.temperature_symbol());
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -2018,7 +1998,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -2028,17 +2008,16 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
                 style_class: Style.get('sm-label')})
         ];
     }
-    temperature_text () {
+    temperature_text() {
         return this.temperature.toString();
     }
-    temperature_symbol () {
+    temperature_symbol() {
         return this.fahrenheit_unit ? '\u2109' : '\u2103';
     }
 }
 
 const Fan = class SystemMonitor_Fan extends ElementBase {
-
-    constructor () {
+    constructor() {
         super({
             elt: 'fan',
             item_name: _('Fan'),
@@ -2050,7 +2029,7 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
         Schema.connect('changed::' + this.elt + '-sensor-file', this.refresh.bind(this));
         this.update();
     }
-    refresh () {
+    refresh() {
         let sfile = Schema.get_string(this.elt + '-sensor-file');
         if (GLib.file_test(sfile, 1 << 4)) {
             let file = Gio.file_new_for_path(sfile);
@@ -2063,13 +2042,13 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
             this.display_error = false;
         }
     }
-    _apply () {
+    _apply() {
         this.text_items[0].text = this.rpm.toString();
         this.menu_items[0].text = this.rpm.toString();
         this.vals = [this.rpm / 10];
         this.tip_vals[0] = this.rpm;
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -2080,7 +2059,7 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         return [
             new St.Label({
                 text: '',
@@ -2092,9 +2071,8 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
     }
 }
 
-const Gpu = class SystemMonitor_Gpu extends ElementBase{
-
-    constructor () {
+const Gpu = class SystemMonitor_Gpu extends ElementBase {
+    constructor() {
         super({
             elt: 'gpu',
             item_name: _('GPU'),
@@ -2108,7 +2086,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
         this.tip_format();
         this.update();
     }
-    _unit (total) {
+    _unit(total) {
         this.total = total;
         let threshold = 4 * 1024; // In MiB
         this.useGiB = false;
@@ -2119,7 +2097,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
             this._unitConversion *= 1024 / this._decimals;
         }
     }
-    refresh () {
+    refresh() {
         // Run asynchronously, to avoid shell freeze
         try {
             let path = Me.dir.get_path();
@@ -2156,7 +2134,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
             // Deal with the error
         }
     }
-    _readTemperature () {
+    _readTemperature() {
         let usage = [];
         let out, size;
         if (this._process_stream) {
@@ -2188,13 +2166,13 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
 
         this._endProcess();
     }
-    _endProcess () {
+    _endProcess() {
         if (this._process_stream) {
             this._process_stream.close(null);
             this._process_stream = null;
         }
     }
-    _pad (number) {
+    _pad(number) {
         if (this.useGiB) {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
@@ -2206,7 +2184,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
 
         return number;
     }
-    _apply () {
+    _apply() {
         if (this.total === 0) {
             this.vals = [0];
             this.tip_vals = [0];
@@ -2224,7 +2202,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
                 '/' + this._pad(this.total).toLocaleString();
         }
     }
-    create_text_items () {
+    create_text_items() {
         return [
             new St.Label({
                 text: '',
@@ -2236,7 +2214,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
                 y_align: Clutter.ActorAlign.CENTER})
         ];
     }
-    create_menu_items () {
+    create_menu_items() {
         let unit = _('MiB');
         if (this.useGiB) {
             unit = _('GiB');
@@ -2262,8 +2240,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase{
 }
 
 const Icon = class SystemMonitor_Icon {
-
-    constructor () {
+    constructor() {
         this.actor = new St.Icon({icon_name: 'utilities-system-monitor-symbolic',
             style_class: 'system-status-icon'});
         this.actor.visible = Schema.get_boolean('icon-display');
@@ -2290,8 +2267,7 @@ function init() {
     IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 }
 
-function enable () {
-
+function enable() {
     log('[System monitor] applet enabling');
     Schema = Convenience.getSettings();
 
@@ -2342,10 +2318,10 @@ function enable () {
         Main.__sm.elts.push(new Disk());
         Main.__sm.elts.push(new Gpu());
         Main.__sm.elts.push(new Thermal());
-	    Main.__sm.elts.push(new Fan());
+        Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());
 
-	    let tray = Main.__sm.tray;
+        let tray = Main.__sm.tray;
         let elts = Main.__sm.elts;
 
         if (Schema.get_boolean('move-clock')) {
@@ -2363,8 +2339,8 @@ function enable () {
         }
 
         Schema.connect('changed::background', (schema, key) => {
-                Background = color_from_string(Schema.get_string(key));
-            });
+            Background = color_from_string(Schema.get_string(key));
+        });
         if (!Compat.versionCompare(shell_Version, '3.5.5')) {
             StatusArea.systemMonitor = tray;
             panel.insert_child_at_index(tray.actor, 1);
@@ -2454,7 +2430,7 @@ function enable () {
     log('[System monitor] applet enabling done');
 }
 
-function disable () {
+function disable() {
     // restore clock
     if (Main.__sm.tray.clockMoved) {
         let dateMenu;

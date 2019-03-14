@@ -6,7 +6,8 @@
     //enable nodejs environment
     "node": 1,
     //enable browser environment
-    "browser": 1
+    "browser": 1,
+    "es6": true
   },
   "parserOptions": {
     "ecmaVersion": 6

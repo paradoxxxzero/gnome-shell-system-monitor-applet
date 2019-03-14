@@ -67,7 +67,7 @@ function check_sensors(sensor_type) {
 
 
 const ColorSelect = class SystemMonitor_ColorSelect {
-    constructor (name) {
+    constructor(name) {
         this.label = new Gtk.Label({label: name + _(':')});
         this.picker = new Gtk.ColorButton();
         this.actor = new Gtk.HBox({spacing: 5});
@@ -75,7 +75,7 @@ const ColorSelect = class SystemMonitor_ColorSelect {
         this.actor.add(this.picker);
         this.picker.set_use_alpha(true);
     }
-    set_value (value) {
+    set_value(value) {
         let clutterColor = Compat.color_from_string(value);
         let color = new Gdk.RGBA();
         let ctemp = [clutterColor.red, clutterColor.green, clutterColor.blue, clutterColor.alpha / 255];
@@ -85,7 +85,7 @@ const ColorSelect = class SystemMonitor_ColorSelect {
 }
 
 const IntSelect = class SystemMonitor_IntSelect {
-    constructor (name) {
+    constructor(name) {
         this.label = new Gtk.Label({label: name + _(':')});
         this.spin = new Gtk.SpinButton();
         this.actor = new Gtk.HBox();
@@ -93,17 +93,17 @@ const IntSelect = class SystemMonitor_IntSelect {
         this.actor.add(this.spin);
         this.spin.set_numeric(true);
     }
-    set_args (minv, maxv, incre, page) {
+    set_args(minv, maxv, incre, page) {
         this.spin.set_range(minv, maxv);
         this.spin.set_increments(incre, page);
     }
-    set_value (value) {
+    set_value(value) {
         this.spin.set_value(value);
     }
 }
 
 const Select = class SystemMonitor_Select {
-    constructor (name) {
+    constructor(name) {
         this.label = new Gtk.Label({label: name + _(':')});
         // this.label.set_justify(Gtk.Justification.RIGHT);
         this.selector = new Gtk.ComboBoxText();
@@ -111,10 +111,10 @@ const Select = class SystemMonitor_Select {
         this.actor.add(this.label);
         this.actor.add(this.selector);
     }
-    set_value (value) {
+    set_value(value) {
         this.selector.set_active(value);
     }
-    add (items) {
+    add(items) {
         items.forEach((item) => {
             this.selector.append_text(item);
         })
@@ -134,7 +134,7 @@ function set_string(combo, schema, name, _slist) {
 }
 
 const SettingFrame = class SystemMonitor {
-    constructor (name, schema) {
+    constructor(name, schema) {
         this.schema = schema;
         this.label = new Gtk.Label({label: name});
         this.frame = new Gtk.Frame({border_width: 10});
@@ -152,7 +152,7 @@ const SettingFrame = class SystemMonitor {
     }
 
     /** Enforces child ordering of first 2 boxes by label */
-    _reorder () {
+    _reorder() {
         /** @return {string} label of/inside component */
         const labelOf = el => {
             if (el.get_children) {
@@ -168,7 +168,7 @@ const SettingFrame = class SystemMonitor {
         });
     }
 
-    add (key) {
+    add(key) {
         const configParent = key.substring(0, key.indexOf('-'));
         const config = key.substring(configParent.length + 1);
 
@@ -283,8 +283,7 @@ const SettingFrame = class SystemMonitor {
 }
 
 const App = class SystemMonitor_App {
-
-    constructor () {
+    constructor() {
         let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
 

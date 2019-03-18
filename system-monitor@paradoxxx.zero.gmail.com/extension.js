@@ -1487,15 +1487,16 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
         let i = 0;
         let file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
+        var that = this;
         file.load_contents_async(null, function cb (source, result) {
             let as_r = source.load_contents_finish(result);
             total_frequency += parseInt(as_r[1]);
 
             if (++i >= num_cpus) {
-                this.freq = Math.round(total_frequency / num_cpus / 1000);
+                that.freq = Math.round(total_frequency / num_cpus / 1000);
             } else {
                 file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
-                file.load_contents_async(null, cb.bind(this));
+                file.load_contents_async(null, cb.bind(that));
             }
         });
     }

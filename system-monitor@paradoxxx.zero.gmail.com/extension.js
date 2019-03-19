@@ -1490,7 +1490,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         var that = this;
         file.load_contents_async(null, function cb (source, result) {
             let as_r = source.load_contents_finish(result);
-            total_frequency += parseInt(as_r[1]);
+            total_frequency += parseInt(ByteArray.toString(as_r[1]));
 
             if (++i >= num_cpus) {
                 that.freq = Math.round(total_frequency / num_cpus / 1000);

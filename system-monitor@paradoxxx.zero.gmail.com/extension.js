@@ -353,9 +353,7 @@ const Chart = class SystemMonitor_Chart {
             Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
             cr.fill();
         }
-        if (Compat.versionCompare(shell_Version, '3.7.4')) {
-            cr.$dispose();
-        }
+        cr.$dispose();
     }
     resize(schema, key) {
         let old_width = this.width;
@@ -567,9 +565,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
             cr.stroke();
             y0 += (7 * this.thickness) / 4;
         }
-        if (Compat.versionCompare(shell_Version, '3.7.4')) {
-            cr.$dispose();
-        }
+        cr.$dispose();
     }
     update_mounts(mounts) {
         this.mounts = mounts;
@@ -624,9 +620,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
-        if (Compat.versionCompare(shell_Version, '3.7.4')) {
-            cr.$dispose();
-        }
+        cr.$dispose();
     }
 
     update_mounts(mounts) {
@@ -1015,12 +1009,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 for (let i = 0; i < result.length; i++) {
                     let [device_id, device_type, icon, percentage, state, seconds] = result[i];
 
-                    if (Compat.versionCompare(shell_Version, '3.9')) {
-                        isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
-                    } else {
-                        isBattery = (device_type === Power.UPDeviceType.BATTERY);
-                    }
-
+                    isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
                     if (isBattery) {
                         battery_found = true;
                         this.update_battery_value(seconds, percentage, icon);
@@ -2328,29 +2317,16 @@ function enable() {
         let elts = Main.__sm.elts;
 
         if (Schema.get_boolean('move-clock')) {
-            let dateMenu;
-            if (Compat.versionCompare(shell_Version, '3.5.90')) {
-                dateMenu = Main.panel.statusArea.dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.container);
-                Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
-            } else {
-                dateMenu = Main.panel._dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.actor);
-                Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
-            }
+            let dateMenu = Main.panel.statusArea.dateMenu;
+            Main.panel._centerBox.remove_actor(dateMenu.container);
+            Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
             tray.clockMoved = true;
         }
 
         Schema.connect('changed::background', (schema, key) => {
             Background = color_from_string(Schema.get_string(key));
         });
-        if (!Compat.versionCompare(shell_Version, '3.5.5')) {
-            StatusArea.systemMonitor = tray;
-            panel.insert_child_at_index(tray.actor, 1);
-            panel.child_set(tray.actor, {y_fill: true});
-        } else {
-            Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
-        }
+        Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
 
         // The spacing adds a distance between the graphs/text on the top bar
         let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
@@ -2424,11 +2400,7 @@ function enable() {
             }
         });
         tray.menu.addMenuItem(item);
-        if (Compat.versionCompare(shell_Version, '3.5.5')) {
-            Main.panel.menuManager.addMenu(tray.menu);
-        } else {
-            Main.panel._menus.addMenu(tray.menu);
-        }
+        Main.panel.menuManager.addMenu(tray.menu);
     }
     log('[System monitor] applet enabling done');
 }
@@ -2436,16 +2408,9 @@ function enable() {
 function disable() {
     // restore clock
     if (Main.__sm.tray.clockMoved) {
-        let dateMenu;
-        if (Compat.versionCompare(shell_Version, '3.5.90')) {
-            dateMenu = Main.panel.statusArea.dateMenu;
-            Main.panel._rightBox.remove_actor(dateMenu.container);
-            Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
-        } else {
-            dateMenu = Main.panel._dateMenu;
-            Main.panel._rightBox.remove_actor(dateMenu.actor);
-            Main.panel._centerBox.insert_child_at_index(dateMenu.actor, 0);
-        }
+        let dateMenu = Main.panel.statusArea.dateMenu;
+        Main.panel._rightBox.remove_actor(dateMenu.container);
+        Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
     }
     // restore system power icon if necessary
     // workaround bug introduced by multiple cpus init :
@@ -2471,12 +2436,7 @@ function disable() {
         Main.__sm.elts[eltName].destroy();
     }
 
-    if (!Compat.versionCompare(shell_Version, '3.5')) {
-        Main.__sm.tray.destroy();
-        StatusArea.systemMonitor = null;
-    } else {
-        Main.__sm.tray.actor.destroy();
-    }
+    Main.__sm.tray.actor.destroy();
     Main.__sm = null;
 
     log('[System monitor] applet disable');

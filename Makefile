@@ -23,7 +23,11 @@ ifeq ($(strip $(DESTDIR)),)
   SUDO=
 else
   INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
+ifeq ($(BUILD_FOR_RPM),1)
+  SUDO=
+else
   SUDO=sudo
+endif
 endif
 
 ifdef VERSION
@@ -96,13 +100,17 @@ install: remove build
 	$(call msg,$@,$(SUDO) $(INSTALLBASE)/$(INSTALLNAME))
 	$(Q) $(SUDO) mkdir -p $(INSTALLBASE)/$(INSTALLNAME)
 	$(Q) $(SUDO) cp $(VV) -r ./_build/* $(INSTALLBASE)/$(INSTALLNAME)/
+ifeq ($(strip $(BUILD_FOR_RPM)),)
 	$(Q) $(MAKE) -s reload
+endif
 	$(call msg,$@,OK)
 
 remove:
 	$(call msg,$@,$(SUDO) $(INSTALLBASE)/$(INSTALLNAME))
 	$(Q) $(SUDO) rm $(VV) -fr $(INSTALLBASE)/$(INSTALLNAME)
+ifeq ($(strip $(BUILD_FOR_RPM)),)
 	$(Q) $(MAKE) -s reload
+endif
 	$(call msg,$@,OK)
 
 reload:

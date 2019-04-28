@@ -22,7 +22,7 @@ ifeq ($(strip $(DESTDIR)),)
   INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
   SUDO=
 else
-  INSTALLBASE = $(DESTDIR)usr/share/gnome-shell/extensions
+  INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
   SUDO=sudo
 endif
 

@@ -1,30 +1,24 @@
 # https://docs.travis-ci.com/user/multi-os/
 # https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
-
-dist: trusty
+dist: xenial
 sudo: required
 language: python
 python: 2.7
 
+env:
+-   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5
+
 install:
 -   sudo apt-key update
 -   sudo apt-get -yq update
-#-   sudo apt-get -yq purge postgr*
-#-   sudo apt-get -yq purge virtualbox*
-# The Oracle Java install routinely times out, and we're not using it, so uninstall it.
-#-   sudo apt-get -yq purge oracle-java*
-#-   sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-
-# Fails.
-#-   DEBIAN_FRONTEND=noninteractive sudo apt-get -f -o Dpkg::Options::="--force-overwrite" install --yes npm
-#-   sudo npm install
-#-   sudo apt-get -yq install nodejs
+-   sudo apt -yq install xvfb gnome-shell
 
 # Install NodeJS from upstream, since the version that comes with Ubuntu 14 is ancient.
 # https://askubuntu.com/a/548776/13217
 -   sudo apt-get -yq install curl
 -   curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 -   sudo apt-get install -yq nodejs
+
 # Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
 -   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
 -   which nodejs
@@ -39,7 +33,40 @@ install:
 
 -   sudo npm install -g eslint
 
+before_script:
+  - "export DISPLAY=:99.0"
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+  - sleep 3 # give xvfb some time to start
+  - sudo gnome-shell &
+  - sleep 3 # give gnome-shell some time to start
+
 script:
--   set -e
+
+# Clear initial gnome-shell errors we don't care about.
+-   sudo journalctl /usr/bin/gnome-shell
+-   sudo journalctl --rotate
+-   sudo journalctl --vacuum-time=1s
+
+# Show pre-extension gnome-shell performance.
+-   ps -C gnome-shell -o %cpu,%mem,cmd
+
+# Run JSlint check.
 -   cd $TRAVIS_BUILD_DIR
 -   ./checkjs.sh
+
+# Install and enable extension.
+-   sudo make install
+-   gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com
+
+# Give extension time to run.
+-   sleep 10
+
+# Show post-extension gnome-shell performance.
+-   ps -C gnome-shell -o %cpu,%mem,cmd
+# Check CPU. On localhost with 2.80GHz x 4 takes ~3%, on Travis ~15%.
+-   bash -c '[[ $(bc <<< "$(ps -C gnome-shell -o %cpu|tail -1) < $MAX_CPU_PERCENT") -eq 1 ]]'
+# Check memory. On localhost with 32GB of memory, ~0.6%, on Travis ~3%.
+-   bash -c '[[ $(bc <<< "$(ps -C gnome-shell -o %mem|tail -1) < $MAX_MEM_PERCENT") -eq 1 ]]'
+# Confirm extension hasn't thrown any errors.
+-   sudo journalctl /usr/bin/gnome-shell
+-   sudo journalctl /usr/bin/gnome-shell|grep "\-\- No entries \-\-"

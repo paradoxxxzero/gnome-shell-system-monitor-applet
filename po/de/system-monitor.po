@@ -259,9 +259,8 @@ msgid "MiB"
 msgstr "MB"
 
 #: extension.js:1714
-#, fuzzy
 msgid "GiB"
-msgstr "MB"
+msgstr "GB"
 
 #: extension.js:184
 msgid "kB"

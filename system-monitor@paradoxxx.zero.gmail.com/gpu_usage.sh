@@ -20,9 +20,21 @@
 #                                #
 ##################################
 
-# This will print two lines. The first one is the the total vRAM available,
-# while the second one is the used vRAM.
-nvidia-smi -i 0 -q -d MEMORY | grep -A4 -i gpu | egrep -i "used|total" | awk '{print $3}'
+checkcommand()
+{
+	type $1 > /dev/null 2>&1
+	return "$?"
+}
 
-# This line will print the GPU usage in %.
-nvidia-smi -i 0 -q -d UTILIZATION | grep Gpu | awk '{print $3}'
+# This will print three lines. The first one is the the total vRAM available,
+# the second one is the used vRAM and the third on is the GPU usage in %.
+if checkcommand nvidia-smi; then
+	nvidia-smi -i -1 -q -d MEMORY | grep -A4 -i gpu | egrep -i "used|total" | awk '{print $3}'
+	nvidia-smi -i 0 -q -d UTILIZATION | grep Gpu | awk '{print $3}'
+elif checkcommand glxinfo; then
+	TOTALVRAM="`glxinfo | grep -A2 -i GL_NVX_gpu_memory_info | egrep -i "dedicated" | cut -f2- -d ':' | gawk '{print $1}'`"
+	AVAILVRAM="`glxinfo | grep -A4 -i GL_NVX_gpu_memory_info | egrep -i "available dedicated" | cut -f2- -d ':' | gawk '{print $1}'`"
+	let FREEVRAM=TOTALVRAM-AVAILVRAM
+	echo "$TOTALVRAM"
+	echo "$FREEVRAM"
+fi

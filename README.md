@@ -21,6 +21,9 @@ Before installing this extension, ensure you have the necessary system packages 
 
       $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0  gir1.2-clutter-1.0
 
+* On Debian:
+      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
+
 * On Fedora:
 
       $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel

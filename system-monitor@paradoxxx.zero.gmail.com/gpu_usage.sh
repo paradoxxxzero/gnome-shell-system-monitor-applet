@@ -25,4 +25,4 @@
 nvidia-smi -i 0 -q -d MEMORY | grep -A4 -i gpu | egrep -i "used|total" | awk '{print $3}'
 
 # This line will print the GPU usage in %.
-nvidia-smi -i 0 -q -d UTILIZATION | grep Gpu | awk '{print $3}'
+sed -e 's#.*=\(\)#\1#;s'/.$//'' <<< $(nvidia-settings -q all | grep -i GPUUtilization | grep graphics | awk '{print $4}')

@@ -1482,7 +1482,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         let i = 0;
         let file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
         var that = this;
-        file.load_contents_async(null, function cb (source, result) {
+        file.load_contents_async(null, function cb(source, result) {
             let as_r = source.load_contents_finish(result);
             total_frequency += parseInt(as_r[1]);
 

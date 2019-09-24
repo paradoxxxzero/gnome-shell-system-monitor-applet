@@ -1957,7 +1957,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
     }
     refresh() {
         let sfile = Schema.get_string(this.elt + '-sensor-file');
-        if (GLib.file_test(sfile, 1 << 4)) {
+        if (GLib.file_test(sfile, GLib.FileTest.EXISTS)) {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
@@ -2028,7 +2028,7 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
     }
     refresh() {
         let sfile = Schema.get_string(this.elt + '-sensor-file');
-        if (GLib.file_test(sfile, 1 << 4)) {
+        if (GLib.file_test(sfile, GLib.FileTest.EXISTS)) {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)

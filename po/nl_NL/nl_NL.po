@@ -1,23 +1,22 @@
-# German translation.
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Michael Pusterhofer <pusterhofer@student.tugraz.at>, 2011.
-#: extension.js:751
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: paradoxxxzero/gnome-shell-system-monitor-applet\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-22 15:04+0100\n"
-"PO-Revision-Date: 2012-09-05 20:42+0100\n"
-"Last-Translator: Agilo Kern <prdiewelt@googlemail.com>\n"
-"Language-Team: LANGUAGE <prdiewelt@googlemail.com>\n"
-"Language: \n"
+"PO-Revision-Date: 2019-07-24 16:37+0200\n"
+"Language-Team: Dutch <vistausss@outlook.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-Country: GERMANY\n"
-"X-Poedit-KeywordsList: Collisions\n"
+"X-Generator: Poedit 2.2.3\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl_NL\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
@@ -25,43 +24,43 @@ msgstr ":"
 
 #: prefs.js:161 prefs.js:159
 msgid "Display"
-msgstr "Anzeigen"
+msgstr "Weergave"
 
 #: prefs.js:166 prefs.js:164
 msgid "Refresh Time"
-msgstr "Aktualisierungs-Intervall"
+msgstr "Ververstijd"
 
 #: prefs.js:171 prefs.js:169
 msgid "Graph Width"
-msgstr "Diagrammbreite"
+msgstr "Breedte van grafiek"
 
 #: prefs.js:176 prefs.js:174
 msgid "Show Text"
-msgstr "Anzeige beschriften"
+msgstr "Tekst tonen"
 
 #: prefs.js:184 prefs.js:182
 msgid "Display Style"
-msgstr "Anzeigestil"
+msgstr "Weergavestijl"
 
 #: prefs.js:267 prefs.js:274
 msgid "Display Icon"
-msgstr "Zeige Icon"
+msgstr "Pictogram"
 
 #: prefs.js:276 prefs.js:283
 msgid "Display in the Middle"
-msgstr "Anzeige zentrieren"
+msgstr "Gecentreerde weergave"
 
 #: prefs.js:288 prefs.js:306
 msgid "Background Color"
-msgstr "Hintergrundfarbe"
+msgstr "Achtergrondkleur"
 
 #: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr "Einzelne Prozessorkerne anzeigen"
+msgstr "Individuele kernen tonen"
 
 #: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
-msgstr "Übertragungsrate in Bits anzeigen"
+msgstr "Netwerksnelheid tonen in bits"
 
 #: prefs.js:205 prefs.js:208
 msgid "Sensor"
@@ -69,198 +68,206 @@ msgstr "Sensor"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr "Bitte installieren Sie lm-sensors"
+msgstr "Installeer lm-sensors"
 
 #: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr "Uhr verschieben"
+msgstr "Klok verplaatsen"
 
 #: prefs.js:286 prefs.js:289
 msgid "Compact Display"
-msgstr "Kompakte Darstellung"
+msgstr "Compacte weergave"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
 msgstr "CPU"
 
 msgid "User"
-msgstr "Benutzer"
+msgstr "Gebruiker"
 
 msgid "System"
-msgstr "System"
+msgstr "Systeem"
 
 msgid "Other"
-msgstr "Andere"
+msgstr "Overig"
 
 msgid "Nice"
 msgstr "Nice"
 
 msgid "Iowait"
-msgstr "IOwait"
+msgstr "Iowait"
 
 #: extension.js:941 extension.js:1378
 msgid "Memory"
-msgstr "Hauptspeicher"
+msgstr "Werkgeheugen"
 
 msgid "Program"
-msgstr "Programm"
+msgstr "Toepassing"
 
 msgid "Cache"
-msgstr "Zwischenspeicher"
+msgstr "Cache"
 
 msgid "Buffer"
-msgstr "Pufferspeicher"
+msgstr "Buffer"
 
 #: extension.js:1134 extension.js:1598
 msgid "Swap"
-msgstr "Auslagerungsdateien"
+msgstr "Wisselgeheugen"
 
 msgid "Used"
-msgstr "Verwendet"
+msgstr "Gebruikt"
 
 #: extension.js:1010 extension.js:1428
 msgid "Net"
-msgstr "Netzwerk"
+msgstr "Net"
 
 #: extension.js:1589
 msgid "Up"
-msgstr "Senden"
+msgstr "Up"
 
 #: extension.js:1586
 msgid "Down"
-msgstr "Empfangen"
+msgstr "Down"
 
 msgid "Uperrors"
-msgstr "Sendefehler"
+msgstr "Upfouten"
 
 msgid "Downerrors"
-msgstr "Empfangsfehler"
+msgstr "Downfouten"
 
 msgid "collisions"
-msgstr "Kollisionsdaten"
+msgstr "conflicten"
 
 msgid "Collisions"
-msgstr "Kollisionsdaten"
+msgstr "Conflicten"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
-msgstr "Festplatte"
+msgstr "Schijf"
 
 msgid "Write"
-msgstr "Schreiben"
+msgstr "Wegschrijven"
 
 msgid "Read"
-msgstr "Lesen"
+msgstr "Uitlezen"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
-msgstr ""
+msgstr "L"
 
 #: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #: prefs.js:185 prefs.js:183
 msgid "graph"
-msgstr "Diagramm"
+msgstr "grafiek"
 
 #: prefs.js:185 prefs.js:183
 msgid "digit"
-msgstr "Zahl"
+msgstr "getal"
 
 #: prefs.js:185 prefs.js:183
 msgid "both"
-msgstr "Beides"
+msgstr "beide"
 
 msgid "cpu"
-msgstr "CPU"
+msgstr "cpu"
 
 #: extension.js:811
 msgid "mem"
-msgstr "Speicher"
+msgstr "geh."
 
 msgid "swap"
-msgstr "Zw.-Speicher"
+msgstr "wisselgeh."
 
 msgid "net"
-msgstr "Netzwerk"
+msgstr "net"
 
 msgid "disk"
-msgstr "Festplatte"
+msgstr "schijf"
 
 #: extension.js:1346 extension.js:1900
 msgid "Preferences..."
-msgstr "Einstellungen..."
+msgstr "Voorkeuren..."
 
 #: extension.js:1340 extension.js:1894
 msgid "System Monitor..."
-msgstr "Systemüberwachung..."
+msgstr "Systeemmonitor..."
 
 msgid "System monitor"
-msgstr "System Monitor"
+msgstr "Systeemmonitor"
 
 msgid "user"
-msgstr "Benutzer"
+msgstr "gebruiker"
 
 msgid "system"
-msgstr "System"
+msgstr "systeem"
 
 msgid "other"
-msgstr "Andere"
+msgstr "overig"
 
 msgid "nice"
-msgstr "Nice"
+msgstr "nice"
 
 msgid "iowait"
-msgstr "Iowait"
+msgstr "iowait"
 
 msgid "program"
-msgstr "Programmspeicher"
+msgstr "toepassing"
 
 msgid "cache"
-msgstr "Zwischenspeicher"
+msgstr "cache"
 
 msgid "buffer"
-msgstr "Pufferspeicher"
+msgstr "buffer"
 
 msgid "used"
-msgstr "belegt"
+msgstr "gebruikt"
 
 msgid "up"
-msgstr "Senden"
+msgstr "up"
 
 msgid "down"
-msgstr "Empfangen"
+msgstr "down"
 
 msgid "uperrors"
-msgstr "Sendefehler"
+msgstr "upfouten"
 
 msgid "downerrors"
-msgstr "Empfangsfehler"
+msgstr "downfouten"
 
 msgid "write"
-msgstr "schreiben"
+msgstr "wegschrijven"
 
 msgid "read"
-msgstr "lesen"
+msgstr "uitlezen"
 
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
 msgid "KiB/s"
-msgstr "KB/s"
+msgstr "KiB/s"
 
 #: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
 #: extension.js:1324 extension.js:1549 extension.js:1558
 msgid "MiB/s"
-msgstr "MB/s"
+msgstr "MiB/s"
+
+#: extension.js:178 extension.js:1597 extension.js:1605
+msgid "kbit/s"
+msgstr "kbit/s"
+
+#: extension.js:179 extension.js:1600 extension.js:1608
+msgid "Mbit/s"
+msgstr "Mbit/s"
 
 #: extension.js:1419 extension.js:1635
 msgid "MiB"
-msgstr "MB"
+msgstr "MiB"
 
 #: extension.js:1714
 msgid "GiB"
-msgstr "GB"
+msgstr "GiB"
 
 #: extension.js:184
 msgid "kB"
@@ -272,41 +279,40 @@ msgstr "MB"
 
 #: extension.js:1179 extension.js:1644
 msgid "Thermal"
-msgstr "Temperatur"
+msgstr "Thermisch"
 
 msgid "thermal"
-msgstr "Temp."
+msgstr "thermisch"
 
 #: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
-msgstr "Im Menü anzeigen"
+msgstr "Tonen in menu"
 
 #: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
-msgstr "Verbleibende Zeit anzeigen"
+msgstr "Resterende tijd tonen"
 
 #: prefs.js:226 prefs.js:233
 msgid "Hide System Icon"
-msgstr "Systemeigenes Icon verbergen"
+msgstr "Systeempictogram verbergen"
 
 #: prefs.js:230 prefs.js:237
 msgid "Usage Style"
-msgstr "Anzeigestil der Speicherbelegung"
+msgstr "Stijl van gebruik"
 
 #: prefs.js:231 prefs.js:238
 msgid "pie"
-msgstr "Kreisdiagramm"
+msgstr "cirkeldiagram"
 
 #: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr "Balkendiagramm"
+msgstr "staafdiagram"
 
 #: prefs.js:231 prefs.js:238
 msgid "none"
-msgstr "nicht anzeigen"
+msgstr "geen"
 
 #: extension.js:68
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -316,62 +322,60 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 "\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 msgstr ""
-"Fehlende Abhängigkeiten\n"
-"Bitte installieren Sie: \n"
-"libgtop, Netzwerkverwaltung und Gir-Anbindungen\n"
-"\t unter Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t unter Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t unter Arch Linux: libgtop, networkmanager\n"
+"Er ontbreken afhankelijkheden\n"
+"Installeer: \n"
+"libgtop, NetworkManager en de gir-bindings \n"
+"\t    op Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    op Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    op Arch: libgtop, networkmanager\n"
+"\t    op openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
-msgstr "Shell-Erweiterung System Monitor"
+msgstr "Systeemmonitor-uitbreiding"
 
 #: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Annuleren"
 
 #: extension.js:601 extension.js:875
 msgid "Battery"
-msgstr "Akku"
+msgstr "Accu"
 
 msgid "battery"
-msgstr "Akku"
+msgstr "accu"
 
 #: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr "Taktfrequenz"
+msgstr "Freq"
 
 msgid "freq"
-msgstr "Taktfrequenz"
+msgstr "freq"
 
 #: extension.js:1540 extension.js:1692
 msgid "Fan"
-msgstr "Lüfter"
+msgstr "Ventilator"
 
 msgid "fan"
-msgstr "Lüfter"
+msgstr "ventilator"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730
 msgid "rpm"
-msgstr "1/min"
+msgstr "rpm"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Hulpballon tonen"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Fahrenheit gebruiken voor temperatuurweergave"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"
-msgstr ""
-
-#~ msgid "System Monitor Applet Configurator"
-#~ msgstr "System Monitor Applet Konfigurator"
+msgstr "Temperatuurdrempelwaarde (0 om uit te schakelen)"

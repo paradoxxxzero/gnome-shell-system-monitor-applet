@@ -12,7 +12,7 @@
 
 #### Prerequisites
 
-This extension [requires GNOME Shell v3.4 or later](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/blob/master/system-monitor%40paradoxxx.zero.gmail.com/metadata.json#L2).
+This extension [requires GNOME Shell v3.26 or later](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/blob/master/system-monitor%40paradoxxx.zero.gmail.com/metadata.json#L2).
 Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2) if you are using an older version of GNOME Shell (check with `gnome-shell --version`).
 
 Before installing this extension, ensure you have the necessary system packages installed:
@@ -20,6 +20,10 @@ Before installing this extension, ensure you have the necessary system packages 
 * On Ubuntu:
 
       $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0  gir1.2-clutter-1.0
+      
+* On Debian:
+
+      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
 
 * On Fedora:
 
@@ -51,6 +55,14 @@ If it failed, ensure that you installed all the [necessary dependencies](#prereq
 and that you granted the browser permission to install extensions when prompted.
 Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt).
 
+#### Repository installation
+
+* Extension is in Fedora 25, 26, 27 and Rawhide repositories, you can install it for all users with the following command:
+
+    $ sudo dnf install gnome-shell-extension-system-monitor-applet
+
+* Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
+
 #### Manual installation
 
 [Download the ZIP/Tarball](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases),
@@ -60,13 +72,16 @@ extract the archive, open a shell into its directory, and run:
 
 Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc), then run:
 
-    mkdir ~/git_projects
-    cd ~/git_projects
-    git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git    
+    GIT_PROJECTS=~/git_projects
+    PROJECT_NAME=system-monitor@paradoxxx.zero.gmail.com
+    mkdir $GIT_PROJECTS
+    cd $GIT_PROJECTS
+    git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git $PROJECT_NAME
     mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
-    ln -s ~/git_projects/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com
-    gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com
+    { [ -d "./$PROJECT_NAME" ] || [ -L "./$PROJECT_NAME" ]; } && rm -Rf "./$PROJECT_NAME"
+    ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
+    gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
 
 And restart gnome-shell (`Alt + F2`, then `r`) or reboot the machine.
 
@@ -82,7 +97,7 @@ If we do not have the translation of your language and you want to translate by 
 
 #### Deployment
     
-To create a zip file with the specified version number, ready to upload to [Gnome Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
+1. To create a zip file with the specified version number, ready to upload to [Gnome Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
 
     make zip-file VERSION=<version>
 
@@ -90,7 +105,7 @@ To determine the version number to use, check the extensions site and increment 
 
 The specified version number is just for documentation and isn't strictly necessary in the uploaded file, since the extensions website will dynamically set this and override whatever we enter.
 
-Once uploaded, [create a Github release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
+2. Once uploaded, [create a Github release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
 
 ### Authors
 

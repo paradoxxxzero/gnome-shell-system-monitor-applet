@@ -2106,18 +2106,17 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             proc.init(null);
             // Asynchronously call the output handler when script output is ready
             proc.communicate_utf8_async(null, null, Lang.bind(this, this._handleOutput));
-
         } catch (err) {
             global.logError(err.message);
         }
     }
     _handleOutput(proc, result) {
-      let [ok, output,] = proc.communicate_utf8_finish(result);
-      if (ok) {
-        this._readTemperature(output);
-      } else {
-        global.logError('gpu_usage.sh invocation failed');
-      }
+        let [ok, output, ] = proc.communicate_utf8_finish(result);
+        if (ok) {
+            this._readTemperature(output);
+        } else {
+            global.logError('gpu_usage.sh invocation failed');
+        }
     }
     _readTemperature(procOutput) {
         let usage = procOutput.split('\n');
@@ -2152,11 +2151,11 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         return number;
     }
     _update_unit() {
-      let unit = _('MiB');
-      if (this.useGiB) {
-          unit = _('GiB');
-      }
-      this.menu_items[4].text = unit;
+        let unit = _('MiB');
+        if (this.useGiB) {
+            unit = _('GiB');
+        }
+        this.menu_items[4].text = unit;
     }
     _apply() {
         if (this.total === 0) {

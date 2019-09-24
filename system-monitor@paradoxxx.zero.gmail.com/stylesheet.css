@@ -187,16 +187,6 @@
     padding: 0 2px;
 }
 
-.sm-tooltip-box {
-    font-size: 0.85em;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.9);
-    background-color: rgba(10, 10, 10, 0.7);
-    border-radius: 5px;
-    padding: 3px;
-    border: 1px solid #a5a5a5;
-}
-
 .sm-tooltip-item-compact {
     padding: 0px;
     spacing: 10px;

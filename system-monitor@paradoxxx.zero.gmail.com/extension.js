@@ -353,9 +353,7 @@ const Chart = class SystemMonitor_Chart {
             Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
             cr.fill();
         }
-        if (Compat.versionCompare(shell_Version, '3.7.4')) {
-            cr.$dispose();
-        }
+        cr.$dispose();
     }
     resize(schema, key) {
         let old_width = this.width;
@@ -567,9 +565,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
             cr.stroke();
             y0 += (7 * this.thickness) / 4;
         }
-        if (Compat.versionCompare(shell_Version, '3.7.4')) {
-            cr.$dispose();
-        }
+        cr.$dispose();
     }
     update_mounts(mounts) {
         this.mounts = mounts;
@@ -624,9 +620,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
             cr.stroke();
             r -= (3 * thickness) / 2;
         }
-        if (Compat.versionCompare(shell_Version, '3.7.4')) {
-            cr.$dispose();
-        }
+        cr.$dispose();
     }
 
     update_mounts(mounts) {
@@ -823,7 +817,12 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
             this.colors.push(clutterColor);
         }
 
-        this.chart = new Chart(Schema.get_int(this.elt + '-graph-width'), IconSize, this);
+        let element_width = Schema.get_int(this.elt + '-graph-width');
+        if (Style.get('') === '-compact') {
+            element_width = Math.round(element_width / 1.5);
+        }
+        this.chart = new Chart(element_width, IconSize, this);
+
         Schema.connect('changed::background', () => {
             this.chart.actor.queue_repaint();
         });
@@ -1015,12 +1014,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 for (let i = 0; i < result.length; i++) {
                     let [device_id, device_type, icon, percentage, state, seconds] = result[i];
 
-                    if (Compat.versionCompare(shell_Version, '3.9')) {
-                        isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
-                    } else {
-                        isBattery = (device_type === Power.UPDeviceType.BATTERY);
-                    }
-
+                    isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
                     if (isBattery) {
                         battery_found = true;
                         this.update_battery_value(seconds, percentage, icon);
@@ -1488,9 +1482,9 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         let i = 0;
         let file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
         var that = this;
-        file.load_contents_async(null, function cb (source, result) {
+        file.load_contents_async(null, function cb(source, result) {
             let as_r = source.load_contents_finish(result);
-            total_frequency += parseInt(ByteArray.toString(as_r[1]));
+            total_frequency += parseInt(as_r[1]);
 
             if (++i >= num_cpus) {
                 that.freq = Math.round(total_frequency / num_cpus / 1000);
@@ -1963,11 +1957,11 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
     }
     refresh() {
         let sfile = Schema.get_string(this.elt + '-sensor-file');
-        if (GLib.file_test(sfile, 1 << 4)) {
+        if (GLib.file_test(sfile, GLib.FileTest.EXISTS)) {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = Math.round(parseInt(ByteArray.toString(as_r[1])) / 1000);
+                this.temperature = Math.round(parseInt(as_r[1]) / 1000);
                 if (this.fahrenheit_unit) {
                     this.temperature = Math.round(this.temperature * 1.8 + 32);
                 }
@@ -2034,11 +2028,11 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
     }
     refresh() {
         let sfile = Schema.get_string(this.elt + '-sensor-file');
-        if (GLib.file_test(sfile, 1 << 4)) {
+        if (GLib.file_test(sfile, GLib.FileTest.EXISTS)) {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.rpm = parseInt(ByteArray.toString(as_r[1]));
+                this.rpm = parseInt(as_r[1]);
             });
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -2328,29 +2322,16 @@ function enable() {
         let elts = Main.__sm.elts;
 
         if (Schema.get_boolean('move-clock')) {
-            let dateMenu;
-            if (Compat.versionCompare(shell_Version, '3.5.90')) {
-                dateMenu = Main.panel.statusArea.dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.container);
-                Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
-            } else {
-                dateMenu = Main.panel._dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.actor);
-                Main.panel._rightBox.insert_child_at_index(dateMenu.actor, -1);
-            }
+            let dateMenu = Main.panel.statusArea.dateMenu;
+            Main.panel._centerBox.remove_actor(dateMenu.container);
+            Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
             tray.clockMoved = true;
         }
 
         Schema.connect('changed::background', (schema, key) => {
             Background = color_from_string(Schema.get_string(key));
         });
-        if (!Compat.versionCompare(shell_Version, '3.5.5')) {
-            StatusArea.systemMonitor = tray;
-            panel.insert_child_at_index(tray.actor, 1);
-            panel.child_set(tray.actor, {y_fill: true});
-        } else {
-            Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
-        }
+        Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
 
         // The spacing adds a distance between the graphs/text on the top bar
         let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
@@ -2424,11 +2405,7 @@ function enable() {
             }
         });
         tray.menu.addMenuItem(item);
-        if (Compat.versionCompare(shell_Version, '3.5.5')) {
-            Main.panel.menuManager.addMenu(tray.menu);
-        } else {
-            Main.panel._menus.addMenu(tray.menu);
-        }
+        Main.panel.menuManager.addMenu(tray.menu);
     }
     log('[System monitor] applet enabling done');
 }
@@ -2436,16 +2413,9 @@ function enable() {
 function disable() {
     // restore clock
     if (Main.__sm.tray.clockMoved) {
-        let dateMenu;
-        if (Compat.versionCompare(shell_Version, '3.5.90')) {
-            dateMenu = Main.panel.statusArea.dateMenu;
-            Main.panel._rightBox.remove_actor(dateMenu.container);
-            Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
-        } else {
-            dateMenu = Main.panel._dateMenu;
-            Main.panel._rightBox.remove_actor(dateMenu.actor);
-            Main.panel._centerBox.insert_child_at_index(dateMenu.actor, 0);
-        }
+        let dateMenu = Main.panel.statusArea.dateMenu;
+        Main.panel._rightBox.remove_actor(dateMenu.container);
+        Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
     }
     // restore system power icon if necessary
     // workaround bug introduced by multiple cpus init :
@@ -2471,12 +2441,7 @@ function disable() {
         Main.__sm.elts[eltName].destroy();
     }
 
-    if (!Compat.versionCompare(shell_Version, '3.5')) {
-        Main.__sm.tray.destroy();
-        StatusArea.systemMonitor = null;
-    } else {
-        Main.__sm.tray.actor.destroy();
-    }
+    Main.__sm.tray.actor.destroy();
     Main.__sm = null;
 
     log('[System monitor] applet disable');

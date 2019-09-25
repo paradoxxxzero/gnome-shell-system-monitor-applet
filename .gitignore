@@ -6,3 +6,4 @@ tmp
 /*.zip
 /*.geany
 *.out
+/_build

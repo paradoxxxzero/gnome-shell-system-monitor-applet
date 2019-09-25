@@ -97,7 +97,7 @@
     "no-useless-call": 2,
     "no-useless-concat": 2,
     "no-void": 2,
-    "no-warning-comments": [1, { "terms": ["todo", "fixme", "xxx"], "location": "start" }],
+    //"no-warning-comments": [1, { "terms": ["todo", "fixme", "xxx"], "location": "start" }],
     "no-with": 2,
     //"radix": 2,
     "vars-on-top": 0,

@@ -1,20 +1,20 @@
-#: extension.js:751
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-22 15:04+0100\n"
 "PO-Revision-Date: \n"
-"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
+"Last-Translator: Jose Riha <jose1711@gmail.com>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 msgid ":"
-msgstr ""
+msgstr ":"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -54,32 +54,31 @@ msgstr "Farba pozadia"
 
 #: prefs.js:197 prefs.js:195
 msgid "Display Individual Cores"
-msgstr ""
+msgstr "Zobraziť jednotlivé jadrá"
 
 #: prefs.js:193 prefs.js:191
 msgid "Show network speed in bits"
-msgstr ""
+msgstr "Zobraziť rýchlosť siete v bitoch"
 
 #: prefs.js:205 prefs.js:208
 msgid "Sensor"
-msgstr ""
+msgstr "Senzor"
 
 #: prefs.js:207 prefs.js:210
 msgid "Please install lm-sensors"
-msgstr ""
+msgstr "Prosím, nainštalujte lm-sensors"
 
 #: prefs.js:282 prefs.js:300
 msgid "Move the clock"
-msgstr ""
+msgstr "Presunúť hodiny"
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #: prefs.js:286 prefs.js:289
-#, fuzzy
 msgid "Compact Display"
-msgstr "Zobraziť"
+msgstr "Kompaktné zobrazenie"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
@@ -95,7 +94,7 @@ msgid "Other"
 msgstr "Ostatné"
 
 msgid "Nice"
-msgstr ""
+msgstr "Nice"
 
 msgid "Iowait"
 msgstr "I/O čakanie"
@@ -133,16 +132,16 @@ msgid "Down"
 msgstr "Sťahovanie"
 
 msgid "Uperrors"
-msgstr ""
+msgstr "Chyby uploadu"
 
 msgid "Downerrors"
-msgstr ""
+msgstr "Chyby downloadu"
 
 msgid "collisions"
-msgstr ""
+msgstr "kolízie"
 
 msgid "Collisions"
-msgstr ""
+msgstr "Kolízie"
 
 #: extension.js:836 extension.js:1264
 msgid "Disk"
@@ -156,11 +155,11 @@ msgstr "Čítanie"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: extension.js:1185 extension.js:1315 extension.js:1325
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #: prefs.js:185 prefs.js:183
 msgid "graph"
@@ -211,10 +210,10 @@ msgid "other"
 msgstr "ostatné"
 
 msgid "nice"
-msgstr ""
+msgstr "nice"
 
 msgid "iowait"
-msgstr "I/O čakanie"
+msgstr "i/o čakanie"
 
 msgid "program"
 msgstr "programy"
@@ -235,10 +234,10 @@ msgid "down"
 msgstr "sťahovanie"
 
 msgid "uperrors"
-msgstr ""
+msgstr "chyby uploadu"
 
 msgid "downerrors"
-msgstr ""
+msgstr "chyby downloadu"
 
 msgid "write"
 msgstr "zápis"
@@ -249,66 +248,63 @@ msgstr "čítanie"
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
 msgid "KiB/s"
-msgstr ""
+msgstr "KiB/s"
 
 #: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
 #: extension.js:1324 extension.js:1549 extension.js:1558
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 #: extension.js:1419 extension.js:1635
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
 #: extension.js:1714
 msgid "GiB"
-msgstr ""
+msgstr "GiB"
 
 #: extension.js:184
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
 #: extension.js:183 extension.js:185
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: extension.js:1179 extension.js:1644
 msgid "Thermal"
-msgstr ""
+msgstr "Teplota"
 
-#, fuzzy
 msgid "thermal"
-msgstr "Ostatné"
+msgstr "teplota"
 
 #: prefs.js:180 prefs.js:178
 msgid "Show In Menu"
-msgstr ""
+msgstr "Zobraziť v ponuke"
 
 #: prefs.js:222 prefs.js:229
 msgid "Show Time Remaining"
-msgstr ""
+msgstr "Zobraziť zostávajúci čas"
 
 #: prefs.js:226 prefs.js:233
-#, fuzzy
 msgid "Hide System Icon"
-msgstr "Monitor systému"
+msgstr "Skryť systémovú ikonu"
 
 #: prefs.js:230 prefs.js:237
-#, fuzzy
 msgid "Usage Style"
 msgstr "Štýl zobrazenia"
 
 #: prefs.js:231 prefs.js:238
 msgid "pie"
-msgstr ""
+msgstr "koláčový graf"
 
 #: prefs.js:231 prefs.js:238
 msgid "bar"
-msgstr ""
+msgstr "stĺpcový graf"
 
 #: prefs.js:231 prefs.js:238
 msgid "none"
-msgstr ""
+msgstr "žiaden"
 
 #: extension.js:68
 msgid ""
@@ -320,57 +316,63 @@ msgid ""
 "\t    on Arch: libgtop, networkmanager\n"
 "\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 msgstr ""
+"Chýbajúce závislosti\n"
+"Prosím, nainštalujte:\n"
+"libgtop, Network Manager a gir bindings \n"
+"\t    v Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    vo Fedore: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    v Archu: libgtop, networkmanager\n"
+"\t    v openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 
 #: extension.js:97 extension.js:255
-#, fuzzy
 msgid "System Monitor Extension"
-msgstr "Monitor systému"
+msgstr "Rozšírenie Monitor systému"
 
 #: extension.js:113 extension.js:271
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušiť"
 
 #: extension.js:601 extension.js:875
 msgid "Battery"
-msgstr ""
+msgstr "Batéria"
 
 msgid "battery"
-msgstr ""
+msgstr "batéria"
 
 #: extension.js:896 extension.js:1334
 msgid "Freq"
-msgstr ""
+msgstr "Frekv"
 
 msgid "freq"
-msgstr ""
+msgstr "frekv"
 
 #: extension.js:1540 extension.js:1692
 msgid "Fan"
-msgstr ""
+msgstr "Ventilátor"
 
 msgid "fan"
-msgstr ""
+msgstr "vent"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730
 msgid "rpm"
-msgstr ""
+msgstr "rpm"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Zobraziť informačnú bublinu"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "Procesor"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Zobraziť teplotu v stupňoch Fahrenheita"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"
-msgstr ""
+msgstr "Prah teploty (0 pre vypnutie)"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Konfigurátor apletu systémového monitoru"

@@ -1383,9 +1383,9 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         let accum = [0, 0];
 
         let file = Gio.file_new_for_path('/proc/diskstats');
-        var that = this;
-        file.load_contents_async(null, function cb(source, result) {
-            let lines = source.load_contents_finish(result).split('\n');
+        file.load_contents_async(null, (source, result) => {
+            let as_r = source.load_contents_finish(result);
+            let lines = String(as_r[1]).split('\n');
 
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];
@@ -1398,15 +1398,14 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
             }
 
             let time = GLib.get_monotonic_time() / 1000;
-            let delta = (time - that.last_time) / 1000;
+            let delta = (time - this.last_time) / 1000;
             if (delta > 0) {
                 for (let i = 0; i < 2; i++) {
-                    that.usage[i] = ((accum[i] - that.last[i]) / delta / 1024 / 8);
-                    that.last[i] = accum[i];
+                    this.usage[i] = ((accum[i] - this.last[i]) / delta / 1024 / 8);
+                    this.last[i] = accum[i];
                 }
             }
-            that.last_time = time;
-
+            this.last_time = time;
         });
     }
     _apply() {

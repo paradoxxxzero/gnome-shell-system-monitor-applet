@@ -1381,27 +1381,33 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
     }
     refresh() {
         let accum = [0, 0];
-        let lines = Shell.get_file_contents_utf8_sync('/proc/diskstats').split('\n');
 
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            let entry = line.trim().split(/[\s]+/);
-            if (typeof (entry[1]) === 'undefined') {
-                break;
-            }
-            accum[0] += parseInt(entry[5]);
-            accum[1] += parseInt(entry[9]);
-        }
+        let file = Gio.file_new_for_path('/proc/diskstats');
+        var that = this;
+        file.load_contents_async(null, function cb(source, result) {
+            let lines = source.load_contents_finish(result).split('\n');
 
-        let time = GLib.get_monotonic_time() / 1000;
-        let delta = (time - this.last_time) / 1000;
-        if (delta > 0) {
-            for (let i = 0; i < 2; i++) {
-                this.usage[i] = ((accum[i] - this.last[i]) / delta / 1024 / 8);
-                this.last[i] = accum[i];
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                let entry = line.trim().split(/[\s]+/);
+                if (typeof (entry[1]) === 'undefined') {
+                    break;
+                }
+                accum[0] += parseInt(entry[5]);
+                accum[1] += parseInt(entry[9]);
             }
-        }
-        this.last_time = time;
+
+            let time = GLib.get_monotonic_time() / 1000;
+            let delta = (time - that.last_time) / 1000;
+            if (delta > 0) {
+                for (let i = 0; i < 2; i++) {
+                    that.usage[i] = ((accum[i] - that.last[i]) / delta / 1024 / 8);
+                    that.last[i] = accum[i];
+                }
+            }
+            that.last_time = time;
+
+        });
     }
     _apply() {
         this.vals = this.usage.slice();

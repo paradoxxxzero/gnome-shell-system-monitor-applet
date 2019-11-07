@@ -110,9 +110,9 @@ function build_menu_info() {
     if (tray_menu._getMenuItems().length &&
         typeof tray_menu._getMenuItems()[0].actor.get_last_child() !== 'undefined') {
         tray_menu._getMenuItems()[0].actor.get_last_child().destroy_all_children();
-        for (let elt in elts) {
-            elts[elt].menu_items = elts[elt].create_menu_items();
-        }
+        elts.forEach(elt => {
+            elt.menu_items = elt.create_menu_items();
+        });
     } else {
         return;
     }
@@ -125,28 +125,31 @@ function build_menu_info() {
 
     // Populate Table
     let row_index = 0;
-    for (let elt in elts) {
-        if (!elts[elt].menu_visible) {
-            continue;
+    elts.forEach(elt => {
+        if (!elt.menu_visible) {
+            return;
         }
 
         // Add item name to table
         menu_info_box_table_layout.pack(
             new St.Label({
-                text: elts[elt].item_name,
+                text: elt.item_name,
                 style_class: Style.get('sm-title')}), 0, row_index);
 
         // Add item data to table
         let col_index = 1;
-        for (let item in elts[elt].menu_items) {
+        elt.menu_items.forEach(menuItem => {
             menu_info_box_table_layout.pack(
-                elts[elt].menu_items[item], col_index, row_index);
+                menuItem,
+                col_index,
+                row_index
+            );
 
             col_index++;
-        }
+        });
 
         row_index++;
-    }
+    });
     tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
 }
 
@@ -411,11 +414,7 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
         //     }
         // }
         // log("[System monitor] old mounts: " + this.mounts);
-        this.mounts = [];
-        for (let base in this.base_mounts) {
-            // log("[System monitor] " + this.base_mounts[base]);
-            this.mounts.push(this.base_mounts[base]);
-        }
+        this.mounts = [...this.base_mounts];
         let mount_lines = this._volumeMonitor.get_mounts();
         mount_lines.forEach((mount) => {
             if ((!this.is_net_mount(mount) || ENABLE_NETWORK_DISK_USAGE) &&
@@ -428,9 +427,7 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
         });
         // log("[System monitor] base: " + this.base_mounts);
         // log("[System monitor] mounts: " + this.mounts);
-        for (let i in this.listeners) {
-            this.listeners[i](this.mounts);
-        }
+        this.listeners.forEach(fn => fn(this.mounts));
     }
     add_listener(cb) {
         this.listeners.push(cb);
@@ -510,10 +507,7 @@ const Graph = class SystemMonitor_Graph {
         this.actor.set_height(this.height);
         this.actor.connect('repaint', this._draw.bind(this));
         this.gtop = new GTop.glibtop_fsusage();
-        this.colors = ['#888', '#aaa', '#ccc'];
-        for (let color in this.colors) {
-            this.colors[color] = color_from_string(this.colors[color]);
-        }
+        this.colors = ['#888', '#aaa', '#ccc'].map(color => color_from_string(color));
     }
     create_menu_item() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
@@ -546,12 +540,12 @@ const Bar = class SystemMonitor_Bar extends Graph {
         let y0 = this.thickness / 2;
         cr.setLineWidth(this.thickness);
         cr.setFontSize(this.fontsize);
-        for (let mount in this.mounts) {
-            GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
+        this.mounts.forEach((mount, index) => {
+            GTop.glibtop_get_fsusage(this.gtop, mount);
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
-            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            Clutter.cairo_set_source_color(cr, this.colors[index % this.colors.length]);
 
-            var text = this.mounts[mount];
+            var text = mount;
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
@@ -565,7 +559,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
             cr.relLineTo(perc_full * width, 0);
             cr.stroke();
             y0 += (7 * this.thickness) / 4;
-        }
+        });
         cr.$dispose();
     }
     update_mounts(mounts) {
@@ -608,19 +602,19 @@ const Pie = class SystemMonitor_Pie extends Graph {
         let r = rc - (thickness / 2);
         cr.setLineWidth(thickness);
         cr.setFontSize(fontsize);
-        for (let mount in this.mounts) {
-            GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
-            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+        this.mounts.forEach((mount, index) => {
+            GTop.glibtop_get_fsusage(this.gtop, mount);
+            Clutter.cairo_set_source_color(cr, this.colors[index % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
             cr.moveTo(0, yc - r + thickness / 2);
-            var text = this.mounts[mount];
+            var text = mount;
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
             cr.showText(text);
             cr.stroke();
             r -= (3 * thickness) / 2;
-        }
+        });
         cr.$dispose();
     }
 
@@ -806,8 +800,8 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         this.tip_unit_labels = [];
 
         this.colors = [];
-        for (let color in this.color_name) {
-            let name = this.elt + '-' + this.color_name[color] + '-color';
+        this.color_name.forEach(color => {
+            let name = this.elt + '-' + color + '-color';
             let clutterColor = color_from_string(Schema.get_string(name));
             Schema.connect('changed::' + name, (schema, key) => {
                 this.clutterColor = color_from_string(Schema.get_string(key));
@@ -816,7 +810,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.chart.actor.queue_repaint();
             });
             this.colors.push(clutterColor);
-        }
+        });
 
         let element_width = Schema.get_int(this.elt + '-graph-width');
         if (Style.get('') === '-compact') {
@@ -875,9 +869,9 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
 
         this.actor.add_actor(this.text_box);
         this.text_items = this.create_text_items();
-        for (let item in this.text_items) {
-            this.text_box.add_actor(this.text_items[item]);
-        }
+        this.text_items.forEach(item => {
+            this.text_box.add_actor(item);
+        });
         this.actor.add_actor(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', change_style.bind(this));
@@ -1708,14 +1702,14 @@ const Net = class SystemMonitor_Net extends ElementBase {
     refresh() {
         let accum = [0, 0, 0, 0, 0];
 
-        for (let ifn in this.ifs) {
-            GTop.glibtop_get_netload(this.gtop, this.ifs[ifn]);
+        this.ifs.forEach(ifn => {
+            GTop.glibtop_get_netload(this.gtop, ifn);
             accum[0] += this.gtop.bytes_in;
             accum[1] += this.gtop.errors_in;
             accum[2] += this.gtop.bytes_out;
             accum[3] += this.gtop.errors_out;
             accum[4] += this.gtop.collisions;
-        }
+        });
 
         let time = GLib.get_monotonic_time() * 0.001024;
         let delta = time - this.last_time;
@@ -2315,9 +2309,9 @@ function enable() {
         tray.actor.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
         // Add items to panel box
-        for (let elt in elts) {
-            box.add_actor(elts[elt].actor);
-        }
+        elts.forEach(elt => {
+            box.add_actor(elt.actor);
+        });
 
         // Build Menu Info Box Table
         let menu_info = new PopupMenu.PopupBaseMenuItem({reactive: false});
@@ -2413,9 +2407,7 @@ function disable() {
     }
 
     Schema.run_dispose();
-    for (let eltName in Main.__sm.elts) {
-        Main.__sm.elts[eltName].destroy();
-    }
+    Main.__sm.elts.forEach(elt => elt.destroy());
 
     Main.__sm.tray.actor.destroy();
     Main.__sm = null;

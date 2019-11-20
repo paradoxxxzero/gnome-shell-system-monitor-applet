@@ -80,7 +80,7 @@ Alternately, if you plan on doing development on the extension, or testing modif
     mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
     { [ -d "./$PROJECT_NAME" ] || [ -L "./$PROJECT_NAME" ]; } && rm -Rf "./$PROJECT_NAME"
-    ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
+    ln -s $GIT_PROJECTS/$PROJECT_NAME/$PROJECT_NAME
     gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
 
 And restart gnome-shell (`Alt + F2`, then `r`) or reboot the machine.

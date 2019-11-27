@@ -107,11 +107,12 @@ Clutter.Actor.prototype.reparent = function reparent(newParent) {
     newParent.add_child(this);
 }
 
-function parse_bytearray(bytearray) {
-    if (!ByteArray.toString(bytearray).match(/GjsModule byteArray/)) {
-        return ByteArray.toString(bytearray);
+function parse_bytearray(maybeBA) {
+    const decoded = ByteArray.toString(maybeBA);
+    if ((/GjsModule byteArray/).test(decoded)) {
+        return maybeBA;
     }
-    return bytearray
+    return decoded;
 }
 
 function l_limit(t) {
@@ -1573,7 +1574,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         var that = this;
         file.load_contents_async(null, function cb(source, result) {
             let as_r = source.load_contents_finish(result);
-            total_frequency += parseInt(as_r[1]);
+            total_frequency += parseInt(parse_bytearray(as_r[1]));
 
             if (++i >= num_cpus) {
                 that.freq = Math.round(total_frequency / num_cpus / 1000);

@@ -1,0 +1,373 @@
+
+# Sistem Ekranı için Türkçe çeviri yaması.
+# Copyright (C) 2012 THE system-monitor'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the system-monitor package.
+# Based on Italian translation file.
+# Fatih Eser afeserr@gmail.com, 2020
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-system-monitor-applet-translation-2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-08 13:27+0300\n"
+"PO-Revision-Date: 2020-01-08 13:57+0300\n"
+"Last-Translator: Fatih Eser <afeserr@gmail.com>\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.4\n"
+
+#: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
+msgid ":"
+msgstr ":"
+
+#: prefs.js:161 prefs.js:159
+msgid "Display"
+msgstr "Görünüm"
+
+#: prefs.js:166 prefs.js:164
+msgid "Refresh Time"
+msgstr "Yenileme Süresi"
+
+#: prefs.js:171 prefs.js:169
+msgid "Graph Width"
+msgstr "Grafik Genişliği"
+
+#: prefs.js:176 prefs.js:174
+msgid "Show Text"
+msgstr "Metni Göster"
+
+#: prefs.js:184 prefs.js:182
+msgid "Display Style"
+msgstr "Gösterim Biçimi"
+
+#: prefs.js:267 prefs.js:274
+msgid "Display Icon"
+msgstr "Simgeyi Göster"
+
+#: prefs.js:276 prefs.js:283
+msgid "Display in the Middle"
+msgstr "Ortada Göster"
+
+#: prefs.js:288 prefs.js:306
+msgid "Background Color"
+msgstr "Arkaplan Rengi"
+
+#: prefs.js:197 prefs.js:195
+msgid "Display Individual Cores"
+msgstr "Her Bir Çekirdeği Göster"
+
+#: prefs.js:193 prefs.js:191
+msgid "Show network speed in bits"
+msgstr "Ağ Hızını Bit Olarak Göster"
+
+#: prefs.js:205 prefs.js:208
+msgid "Sensor"
+msgstr "Sensör"
+
+#: prefs.js:207 prefs.js:210
+msgid "Please install lm-sensors"
+msgstr "Lütfen lm-sensörlerini Yükle"
+
+#: prefs.js:282 prefs.js:300
+msgid "Move the clock"
+msgstr "Saati Hareket Ettir"
+
+#: prefs.js:286 prefs.js:289
+msgid "Compact Display"
+msgstr "Küçültülmüş Görünüm"
+
+#: extension.js:746 extension.js:1117
+msgid "Cpu"
+msgstr "İşlemci"
+
+msgid "User"
+msgstr "Kullanıcı"
+
+msgid "System"
+msgstr "Sistem"
+
+msgid "Other"
+msgstr "Diğer"
+
+msgid "Nice"
+msgstr "Nice"
+
+msgid "Iowait"
+msgstr "IO bekleme süresi"
+
+#: extension.js:941 extension.js:1378
+msgid "Memory"
+msgstr "Bellek"
+
+msgid "Program"
+msgstr "Program"
+
+msgid "Cache"
+msgstr "Önbellek"
+
+msgid "Buffer"
+msgstr "Arabellek"
+
+#: extension.js:1134 extension.js:1598
+msgid "Swap"
+msgstr "Takas Alanı"
+
+msgid "Used"
+msgstr "Kullanılan"
+
+#: extension.js:1010 extension.js:1428
+msgid "Net"
+msgstr "Ağ"
+
+#: extension.js:1589
+msgid "Up"
+msgstr "Yükleme"
+
+#: extension.js:1586
+msgid "Down"
+msgstr "İndirme"
+
+msgid "Uperrors"
+msgstr "Yükleme hatası"
+
+msgid "Downerrors"
+msgstr "İndirme hatası"
+
+msgid "collisions"
+msgstr "çakışmalar"
+
+msgid "Collisions"
+msgstr "Çakışmalar"
+
+#: extension.js:836 extension.js:1264
+msgid "Disk"
+msgstr "Disk"
+
+msgid "Write"
+msgstr "Yazma"
+
+msgid "Read"
+msgstr "Okuma"
+
+#: extension.js:1182 extension.js:1312 extension.js:1322
+msgid "R"
+msgstr "O"
+
+#: extension.js:1185 extension.js:1315 extension.js:1325
+msgid "W"
+msgstr "Y"
+
+#: prefs.js:185 prefs.js:183
+msgid "graph"
+msgstr "grafik"
+
+#: prefs.js:185 prefs.js:183
+msgid "digit"
+msgstr "rakam"
+
+#: prefs.js:185 prefs.js:183
+msgid "both"
+msgstr "tümü"
+
+msgid "cpu"
+msgstr "işlemci"
+
+#: extension.js:811
+msgid "mem"
+msgstr "bellek"
+
+msgid "swap"
+msgstr "takas alanı"
+
+msgid "net"
+msgstr "ağ"
+
+msgid "disk"
+msgstr "disk"
+
+#: extension.js:1346 extension.js:1900
+msgid "Preferences..."
+msgstr "Seçenekler..."
+
+#: extension.js:1340 extension.js:1894
+msgid "System Monitor..."
+msgstr "Sistem Gözlemcisi..."
+
+msgid "System monitor"
+msgstr "Sistem Gözlemcisi"
+
+msgid "user"
+msgstr "kullanıcı"
+
+msgid "system"
+msgstr "sistem"
+
+msgid "other"
+msgstr "diğer"
+
+msgid "nice"
+msgstr "nice"
+
+msgid "iowait"
+msgstr "girdi/çıktı bekleme süresi"
+
+msgid "program"
+msgstr "program"
+
+msgid "cache"
+msgstr "önbellek"
+
+msgid "buffer"
+msgstr "ara bellek"
+
+msgid "used"
+msgstr "kullanılan"
+
+msgid "up"
+msgstr "yükleme"
+
+msgid "down"
+msgstr "indirme"
+
+msgid "uperrors"
+msgstr "yükleme hatası"
+
+msgid "downerrors"
+msgstr "indirme hatası"
+
+msgid "write"
+msgstr "yazma"
+
+msgid "read"
+msgstr "okuma"
+
+#: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
+#: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
+msgid "KiB/s"
+msgstr "KiB/s"
+
+#: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
+#: extension.js:1324 extension.js:1549 extension.js:1558
+msgid "MiB/s"
+msgstr "MiB/s"
+
+#: extension.js:1419 extension.js:1635
+msgid "MiB"
+msgstr "MiB"
+
+#: extension.js:1714
+msgid "GiB"
+msgstr "GiB"
+
+#: extension.js:184
+msgid "kB"
+msgstr "kB"
+
+#: extension.js:183 extension.js:185
+msgid "MB"
+msgstr "MB"
+
+#: extension.js:1179 extension.js:1644
+msgid "Thermal"
+msgstr "Sıcaklık"
+
+msgid "thermal"
+msgstr "sıcaklık"
+
+#: prefs.js:180 prefs.js:178
+msgid "Show In Menu"
+msgstr "Menüde Göster"
+
+#: prefs.js:222 prefs.js:229
+msgid "Show Time Remaining"
+msgstr "Kalan Süreyi Göster"
+
+#: prefs.js:226 prefs.js:233
+msgid "Hide System Icon"
+msgstr "Sistem Simgesini Gizle"
+
+#: prefs.js:230 prefs.js:237
+msgid "Usage Style"
+msgstr "Kullanıcı Biçimi"
+
+#: prefs.js:231 prefs.js:238
+msgid "pie"
+msgstr "pasta"
+
+#: prefs.js:231 prefs.js:238
+msgid "bar"
+msgstr "bar"
+
+#: prefs.js:231 prefs.js:238
+msgid "none"
+msgstr "hiçbiri"
+
+#: extension.js:68
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"libgtop, Network Manager and gir bindings \n"
+"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    on Arch: libgtop, networkmanager\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+msgstr ""
+"Bağımlılıklar kayıp\n"
+"Lütfen aşağıdaki paketleri yükleyin: \n"
+"libgtop, Network Manager ve gir bindings \n"
+"\t    Ubuntu'da iseniz  : gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    Fedora'da iseniz  : libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    Arch'ta iseniz    : libgtop, networkmanager\n"
+"\t    openSUSE'de iseniz: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+
+#: extension.js:97 extension.js:255
+msgid "System Monitor Extension"
+msgstr "Sistem Gözlemcisi Uzantısı"
+
+#: extension.js:113 extension.js:271
+msgid "Cancel"
+msgstr "İptal"
+
+#: extension.js:601 extension.js:875
+msgid "Battery"
+msgstr "Pil"
+
+msgid "battery"
+msgstr "pil"
+
+#: extension.js:896 extension.js:1334
+msgid "Freq"
+msgstr "Frekans"
+
+msgid "freq"
+msgstr "frekans"
+
+#: extension.js:1540 extension.js:1692
+msgid "Fan"
+msgstr "Pervane"
+
+msgid "fan"
+msgstr "pervane"
+
+#: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
+#: extension.js:1722 extension.js:1730
+msgid "rpm"
+msgstr "devir(rpm)"
+
+#: prefs.js:294
+msgid "Show tooltip"
+msgstr "İmleç ölçüm üzerindeyken ipuçlarını göster"
+
+#: extension.js:1097
+msgid "CPU"
+msgstr "İşlemci"
+
+#: prefs.js:267
+msgid "Display temperature in Fahrenheit"
+msgstr "Sıcaklığı Fahrenheit biriminde göster"
+
+#: prefs.js:277
+msgid "Temperature threshold (0 to disable)"
+msgstr "Sıcaklık eşiği (Devre dışı bırakmak için 0 yazın)"

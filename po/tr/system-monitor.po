@@ -105,10 +105,10 @@ msgid "Program"
 msgstr "Program"
 
 msgid "Cache"
-msgstr "Cache"
+msgstr "Önbellek"
 
 msgid "Buffer"
-msgstr "Buffer"
+msgstr "Arabellek"
 
 #: extension.js:1134 extension.js:1598
 msgid "Swap"
@@ -217,10 +217,10 @@ msgid "program"
 msgstr "program"
 
 msgid "cache"
-msgstr "cache"
+msgstr "önbellek"
 
 msgid "buffer"
-msgstr "buffer"
+msgstr "ara bellek"
 
 msgid "used"
 msgstr "kullanılan"

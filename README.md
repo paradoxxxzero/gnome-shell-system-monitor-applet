@@ -19,7 +19,7 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Ubuntu:
 
-      $ sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0  gir1.2-clutter-1.0
+      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
       
 * On Debian:
 

@@ -29,6 +29,7 @@ var smDepsNM = true;
 var Config = imports.misc.config;
 var Clutter = imports.gi.Clutter;
 var GLib = imports.gi.GLib;
+var GObject = imports.gi.GObject;
 var Lang = imports.lang;
 
 var Gio = imports.gi.Gio;
@@ -89,6 +90,20 @@ let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 let shell_Version = Config.PACKAGE_VERSION;
 
+Clutter.Actor.prototype.raise_top = function raise_top() {
+    const parent = this.get_parent();
+    if (!parent)
+        return;
+    parent.set_child_above_sibling(this, null);
+}
+Clutter.Actor.prototype.reparent = function reparent(newParent) {
+    const parent = this.get_parent();
+    if (parent) {
+        parent.remove_child(this);
+    }
+    newParent.add_child(this);
+}
+
 function l_limit(t) {
     return (t > 0) ? t : 1000;
 }
@@ -119,7 +134,7 @@ function build_menu_info() {
 
     let menu_info_box_table = new St.Widget({
         style: 'padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;',
-        layout_manager: new Clutter.TableLayout()
+        layout_manager: new Clutter.GridLayout({ orientation: Clutter.Orientation.VERTICAL })
     });
     let menu_info_box_table_layout = menu_info_box_table.layout_manager;
 
@@ -131,16 +146,19 @@ function build_menu_info() {
         }
 
         // Add item name to table
-        menu_info_box_table_layout.pack(
+        menu_info_box_table_layout.attach(
             new St.Label({
                 text: elts[elt].item_name,
-                style_class: Style.get('sm-title')}), 0, row_index);
+                style_class: Style.get('sm-title'),
+		x_align: Clutter.ActorAlign.START,
+                y_align: Clutter.ActorAlign.CENTER
+	    }), 0, row_index, 1, 1);
 
         // Add item data to table
         let col_index = 1;
         for (let item in elts[elt].menu_items) {
-            menu_info_box_table_layout.pack(
-                elts[elt].menu_items[item], col_index, row_index);
+            menu_info_box_table_layout.attach(
+                elts[elt].menu_items[item], col_index, row_index, 1, 1);
 
             col_index++;
         }
@@ -630,14 +648,15 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
-const TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
-    constructor() {
-        super();
+const TipItem = GObject.registerClass({GTypeName:'TipItem'},
+    class TipItem extends PopupMenu.PopupBaseMenuItem {
+    _init() {
+        super._init();
         // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
         this.actor.remove_style_class_name('popup-menu-item');
         this.actor.add_style_class_name('sm-tooltip-item');
     }
-}
+});
 
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     constructor(sourceActor) {

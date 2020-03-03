@@ -92,8 +92,9 @@ let shell_Version = Config.PACKAGE_VERSION;
 
 Clutter.Actor.prototype.raise_top = function raise_top() {
     const parent = this.get_parent();
-    if (!parent)
+    if (!parent) {
         return;
+    }
     parent.set_child_above_sibling(this, null);
 }
 Clutter.Actor.prototype.reparent = function reparent(newParent) {
@@ -134,7 +135,7 @@ function build_menu_info() {
 
     let menu_info_box_table = new St.Widget({
         style: 'padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;',
-        layout_manager: new Clutter.GridLayout({ orientation: Clutter.Orientation.VERTICAL })
+        layout_manager: new Clutter.GridLayout({orientation: Clutter.Orientation.VERTICAL})
     });
     let menu_info_box_table_layout = menu_info_box_table.layout_manager;
 
@@ -150,7 +151,7 @@ function build_menu_info() {
             new St.Label({
                 text: elts[elt].item_name,
                 style_class: Style.get('sm-title'),
-		x_align: Clutter.ActorAlign.START,
+                x_align: Clutter.ActorAlign.START,
                 y_align: Clutter.ActorAlign.CENTER
 	    }), 0, row_index, 1, 1);
 
@@ -648,15 +649,19 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
-const TipItem = GObject.registerClass({GTypeName:'TipItem'},
+const TipItem = GObject.registerClass(
+    {
+        GTypeName:'TipItem'
+    },
     class TipItem extends PopupMenu.PopupBaseMenuItem {
-    _init() {
-        super._init();
-        // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
-        this.actor.remove_style_class_name('popup-menu-item');
-        this.actor.add_style_class_name('sm-tooltip-item');
+        _init() {
+            super._init();
+            // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
+            this.actor.remove_style_class_name('popup-menu-item');
+            this.actor.add_style_class_name('sm-tooltip-item');
+        }
     }
-});
+);
 
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     constructor(sourceActor) {

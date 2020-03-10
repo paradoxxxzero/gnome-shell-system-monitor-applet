@@ -153,7 +153,7 @@ function build_menu_info() {
                 style_class: Style.get('sm-title'),
                 x_align: Clutter.ActorAlign.START,
                 y_align: Clutter.ActorAlign.CENTER
-	    }), 0, row_index, 1, 1);
+            }), 0, row_index, 1, 1);
 
         // Add item data to table
         let col_index = 1;
@@ -651,7 +651,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
 
 const TipItem = GObject.registerClass(
     {
-        GTypeName:'TipItem'
+        GTypeName: 'TipItem'
     },
     class TipItem extends PopupMenu.PopupBaseMenuItem {
         _init() {
@@ -2387,9 +2387,9 @@ function enable() {
         let _appSys = Shell.AppSystem.get_default();
         let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
         let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
-        if (_gsmPrefs == null) {
+        if (_gsmPrefs === null) {
             _gsmPrefs = _appSys.lookup_app('org.gnome.Extensions.desktop');
-	}
+        }
         let item;
         item = new PopupMenu.PopupMenuItem(_('System Monitor...'));
         item.connect('activate', () => {

@@ -2392,6 +2392,9 @@ function enable() {
         let _appSys = Shell.AppSystem.get_default();
         let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
         let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
+        if (_gsmPrefs == null) {
+            _gsmPrefs = _appSys.lookup_app('org.gnome.Extensions.desktop');
+	}
         let item;
         item = new PopupMenu.PopupMenuItem(_('System Monitor...'));
         item.connect('activate', () => {

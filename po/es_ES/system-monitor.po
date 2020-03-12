@@ -39,7 +39,7 @@ msgstr "Mostrar etiqueta"
 
 #: prefs.js:184 prefs.js:182
 msgid "Display Style"
-msgstr "Estilo mostrado"
+msgstr "Mostrar estilo"
 
 #: prefs.js:267 prefs.js:274
 msgid "Display Icon"
@@ -95,7 +95,7 @@ msgid "Other"
 msgstr "Otro"
 
 msgid "Nice"
-msgstr ""
+msgstr "Prioridad"
 
 msgid "Iowait"
 msgstr "Espera E/S"
@@ -111,11 +111,11 @@ msgid "Cache"
 msgstr "Caché"
 
 msgid "Buffer"
-msgstr "Intermedia"
+msgstr "Búfer"
 
 #: extension.js:1134 extension.js:1598
 msgid "Swap"
-msgstr "Intercambio"
+msgstr "Swap"
 
 msgid "Used"
 msgstr "Usado"
@@ -211,7 +211,7 @@ msgid "other"
 msgstr "otro"
 
 msgid "nice"
-msgstr ""
+msgstr "prioridad"
 
 msgid "iowait"
 msgstr "espera e/s"
@@ -223,7 +223,7 @@ msgid "cache"
 msgstr "caché"
 
 msgid "buffer"
-msgstr "intermedia"
+msgstr "búfer"
 
 msgid "used"
 msgstr "usado"
@@ -308,7 +308,6 @@ msgid "none"
 msgstr "ninguno"
 
 #: extension.js:68
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -324,6 +323,7 @@ msgstr ""
 "\t    en Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
 "\t    en Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    en Arch: libgtop, networkmanager\n"
+"\t    en openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
 
 #: extension.js:97 extension.js:255
 msgid "System Monitor Extension"
@@ -361,15 +361,15 @@ msgstr "rpm"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Mostrar descripción emergente"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Mostrar temperatura en Fahrenheit"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"

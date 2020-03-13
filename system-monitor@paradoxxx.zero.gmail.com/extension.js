@@ -381,6 +381,9 @@ const Chart = class SystemMonitor_Chart {
         if (old_width === this.width) {
             return;
         }
+        if (Style.get('') === '-compact') {
+            this.width = Math.round(this.width / 1.5);
+        }
         this.actor.set_width(this.width);
         if (this.width < this.data[0].length) {
             for (let i = 0; i < this.parentC.colors.length; i++) {
@@ -1991,7 +1994,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = Math.round(parseInt(as_r[1]) / 1000);
+                this.temperature = Math.round(parseInt(ByteArray.toString(as_r[1])) / 1000);
                 if (this.fahrenheit_unit) {
                     this.temperature = Math.round(this.temperature * 1.8 + 32);
                 }
@@ -2062,7 +2065,7 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.rpm = parseInt(as_r[1]);
+                this.rpm = parseInt(ByteArray.toString(as_r[1]));
             });
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -2341,7 +2344,7 @@ function enable() {
         // The spacing adds a distance between the graphs/text on the top bar
         let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
         let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
-        tray.actor.add_actor(box);
+        tray.add_actor(box);
         box.add_actor(Main.__sm.icon.actor);
         // Add items to panel box
         for (let elt in elts) {

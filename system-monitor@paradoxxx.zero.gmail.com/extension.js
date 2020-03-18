@@ -30,6 +30,7 @@ var Config = imports.misc.config;
 var Clutter = imports.gi.Clutter;
 var GLib = imports.gi.GLib;
 var Lang = imports.lang;
+var GObject = imports.gi.GObject;
 
 var Gio = imports.gi.Gio;
 var Shell = imports.gi.Shell;
@@ -630,14 +631,15 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
-const TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
-    constructor() {
-        super();
+const TipItem = GObject.registerClass(
+class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
+    _init() {
+        super._init();
         // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
         this.actor.remove_style_class_name('popup-menu-item');
         this.actor.add_style_class_name('sm-tooltip-item');
     }
-}
+});
 
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     constructor(sourceActor) {

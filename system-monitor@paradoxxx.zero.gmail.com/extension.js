@@ -118,11 +118,11 @@ function build_menu_info() {
         return;
     }
 
-    let menu_info_box_table = new St.Widget({
+    let menu_info_box_grid = new St.Widget({
         style: 'padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;',
-        layout_manager: new Clutter.TableLayout()
+        layout_manager: new Clutter.GridLayout()
     });
-    let menu_info_box_table_layout = menu_info_box_table.layout_manager;
+    let menu_info_box_grid_layout = menu_info_box_grid.layout_manager;
 
     // Populate Table
     let row_index = 0;
@@ -132,23 +132,23 @@ function build_menu_info() {
         }
 
         // Add item name to table
-        menu_info_box_table_layout.pack(
+        menu_info_box_grid_layout.attach(
             new St.Label({
                 text: elts[elt].item_name,
-                style_class: Style.get('sm-title')}), 0, row_index);
+                style_class: Style.get('sm-title')}), 0, row_index, 1, 1);
 
         // Add item data to table
         let col_index = 1;
         for (let item in elts[elt].menu_items) {
-            menu_info_box_table_layout.pack(
-                elts[elt].menu_items[item], col_index, row_index);
+            menu_info_box_grid_layout.attach(
+                elts[elt].menu_items[item], col_index, row_index, 1, 1);
 
             col_index++;
         }
 
         row_index++;
     }
-    tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+    tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_grid, {expand: true});
 }
 
 function change_menu() {

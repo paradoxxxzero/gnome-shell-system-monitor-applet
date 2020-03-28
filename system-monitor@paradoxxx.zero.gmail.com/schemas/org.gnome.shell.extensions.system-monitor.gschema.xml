@@ -398,6 +398,10 @@
     </key>
     <key name="gpu-used-color" type="s">
       <default>'#00b35b'</default>
+      <summary>Color of program gpu usage in the chart</summary>
+    </key>
+    <key name="gpu-memory-color" type="s">
+      <default>'#00ff82'</default>
       <summary>Color of program gpu memory in the chart</summary>
     </key>
     <key name="thermal-tz0-color" type="s">

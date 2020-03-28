@@ -2074,7 +2074,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         super({
             elt: 'gpu',
             item_name: _('GPU'),
-            color_name: ['used']
+            color_name: ['used', 'memory']
         });
         this.max = 100;
 
@@ -2158,15 +2158,16 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         this.menu_items[4].text = unit;
     }
     _apply() {
+        this.tip_unit_labels[1].text = "/ " + this.total + " " + this.menu_items[4].text;
         if (this.total === 0) {
-            this.vals = [0];
-            this.tip_vals = [0];
+            this.vals = [0, 0];
+            this.tip_vals = [0, 0];
         } else {
-            this.vals = [this.percentage];
-            this.tip_vals = [Math.round(this.vals[0])];
+            this.vals = [this.percentage, this.mem / this.total];
+            this.tip_vals = [Math.round(this.vals[0]), this.mem];
         }
-        this.text_items[0].text = this.tip_vals.toString();
-        this.menu_items[0].text = this.tip_vals.toLocaleString();
+        this.text_items[0].text = this.tip_vals[0].toString();
+        this.menu_items[0].text = this.tip_vals[0].toLocaleString();
         if (Style.get('') !== '-compact') {
             this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
                 '  /  ' + this._pad(this.total).toLocaleString();

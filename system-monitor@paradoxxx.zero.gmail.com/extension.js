@@ -2163,7 +2163,10 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             this.vals = [0, 0];
             this.tip_vals = [0, 0];
         } else {
-            this.vals = [this.percentage, this.mem / this.total];
+            // we subtract percentage from memory because we do not want memory to be 
+            // "accumulated" in the chart with utilization; these two measures should be 
+            // independent
+            this.vals = [this.percentage, this.mem / this.total * 100 - this.percentage];
             this.tip_vals = [Math.round(this.vals[0]), this.mem];
         }
         this.text_items[0].text = this.tip_vals[0].toString();

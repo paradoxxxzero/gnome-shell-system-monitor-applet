@@ -652,20 +652,32 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
-const TipItem = GObject.registerClass(
-    {
-        GTypeName: 'TipItem'
-    },
-    class TipItem extends PopupMenu.PopupBaseMenuItem {
-        _init() {
-            super._init();
+var TipItem = null;
+
+if (shell_Version < '3.36') {
+    var TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
+        constructor() {
+            super();
             // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
             this.actor.remove_style_class_name('popup-menu-item');
             this.actor.add_style_class_name('sm-tooltip-item');
+       }
+   }
+} else {
+    var TipItem = GObject.registerClass(
+        {
+            GTypeName: 'TipItem'
+        },
+        class TipItem extends PopupMenu.PopupBaseMenuItem {
+            _init() {
+                super._init();
+                // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
+                this.actor.remove_style_class_name('popup-menu-item');
+                this.actor.add_style_class_name('sm-tooltip-item');
+            }
         }
-    }
-);
-
+    );
+}
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     constructor(sourceActor) {
         // PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
@@ -949,7 +961,9 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         }
         this.chart.update();
         for (let i = 0; i < this.tip_vals.length; i++) {
-            this.tip_labels[i].text = this.tip_vals[i].toString();
+            if (this.tip_labels[i]) {
+                this.tip_labels[i].text = this.tip_vals[i].toString();
+	    }
         }
         return true;
     }
@@ -2344,7 +2358,11 @@ function enable() {
         // The spacing adds a distance between the graphs/text on the top bar
         let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
         let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
-        tray.add_actor(box);
+        if (shell_Version < '3.36') {
+            tray.actor.add_actor(box);
+        } else {
+            tray.add_actor(box);
+        }
         box.add_actor(Main.__sm.icon.actor);
         // Add items to panel box
         for (let elt in elts) {

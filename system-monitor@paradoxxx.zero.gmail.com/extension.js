@@ -166,7 +166,11 @@ function build_menu_info() {
 
         row_index++;
     }
-    tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+    if (shell_Version < '3.36') {
+        tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+    } else {
+        tray_menu._getMenuItems()[0].actor.get_last_child().add_child(menu_info_box_table);
+    }
 }
 
 function change_menu() {
@@ -539,7 +543,11 @@ const Graph = class SystemMonitor_Graph {
     }
     create_menu_item() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        this.menu_item.actor.add(this.actor, {span: -1, expand: true});
+        if (shell_Version < '3.36') {
+            this.menu_item.actor.add(this.actor, {span: -1, expand: true});
+        } else {
+            this.menu_item.actor.add_child(this.actor);
+        }
         // tray.menu.addMenuItem(this.menu_item);
     }
     show(visible) {
@@ -661,8 +669,8 @@ if (shell_Version < '3.36') {
             // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
             this.actor.remove_style_class_name('popup-menu-item');
             this.actor.add_style_class_name('sm-tooltip-item');
-       }
-   }
+        }
+    }
 } else {
     var TipItem = GObject.registerClass(
         {
@@ -963,7 +971,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         for (let i = 0; i < this.tip_vals.length; i++) {
             if (this.tip_labels[i]) {
                 this.tip_labels[i].text = this.tip_vals[i].toString();
-	    }
+            }
         }
         return true;
     }
@@ -2469,8 +2477,11 @@ function disable() {
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-
-    Main.__sm.tray.actor.destroy();
+    if (shell_Version < '3.36') {
+        Main.__sm.tray.actor.destroy();
+    } else {
+        Main.__sm.tray.destroy();
+    }
     Main.__sm = null;
 
     log('[System monitor] applet disable');

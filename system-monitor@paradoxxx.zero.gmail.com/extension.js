@@ -35,7 +35,8 @@ var Lang = imports.lang;
 var Gio = imports.gi.Gio;
 var Shell = imports.gi.Shell;
 var St = imports.gi.St;
-var Power = imports.ui.status.power;
+const UPower = imports.gi.UPowerGlib;
+
 // const System = imports.system;
 var ModalDialog = imports.ui.modalDialog;
 
@@ -1037,7 +1038,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
         let isBattery = false;
         if (typeof (this._proxy.GetDevicesRemote) === 'undefined') {
             let device_type = this._proxy.Type;
-            isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
+            isBattery = (device_type === UPower.DeviceKind.BATTERY);
             if (isBattery) {
                 battery_found = true;
                 let icon = this._proxy.IconName;
@@ -1064,7 +1065,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 for (let i = 0; i < result.length; i++) {
                     let [device_id, device_type, icon, percentage, state, seconds] = result[i];
 
-                    isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
+                    isBattery = (device_type === UPower.DeviceKind.BATTERY);
                     if (isBattery) {
                         battery_found = true;
                         this.update_battery_value(seconds, percentage, icon);

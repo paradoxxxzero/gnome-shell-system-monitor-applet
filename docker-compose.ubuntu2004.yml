@@ -1,0 +1,12 @@
+#https://docs.docker.com/compose/compose-file/#shm_size
+version: "3.5"
+services:
+
+  test:
+    build:
+      context: .
+      # Increase the size of shared memory.
+      # The default shared memory is only 64mb, causing odd Selenium errors like:
+      # selenium.common.exceptions.WebDriverException: Message: Failed to decode response from marionette
+      shm_size: '1gb'
+      dockerfile: Dockerfile.ubuntu2004

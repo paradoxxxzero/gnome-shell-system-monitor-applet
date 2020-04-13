@@ -664,7 +664,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
 var TipItem = null;
 
 if (shell_Version < '3.36') {
-    var TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
+    TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
         constructor() {
             super();
             // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
@@ -673,7 +673,7 @@ if (shell_Version < '3.36') {
         }
     }
 } else {
-    var TipItem = GObject.registerClass(
+    TipItem = GObject.registerClass(
         {
             GTypeName: 'TipItem'
         },

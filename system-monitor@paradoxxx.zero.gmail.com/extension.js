@@ -2136,6 +2136,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         this.item_name = _('GPU');
         this.mem = 0;
         this.total = 0;
+        this._brand = '';
         this.tip_format();
         this.update();
     }
@@ -2175,6 +2176,9 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
     }
     _readTemperature(procOutput) {
         let usage = procOutput.split('\n');
+        if (usage[3] == 'intel') {
+            this._brand = 'intel';
+        }
         let memTotal = parseInt(usage[0]);
         let memUsed = parseInt(usage[1]);
         this.percentage = parseInt(usage[2]);
@@ -2210,6 +2214,11 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         if (this.useGiB) {
             unit = _('GiB');
         }
+
+        if (this._brand == 'intel') {
+            unit = 'MHz';
+        }
+
         this.menu_items[4].text = unit;
     }
     _apply() {

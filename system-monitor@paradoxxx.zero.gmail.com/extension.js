@@ -2233,7 +2233,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         this.menu_items[0].text = this.tip_vals.toLocaleString();
         if (Style.get('') !== '-compact') {
             this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
-                '  /  ' + this._pad(this.total).toLocaleString();
+                ' / ' + this._pad(this.total).toLocaleString();
         } else {
             this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
                 '/' + this._pad(this.total).toLocaleString();

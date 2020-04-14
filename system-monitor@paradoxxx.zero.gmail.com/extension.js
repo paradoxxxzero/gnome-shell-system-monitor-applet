@@ -2436,15 +2436,13 @@ function enable() {
         item.connect('activate', () => {
             if (typeof ExtensionUtils.openPrefs === 'function') {
                 ExtensionUtils.openPrefs();
+            } else if (_gsmPrefs.get_state() === _gsmPrefs.SHELL_APP_STATE_RUNNING) {
+                _gsmPrefs.activate();
             } else {
-                if (_gsmPrefs.get_state() === _gsmPrefs.SHELL_APP_STATE_RUNNING) {
-                    _gsmPrefs.activate();
-                } else {
-                    let info = _gsmPrefs.get_app_info();
-                    let timestamp = global.display.get_current_time_roundtrip();
-                    info.launch_uris([metadata.uuid], global.create_app_launch_context(timestamp, -1));
-                }
-	    }
+                let info = _gsmPrefs.get_app_info();
+                let timestamp = global.display.get_current_time_roundtrip();
+                info.launch_uris([metadata.uuid], global.create_app_launch_context(timestamp, -1));
+            }
         });
         tray.menu.addMenuItem(item);
         Main.panel.menuManager.addMenu(tray.menu);

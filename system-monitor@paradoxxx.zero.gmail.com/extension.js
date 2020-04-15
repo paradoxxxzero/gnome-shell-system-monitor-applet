@@ -2176,29 +2176,35 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
     }
     _readTemperature(procOutput) {
         let usage = procOutput.split('\n');
-        if (usage[3] == 'intel') {
-            this._brand = 'intel';
-        }
         let memTotal = parseInt(usage[0]);
         let memUsed = parseInt(usage[1]);
         this.percentage = parseInt(usage[2]);
+
+        if (usage[3] == 'intel') {
+            this._brand = 'intel';
+        }
+
         if (typeof this.useGiB === 'undefined') {
             this._unit(memTotal);
             this._update_unit();
         }
 
+        this.mem = Math.round(memUsed / this._unitConversion);
+        this.total = Math.round(memTotal / this._unitConversion);
+
         if (this.useGiB) {
-            this.mem = Math.round(memUsed / this._unitConversion);
             this.mem /= this._decimals;
-            this.total = Math.round(memTotal / this._unitConversion);
             this.total /= this._decimals;
-        } else {
-            this.mem = Math.round(memUsed / this._unitConversion);
-            this.total = Math.round(memTotal / this._unitConversion);
+        }
+
+        if (usage[3] == 'intel') {
+            // Convert to GHz
+            this.mem /= 1000;
+            this.total /= 1000;
         }
     }
     _pad(number) {
-        if (this.useGiB) {
+        if (this.useGiB || this._brand == 'intel') {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
                 return number.toFixed(2);
@@ -2216,7 +2222,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         }
 
         if (this._brand == 'intel') {
-            unit = 'MHz';
+            unit = 'GHz';
         }
 
         this.menu_items[4].text = unit;

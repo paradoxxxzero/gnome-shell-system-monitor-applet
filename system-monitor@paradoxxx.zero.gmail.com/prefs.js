@@ -45,30 +45,82 @@ function parse_bytearray(bytearray) {
 }
 
 function check_sensors(sensor_type) {
-    let inputs = [sensor_type + '1_input', sensor_type + '2_input', sensor_type + '3_input'];
-    let sensor_path = '/sys/class/hwmon/';
-    let sensor_list = [];
-    let string_list = [];
-    let test;
-    for (let j = 0; j < 6; j++) {
-        for (let k = 0; k < inputs.length; k++) {
-            test = sensor_path + 'hwmon' + j + '/' + inputs[k];
-            if (!GLib.file_test(test, GLib.FileTest.EXISTS)) {
-                test = sensor_path + 'hwmon' + j + '/device/' + inputs[k];
-                if (!GLib.file_test(test, GLib.FileTest.EXISTS)) {
-                    continue;
+    const hwmon_path = '/sys/class/hwmon/';
+    const hwmon_dir = Gio.file_new_for_path(hwmon_path);
+
+    const sensor_files = [];
+    const sensor_labels = [];
+
+    function get_label_from(file) {
+        if (file.query_exists(null)) {
+            // load_contents (and even cat) fails with "Invalid argument" for some label files
+            try {
+                const result = file.load_contents(null);
+                if (result[0]) {
+                    return String(parse_bytearray(result[1])).split('\n')[0];
                 }
+            } catch (e) {
+                global.log('[System monitor] error loading label from file ' + file.get_path() + ': ' + e);
             }
-            let sensor = test.substr(0, test.lastIndexOf('/'));
-            let result = GLib.file_get_contents(sensor + '/name');
-            if(result){
-                let label = String(parse_bytearray(result[1])).split('\n')[0];
-                string_list.push(label + ' - ' + inputs[k].split('_')[0].capitalize());
-                sensor_list.push(test);
+        }
+        return null;
+    }
+
+    function add_sensors_from(chip_dir, chip_label) {
+        const chip_children = chip_dir.enumerate_children(
+            'standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
+        if (!chip_children) {
+            global.log('[System monitor] error enumerating children of chip ' + chip_dir.get_path());
+            return false;
+        }
+
+        const input_entry_regex = new RegExp('^' + sensor_type + '(\\d+)_input$');
+        let info;
+        let added = false;
+        while ((info = chip_children.next_file(null))) {
+            if (info.get_file_type() !== Gio.FileType.REGULAR) {
+                continue;
+            }
+            const matches = info.get_name().match(input_entry_regex);
+            if (!matches) {
+                continue;
+            }
+            const input_ordinal = matches[1];
+            const input = chip_children.get_child(info);
+            const input_label = get_label_from(chip_dir.get_child(sensor_type + input_ordinal + '_label'));
+
+            sensor_files.push(input.get_path());
+            sensor_labels.push(chip_label + ' - ' + (input_label || input_ordinal));
+            added = true;
+        }
+        return added;
+    }
+
+    const hwmon_children = hwmon_dir.enumerate_children(
+        'standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
+    if (!hwmon_children) {
+        global.log('[System monitor] error enumerating hwmon children');
+        return [[], []];
+    }
+
+    let info;
+    while ((info = hwmon_children.next_file(null))) {
+        if (info.get_file_type() !== Gio.FileType.DIRECTORY || !info.get_name().match(/^hwmon\d+$/)) {
+            continue;
+        }
+        const chip = hwmon_children.get_child(info);
+        const chip_label = get_label_from(chip.get_child('name')) || chip.get_basename();
+
+        if (!add_sensors_from(chip, chip_label)) {
+            // This is here to provide compatibility with previous code, but I can't find any
+            // information about sensors being stored in chip/device directory. Can we delete it?
+            const chip_device = chip.get_child('device');
+            if (chip_device.query_exists(null)) {
+                add_sensors_from(chip_device, chip_label);
             }
         }
     }
-    return [sensor_list, string_list];
+    return [sensor_files, sensor_labels];
 }
 
 

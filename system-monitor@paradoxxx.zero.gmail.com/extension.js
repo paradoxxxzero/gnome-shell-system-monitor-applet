@@ -1435,7 +1435,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         let file = Gio.file_new_for_path('/proc/diskstats');
         file.load_contents_async(null, (source, result) => {
             let as_r = source.load_contents_finish(result);
-            let lines = String(as_r[1]).split('\n');
+            let lines = ByteArray.toString(as_r[1]).split('\n');
 
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];

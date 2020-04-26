@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ##################################################################################
 #    This file is part of System Monitor Gnome extension.
 #    System Monitor Gnome extension is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 
 checkcommand()
 {
-	type $1 > /dev/null 2>&1
+	command -v "$1" > /dev/null 2>&1
 }
 
 # This will print three lines. The first one is the the total vRAM available,
@@ -32,7 +32,7 @@ if checkcommand nvidia-smi; then
 elif checkcommand glxinfo; then
 	TOTALVRAM=$(glxinfo | grep -A2 -i GL_NVX_gpu_memory_info | grep -E -i "dedicated" | cut -f2- -d ':' | gawk '{print $1}')
 	AVAILVRAM=$(glxinfo | grep -A4 -i GL_NVX_gpu_memory_info | grep -E -i "available dedicated" | cut -f2- -d ':' | gawk '{print $1}')
-	let FREEVRAM=TOTALVRAM-AVAILVRAM
+	FREEVRAM=$((TOTALVRAM-AVAILVRAM))
 	echo "$TOTALVRAM"
 	echo "$FREEVRAM"
 fi

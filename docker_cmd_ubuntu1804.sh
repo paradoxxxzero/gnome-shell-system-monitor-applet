@@ -13,13 +13,12 @@ export DISPLAY=:99.0
 sleep 3 # give xvfb some time to start
 
 echo "[$(date)] Launching Gnome-Shell."
-sudo gnome-shell &
+sudo DISPLAY=:99.0 gnome-shell &
 sleep 3 # give gnome-shell some time to start
-echo "[$(date)] Confirming Gnome-Shell is running."
-pgrep gnome-shell
-
 echo "[$(date)] Showing Gnome-Shell log entries."
 sudo journalctl /usr/bin/gnome-shell || true
+echo "[$(date)] Confirming Gnome-Shell is running."
+pgrep gnome-shell
 echo "[$(date)] Rotating Gnome-Shell log entries."
 sudo journalctl --rotate || true
 echo "[$(date)] Clearing Gnome-Shell log entries."

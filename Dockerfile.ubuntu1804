@@ -1,8 +1,10 @@
 FROM ubuntu:18.04
 ENV PYTHONUNBUFFERED 1
 
-USER root
-ENV HOME /home/root
+#USER root
+#ENV HOME /home/root
+#ENV DISPLAY :99.0
+ENV DEBIAN_FRONTEND noninteractive
 
 # Install sudo. Not strictly required inside Docker, but it will allow Docker to run scripts that typically run outside Docker
 # which do use sudo.
@@ -21,7 +23,8 @@ ENV LANG en_US.utf8
 RUN apt-get -yq update && apt-get install -y gnupg2
 RUN apt-key update
 RUN apt-get -yq update
-RUN apt-get -yq install xvfb gnome-shell git make bc dbus procps
+RUN apt-get -yq install xvfb gnome-shell git make bc dbus procps ubuntu-desktop
+#RUN apt-get -yq purge whoopsie libwhoopsie*
 
 # Install NodeJS from upstream, since the version that comes with the distro is ancient.
 # https://askubuntu.com/a/548776/13217

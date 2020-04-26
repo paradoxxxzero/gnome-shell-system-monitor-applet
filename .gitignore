@@ -7,3 +7,4 @@ tmp
 /*.geany
 *.out
 /_build
+/dist

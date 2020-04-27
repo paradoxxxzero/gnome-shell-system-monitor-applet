@@ -36,4 +36,5 @@ elif checkcommand glxinfo; then
 	let FREEVRAM=TOTALVRAM-AVAILVRAM
 	echo "$TOTALVRAM"
 	echo "$FREEVRAM"
+	echo "scale=2; $FREEVRAM / $TOTALVRAM * 100" | bc
 fi

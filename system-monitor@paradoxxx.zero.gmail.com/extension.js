@@ -2174,8 +2174,8 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
         }
     }
     _sanitizeUsageValue(val){
-        val = parseInt( val );
-        if( isNaN(val) ) val = 0;
+        val = parseInt(val);
+        if(isNaN(val)){ val = 0 };
         return val;
     }
     _readTemperature(procOutput) {

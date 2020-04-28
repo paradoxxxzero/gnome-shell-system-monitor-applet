@@ -2173,9 +2173,11 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             global.logError('gpu_usage.sh invocation failed');
         }
     }
-    _sanitizeUsageValue(val){
+    _sanitizeUsageValue(val) {
         val = parseInt(val);
-        if(isNaN(val)){ val = 0 };
+        if (isNaN(val)) {
+            val = 0
+        }
         return val;
     }
     _readTemperature(procOutput) {

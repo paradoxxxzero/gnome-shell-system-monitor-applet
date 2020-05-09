@@ -1,311 +1,143 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: mars <gzhqyz@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"X-Generator: Poedit 2.3\n"
+
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#: extension.js:751
-msgid ""
+#
+#: prefs.js:33
+#, javascript-format
+msgid "#%02x%02x%02x%02x"
 msgstr ""
-"Project-Id-Version: 0.99\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-22 15:04+0100\n"
-"PO-Revision-Date: 2014-07-07 12:17+0800\n"
-"Last-Translator: Star Brilliant <m13253@hotmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: Chinese\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.5\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
+#: prefs.js:72 prefs.js:90 prefs.js:108
 msgid ":"
 msgstr "："
 
-#: prefs.js:161 prefs.js:159
+#: prefs.js:178
 msgid "Display"
 msgstr "显示"
 
-#: prefs.js:166 prefs.js:164
-msgid "Refresh Time"
-msgstr "刷新时间"
-
-#: prefs.js:171 prefs.js:169
-msgid "Graph Width"
-msgstr "图形宽度"
-
-#: prefs.js:176 prefs.js:174
+#: prefs.js:182
 msgid "Show Text"
 msgstr "显示文字"
 
-#: prefs.js:184 prefs.js:182
-msgid "Display Style"
-msgstr "显示风格"
-
-#: prefs.js:267 prefs.js:274
-msgid "Display Icon"
-msgstr "显示图标"
-
-#: prefs.js:276 prefs.js:283
-msgid "Display in the Middle"
-msgstr "居中显示"
-
-#: prefs.js:288 prefs.js:306
-msgid "Background Color"
-msgstr "背景色"
-
-#: prefs.js:197 prefs.js:195
-msgid "Display Individual Cores"
-msgstr "单独显示每个核心"
-
-#: prefs.js:193 prefs.js:191
-msgid "Show network speed in bits"
-msgstr "以位为单位显示网络速度"
-
-#: prefs.js:205 prefs.js:208
-msgid "Sensor"
-msgstr "传感器"
-
-#: prefs.js:207 prefs.js:210
-msgid "Please install lm-sensors"
-msgstr "请安装 lm-sensors"
-
-#: prefs.js:282 prefs.js:300
-msgid "Move the clock"
-msgstr "移走时钟"
-
-#: prefs.js:286 prefs.js:289
-msgid "Compact Display"
-msgstr "紧凑显示"
-
-#: extension.js:746 extension.js:1117
-msgid "Cpu"
-msgstr "处理器"
-
-msgid "User"
-msgstr "用户"
-
-msgid "System"
-msgstr "系统"
-
-msgid "Other"
-msgstr "其他"
-
-msgid "Nice"
-msgstr "优先级"
-
-msgid "Iowait"
-msgstr "IO 等待"
-
-#: extension.js:941 extension.js:1378
-msgid "Memory"
-msgstr "内存"
-
-msgid "Program"
-msgstr "程序"
-
-msgid "Cache"
-msgstr "缓存"
-
-msgid "Buffer"
-msgstr "缓冲"
-
-#: extension.js:1134 extension.js:1598
-msgid "Swap"
-msgstr "交换分区"
-
-msgid "Used"
-msgstr "已用"
-
-#: extension.js:1010 extension.js:1428
-msgid "Net"
-msgstr "网络"
-
-#: extension.js:1589
-msgid "Up"
-msgstr "上传"
-
-#: extension.js:1586
-msgid "Down"
-msgstr "下载"
-
-msgid "Uperrors"
-msgstr "上传错误"
-
-msgid "Downerrors"
-msgstr "下载错误"
-
-msgid "collisions"
-msgstr "冲突"
-
-msgid "Collisions"
-msgstr "冲突"
-
-#: extension.js:836 extension.js:1264
-msgid "Disk"
-msgstr "硬盘"
-
-msgid "Write"
-msgstr "写入"
-
-msgid "Read"
-msgstr "读取"
-
-#: extension.js:1182 extension.js:1312 extension.js:1322
-msgid "R"
-msgstr "读"
-
-#: extension.js:1185 extension.js:1315 extension.js:1325
-msgid "W"
-msgstr "写"
-
-#: prefs.js:185 prefs.js:183
-msgid "graph"
-msgstr "图形"
-
-#: prefs.js:185 prefs.js:183
-msgid "digit"
-msgstr "数字"
-
-#: prefs.js:185 prefs.js:183
-msgid "both"
-msgstr "同时"
-
-msgid "cpu"
-msgstr "处理器"
-
-#: extension.js:811
-msgid "mem"
-msgstr "内存"
-
-msgid "swap"
-msgstr "交换"
-
-msgid "net"
-msgstr "网络"
-
-msgid "disk"
-msgstr "硬盘"
-
-#: extension.js:1346 extension.js:1900
-msgid "Preferences..."
-msgstr "首选项..."
-
-#: extension.js:1340 extension.js:1894
-msgid "System Monitor..."
-msgstr "系统监视器..."
-
-msgid "System monitor"
-msgstr "系统监视器"
-
-msgid "user"
-msgstr "用户"
-
-msgid "system"
-msgstr "系统"
-
-msgid "other"
-msgstr "其他"
-
-msgid "nice"
-msgstr "优先级"
-
-msgid "iowait"
-msgstr "IO 等待"
-
-msgid "program"
-msgstr "程序"
-
-msgid "cache"
-msgstr "缓存"
-
-msgid "buffer"
-msgstr "缓冲"
-
-msgid "used"
-msgstr "已用"
-
-msgid "up"
-msgstr "上传"
-
-msgid "down"
-msgstr "下载"
-
-msgid "uperrors"
-msgstr "上传错误"
-
-msgid "downerrors"
-msgstr "下载错误"
-
-msgid "write"
-msgstr "写入"
-
-msgid "read"
-msgstr "读取"
-
-#: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
-#: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
-msgid "KiB/s"
-msgstr "KiB/s"
-
-#: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
-#: extension.js:1324 extension.js:1549 extension.js:1558
-msgid "MiB/s"
-msgstr "MiB/s"
-
-#: extension.js:1419 extension.js:1635
-msgid "MiB"
-msgstr "MiB"
-
-#: extension.js:1714
-#, fuzzy
-msgid "GiB"
-msgstr "MiB"
-
-#: extension.js:184
-msgid "kB"
-msgstr "kB"
-
-#: extension.js:183 extension.js:185
-msgid "MB"
-msgstr "MB"
-
-#: extension.js:1179 extension.js:1644
-msgid "Thermal"
-msgstr "温度"
-
-msgid "thermal"
-msgstr "温度"
-
-#: prefs.js:180 prefs.js:178
+#: prefs.js:186
 msgid "Show In Menu"
 msgstr "在菜单中显示"
 
-#: prefs.js:222 prefs.js:229
+#: prefs.js:191
+msgid "Refresh Time"
+msgstr "刷新时间"
+
+#: prefs.js:196
+msgid "Graph Width"
+msgstr "图形宽度"
+
+#: prefs.js:201
+msgid "Display Style"
+msgstr "显示风格"
+
+#: prefs.js:202
+msgid "digit"
+msgstr "数字"
+
+#: prefs.js:202
+msgid "graph"
+msgstr "图形"
+
+#: prefs.js:202
+msgid "both"
+msgstr "同时"
+
+#: prefs.js:220
+msgid "Sensor"
+msgstr "传感器"
+
+#: prefs.js:222
+msgid "Please install lm-sensors"
+msgstr "请安装 lm-sensors"
+
+#: prefs.js:243
+msgid "Show network speed in bits"
+msgstr "以位为单位显示网络速度"
+
+#: prefs.js:247
+msgid "Display Individual Cores"
+msgstr "单独显示每个核心"
+
+#: prefs.js:251
 msgid "Show Time Remaining"
 msgstr "显示剩余时间"
 
-#: prefs.js:226 prefs.js:233
+#: prefs.js:255
 msgid "Hide System Icon"
 msgstr "隐藏系统图标"
 
-#: prefs.js:230 prefs.js:237
+#: prefs.js:259
 msgid "Usage Style"
 msgstr "用量显示风格"
 
-#: prefs.js:231 prefs.js:238
+#: prefs.js:260
 msgid "pie"
 msgstr "扇形图"
 
-#: prefs.js:231 prefs.js:238
+#: prefs.js:260
 msgid "bar"
 msgstr "条形图"
 
-#: prefs.js:231 prefs.js:238
+#: prefs.js:260
 msgid "none"
 msgstr "无"
 
-#: extension.js:68
-#, fuzzy
+#: prefs.js:268
+msgid "Display temperature in Fahrenheit"
+msgstr "显示华氏温度"
+
+#: prefs.js:272
+msgid "Temperature threshold (0 to disable)"
+msgstr "温度阀值（0 表示禁用）"
+
+#: prefs.js:279
+msgid "** Only Nvidia GPUs supported so far **"
+msgstr "** 目前只支持 NVIDIA 显卡 **"
+
+#: prefs.js:310
+msgid "Display Icon"
+msgstr "显示图标"
+
+#: prefs.js:319
+msgid "Display in the Middle"
+msgstr "居中显示"
+
+#: prefs.js:325
+msgid "Compact Display"
+msgstr "紧凑显示"
+
+#: prefs.js:330
+msgid "Show tooltip"
+msgstr "显示文字提示"
+
+#: prefs.js:336
+msgid "Move the clock"
+msgstr "移走时钟"
+
+#: prefs.js:342
+msgid "Background Color"
+msgstr "背景色"
+
+#: extension.js:79
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
@@ -322,55 +154,253 @@ msgstr ""
 "\t    于 Fedora：libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    于 Arch：libgtop, networkmanager\n"
 
-#: extension.js:97 extension.js:255
+#: extension.js:202 extension.js:204 extension.js:1426 extension.js:1823
+#: extension.js:1831
+msgid "MiB/s"
+msgstr "MiB/s"
+
+#: extension.js:203 extension.js:1733 extension.js:1820 extension.js:1828
+#: extension.js:1854 extension.js:1865 extension.js:1876
+msgid "KiB/s"
+msgstr "KiB/s"
+
+#: extension.js:205 extension.js:1803 extension.js:1811
+msgid "kbit/s"
+msgstr "kbit/s"
+
+#: extension.js:206 extension.js:1806 extension.js:1814
+msgid "Mbit/s"
+msgstr "Mbit/s"
+
+#: extension.js:219 extension.js:221
+msgid "MB"
+msgstr "MB"
+
+#: extension.js:220
+msgid "kB"
+msgstr "kB"
+
+#: extension.js:299
 msgid "System Monitor Extension"
 msgstr "系统监视器扩展"
 
-#: extension.js:113 extension.js:271
+#: extension.js:315
 msgid "Cancel"
 msgstr "取消"
 
-#: extension.js:601 extension.js:875
+#: extension.js:913
+msgid "mem"
+msgstr "内存"
+
+#: extension.js:1004
 msgid "Battery"
 msgstr "电池"
 
-msgid "battery"
-msgstr "电池"
+#: extension.js:1215
+msgid "CPU"
+msgstr "处理器"
 
-#: extension.js:896 extension.js:1334
+#: extension.js:1236
+msgid "Cpu"
+msgstr "处理器"
+
+#: extension.js:1418
+msgid "Disk"
+msgstr "硬盘"
+
+#: extension.js:1477
+msgid "R"
+msgstr "读"
+
+#: extension.js:1488
+msgid "W"
+msgstr "写"
+
+#: extension.js:1509
+msgid " R"
+msgstr " 读"
+
+#: extension.js:1518
+msgid " W"
+msgstr " 写"
+
+#: extension.js:1528
 msgid "Freq"
 msgstr "主频"
 
-msgid "freq"
-msgstr "主频"
+#: extension.js:1599
+msgid "Memory"
+msgstr "内存"
 
-#: extension.js:1540 extension.js:1692
+#: extension.js:1682 extension.js:2209 extension.js:2246
+msgid "MiB"
+msgstr "MiB"
+
+#: extension.js:1684 extension.js:2211 extension.js:2248
+msgid "GiB"
+msgstr "GiB"
+
+#: extension.js:1709
+msgid "Net"
+msgstr "网络"
+
+# 译者注：这里和下面的 "Up" 直译为“下载”和“上传”可能更符合原文意思，但用 Emoji 感觉更好看，有问题欢迎反馈
+#: extension.js:1879
+msgid " Down"
+msgstr " ⬇️"
+
+#: extension.js:1885
+msgid " KiB/s"
+msgstr " KiB/s"
+
+#: extension.js:1888
+msgid " Up"
+msgstr " ⬆️"
+
+#: extension.js:1898
+msgid "Swap"
+msgstr "交换分区"
+
+#: extension.js:2001 extension.js:2006
+msgid "Thermal"
+msgstr "温度"
+
+#: extension.js:2076
 msgid "Fan"
 msgstr "风扇"
 
-msgid "fan"
-msgstr "风扇"
-
-#: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
-#: extension.js:1722 extension.js:1730
+#: extension.js:2081 extension.js:2111 extension.js:2121
 msgid "rpm"
 msgstr "rpm"
 
-#: prefs.js:294
-msgid "Show tooltip"
-msgstr ""
+#: extension.js:2131 extension.js:2136
+msgid "Gpu"
+msgstr "显卡"
 
-#: extension.js:1097
-msgid "CPU"
-msgstr ""
+#: extension.js:2429
+msgid "System Monitor..."
+msgstr "系统监视器..."
 
-#: prefs.js:267
-msgid "Display temperature in Fahrenheit"
-msgstr ""
+#: extension.js:2435
+msgid "Preferences..."
+msgstr "首选项..."
 
-#: prefs.js:277
-msgid "Temperature threshold (0 to disable)"
-msgstr ""
+#~ msgid "User"
+#~ msgstr "用户"
+
+#~ msgid "System"
+#~ msgstr "系统"
+
+#~ msgid "Other"
+#~ msgstr "其他"
+
+#~ msgid "Nice"
+#~ msgstr "优先级"
+
+#~ msgid "Iowait"
+#~ msgstr "IO 等待"
+
+#~ msgid "Program"
+#~ msgstr "程序"
+
+#~ msgid "Cache"
+#~ msgstr "缓存"
+
+#~ msgid "Buffer"
+#~ msgstr "缓冲"
+
+#~ msgid "Used"
+#~ msgstr "已用"
+
+#~ msgid "Uperrors"
+#~ msgstr "上传错误"
+
+#~ msgid "Downerrors"
+#~ msgstr "下载错误"
+
+#~ msgid "collisions"
+#~ msgstr "冲突"
+
+#~ msgid "Collisions"
+#~ msgstr "冲突"
+
+#~ msgid "Write"
+#~ msgstr "写入"
+
+#~ msgid "Read"
+#~ msgstr "读取"
+
+#~ msgid "cpu"
+#~ msgstr "处理器"
+
+#~ msgid "swap"
+#~ msgstr "交换"
+
+#~ msgid "net"
+#~ msgstr "网络"
+
+#~ msgid "disk"
+#~ msgstr "硬盘"
+
+#~ msgid "System monitor"
+#~ msgstr "系统监视器"
+
+#~ msgid "user"
+#~ msgstr "用户"
+
+#~ msgid "system"
+#~ msgstr "系统"
+
+#~ msgid "other"
+#~ msgstr "其他"
+
+#~ msgid "nice"
+#~ msgstr "优先级"
+
+#~ msgid "iowait"
+#~ msgstr "IO 等待"
+
+#~ msgid "program"
+#~ msgstr "程序"
+
+#~ msgid "cache"
+#~ msgstr "缓存"
+
+#~ msgid "buffer"
+#~ msgstr "缓冲"
+
+#~ msgid "used"
+#~ msgstr "已用"
+
+#~ msgid "up"
+#~ msgstr "上传"
+
+#~ msgid "down"
+#~ msgstr "下载"
+
+#~ msgid "uperrors"
+#~ msgstr "上传错误"
+
+#~ msgid "downerrors"
+#~ msgstr "下载错误"
+
+#~ msgid "write"
+#~ msgstr "写入"
+
+#~ msgid "read"
+#~ msgstr "读取"
+
+#~ msgid "thermal"
+#~ msgstr "温度"
+
+#~ msgid "battery"
+#~ msgstr "电池"
+
+#~ msgid "freq"
+#~ msgstr "主频"
+
+#~ msgid "fan"
+#~ msgstr "风扇"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "面板系统监视器配置"

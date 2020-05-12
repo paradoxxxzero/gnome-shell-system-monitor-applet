@@ -285,7 +285,15 @@ const SettingFrame = class SystemMonitor {
 
 const App = class SystemMonitor_App {
     constructor() {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
+        let ordered_items = {};
+        let setting_names = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_items = [];
+        for (let item of setting_names) {
+            ordered_items[Schema.get_int(item + '-position')] = item;
+        }
+        for (let i = 0; i < Object.keys(ordered_items).length; i++) {
+            setting_items.push(ordered_items[i]);
+        }  
         let keys = Schema.list_keys();
 
         this.items = [];

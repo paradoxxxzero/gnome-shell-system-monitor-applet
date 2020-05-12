@@ -2338,19 +2338,34 @@ function enable() {
         };
 
         // Items to Monitor
-        Main.__sm.elts = createCpus();
-        Main.__sm.elts.push(new Freq());
-        Main.__sm.elts.push(new Mem());
-        Main.__sm.elts.push(new Swap());
-        Main.__sm.elts.push(new Net());
-        Main.__sm.elts.push(new Disk());
-        Main.__sm.elts.push(new Gpu());
-        Main.__sm.elts.push(new Thermal());
-        Main.__sm.elts.push(new Fan());
-        Main.__sm.elts.push(new Battery());
-
         let tray = Main.__sm.tray;
         let elts = Main.__sm.elts;
+        
+        // Load the preferred position of the displays and insert them in said order.
+        const positionList = {};
+        // CPUs are inserted differently, so cpu-position is stored apart
+        const cpuPosition = Schema.get_int('cpu-position');
+        positionList[cpuPosition] = createCpus();
+        positionList[Schema.get_int('freq-position')] = new Freq();
+        positionList[Schema.get_int('memory-position')] = new Mem();
+        positionList[Schema.get_int('swap-position')] = new Swap();
+        positionList[Schema.get_int('net-position')] = new Net();
+        positionList[Schema.get_int('disk-position')] = new Disk();
+        positionList[Schema.get_int('gpu-position')] = new Gpu();
+        positionList[Schema.get_int('thermal-position')] = new Thermal();
+        positionList[Schema.get_int('fan-position')] = new Fan();
+        positionList[Schema.get_int('battery-position')] = new Battery();
+
+        for (let i = 0; i < Object.keys(positionList).length; i++) {
+            if (i === cpuPosition) {
+                // CPUs are in an array, store them one by one
+                for (let cpu of positionList[cpuPosition]) {
+                    elts.push(cpu);
+                }
+            } else {
+                elts.push(positionList[i]);
+            }
+        }        
 
         if (Schema.get_boolean('move-clock')) {
             let dateMenu = Main.panel.statusArea.dateMenu;

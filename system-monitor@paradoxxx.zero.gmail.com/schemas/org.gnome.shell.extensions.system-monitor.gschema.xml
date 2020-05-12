@@ -454,6 +454,46 @@
 	  <default>false</default>
 	  <summary>Hide system battery icon</summary>
 	</key>
+  <key name="cpu-position" type="i">
+    <default>0</default>
+    <summary>Position in which to display the CPU display</summary>
+  </key>
+  <key name="freq-position" type="i">
+    <default>1</default>
+    <summary>Position in which to display the frequency display</summary>
+  </key>
+  <key name="memory-position" type="i">
+    <default>2</default>
+    <summary>Position in which to display the memory display</summary>
+  </key>
+  <key name="swap-position" type="i">
+    <default>3</default>
+    <summary>Position in which to display the swap display</summary>
+  </key>
+  <key name="net-position" type="i">
+    <default>4</default>
+    <summary>Position in which to display the net display</summary>
+  </key>
+  <key name="disk-position" type="i">
+    <default>5</default>
+    <summary>Position in which to display the disk display</summary>
+  </key>
+  <key name="gpu-position" type="i">
+    <default>6</default>
+    <summary>Position in which to display the GPU display</summary>
+  </key>
+  <key name="thermal-position" type="i">
+    <default>7</default>
+    <summary>Position in which to display the thermal display</summary>
+  </key>
+  <key name="fan-position" type="i">
+    <default>8</default>
+    <summary>Position in which to display the fan display</summary>
+  </key>
+  <key name="battery-position" type="i">
+    <default>9</default>
+    <summary>Position in which to display the battery display</summary>
+  </key>
 
   </schema>
 </schemalist>

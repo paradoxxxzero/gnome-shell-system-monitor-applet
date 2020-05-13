@@ -92,3 +92,41 @@ function getSettings(schema) {
 
     return new Gio.Settings({settings_schema: schemaObj});
 }
+
+/**
+ * stringFromUTF8Array:
+ * @byte_array_data: utf-8 string input as a byte array
+ *
+ * Decode the byte array as a proper UTF-8 String.
+ */
+function stringFromUTF8Array(byte_array_data)
+{
+    const extraByteMap = [ 1, 1, 1, 1, 2, 2, 3, 0 ];
+    var count = byte_array_data.length;
+    var str = "";
+
+    for (var index = 0;index < count;)
+    {
+        var ch = byte_array_data[index++];
+        if (ch & 0x80)
+        {
+            var extra = extraByteMap[(ch >> 3) & 0x07];
+            if (!(ch & 0x40) || !extra || ((index + extra) > count))
+                return null;
+
+            ch = ch & (0x3F >> extra);
+            for (;extra > 0;extra -= 1)
+            {
+                var chx = byte_array_data[index++];
+                if ((chx & 0xC0) !== 0x80)
+                    return null;
+
+                ch = (ch << 6) | (chx & 0x3F);
+            }
+        }
+
+        str += String.fromCharCode(ch);
+    }
+
+    return str;
+}

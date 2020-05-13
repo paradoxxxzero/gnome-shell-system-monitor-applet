@@ -40,8 +40,6 @@ const UPower = imports.gi.UPowerGlib;
 // const System = imports.system;
 var ModalDialog = imports.ui.modalDialog;
 
-var ByteArray = imports.byteArray;
-
 var ExtensionSystem = imports.ui.extensionSystem;
 var ExtensionUtils = imports.misc.extensionUtils;
 
@@ -1435,7 +1433,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         let file = Gio.file_new_for_path('/proc/diskstats');
         file.load_contents_async(null, (source, result) => {
             let as_r = source.load_contents_finish(result);
-            let lines = ByteArray.toString(as_r[1]).split('\n');
+            let lines = Convenience.stringFromUTF8Array(as_r[1]).split('\n');
 
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];
@@ -2017,7 +2015,8 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = Math.round(parseInt(ByteArray.toString(as_r[1])) / 1000);
+                let thermal_reading = Convenience.stringFromUTF8Array(as_r[1])
+                this.temperature = Math.round(parseInt(thermal_reading) / 1000);
                 if (this.fahrenheit_unit) {
                     this.temperature = Math.round(this.temperature * 1.8 + 32);
                 }
@@ -2088,7 +2087,7 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.rpm = parseInt(ByteArray.toString(as_r[1]));
+                this.rpm = parseInt(Convenience.stringFromUTF8Array(as_r[1]));
             });
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);

@@ -36,4 +36,9 @@ elif checkcommand glxinfo; then
 	let FREEVRAM=TOTALVRAM-AVAILVRAM
 	echo "$TOTALVRAM"
 	echo "$FREEVRAM"
+elif checkcommand /opt/rocm/bin/rocm-smi; then
+    sdir=$(pwd)
+    cd /opt/rocm/bin/
+    python -c "import rocm_smi as smi; devices=smi.listDevices(True); mem=smi.getMemInfo(devices[0], 'vram'); usage=smi.getSysfsValue(devices[0], 'use'); print(str(int(mem[1])/(1024**2))+'\n'+str(int(mem[0])/(1024**2))+'\n'+usage)"
+    cd $sdir
 fi

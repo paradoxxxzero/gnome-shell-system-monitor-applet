@@ -197,6 +197,16 @@ const SettingFrame = class SystemMonitor {
             item.set_args(1, 1000, 1, 10);
             this.hbox1.add(item.actor);
             Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+        } else if (config === 'min-y') {
+            let item = new IntSelect(_('Min Y'));
+            item.set_args(1, 100, 1, 1);
+            this.hbox1.add(item.actor);
+            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+        } else if (config === 'max-y') {
+            let item = new IntSelect(_('Max Y'));
+            item.set_args(1, 100, 1, 1);
+            this.hbox1.add(item.actor);
+            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'style') {
             let item = new Select(_('Display Style'));
             item.add([_('digit'), _('graph'), _('both')]);

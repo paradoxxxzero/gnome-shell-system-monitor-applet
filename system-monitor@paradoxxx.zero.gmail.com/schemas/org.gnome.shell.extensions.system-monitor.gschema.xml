@@ -409,6 +409,16 @@
       <summary>Display temperature in Fahrenheit</summary>
       <description>Set to true to show temperature in Fahrenheit</description>
     </key>
+    <key name="thermal-min-y" type="i">
+      <default>45</default>
+      <summary>thermal min temp</summary>
+      <description>Thermal chart min temp</description>
+    </key>
+    <key name="thermal-max-y" type="i">
+      <default>65</default>
+      <summary>thermal max temp</summary>
+      <description>Thermal chart min temp</description>
+    </key>
     <key name="background" type="s">
       <default>'#ffffff16'</default>
       <summary>Color of background</summary>

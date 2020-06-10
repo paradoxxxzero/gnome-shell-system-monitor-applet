@@ -358,6 +358,11 @@ const Chart = class SystemMonitor_Chart {
         }
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
+        let min;
+        min = 0;
+        if (this.parentC.min) {
+            min = this.parentC.min;
+        };
         let max;
         if (this.parentC.max) {
             max = this.parentC.max;
@@ -371,7 +376,7 @@ const Chart = class SystemMonitor_Chart {
         for (let i = this.parentC.colors.length - 1; i >= 0; i--) {
             cr.moveTo(width, height);
             for (let j = this.data[i].length - 1; j >= 0; j--) {
-                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
+                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - (this.data[i][j] - min) / (max - min) ) * height);
             }
             cr.lineTo(width - (this.data[i].length - 1), height);
             cr.closePath();
@@ -2001,7 +2006,8 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
             item_name: _('Thermal'),
             color_name: ['tz0']
         });
-        this.max = 100;
+        this.max = Schema.get_int(this.elt + '-max-y');
+        this.min = Schema.get_int(this.elt + '-min-y');
 
         this.item_name = _('Thermal');
         this.temperature = '-- ';
@@ -2028,6 +2034,9 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         }
 
         this.fahrenheit_unit = Schema.get_boolean(this.elt + '-fahrenheit-unit');
+        this.max = Schema.get_int(this.elt + '-max-y');
+        this.min = Schema.get_int(this.elt + '-min-y');
+
     }
     _apply() {
         this.text_items[0].text = this.menu_items[0].text = this.temperature_text();

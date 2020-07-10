@@ -27,7 +27,7 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Fedora:
 
-      $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
+      $ sudo yum install --assumeyes libgtop2-devel NetworkManager-libnm-devel
     
 * On openSUSE (Leap 42.1):
 

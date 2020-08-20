@@ -60,7 +60,7 @@ function check_sensors(sensor_type) {
                     return String(parse_bytearray(result[1])).split('\n')[0];
                 }
             } catch (e) {
-                global.log('[System monitor] error loading label from file ' + file.get_path() + ': ' + e);
+                log('[System monitor] error loading label from file ' + file.get_path() + ': ' + e);
             }
         }
         return null;
@@ -70,7 +70,7 @@ function check_sensors(sensor_type) {
         const chip_children = chip_dir.enumerate_children(
             'standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
         if (!chip_children) {
-            global.log('[System monitor] error enumerating children of chip ' + chip_dir.get_path());
+            log('[System monitor] error enumerating children of chip ' + chip_dir.get_path());
             return false;
         }
 
@@ -99,7 +99,7 @@ function check_sensors(sensor_type) {
     const hwmon_children = hwmon_dir.enumerate_children(
         'standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
     if (!hwmon_children) {
-        global.log('[System monitor] error enumerating hwmon children');
+        log('[System monitor] error enumerating hwmon children');
         return [[], []];
     }
 

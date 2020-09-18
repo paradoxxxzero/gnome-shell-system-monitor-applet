@@ -2267,6 +2267,108 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
     }
 }
 
+const Charging = class SystemMonitor_Charging extends ElementBase {
+    constructor() {
+        super({
+            elt: 'charging',
+            item_name: _('Charging'),
+            // For status names, see power_supply_status_text in Linux source
+            // file drivers/power/supply/power_supply_sysfs.c
+            color_name: ['unknown', 'charging', 'discharging', 'notcharging', 'full'],
+        });
+        this.volts = -1;
+        this.amps = -1;
+        this.status = "Unknown";
+        this.charging = [0, 0, 0, 0, 0];
+        this.tip_format(_('W')); // Watts
+        this.update();
+        Schema.connect('changed::charging-status', this._apply.bind(this));
+    }
+    refresh () {
+        const voltage_file = Gio.file_new_for_path('/sys/class/power_supply/BAT0/voltage_now');
+        voltage_file.load_contents_async(null, (source, result) => {
+            const as_r = source.load_contents_finish(result);
+            const lines = ByteArray.toString(as_r[1]);
+            const voltage = parseFloat(lines);
+            this.volts = voltage === -1 ? voltage : voltage / 1000000;
+            this.update_charging();
+        });
+        const current_file = Gio.file_new_for_path('/sys/class/power_supply/BAT0/current_now');
+        current_file.load_contents_async(null, (source, result) => {
+            const as_r = source.load_contents_finish(result);
+            const lines = ByteArray.toString(as_r[1]);
+            const current = parseFloat(lines);
+            this.amps = current === -1 ? current : current / 1000000;
+            this.update_charging();
+        });
+        const status_file = Gio.file_new_for_path('/sys/class/power_supply/BAT0/status');
+        status_file.load_contents_async(null, (source, result) => {
+            const as_r = source.load_contents_finish(result);
+            const lines = ByteArray.toString(as_r[1]);
+            this.status = lines.trim();
+            this.update_charging();
+        });
+    }
+    update_charging () {
+        const volts = this.volts;
+        const amps = this.amps;
+        const status = this.status;
+        if (volts !== -1 && amps !== -1) {
+            const watts = Math.round(volts * amps);
+            switch (status) {
+                case "Unknown":      this.vals = [watts, 0, 0, 0, 0]; break;
+                case "Charging":     this.vals = [0, watts, 0, 0, 0]; break;
+                case "Discharging":  this.vals = [0, 0, watts, 0, 0]; break;
+                case "Not charging": this.vals = [0, 0, 0, watts, 0]; break;
+                case "Full":         this.vals = [0, 0, 0, 0, watts]; break;
+                default:             this.vals = [0, 0, 0, 0, 0]; break;
+            }
+        } else {
+            this.vals = [0, 0, 0, 0, 0];
+        }
+    }
+    _apply() {
+        const watts = Math.max(...this.vals);
+        if (Schema.get_boolean('charging-status')) {
+            this.text_items[0].text = this.status + "  " + watts.toString();
+        } else {
+            this.text_items[0].text = watts.toString();
+        }
+
+        this.menu_items[0].text = watts.toString();
+        this.menu_items[3].text = this.status;
+        this.tip_vals = this.vals;
+    }
+    create_text_items() {
+        return [
+            new St.Label({
+                text: '',
+                style_class: Style.get('sm-status-value'),
+                y_align: Clutter.ActorAlign.CENTER}),
+            new St.Label({
+                text: _('W'),
+                style_class: Style.get('sm-unit-label'),
+                y_align: Clutter.ActorAlign.CENTER})
+        ];
+    }
+    create_menu_items() {
+        return [
+            new St.Label({
+                text: '',
+                style_class: Style.get('sm-value')}),
+            new St.Label({
+                text: _('W'),
+                style_class: Style.get('sm-label')}),
+            new St.Label({
+                text: _('Status '),
+                style_class: Style.get('sm-label')}),
+            new St.Label({
+                text: '',
+                style_class: Style.get('sm-value')})
+            ];
+    }
+}
+
 const Icon = class SystemMonitor_Icon {
     constructor() {
         this.actor = new St.Icon({icon_name: 'utilities-system-monitor-symbolic',
@@ -2348,6 +2450,7 @@ function enable() {
         Main.__sm.elts.push(new Thermal());
         Main.__sm.elts.push(new Fan());
         Main.__sm.elts.push(new Battery());
+        Main.__sm.elts.push(new Charging());
 
         let tray = Main.__sm.tray;
         let elts = Main.__sm.elts;

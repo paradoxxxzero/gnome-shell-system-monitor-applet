@@ -273,6 +273,10 @@ const SettingFrame = class SystemMonitor {
             item.set_args(0, 300, 5, 5);
             this.hbox3.add(item.actor);
             Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+        } else if (config === 'status') {
+            let item = new Gtk.CheckButton({label: _('Show Charging Status')});
+            this.hbox3.add(item);
+            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         }
         if (configParent.indexOf('gpu') !== -1 &&
             config === 'display') {
@@ -285,7 +289,7 @@ const SettingFrame = class SystemMonitor {
 
 const App = class SystemMonitor_App {
     constructor() {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery', 'charging'];
         let keys = Schema.list_keys();
 
         this.items = [];

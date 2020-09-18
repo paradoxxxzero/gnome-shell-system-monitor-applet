@@ -454,6 +454,58 @@
 	  <default>false</default>
 	  <summary>Hide system battery icon</summary>
 	</key>
-
+    <key name="charging-display" type="b">
+      <default>true</default>
+      <summary>Display charging</summary>
+      <description>Set to false to remove charging display in status bar</description>
+    </key>
+    <key name="charging-refresh-time" type="i">
+      <default>1000</default>
+      <summary>Memory refresh time</summary>
+      <description>Time in ms between two refresh of charging</description>
+    </key>
+    <key name="charging-show-text" type="b">
+      <default>true</default>
+      <summary>Display 'charging'</summary>
+      <description>Set to true to show watts before memory display</description>
+    </key>
+    <key name="charging-graph-width" type="i">
+      <default>100</default>
+      <summary>Charging graph width</summary>
+      <description>Graph width in pixels</description>
+    </key>
+    <key name="charging-show-menu" type="b">
+      <default>true</default>
+      <summary>Display charging in menu</summary>
+      <description>Set to true to show charging in pop-up menu</description>
+    </key>
+    <key name="charging-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
+      <default>'both'</default>
+      <summary>Choose the display style.</summary>
+    </key>
+    <key name="charging-unknown-color" type="s">
+      <default>'#fcaf3eff'</default>
+      <summary>Color for "Unknown" charging state</summary>
+    </key>
+    <key name="charging-charging-color" type="s">
+      <default>'#4e9a06ff'</default>
+      <summary>Color for "Charging" charging state</summary>
+    </key>
+    <key name="charging-discharging-color" type="s">
+      <default>'#a40000ff'</default>
+      <summary>Color for "Discharging" charging state</summary>
+    </key>
+    <key name="charging-notcharging-color" type="s">
+      <default>'#729fcfff'</default>
+      <summary>Color for "Not Charging" charging state</summary>
+    </key>
+    <key name="charging-full-color" type="s">
+      <default>'#eeeeee'</default>
+      <summary>Color for "Full" charging state</summary>
+    </key>
+    <key name="charging-status" type="b">
+      <default>true</default>
+      <summary>Show charging status</summary>
+    </key>
   </schema>
 </schemalist>

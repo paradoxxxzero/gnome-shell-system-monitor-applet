@@ -44,7 +44,7 @@ function check_sensors(sensor_type) {
     let sensor_list = [];
     let string_list = [];
     let test;
-    for (let j = 0; j < 6; j++) {
+    for (let j = 0; j < 12; j++) {
         for (let k = 0; k < inputs.length; k++) {
             test = sensor_path + 'hwmon' + j + '/' + inputs[k];
             if (!GLib.file_test(test, GLib.FileTest.EXISTS)) {

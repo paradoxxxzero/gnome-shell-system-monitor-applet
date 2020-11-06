@@ -19,11 +19,11 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Ubuntu:
 
-      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
+      $ sudo apt install --yes gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
       
 * On Debian:
 
-      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
+      $ sudo apt install --yes gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
 
 * On Fedora:
 
@@ -31,7 +31,7 @@ Before installing this extension, ensure you have the necessary system packages 
     
 * On openSUSE (Leap 42.1):
 
-      $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
+      $ sudo zypper --non-interactive install gnome-shell-devel libgtop-devel libgtop-2_0-10
 
 Additionally, if you have an Nvidia graphics card, and want to monitor its memory usage, you'll need to install `nvidia-smi`.
 

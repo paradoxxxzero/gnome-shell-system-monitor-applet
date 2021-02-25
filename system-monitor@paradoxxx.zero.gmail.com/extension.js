@@ -714,22 +714,23 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         // Probably old but works
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
-        let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
+        let extents = this.sourceActor.get_transformed_extents();
+        let sourceTopLeft = extents.get_top_left();
         let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor);
-        let [x, y] = [allocation.x1 + contentbox.x1,
-            allocation.y1 + contentbox.y1];
-        let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
-            allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
-        let [xm, ym] = [allocation.x1 + contentbox.x2,
-            allocation.y1 + contentbox.y2];
+        let [x, y] = [sourceTopLeft.x + contentbox.x1,
+            sourceTopLeft.y + contentbox.y1];
+        let [cx, cy] = [sourceTopLeft.x + (contentbox.x1 + contentbox.x2) / 2,
+            sourceTopLeft.y + (contentbox.y1 + contentbox.y2) / 2];
+        let [xm, ym] = [sourceTopLeft.x + contentbox.x2,
+            sourceTopLeft.y + contentbox.y2];
         let [width, height] = this.actor.get_size();
         let tipx = cx - width / 2;
         tipx = Math.max(tipx, monitor.x);
         tipx = Math.min(tipx, monitor.x + monitor.width - width);
         let tipy = Math.floor(ym);
         // Hacky condition to determine if the status bar is at the top or at the bottom of the screen
-        if (allocation.y1 / monitor.height > 0.3) {
-            tipy = allocation.y1 - height; // If it is at the bottom, place the tooltip above instead of below
+        if (sourceTopLeft.y / monitor.height > 0.3) {
+            tipy = sourceTopLeft.y - height; // If it is at the bottom, place the tooltip above instead of below
         }
         this.actor.set_position(tipx, tipy);
     }

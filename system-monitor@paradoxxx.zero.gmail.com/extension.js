@@ -1932,13 +1932,13 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
         if (this.useGiB) {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
-                return number.toFixed(2);
+                return number.toLocaleString(Locale, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
             // examples: 5.85, 16.0, 128
-            return number.toPrecision(3);
+            return number.toLocaleString(Locale, {minimumSignificantDigits: 3, maximumSignificantDigits: 3});
         }
 
-        return number;
+        return number.toLocaleString(Locale);
     }
     _apply() {
         if (this.total === 0) {
@@ -1950,11 +1950,11 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.tip_vals[0].toString();
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
-                ' / ' + this._pad(this.total).toLocaleString(Locale);
+            this.menu_items[3].text = this._pad(this.swap) +
+                ' / ' + this._pad(this.total);
         } else {
-            this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
-                '/' + this._pad(this.total).toLocaleString(Locale);
+            this.menu_items[3].text = this._pad(this.swap) +
+                '/' + this._pad(this.total);
         }
     }
 

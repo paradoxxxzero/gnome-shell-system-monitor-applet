@@ -2270,7 +2270,7 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
 
 const Icon = class SystemMonitor_Icon {
     constructor() {
-        this.actor = new St.Icon({icon_name: 'utilities-system-monitor-symbolic',
+        this.actor = new St.Icon({icon_name: 'utilities-system-monitor',
             style_class: 'system-status-icon'});
         this.actor.visible = Schema.get_boolean('icon-display');
         Schema.connect(

@@ -2222,13 +2222,13 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             this.tip_vals = [Math.round(this.vals[0])];
         }
         this.text_items[0].text = this.tip_vals.toString();
-        this.menu_items[0].text = this.tip_vals.toLocaleString();
+        this.menu_items[0].text = this.tip_vals.toLocaleString(Locale);
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
-                '  /  ' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.mem).toLocaleString(Locale) +
+                '  /  ' + this._pad(this.total).toLocaleString(Locale);
         } else {
-            this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
-                '/' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.mem).toLocaleString(Locale) +
+                '/' + this._pad(this.total).toLocaleString(Locale);
         }
     }
     create_text_items() {

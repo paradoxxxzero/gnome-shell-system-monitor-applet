@@ -1507,7 +1507,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' R'),
+                text: _('R'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
@@ -1516,7 +1516,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' W'),
+                text: _('W'),
                 style_class: Style.get('sm-label')})
         ];
     }
@@ -1877,7 +1877,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
                 text: _('KiB/s'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' Down'),
+                text: _(' ↓'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
@@ -1886,7 +1886,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
                 text: _(' KiB/s'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' Up'),
+                text: _(' ↑'),
                 style_class: Style.get('sm-label')})
         ];
     }

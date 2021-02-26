@@ -1516,7 +1516,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _('W'),
+                text: ' ' + _('W'),
                 style_class: Style.get('sm-label')})
         ];
     }

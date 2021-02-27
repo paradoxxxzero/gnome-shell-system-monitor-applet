@@ -29,7 +29,7 @@ msgstr "Anzeigen"
 
 #: prefs.js:166 prefs.js:164
 msgid "Refresh Time"
-msgstr "Aktualisierungs-Intervall"
+msgstr "Aktualisierungsintervall"
 
 #: prefs.js:171 prefs.js:169
 msgid "Graph Width"
@@ -50,6 +50,10 @@ msgstr "Zeige Icon"
 #: prefs.js:276 prefs.js:283
 msgid "Display in the Middle"
 msgstr "Anzeige zentrieren"
+
+#: prefs.js:287
+msgid "** Only Nvidia GPUs supported so far **"
+msgstr "** Derzeit werden nur Nvidia Grafikkarten unterstützt **"
 
 #: prefs.js:288 prefs.js:306
 msgid "Background Color"
@@ -81,7 +85,7 @@ msgstr "Kompakte Darstellung"
 
 #: extension.js:746 extension.js:1117
 msgid "Cpu"
-msgstr "CPU"
+msgstr "Prozessor"
 
 msgid "User"
 msgstr "Benutzer"
@@ -177,7 +181,7 @@ msgstr "CPU"
 
 #: extension.js:811
 msgid "mem"
-msgstr "Speicher"
+msgstr "RAM"
 
 msgid "swap"
 msgstr "Zw.-Speicher"
@@ -197,7 +201,7 @@ msgid "System Monitor..."
 msgstr "Systemüberwachung..."
 
 msgid "System monitor"
-msgstr "System Monitor"
+msgstr "Systemüberwachung"
 
 msgid "user"
 msgstr "Benutzer"
@@ -359,19 +363,29 @@ msgstr "1/min"
 
 #: prefs.js:294
 msgid "Show tooltip"
-msgstr ""
+msgstr "Zeige Einblendungen"
 
 #: extension.js:1097
 msgid "CPU"
-msgstr ""
+msgstr "Prozessor"
 
 #: prefs.js:267
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "Temperatur in Fahrenheit anzeigen"
 
 #: prefs.js:277
 msgid "Temperature threshold (0 to disable)"
-msgstr ""
+msgstr "Temperaturschwellenwert (0 zum deaktivieren)"
+
+#: extension.js:2107 extension.js:2112
+msgid "GPU"
+msgstr "Grafikkarte"
+
+msgid "gpu"
+msgstr "GPU"
+
+msgid "Gpu"
+msgstr "Grafikkarte"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "System Monitor Applet Konfigurator"

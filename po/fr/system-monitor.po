@@ -420,3 +420,6 @@ msgstr " ↑"
 #: extension.js:2132 extension.js:2137
 msgid "GPU"
 msgstr "Processeur graphique"
+
+msgid "Gpu"
+msgstr "Processeur graphique"

@@ -15,8 +15,12 @@ install:
 
 # Install NodeJS from upstream, since the version that comes with Ubuntu is usually ancient.
 -   sudo apt-get -yq install curl
--   curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
--   sudo apt-get install -yq nodejs
+#-   curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+#-   sudo apt-get install -yq nodejs
+-   curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+-   sudo bash nodesource_setup.sh
+-   sudo apt install nodejs
+-   node -v
 
 # Necessary on some versions of Ubuntu, which has a malformed npm/nodejs package.
 -   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"

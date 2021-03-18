@@ -1,9 +1,9 @@
 # https://docs.travis-ci.com/user/multi-os/
 # https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
-dist: xenial
+dist: focal
 sudo: required
 language: python
-python: 2.7
+python: 3.7
 
 env:
 -   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5

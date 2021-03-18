@@ -2,8 +2,8 @@
 # https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
 dist: xenial
 sudo: required
-language: python
-python: 2.7
+language: node_js
+node_js: node
 
 env:
 -   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5
@@ -12,18 +12,18 @@ install:
 -   sudo apt-key update
 -   sudo apt-get -yq update
 -   sudo apt -yq install xvfb gnome-shell
--   sudo apt-get -yq install nodejs
+#-   sudo apt-get -yq install nodejs
 # Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
--   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
--   which nodejs
--   which node
+#-   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
+#-   which nodejs
+#-   which node
 
 # Install NPM from upstream.
--   git clone git://github.com/npm/cli.git
--   cd cli/scripts
--   chmod +x install.sh
--   sudo ./install.sh
--   cd ../..
+#-   git clone git://github.com/npm/cli.git
+#-   cd cli/scripts
+#-   chmod +x install.sh
+#-   sudo ./install.sh
+#-   cd ../..
 
 -   sudo npm install -g eslint
 

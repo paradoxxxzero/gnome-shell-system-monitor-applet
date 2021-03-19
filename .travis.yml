@@ -44,6 +44,7 @@ before_script:
   - sleep 3 # give gnome-shell some time to start
 
 script:
+-   set -e
 
 # Clear initial gnome-shell errors we don't care about.
 -   sudo journalctl /usr/bin/gnome-shell
@@ -51,7 +52,7 @@ script:
 -   sudo journalctl --vacuum-time=1s
 
 # Show pre-extension gnome-shell performance.
--   ps -C gnome-shell -o %cpu,%mem,cmd
+-   ps -C gnome-shell -o %cpu,%mem,cmd || true
 
 # Run JSlint check.
 -   cd $TRAVIS_BUILD_DIR

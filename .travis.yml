@@ -38,12 +38,16 @@ install:
 
 before_script:
   - "export DISPLAY=:99.0"
+  - which Xvfb
+  - which start-stop-daemon
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
   - sleep 3 # give xvfb some time to start
+  - ps aux|grep -i Xvfb|grep -v grep
   - sudo gnome-shell &
   - sleep 3 # give gnome-shell some time to start
+  - journalctl /usr/bin/gnome-shell
+  - tail -n 5 ~/.xsession-errors
   - ps aux|grep -i gnome-shell|grep -v grep
-  - ps aux|grep -i Xvfb|grep -v grep
 
 script:
 -   set -e

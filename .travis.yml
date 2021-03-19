@@ -42,6 +42,8 @@ before_script:
   - sleep 3 # give xvfb some time to start
   - sudo gnome-shell &
   - sleep 3 # give gnome-shell some time to start
+  - ps aux|grep -i gnome-shell|grep -v grep
+  - ps aux|grep -i Xvfb|grep -v grep
 
 script:
 -   set -e

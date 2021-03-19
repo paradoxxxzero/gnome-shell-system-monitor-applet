@@ -46,7 +46,7 @@ before_script:
   - sudo gnome-shell &
   - sleep 3 # give gnome-shell some time to start
   - journalctl /usr/bin/gnome-shell
-  - tail -n 5 ~/.xsession-errors
+  - tail -n 5 ~/.xsession-errors || true
   - ps aux|grep -i gnome-shell|grep -v grep
 
 script:

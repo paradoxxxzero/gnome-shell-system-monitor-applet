@@ -51,20 +51,20 @@ For the browser installation (recommended), you will need the GNOME Shell integr
 [Firefox](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) or
 [Opera](https://addons.opera.com/en/extensions/details/gnome-shell-integration/).
 
-Note: If you’re using Firefox 52 or later, [you will also need to install `chrome-gnome-shell`](https://blogs.gnome.org/ne0sight/2016/12/25/how-to-install-gnome-shell-extensions-with-firefox-52/).
+Note: If you're using Firefox 52 or later, [you will also need to install `chrome-gnome-shell`](https://blogs.gnome.org/ne0sight/2016/12/25/how-to-install-gnome-shell-extensions-with-firefox-52/).
 The instructions are available [on the GNOME wiki](https://wiki.gnome.org/Projects/GnomeShellIntegrationForChrome/Installation#Ubuntu_Linux).
 
 #### Browser installation
 
-It’s recommended you install the extension via the Gnome Shell Extensions website.
+It's recommended you install the extension via the Gnome Shell Extensions website.
 
-Visit [this extension’s page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
-preferably in Firefox, and install by clicking the toggle button next to the extension’s name.
+Visit [this extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
+preferably in Firefox, and install by clicking the toggle button next to the extension's name.
 
 If the install was successful, the toggle button should now show “ON”.
 If it failed, ensure that you installed all the [necessary dependencies](#prerequisites),
 and that you granted the browser permission to install extensions when prompted.
-Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt), but it won’t work with Wayland.
+Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt), but it won't work with Wayland.
 
 #### Repository installation
 
@@ -81,7 +81,7 @@ extract the archive, open a shell into its directory, and run:
 
     make install
 
-Alternately, if you plan on doing development on the extension, or testing modifications, it’s advised you checkout the Git repository and install a symlink. First, install git if you don’t have it: (`sudo apt-get install git-core`, `sudo pacman -S git`, etc.), then run:
+Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don’t have it: (`sudo apt-get install git-core`, `sudo pacman -S git`, etc.), then run:
 
     GIT_PROJECTS=~/git_projects
     PROJECT_NAME=system-monitor@paradoxxx.zero.gmail.com
@@ -94,7 +94,7 @@ Alternately, if you plan on doing development on the extension, or testing modif
     ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
     gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
 
-And restart GNOME Shell (`Alt + F2`, then `r`) or reboot the machine.
+And reload GNOME Shell (`Alt + F2`, then `r`) or restart your GNOME session if you are using Wayland.
 
 On openSUSE you need to install a devel package that provides the `gnome-shell-extension-tool` command:
 

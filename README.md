@@ -27,7 +27,7 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Fedora:
 
-      $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel gnome-system-monitor
+      $ sudo yum install libgtop2-devel NetworkManager-glib-devel gnome-system-monitor
     
 * On openSUSE (Leap 42.1):
 

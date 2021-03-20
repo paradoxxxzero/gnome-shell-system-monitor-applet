@@ -37,9 +37,9 @@ Before installing this extension, ensure you have the necessary system packages 
 
       $ sudo urpmi lib64gtop-gir2.0 lib64nm-gir1.0 libclutter-gir1.0 gnome-system-monitor
       
-      or
+    or
       
-      $ sudo dnf install lib64gtop-gir2.0 lib64nm-gir1.0 libclutter-gir1.0 gnome-system-monitor
+      $ sudo dnf install lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
       
 
 Additionally, if you have an NVIDIA graphics card, and want to monitor its memory usage, you'll need to install `nvidia-smi`.
@@ -68,7 +68,7 @@ Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` 
 
 * Extension is in Fedora 25, 26, 27 and Rawhide repositories, you can install it for all users with the following command:
 
-    $ sudo dnf install gnome-shell-extension-system-monitor-applet
+      $ sudo dnf install gnome-shell-extension-system-monitor-applet
 
 * Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
 

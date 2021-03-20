@@ -27,7 +27,9 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Fedora:
 
-      $ sudo yum install libgtop2-devel NetworkManager-glib-devel gnome-system-monitor
+      $ dnf install libgtop2-devel NetworkManager-libnm-devel
+
+
     
 * On openSUSE (Leap 42.1):
 
@@ -66,7 +68,7 @@ Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` 
 
 #### Repository installation
 
-* Extension is in Fedora 25, 26, 27 and Rawhide repositories, you can install it for all users with the following command:
+* Extension is in Fedora onwards (up to Fedora 33, last update) and Rawhide repositories, you can install it for all users with the following command:
 
       $ sudo dnf install gnome-shell-extension-system-monitor-applet
 

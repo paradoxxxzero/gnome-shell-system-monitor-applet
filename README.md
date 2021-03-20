@@ -35,7 +35,7 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Mageia 64-bit (just remove “64” on i586):
 
-      $ sudo urpmi lib64gtop-gir2.0 lib64nm-gir1.0 libclutter-gir1.0 gnome-system-monitor
+      $ sudo urpmi lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
       
     or
       

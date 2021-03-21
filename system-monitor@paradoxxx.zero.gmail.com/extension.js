@@ -78,11 +78,12 @@ const _ = Gettext.gettext;
 
 const MESSAGE = _('Dependencies Missing\n\
 Please install: \n\
-libgtop, Network Manager and gir bindings \n\
-\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
-\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
-\t    on Arch: libgtop, networkmanager\n\
-\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n');
+gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n\
+\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-clutter-1.0, gnome-system-monitor \n\
+\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-monitor \n\
+\t    on Arch: libgtop, networkmanager, gnome-system-monitor\n\
+\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0, gnome-system-monitor \n\
+\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-gir1.0, gnome-system-monitor\n');
 
 // stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;

@@ -26,11 +26,11 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Fedora:
 
-      $ sudo dnf install libgtop2-devel NetworkManager-libnm-devel
+      $ sudo dnf install libgtop2-devel NetworkManager-libnm-devel gnome-system-monitor
 
 * On Arch Linux:
 
-      $ sudo pacman -S libgtop networkmanager
+      $ sudo pacman -S libgtop networkmanager gnome-system-monitor
 
 * On openSUSE (Leap 42.1):
 

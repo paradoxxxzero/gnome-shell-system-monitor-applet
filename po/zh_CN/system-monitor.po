@@ -1,21 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#: extension.js:844
+# Chinese (Simplified) translation for gnome-shell-system-monitor-applet.
+# Copyright (C) 2011-2021 gnome-shell-system-monitor-applet's authors and contributors.
+# This file is distributed under the same license as the gnome-shell-system-monitor-applet package.
+# Yichao Yu <yyc1992@gmail.com>, 2011.
+# Star Brilliant <m13253@hotmail.com>, 2014.
+# mars <gzhqyz@gmail.com>, 2021.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.99\n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
 "POT-Creation-Date: 2021-03-21 14:18+0100\n"
-"PO-Revision-Date: 2014-07-07 12:17+0800\n"
-"Last-Translator: Star Brilliant <m13253@hotmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: Chinese\n"
+"PO-Revision-Date: 2021-03-22 13:52+0800\n"
+"Last-Translator: mars <gzhqyz@gmail.com>\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 2.4.1\n"
+"Language-Team: \n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
 #: prefs.js:72 prefs.js:108
@@ -266,13 +268,13 @@ msgstr "MiB/s"
 #: extension.js:1804 extension.js:1812 extension.js:206 extension.js:1805
 #: extension.js:1813
 msgid "kbit/s"
-msgstr ""
+msgstr "kbit/s"
 
 #: extension.js:179 extension.js:1600 extension.js:1608 extension.js:206
 #: extension.js:1807 extension.js:1815 extension.js:207 extension.js:1808
 #: extension.js:1816
 msgid "Mbit/s"
-msgstr ""
+msgstr "Mbit/s"
 
 #: extension.js:1419 extension.js:1635 extension.js:1683 extension.js:2210
 #: extension.js:2247 extension.js:1684 extension.js:2211 extension.js:2248
@@ -281,9 +283,8 @@ msgstr "MiB"
 
 #: extension.js:1714 extension.js:1685 extension.js:2212 extension.js:2249
 #: extension.js:1686 extension.js:2213 extension.js:2250
-#, fuzzy
 msgid "GiB"
-msgstr "MiB"
+msgstr "GiB"
 
 #: extension.js:184 extension.js:220 extension.js:221
 msgid "kB"
@@ -367,56 +368,54 @@ msgstr "rpm"
 
 #: prefs.js:294 prefs.js:330
 msgid "Show tooltip"
-msgstr ""
+msgstr "显示文字提示"
 
 #: extension.js:1097 extension.js:1216 extension.js:1217
 msgid "CPU"
-msgstr ""
+msgstr "处理器"
 
 #: prefs.js:267 prefs.js:268
 msgid "Display temperature in Fahrenheit"
-msgstr ""
+msgstr "显示华氏温度"
 
 #: prefs.js:277 prefs.js:272
 msgid "Temperature threshold (0 to disable)"
-msgstr ""
+msgstr "温度阀值（0 表示禁用）"
 
 #: prefs.js:33
 #, javascript-format
 msgid "#%02x%02x%02x%02x"
-msgstr ""
+msgstr "#%02x%02x%02x%02x"
 
 #: prefs.js:279
 msgid "** Only Nvidia GPUs supported so far **"
-msgstr ""
+msgstr "** 目前只支持 NVIDIA 显卡 **"
 
 #: extension.js:1880 extension.js:1881
 msgid " ↓"
-msgstr ""
+msgstr " ↓"
 
 #: extension.js:1886 extension.js:1887
-#, fuzzy
 msgid " KiB/s"
-msgstr "KiB/s"
+msgstr " KiB/s"
 
 #: extension.js:1889 extension.js:1890
 msgid " ↑"
-msgstr ""
+msgstr " ↑"
 
 #: extension.js:2132 extension.js:2137 extension.js:2133 extension.js:2138
 msgid "GPU"
-msgstr ""
+msgstr "显卡"
 
-#, fuzzy
 msgid "Gpu"
-msgstr "处理器"
+msgstr "显卡"
 
 #: extension.js:79
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
-"gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n"
+"gnome-system-monitor and libgtop, clutter and Network Manager gir "
+"bindings \n"
 "\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-"
 "clutter-1.0, gnome-system-monitor \n"
 "\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-"
@@ -429,10 +428,16 @@ msgid ""
 msgstr ""
 "缺失依赖项\n"
 "请安装：\n"
-"libgtop、Network Manager 及其 gir 绑定\n"
-"\t    于 Ubuntu：gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    于 Fedora：libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    于 Arch：libgtop, networkmanager\n"
+"gnome-system-monitor、libgtop、clutter 和 Network Manager gir 绑定\n"
+"\t    于 Debian 和 Ubuntu：gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-"
+"clutter-1.0, gnome-system-monitor \n"
+"\t    于 Fedora：libgtop2-devel, NetworkManager-libnm-devel, gnome-system-"
+"monitor \n"
+"\t    于 Arch：libgtop, networkmanager, gnome-system-monitor\n"
+"\t    于 openSUSE：typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0, "
+"gnome-system-monitor \n"
+"\t    于 Mageia 64-bit：lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
+"gir1.0, gnome-system-monitor\n"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "面板系统监视器配置"

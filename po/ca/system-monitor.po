@@ -1,9 +1,9 @@
-#: extension.js:843
+#: extension.js:844
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
-"POT-Creation-Date: 2021-03-03 12:11+0100\n"
+"POT-Creation-Date: 2021-03-21 14:18+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Ecron\n"
 "Language-Team: \n"
@@ -82,7 +82,7 @@ msgstr "Mou el rellotge"
 msgid "Compact Display"
 msgstr "Visualització compacta"
 
-#: extension.js:746 extension.js:1117 extension.js:1237
+#: extension.js:746 extension.js:1117 extension.js:1237 extension.js:1238
 msgid "Cpu"
 msgstr "CPU"
 
@@ -101,7 +101,7 @@ msgstr "Nice"
 msgid "Iowait"
 msgstr "Espera E/S"
 
-#: extension.js:941 extension.js:1378 extension.js:1600
+#: extension.js:941 extension.js:1378 extension.js:1600 extension.js:1601
 msgid "Memory"
 msgstr "Memòria"
 
@@ -114,14 +114,14 @@ msgstr "Memòria cau"
 msgid "Buffer"
 msgstr "Memòria intermèdia"
 
-#: extension.js:1134 extension.js:1598 extension.js:1899
+#: extension.js:1134 extension.js:1598 extension.js:1899 extension.js:1900
 msgid "Swap"
 msgstr "Intercanvi"
 
 msgid "Used"
 msgstr "Usat"
 
-#: extension.js:1010 extension.js:1428 extension.js:1710
+#: extension.js:1010 extension.js:1428 extension.js:1710 extension.js:1711
 msgid "Net"
 msgstr "Xarxa"
 
@@ -145,7 +145,7 @@ msgstr "col·lisions"
 msgid "Collisions"
 msgstr "Col·lisions"
 
-#: extension.js:836 extension.js:1264 extension.js:1419
+#: extension.js:836 extension.js:1264 extension.js:1419 extension.js:1420
 msgid "Disk"
 msgstr "Disc"
 
@@ -156,12 +156,12 @@ msgid "Read"
 msgstr "Lectura"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322 extension.js:1478
-#: extension.js:1510
+#: extension.js:1510 extension.js:1479 extension.js:1511
 msgid "R"
 msgstr "L"
 
 #: extension.js:1185 extension.js:1315 extension.js:1325 extension.js:1489
-#: extension.js:1519
+#: extension.js:1519 extension.js:1490 extension.js:1520
 msgid "W"
 msgstr "E"
 
@@ -180,7 +180,7 @@ msgstr "Ambdós"
 msgid "cpu"
 msgstr "cpu"
 
-#: extension.js:811 extension.js:914
+#: extension.js:811 extension.js:914 extension.js:915
 msgid "mem"
 msgstr "mem"
 
@@ -193,11 +193,11 @@ msgstr "xarxa"
 msgid "disk"
 msgstr "disc"
 
-#: extension.js:1346 extension.js:1900 extension.js:2436
+#: extension.js:1346 extension.js:1900 extension.js:2436 extension.js:2439
 msgid "Preferences..."
 msgstr "Configuració..."
 
-#: extension.js:1340 extension.js:1894 extension.js:2430
+#: extension.js:1340 extension.js:1894 extension.js:2430 extension.js:2433
 msgid "System Monitor..."
 msgstr "Monitor del sistema..."
 
@@ -252,45 +252,54 @@ msgstr "lectura"
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
 #: extension.js:203 extension.js:1734 extension.js:1821 extension.js:1829
-#: extension.js:1855 extension.js:1866 extension.js:1877
+#: extension.js:1855 extension.js:1866 extension.js:1877 extension.js:204
+#: extension.js:1735 extension.js:1822 extension.js:1830 extension.js:1856
+#: extension.js:1867 extension.js:1878
 msgid "KiB/s"
 msgstr "KiB/s"
 
 #: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
 #: extension.js:1324 extension.js:1549 extension.js:1558 extension.js:202
 #: extension.js:204 extension.js:1427 extension.js:1824 extension.js:1832
+#: extension.js:203 extension.js:205 extension.js:1428 extension.js:1825
+#: extension.js:1833
 msgid "MiB/s"
 msgstr "MiB/s"
 
 #: extension.js:178 extension.js:1597 extension.js:1605 extension.js:205
-#: extension.js:1804 extension.js:1812
+#: extension.js:1804 extension.js:1812 extension.js:206 extension.js:1805
+#: extension.js:1813
 msgid "kbit/s"
 msgstr ""
 
 #: extension.js:179 extension.js:1600 extension.js:1608 extension.js:206
-#: extension.js:1807 extension.js:1815
+#: extension.js:1807 extension.js:1815 extension.js:207 extension.js:1808
+#: extension.js:1816
 msgid "Mbit/s"
 msgstr ""
 
 #: extension.js:1419 extension.js:1635 extension.js:1683 extension.js:2210
-#: extension.js:2247
+#: extension.js:2247 extension.js:1684 extension.js:2211 extension.js:2248
 msgid "MiB"
 msgstr "MiB"
 
 #: extension.js:1714 extension.js:1685 extension.js:2212 extension.js:2249
+#: extension.js:1686 extension.js:2213 extension.js:2250
 #, fuzzy
 msgid "GiB"
 msgstr "GiB"
 
-#: extension.js:184 extension.js:220
+#: extension.js:184 extension.js:220 extension.js:221
 msgid "kB"
 msgstr "kB"
 
 #: extension.js:183 extension.js:185 extension.js:219 extension.js:221
+#: extension.js:220 extension.js:222
 msgid "MB"
 msgstr "MB"
 
 #: extension.js:1179 extension.js:1644 extension.js:2002 extension.js:2007
+#: extension.js:2003 extension.js:2008
 msgid "Thermal"
 msgstr "Temperatura"
 
@@ -325,47 +334,29 @@ msgstr "barres"
 msgid "none"
 msgstr "cap"
 
-#: extension.js:68 extension.js:79
-#, fuzzy
-msgid ""
-"Dependencies Missing\n"
-"Please install: \n"
-"libgtop, Network Manager and gir bindings \n"
-"\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    on Arch: libgtop, networkmanager\n"
-"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
-msgstr ""
-"Hi falten dependències\n"
-"Instaŀleu:\n"
-"libgtop, Network Manager i gir bindings \n"
-"\t    a Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    a Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    a Arch: libgtop, networkmanager\n"
-
-#: extension.js:97 extension.js:255 extension.js:299
+#: extension.js:97 extension.js:255 extension.js:299 extension.js:300
 msgid "System Monitor Extension"
 msgstr "Extensió Monitor del Sistema"
 
-#: extension.js:113 extension.js:271 extension.js:315
+#: extension.js:113 extension.js:271 extension.js:315 extension.js:316
 msgid "Cancel"
 msgstr "Canceŀla"
 
-#: extension.js:601 extension.js:875 extension.js:1005
+#: extension.js:601 extension.js:875 extension.js:1005 extension.js:1006
 msgid "Battery"
 msgstr "Bateria"
 
 msgid "battery"
 msgstr "bateria"
 
-#: extension.js:896 extension.js:1334 extension.js:1529
+#: extension.js:896 extension.js:1334 extension.js:1529 extension.js:1530
 msgid "Freq"
 msgstr "Freqüència"
 
 msgid "freq"
 msgstr "freq"
 
-#: extension.js:1540 extension.js:1692 extension.js:2077
+#: extension.js:1540 extension.js:1692 extension.js:2077 extension.js:2078
 msgid "Fan"
 msgstr "Ventilador"
 
@@ -374,7 +365,7 @@ msgstr "vent"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730 extension.js:2082 extension.js:2112
-#: extension.js:2122
+#: extension.js:2122 extension.js:2083 extension.js:2113 extension.js:2123
 msgid "rpm"
 msgstr "rpm"
 
@@ -382,7 +373,7 @@ msgstr "rpm"
 msgid "Show tooltip"
 msgstr "Mostra l'indicador de funció"
 
-#: extension.js:1097 extension.js:1216
+#: extension.js:1097 extension.js:1216 extension.js:1217
 msgid "CPU"
 msgstr "CPU"
 
@@ -403,20 +394,20 @@ msgstr ""
 msgid "** Only Nvidia GPUs supported so far **"
 msgstr ""
 
-#: extension.js:1880
+#: extension.js:1880 extension.js:1881
 msgid " ↓"
 msgstr ""
 
-#: extension.js:1886
+#: extension.js:1886 extension.js:1887
 #, fuzzy
 msgid " KiB/s"
 msgstr "KiB/s"
 
-#: extension.js:1889
+#: extension.js:1889 extension.js:1890
 msgid " ↑"
 msgstr ""
 
-#: extension.js:2132 extension.js:2137
+#: extension.js:2132 extension.js:2137 extension.js:2133 extension.js:2138
 #, fuzzy
 msgid "GPU"
 msgstr "CPU"
@@ -424,6 +415,29 @@ msgstr "CPU"
 #, fuzzy
 msgid "Gpu"
 msgstr "CPU"
+
+#: extension.js:79
+#, fuzzy
+msgid ""
+"Dependencies Missing\n"
+"Please install: \n"
+"gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n"
+"\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-"
+"clutter-1.0, gnome-system-monitor \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-"
+"monitor \n"
+"\t    on Arch: libgtop, networkmanager, gnome-system-monitor\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0, "
+"gnome-system-monitor \n"
+"\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
+"gir1.0, gnome-system-monitor\n"
+msgstr ""
+"Hi falten dependències\n"
+"Instaŀleu:\n"
+"libgtop, Network Manager i gir bindings \n"
+"\t    a Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
+"\t    a Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
+"\t    a Arch: libgtop, networkmanager\n"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configuració de l'extensió Monitor del Sistema"

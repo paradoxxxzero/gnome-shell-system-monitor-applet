@@ -29,12 +29,14 @@ var smDepsNM = true;
 var Config = imports.misc.config;
 var Clutter = imports.gi.Clutter;
 var GLib = imports.gi.GLib;
+var GObject = imports.gi.GObject;
 var Lang = imports.lang;
 
 var Gio = imports.gi.Gio;
 var Shell = imports.gi.Shell;
 var St = imports.gi.St;
-var Power = imports.ui.status.power;
+const UPower = imports.gi.UPowerGlib;
+
 // const System = imports.system;
 var ModalDialog = imports.ui.modalDialog;
 
@@ -76,11 +78,12 @@ const _ = Gettext.gettext;
 
 const MESSAGE = _('Dependencies Missing\n\
 Please install: \n\
-libgtop, Network Manager and gir bindings \n\
-\t    on Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n\
-\t    on Fedora: libgtop2-devel, NetworkManager-glib-devel \n\
-\t    on Arch: libgtop, networkmanager\n\
-\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n');
+gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n\
+\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-clutter-1.0, gnome-system-monitor \n\
+\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-monitor \n\
+\t    on Arch: libgtop, networkmanager, gnome-system-monitor\n\
+\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0, gnome-system-monitor \n\
+\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-gir1.0, gnome-system-monitor\n');
 
 // stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;
@@ -88,6 +91,21 @@ const ENABLE_NETWORK_DISK_USAGE = false;
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let metadata = extension.metadata;
 let shell_Version = Config.PACKAGE_VERSION;
+
+Clutter.Actor.prototype.raise_top = function raise_top() {
+    const parent = this.get_parent();
+    if (!parent) {
+        return;
+    }
+    parent.set_child_above_sibling(this, null);
+}
+Clutter.Actor.prototype.reparent = function reparent(newParent) {
+    const parent = this.get_parent();
+    if (parent) {
+        parent.remove_child(this);
+    }
+    newParent.add_child(this);
+}
 
 function l_limit(t) {
     return (t > 0) ? t : 1000;
@@ -119,7 +137,7 @@ function build_menu_info() {
 
     let menu_info_box_table = new St.Widget({
         style: 'padding: 10px 0px 10px 0px; spacing-rows: 10px; spacing-columns: 15px;',
-        layout_manager: new Clutter.TableLayout()
+        layout_manager: new Clutter.GridLayout({orientation: Clutter.Orientation.VERTICAL})
     });
     let menu_info_box_table_layout = menu_info_box_table.layout_manager;
 
@@ -131,23 +149,30 @@ function build_menu_info() {
         }
 
         // Add item name to table
-        menu_info_box_table_layout.pack(
+        menu_info_box_table_layout.attach(
             new St.Label({
                 text: elts[elt].item_name,
-                style_class: Style.get('sm-title')}), 0, row_index);
+                style_class: Style.get('sm-title'),
+                x_align: Clutter.ActorAlign.START,
+                y_align: Clutter.ActorAlign.CENTER
+            }), 0, row_index, 1, 1);
 
         // Add item data to table
         let col_index = 1;
         for (let item in elts[elt].menu_items) {
-            menu_info_box_table_layout.pack(
-                elts[elt].menu_items[item], col_index, row_index);
+            menu_info_box_table_layout.attach(
+                elts[elt].menu_items[item], col_index, row_index, 1, 1);
 
             col_index++;
         }
 
         row_index++;
     }
-    tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+    if (shell_Version < '3.36') {
+        tray_menu._getMenuItems()[0].actor.get_last_child().add(menu_info_box_table, {expand: true});
+    } else {
+        tray_menu._getMenuItems()[0].actor.get_last_child().add_child(menu_info_box_table);
+    }
 }
 
 function change_menu() {
@@ -362,6 +387,9 @@ const Chart = class SystemMonitor_Chart {
         if (old_width === this.width) {
             return;
         }
+        if (Style.get('') === '-compact') {
+            this.width = Math.round(this.width / 1.5);
+        }
         this.actor.set_width(this.width);
         if (this.width < this.data[0].length) {
             for (let i = 0; i < this.parentC.colors.length; i++) {
@@ -517,7 +545,11 @@ const Graph = class SystemMonitor_Graph {
     }
     create_menu_item() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        this.menu_item.actor.add(this.actor, {span: -1, expand: true});
+        if (shell_Version < '3.36') {
+            this.menu_item.actor.add(this.actor, {span: -1, expand: true});
+        } else {
+            this.menu_item.actor.add_child(this.actor);
+        }
         // tray.menu.addMenuItem(this.menu_item);
     }
     show(visible) {
@@ -630,15 +662,32 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
-const TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
-    constructor() {
-        super();
-        // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
-        this.actor.remove_style_class_name('popup-menu-item');
-        this.actor.add_style_class_name('sm-tooltip-item');
-    }
-}
+var TipItem = null;
 
+if (shell_Version < '3.36') {
+    TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
+        constructor() {
+            super();
+            // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
+            this.actor.remove_style_class_name('popup-menu-item');
+            this.actor.add_style_class_name('sm-tooltip-item');
+        }
+    }
+} else {
+    TipItem = GObject.registerClass(
+        {
+            GTypeName: 'TipItem'
+        },
+        class TipItem extends PopupMenu.PopupBaseMenuItem {
+            _init() {
+                super._init();
+                // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
+                this.actor.remove_style_class_name('popup-menu-item');
+                this.actor.add_style_class_name('sm-tooltip-item');
+            }
+        }
+    );
+}
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     constructor(sourceActor) {
         // PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');
@@ -666,22 +715,23 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         // Probably old but works
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
-        let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
+        let extents = this.sourceActor.get_transformed_extents();
+        let sourceTopLeft = extents.get_top_left();
         let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor);
-        let [x, y] = [allocation.x1 + contentbox.x1,
-            allocation.y1 + contentbox.y1];
-        let [cx, cy] = [allocation.x1 + (contentbox.x1 + contentbox.x2) / 2,
-            allocation.y1 + (contentbox.y1 + contentbox.y2) / 2];
-        let [xm, ym] = [allocation.x1 + contentbox.x2,
-            allocation.y1 + contentbox.y2];
+        let [x, y] = [sourceTopLeft.x + contentbox.x1,
+            sourceTopLeft.y + contentbox.y1];
+        let [cx, cy] = [sourceTopLeft.x + (contentbox.x1 + contentbox.x2) / 2,
+            sourceTopLeft.y + (contentbox.y1 + contentbox.y2) / 2];
+        let [xm, ym] = [sourceTopLeft.x + contentbox.x2,
+            sourceTopLeft.y + contentbox.y2];
         let [width, height] = this.actor.get_size();
         let tipx = cx - width / 2;
         tipx = Math.max(tipx, monitor.x);
         tipx = Math.min(tipx, monitor.x + monitor.width - width);
         let tipy = Math.floor(ym);
         // Hacky condition to determine if the status bar is at the top or at the bottom of the screen
-        if (allocation.y1 / monitor.height > 0.3) {
-            tipy = allocation.y1 - height; // If it is at the bottom, place the tooltip above instead of below
+        if (sourceTopLeft.y / monitor.height > 0.3) {
+            tipy = sourceTopLeft.y - height; // If it is at the bottom, place the tooltip above instead of below
         }
         this.actor.set_position(tipx, tipy);
     }
@@ -922,7 +972,9 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         }
         this.chart.update();
         for (let i = 0; i < this.tip_vals.length; i++) {
-            this.tip_labels[i].text = this.tip_vals[i].toString();
+            if (this.tip_labels[i]) {
+                this.tip_labels[i].text = this.tip_vals[i].toString();
+            }
         }
         return true;
     }
@@ -988,7 +1040,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
         let isBattery = false;
         if (typeof (this._proxy.GetDevicesRemote) === 'undefined') {
             let device_type = this._proxy.Type;
-            isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
+            isBattery = (device_type === UPower.DeviceKind.BATTERY);
             if (isBattery) {
                 battery_found = true;
                 let icon = this._proxy.IconName;
@@ -1015,7 +1067,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 for (let i = 0; i < result.length; i++) {
                     let [device_id, device_type, icon, percentage, state, seconds] = result[i];
 
-                    isBattery = (device_type === Power.UPower.DeviceKind.BATTERY);
+                    isBattery = (device_type === UPower.DeviceKind.BATTERY);
                     if (isBattery) {
                         battery_found = true;
                         this.update_battery_value(seconds, percentage, icon);
@@ -1381,27 +1433,32 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
     }
     refresh() {
         let accum = [0, 0];
-        let lines = Shell.get_file_contents_utf8_sync('/proc/diskstats').split('\n');
 
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            let entry = line.trim().split(/[\s]+/);
-            if (typeof (entry[1]) === 'undefined') {
-                break;
-            }
-            accum[0] += parseInt(entry[5]);
-            accum[1] += parseInt(entry[9]);
-        }
+        let file = Gio.file_new_for_path('/proc/diskstats');
+        file.load_contents_async(null, (source, result) => {
+            let as_r = source.load_contents_finish(result);
+            let lines = ByteArray.toString(as_r[1]).split('\n');
 
-        let time = GLib.get_monotonic_time() / 1000;
-        let delta = (time - this.last_time) / 1000;
-        if (delta > 0) {
-            for (let i = 0; i < 2; i++) {
-                this.usage[i] = ((accum[i] - this.last[i]) / delta / 1024 / 8);
-                this.last[i] = accum[i];
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                let entry = line.trim().split(/[\s]+/);
+                if (typeof (entry[1]) === 'undefined') {
+                    break;
+                }
+                accum[0] += parseInt(entry[5]);
+                accum[1] += parseInt(entry[9]);
             }
-        }
-        this.last_time = time;
+
+            let time = GLib.get_monotonic_time() / 1000;
+            let delta = (time - this.last_time) / 1000;
+            if (delta > 0) {
+                for (let i = 0; i < 2; i++) {
+                    this.usage[i] = ((accum[i] - this.last[i]) / delta / 1024 / 8);
+                    this.last[i] = accum[i];
+                }
+            }
+            this.last_time = time;
+        });
     }
     _apply() {
         this.vals = this.usage.slice();
@@ -1451,7 +1508,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' R'),
+                text: _('R'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
@@ -1460,7 +1517,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
                 text: Style.diskunits(),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' W'),
+                text: ' ' + _('W'),
                 style_class: Style.get('sm-label')})
         ];
     }
@@ -1585,13 +1642,13 @@ const Mem = class SystemMonitor_Mem extends ElementBase {
         if (this.useGiB) {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
-                return number.toFixed(2);
+                return number.toLocaleString(Locale, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
             // examples: 5.85, 16.0, 128
-            return number.toPrecision(3);
+            return number.toLocaleString(Locale, {minimumSignificantDigits: 3, maximumSignificantDigits: 3});
         }
 
-        return number;
+        return number.toLocaleString(Locale);
     }
     _apply() {
         if (this.total === 0) {
@@ -1605,11 +1662,11 @@ const Mem = class SystemMonitor_Mem extends ElementBase {
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.tip_vals[0].toLocaleString(Locale);
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString(Locale) +
-                ' / ' + this._pad(this.total).toLocaleString(Locale);
+            this.menu_items[3].text = this._pad(this.mem[0]) +
+                ' / ' + this._pad(this.total);
         } else {
-            this.menu_items[3].text = this._pad(this.mem[0]).toLocaleString(Locale) +
-                '/' + this._pad(this.total).toLocaleString(Locale);
+            this.menu_items[3].text = this._pad(this.mem[0]) +
+                '/' + this._pad(this.total);
         }
     }
     create_text_items() {
@@ -1821,7 +1878,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
                 text: _('KiB/s'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' Down'),
+                text: _(' ↓'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
                 text: '',
@@ -1830,7 +1887,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
                 text: _(' KiB/s'),
                 style_class: Style.get('sm-label')}),
             new St.Label({
-                text: _(' Up'),
+                text: _(' ↑'),
                 style_class: Style.get('sm-label')})
         ];
     }
@@ -1876,13 +1933,13 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
         if (this.useGiB) {
             if (number < 1) {
                 // examples: 0.01, 0.10, 0.88
-                return number.toFixed(2);
+                return number.toLocaleString(Locale, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             }
             // examples: 5.85, 16.0, 128
-            return number.toPrecision(3);
+            return number.toLocaleString(Locale, {minimumSignificantDigits: 3, maximumSignificantDigits: 3});
         }
 
-        return number;
+        return number.toLocaleString(Locale);
     }
     _apply() {
         if (this.total === 0) {
@@ -1894,11 +1951,11 @@ const Swap = class SystemMonitor_Swap extends ElementBase {
         this.text_items[0].text = this.tip_vals[0].toString();
         this.menu_items[0].text = this.tip_vals[0].toString();
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
-                ' / ' + this._pad(this.total).toLocaleString(Locale);
+            this.menu_items[3].text = this._pad(this.swap) +
+                ' / ' + this._pad(this.total);
         } else {
-            this.menu_items[3].text = this._pad(this.swap).toLocaleString(Locale) +
-                '/' + this._pad(this.total).toLocaleString(Locale);
+            this.menu_items[3].text = this._pad(this.swap) +
+                '/' + this._pad(this.total);
         }
     }
 
@@ -1962,7 +2019,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.temperature = Math.round(parseInt(as_r[1]) / 1000);
+                this.temperature = Math.round(parseInt(ByteArray.toString(as_r[1])) / 1000);
                 if (this.fahrenheit_unit) {
                     this.temperature = Math.round(this.temperature * 1.8 + 32);
                 }
@@ -2033,7 +2090,7 @@ const Fan = class SystemMonitor_Fan extends ElementBase {
             let file = Gio.file_new_for_path(sfile);
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
-                this.rpm = parseInt(as_r[1]);
+                this.rpm = parseInt(ByteArray.toString(as_r[1]));
             });
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -2170,13 +2227,14 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             this.tip_vals = [Math.round(this.vals[0]), this.mem];
         }
         this.text_items[0].text = this.tip_vals[0].toString();
-        this.menu_items[0].text = this.tip_vals[0].toLocaleString();
+        this.menu_items[0].text = this.tip_vals[0].toLocaleString(Locale);
+
         if (Style.get('') !== '-compact') {
-            this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
-                '  /  ' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.mem).toLocaleString(Locale) +
+                '  /  ' + this._pad(this.total).toLocaleString(Locale);
         } else {
-            this.menu_items[3].text = this._pad(this.mem).toLocaleString() +
-                '/' + this._pad(this.total).toLocaleString();
+            this.menu_items[3].text = this._pad(this.mem).toLocaleString(Locale) +
+                '/' + this._pad(this.total).toLocaleString(Locale);
         }
     }
     create_text_items() {
@@ -2218,8 +2276,10 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
 
 const Icon = class SystemMonitor_Icon {
     constructor() {
-        this.actor = new St.Icon({icon_name: 'utilities-system-monitor-symbolic',
-            style_class: 'system-status-icon'});
+        this.actor = new St.Icon({
+            icon_name: 'org.gnome.SystemMonitor-symbolic',
+            style_class: 'system-status-icon'
+        });
         this.actor.visible = Schema.get_boolean('icon-display');
         Schema.connect(
             'changed::icon-display',
@@ -2316,7 +2376,11 @@ function enable() {
         // The spacing adds a distance between the graphs/text on the top bar
         let spacing = Schema.get_boolean('compact-display') ? '1' : '4';
         let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
-        tray.actor.add_actor(box);
+        if (shell_Version < '3.36') {
+            tray.actor.add_actor(box);
+        } else {
+            tray.add_actor(box);
+        }
         box.add_actor(Main.__sm.icon.actor);
         // Add items to panel box
         for (let elt in elts) {
@@ -2367,6 +2431,9 @@ function enable() {
         let _appSys = Shell.AppSystem.get_default();
         let _gsmApp = _appSys.lookup_app('gnome-system-monitor.desktop');
         let _gsmPrefs = _appSys.lookup_app('gnome-shell-extension-prefs.desktop');
+        if (_gsmPrefs === null) {
+            _gsmPrefs = _appSys.lookup_app('org.gnome.Extensions.desktop');
+        }
         let item;
         item = new PopupMenu.PopupMenuItem(_('System Monitor...'));
         item.connect('activate', () => {
@@ -2376,7 +2443,9 @@ function enable() {
 
         item = new PopupMenu.PopupMenuItem(_('Preferences...'));
         item.connect('activate', () => {
-            if (_gsmPrefs.get_state() === _gsmPrefs.SHELL_APP_STATE_RUNNING) {
+            if (typeof ExtensionUtils.openPrefs === 'function') {
+                ExtensionUtils.openPrefs();
+            } else if (_gsmPrefs.get_state() === _gsmPrefs.SHELL_APP_STATE_RUNNING) {
                 _gsmPrefs.activate();
             } else {
                 let info = _gsmPrefs.get_app_info();
@@ -2420,8 +2489,11 @@ function disable() {
     for (let eltName in Main.__sm.elts) {
         Main.__sm.elts[eltName].destroy();
     }
-
-    Main.__sm.tray.actor.destroy();
+    if (shell_Version < '3.36') {
+        Main.__sm.tray.actor.destroy();
+    } else {
+        Main.__sm.tray.destroy();
+    }
     Main.__sm = null;
 
     log('[System monitor] applet disable');

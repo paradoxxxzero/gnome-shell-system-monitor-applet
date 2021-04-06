@@ -715,23 +715,34 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         // Probably old but works
         let node = this.sourceActor.get_theme_node();
         let contentbox = node.get_content_box(this.sourceActor.get_allocation_box());
-        let extents = this.sourceActor.get_transformed_extents();
-        let sourceTopLeft = extents.get_top_left();
+
+        let sourceTopLeftX = 0;
+        let sourceTopLeftY = 0;
+        if (shell_Version >= 3.38) {
+                let extents = this.sourceActor.get_transformed_extents();
+                let sourceTopLeft = extents.get_top_left();
+                sourceTopLeftY = sourceTopLeft.y;
+                sourceTopLeftX = sourceTopLeft.x;
+        } else {
+                let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
+                sourceTopLeftY = allocation.y1;
+                sourceTopLeftX = allocation.x1;
+        }
         let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor);
-        let [x, y] = [sourceTopLeft.x + contentbox.x1,
-            sourceTopLeft.y + contentbox.y1];
-        let [cx, cy] = [sourceTopLeft.x + (contentbox.x1 + contentbox.x2) / 2,
-            sourceTopLeft.y + (contentbox.y1 + contentbox.y2) / 2];
-        let [xm, ym] = [sourceTopLeft.x + contentbox.x2,
-            sourceTopLeft.y + contentbox.y2];
+        let [x, y] = [sourceTopLeftX + contentbox.x1,
+            sourceTopLeftY + contentbox.y1];
+        let [cx, cy] = [sourceTopLeftX + (contentbox.x1 + contentbox.x2) / 2,
+            sourceTopLeftY + (contentbox.y1 + contentbox.y2) / 2];
+        let [xm, ym] = [sourceTopLeftX + contentbox.x2,
+            sourceTopLeftY + contentbox.y2];
         let [width, height] = this.actor.get_size();
         let tipx = cx - width / 2;
         tipx = Math.max(tipx, monitor.x);
         tipx = Math.min(tipx, monitor.x + monitor.width - width);
         let tipy = Math.floor(ym);
         // Hacky condition to determine if the status bar is at the top or at the bottom of the screen
-        if (sourceTopLeft.y / monitor.height > 0.3) {
-            tipy = sourceTopLeft.y - height; // If it is at the bottom, place the tooltip above instead of below
+        if (sourceTopLeftY / monitor.height > 0.3) {
+            tipy = sourceTopLeftY - height; // If it is at the bottom, place the tooltip above instead of below
         }
         this.actor.set_position(tipx, tipy);
     }

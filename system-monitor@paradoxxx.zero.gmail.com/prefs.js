@@ -38,6 +38,13 @@ function color_to_hex(color) {
     return output;
 }
 
+function parse_bytearray(bytearray) {
+    if (!ByteArray.toString(bytearray).match(/GjsModule byteArray/)) {
+        return ByteArray.toString(bytearray);
+    }
+    return bytearray
+}
+
 function check_sensors(sensor_type) {
     let inputs = [sensor_type + '1_input', sensor_type + '2_input', sensor_type + '3_input'];
     let sensor_path = '/sys/class/hwmon/';
@@ -55,12 +62,11 @@ function check_sensors(sensor_type) {
             }
             let sensor = test.substr(0, test.lastIndexOf('/'));
             let result = GLib.file_get_contents(sensor + '/name');
-            let label;
-            if (result[0]) {
-                label = N_(ByteArray.toString(result[1])).split('\n')[0];
+            if(result){
+                let label = String(parse_bytearray(result[1])).split('\n')[0];
+                string_list.push(label + ' - ' + inputs[k].split('_')[0].capitalize());
+                sensor_list.push(test);
             }
-            string_list.push(label.capitalize() + ' - ' + inputs[k].split('_')[0].capitalize());
-            sensor_list.push(test);
         }
     }
     return [sensor_list, string_list];

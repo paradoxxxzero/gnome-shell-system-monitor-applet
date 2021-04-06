@@ -718,7 +718,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
 
         let sourceTopLeftX = 0;
         let sourceTopLeftY = 0;
-        if (shell_Version >= 3.38) {
+        if (typeof this.sourceActor.get_transformed_extents === "function") {
                 let extents = this.sourceActor.get_transformed_extents();
                 let sourceTopLeft = extents.get_top_left();
                 sourceTopLeftY = sourceTopLeft.y;

@@ -1,22 +1,17 @@
-# Japanese translations for system-monitor package.
-# Copyright (C) 2017 Listed translators
-# This file is distributed under the same license as the system-monitor package.
-# Shinichirou Yamada <yamada_strong_yamada_nice_64bit@yahoo.co.jp>, 2017.
-# sicklylife <translation@sicklylife.jp>, 2019.
-#
-#: extension.js:844
 msgid ""
 msgstr ""
-"Project-Id-Version: system-monitor\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
 "POT-Creation-Date: 2021-03-21 14:18+0100\n"
-"PO-Revision-Date: 2019-02-10 19:21+0900\n"
-"Last-Translator: sicklylife <translation@sicklylife.jp>\n"
+"PO-Revision-Date: 2021-03-27 17:54+0900\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: ja\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
@@ -26,135 +21,132 @@ msgstr ":"
 
 #: prefs.js:161 prefs.js:159 prefs.js:178
 msgid "Display"
-msgstr "表示"
+msgstr "표시하기"
 
 #: prefs.js:166 prefs.js:164 prefs.js:191
 msgid "Refresh Time"
-msgstr "更新間隔"
+msgstr "새로고침 시간"
 
 #: prefs.js:171 prefs.js:169 prefs.js:196
 msgid "Graph Width"
-msgstr "グラフの幅"
+msgstr "그래프 폭"
 
 #: prefs.js:176 prefs.js:174 prefs.js:182
 msgid "Show Text"
-msgstr "テキストを表示"
+msgstr "텍스트 표시"
 
 #: prefs.js:184 prefs.js:182 prefs.js:201
 msgid "Display Style"
-msgstr "表示スタイル"
+msgstr "스타일"
 
 #: prefs.js:267 prefs.js:274 prefs.js:310
 msgid "Display Icon"
-msgstr "アイコンを表示"
+msgstr "아이콘 표시"
 
 #: prefs.js:276 prefs.js:283 prefs.js:319
 msgid "Display in the Middle"
-msgstr "中央に表示"
+msgstr "가운데에 표시"
 
 #: prefs.js:288 prefs.js:306 prefs.js:342
 msgid "Background Color"
-msgstr "背景色"
+msgstr "배경 색상"
 
 #: prefs.js:197 prefs.js:195 prefs.js:247
 msgid "Display Individual Cores"
-msgstr "各コアを表示"
+msgstr "별도의 코어 표시"
 
 #: prefs.js:193 prefs.js:191 prefs.js:243
 msgid "Show network speed in bits"
-msgstr "ネットワークの速度をビット単位で表示"
+msgstr "네트워크 속도 표시"
 
 #: prefs.js:205 prefs.js:208 prefs.js:220
 msgid "Sensor"
-msgstr "センサー"
+msgstr "센서"
 
 #: prefs.js:207 prefs.js:210 prefs.js:222
 msgid "Please install lm-sensors"
-msgstr "lm-sensors をインストールしてください"
+msgstr "lm-sensors를 설치하십시오"
 
 #: prefs.js:282 prefs.js:300 prefs.js:336
 msgid "Move the clock"
-msgstr "時計を移動"
+msgstr "시계로 이동"
 
 #: prefs.js:286 prefs.js:289 prefs.js:325
 msgid "Compact Display"
-msgstr "コンパクト表示"
+msgstr "작게 표시"
 
 #: extension.js:746 extension.js:1117 extension.js:1237 extension.js:1238
 msgid "Cpu"
 msgstr "CPU"
 
 msgid "User"
-msgstr "ユーザー"
+msgstr "User"
 
 msgid "System"
-msgstr "システム"
+msgstr "System"
 
 msgid "Other"
-msgstr "その他"
+msgstr "Other"
 
 msgid "Nice"
-msgstr ""
+msgstr "Nice"
 
 msgid "Iowait"
-msgstr ""
+msgstr "Iowait"
 
 #: extension.js:941 extension.js:1378 extension.js:1600 extension.js:1601
 msgid "Memory"
-msgstr "メモリ"
+msgstr "메모리"
 
 msgid "Program"
-msgstr "プログラム"
+msgstr "프로그램"
 
 msgid "Cache"
-msgstr "キャッシュ"
+msgstr "캐시"
 
 msgid "Buffer"
-msgstr "バッファ"
+msgstr "버퍼"
 
 #: extension.js:1134 extension.js:1598 extension.js:1899 extension.js:1900
 msgid "Swap"
-msgstr "スワップ"
+msgstr "스왑"
 
 msgid "Used"
-msgstr "使用済み"
+msgstr "사용량"
 
 #: extension.js:1010 extension.js:1428 extension.js:1710 extension.js:1711
 msgid "Net"
-msgstr "ネット"
+msgstr "네트워크"
 
 #: extension.js:1589
-#, fuzzy
 msgid "Up"
 msgstr " Up"
 
 #: extension.js:1586
-#, fuzzy
 msgid "Down"
 msgstr " Down"
 
 msgid "Uperrors"
-msgstr "Up エラー"
+msgstr "Uperrors"
 
 msgid "Downerrors"
-msgstr "Down エラー"
+msgstr "Downerrors"
 
-#, fuzzy
 msgid "collisions"
-msgstr "コリジョン"
+msgstr "collisions"
 
 msgid "Collisions"
-msgstr "コリジョン"
+msgstr "Collisions"
 
 #: extension.js:836 extension.js:1264 extension.js:1419 extension.js:1420
 msgid "Disk"
-msgstr "ディスク"
+msgstr "디스크"
 
 msgid "Write"
-msgstr "書き込み"
+msgstr "Write"
 
 msgid "Read"
-msgstr "読み込み"
+msgstr "Read"
 
 #: extension.js:1182 extension.js:1312 extension.js:1322 extension.js:1478
 #: extension.js:1510 extension.js:1479 extension.js:1511
@@ -168,98 +160,87 @@ msgstr "W"
 
 #: prefs.js:185 prefs.js:183 prefs.js:202
 msgid "graph"
-msgstr "グラフ"
+msgstr "그래프"
 
 #: prefs.js:185 prefs.js:183 prefs.js:202
 msgid "digit"
-msgstr "数値"
+msgstr "숫자"
 
 #: prefs.js:185 prefs.js:183 prefs.js:202
 msgid "both"
-msgstr "両方"
+msgstr "둘 다"
 
-#, fuzzy
 msgid "cpu"
-msgstr "CPU"
+msgstr "cpu"
 
 #: extension.js:811 extension.js:914 extension.js:915
 msgid "mem"
-msgstr ""
+msgstr "mem"
 
 msgid "swap"
-msgstr ""
+msgstr "swap"
 
-#, fuzzy
 msgid "net"
-msgstr "ネット"
+msgstr "net"
 
 msgid "disk"
-msgstr ""
+msgstr "disk"
 
 #: extension.js:1346 extension.js:1900 extension.js:2436 extension.js:2439
 msgid "Preferences..."
-msgstr "設定..."
+msgstr "설정"
 
 #: extension.js:1340 extension.js:1894 extension.js:2430 extension.js:2433
 msgid "System Monitor..."
-msgstr "システムモニター..."
+msgstr "시스템 감시"
 
-#
 msgid "System monitor"
-msgstr "システムモニター"
+msgstr "시스템 감시"
 
 msgid "user"
-msgstr ""
+msgstr "user"
 
-#, fuzzy
 msgid "system"
-msgstr "システム"
+msgstr "system"
 
-#, fuzzy
 msgid "other"
-msgstr "その他"
+msgstr "other"
 
 msgid "nice"
-msgstr ""
+msgstr "nice"
 
 msgid "iowait"
-msgstr ""
+msgstr "iowait"
 
-#, fuzzy
 msgid "program"
-msgstr "プログラム"
+msgstr "program"
 
-#, fuzzy
 msgid "cache"
-msgstr "キャッシュ"
+msgstr "cache"
 
-#, fuzzy
 msgid "buffer"
-msgstr "バッファ"
+msgstr "buffer"
 
 msgid "used"
-msgstr ""
+msgstr "used"
 
 msgid "up"
-msgstr ""
+msgstr "up"
 
 msgid "down"
-msgstr ""
+msgstr "down"
 
-#, fuzzy
 msgid "uperrors"
-msgstr "Up エラー"
+msgstr "uperrors"
 
-#, fuzzy
 msgid "downerrors"
-msgstr "Down エラー"
+msgstr "downerrors"
 
-#, fuzzy
 msgid "write"
-msgstr "書き込み"
+msgstr "write"
 
 msgid "read"
-msgstr ""
+msgstr "read"
 
 #: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
 #: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
@@ -312,70 +293,67 @@ msgstr "MB"
 #: extension.js:1179 extension.js:1644 extension.js:2002 extension.js:2007
 #: extension.js:2003 extension.js:2008
 msgid "Thermal"
-msgstr "温度"
+msgstr "온도"
 
-#, fuzzy
 msgid "thermal"
-msgstr "温度"
+msgstr "thermal"
 
 #: prefs.js:180 prefs.js:178 prefs.js:186
 msgid "Show In Menu"
-msgstr "メニュー内に表示"
+msgstr "메뉴에 표시"
 
 #: prefs.js:222 prefs.js:229 prefs.js:251
 msgid "Show Time Remaining"
-msgstr "残り時間を表示"
+msgstr "남은 시간 보기"
 
 #: prefs.js:226 prefs.js:233 prefs.js:255
 msgid "Hide System Icon"
-msgstr "システムアイコンを隠す"
+msgstr "시스템 아이콘 숨기기"
 
 #: prefs.js:230 prefs.js:237 prefs.js:259
 msgid "Usage Style"
-msgstr "使用量の表示スタイル"
+msgstr "사용량 스타일"
 
 #: prefs.js:231 prefs.js:238 prefs.js:260
 msgid "pie"
-msgstr "円"
+msgstr "원형"
 
 #: prefs.js:231 prefs.js:238 prefs.js:260
 msgid "bar"
-msgstr "バー"
+msgstr "막대"
 
 #: prefs.js:231 prefs.js:238 prefs.js:260
 msgid "none"
-msgstr "なし"
+msgstr "없음"
 
 #: extension.js:97 extension.js:255 extension.js:299 extension.js:300
 msgid "System Monitor Extension"
-msgstr "システムモニター拡張機能"
+msgstr "시스템 모니터 확장"
 
 #: extension.js:113 extension.js:271 extension.js:315 extension.js:316
 msgid "Cancel"
-msgstr "キャンセル"
+msgstr "취소"
 
 #: extension.js:601 extension.js:875 extension.js:1005 extension.js:1006
 msgid "Battery"
-msgstr "バッテリー"
+msgstr "배터리"
 
-#, fuzzy
 msgid "battery"
-msgstr "バッテリー"
+msgstr "battery"
 
 #: extension.js:896 extension.js:1334 extension.js:1529 extension.js:1530
 msgid "Freq"
-msgstr ""
+msgstr "Freq"
 
 msgid "freq"
-msgstr ""
+msgstr "freq"
 
 #: extension.js:1540 extension.js:1692 extension.js:2077 extension.js:2078
 msgid "Fan"
-msgstr "ファン"
+msgstr "쿨링팬"
 
-#, fuzzy
 msgid "fan"
-msgstr "ファン"
+msgstr "fan"
 
 #: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
 #: extension.js:1722 extension.js:1730 extension.js:2082 extension.js:2112
@@ -385,7 +363,7 @@ msgstr "rpm"
 
 #: prefs.js:294 prefs.js:330
 msgid "Show tooltip"
-msgstr "ツールチップを表示"
+msgstr "툴팁 보기"
 
 #: extension.js:1097 extension.js:1216 extension.js:1217
 msgid "CPU"
@@ -393,24 +371,24 @@ msgstr "CPU"
 
 #: prefs.js:267 prefs.js:268
 msgid "Display temperature in Fahrenheit"
-msgstr "華氏で温度を表示"
+msgstr "화씨 온도로 표시"
 
 #: prefs.js:277 prefs.js:272
 msgid "Temperature threshold (0 to disable)"
-msgstr "温度のしきい値 (0 で無効)"
+msgstr "최대 온도 (0일 때 비활성화)"
 
 #: prefs.js:33
 #, javascript-format
 msgid "#%02x%02x%02x%02x"
-msgstr ""
+msgstr "#%02x%02x%02x%02x"
 
 #: prefs.js:279
 msgid "** Only Nvidia GPUs supported so far **"
-msgstr "** 今のところ Nvidia の GPU のみサポートしています **"
+msgstr "** 현재 엔비디아 그래픽카드만 지원합니다 **"
 
 #: extension.js:1880 extension.js:1881
 msgid " ↓"
-msgstr ""
+msgstr " ↓"
 
 #: extension.js:1886 extension.js:1887
 msgid " KiB/s"
@@ -418,21 +396,21 @@ msgstr " KiB/s"
 
 #: extension.js:1889 extension.js:1890
 msgid " ↑"
-msgstr ""
+msgstr " ↑"
 
 #: extension.js:2132 extension.js:2137 extension.js:2133 extension.js:2138
 msgid "GPU"
 msgstr "GPU"
 
 msgid "Gpu"
-msgstr "GPU"
+msgstr "Gpu"
 
 #: extension.js:79
-#, fuzzy
 msgid ""
 "Dependencies Missing\n"
 "Please install: \n"
-"gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n"
+"gnome-system-monitor and libgtop, clutter and Network Manager gir "
+"bindings \n"
 "\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-"
 "clutter-1.0, gnome-system-monitor \n"
 "\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-"
@@ -443,19 +421,16 @@ msgid ""
 "\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
 "gir1.0, gnome-system-monitor\n"
 msgstr ""
-"依存関係が見つかりません\n"
-"必要なパッケージをインストールして下さい: \n"
-"libgtop, Network Manager, gir bindings \n"
-"\t    Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
-"\t    Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
-"\t    Arch: libgtop, networkmanager\n"
-"\t    openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
-
-#~ msgid " R"
-#~ msgstr " R"
-
-#~ msgid " W"
-#~ msgstr " W"
-
-#~ msgid "battery time remaining"
-#~ msgstr "バッテリーの残り時間"
+"Dependencies Missing\n"
+"Please install: \n"
+"gnome-system-monitor and libgtop, clutter and Network Manager gir "
+"bindings \n"
+"\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-"
+"clutter-1.0, gnome-system-monitor \n"
+"\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-"
+"monitor \n"
+"\t    on Arch: libgtop, networkmanager, gnome-system-monitor\n"
+"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0, "
+"gnome-system-monitor \n"
+"\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
+"gir1.0, gnome-system-monitor\n"

@@ -73,7 +73,7 @@ extract the archive, open a shell into its directory, and run:
 Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc), then run:
 
     GIT_PROJECTS=~/git_projects
-    PROJECT_NAME=system-monitor@paradoxxx.zero.gmail.com
+    PROJECT_NAME=gnome-shell-system-monitor-applet
     mkdir $GIT_PROJECTS
     cd $GIT_PROJECTS
     git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git $PROJECT_NAME
@@ -82,6 +82,7 @@ Alternately, if you plan on doing development on the extension, or testing modif
     { [ -d "./$PROJECT_NAME" ] || [ -L "./$PROJECT_NAME" ]; } && rm -Rf "./$PROJECT_NAME"
     ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
     gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
+    gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
 
 And restart gnome-shell (`Alt + F2`, then `r`) or reboot the machine.
 

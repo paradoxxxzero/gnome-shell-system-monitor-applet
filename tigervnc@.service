@@ -1,0 +1,18 @@
+# TODO wait for release of official service file: https://github.com/TigerVNC/tigervnc/pull/838
+[Unit]
+Description=TigerVNC remote desktop service
+# TODO add dbus target? "systemctl --user start dbus" before starting gnome might fix logout issue
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=default
+PAMName=login
+# NOTE %u not working for PIDFile since this is *not* "User=" https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Specifiers
+PIDFile=/home/default/.vnc/%H%i.pid
+ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
+ExecStart=/usr/bin/vncserver %i -geometry 1366x768 -depth 24 -localhost no -fg
+ExecStop=/bin/sh -c '/usr/bin/vncserver -kill %i > /dev/null 2>&1 || :'
+
+[Install]
+WantedBy=multi-user.target

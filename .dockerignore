@@ -2,3 +2,4 @@
 _build
 archlinux
 dist
+*.out

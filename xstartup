@@ -1,0 +1,16 @@
+#!/bin/sh
+# This is a xstartup script for vncserver.
+# (c) Pete Birley
+
+#export XKL_XMODMAP_DISABLE=1
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+
+#Currently Gnome falls over launching via session, so we need to bring it up manually:
+gnome-panel &
+gnome-settings-daemon &
+metacity &
+nautilus &
+#This script customises and bugfixes gnome - it is being run here - rather than in .gnomerc or similar as these will not work with manausl launch - and the user is already logged in so we arn't using gdm or similar - this should be refactored to run sliently and lock user input/VNC output untill it has completed.
+gnome-terminal -e /usr/local/etc/gnome-docker-fix-and-customise.sh &

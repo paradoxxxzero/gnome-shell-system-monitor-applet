@@ -1,7 +1,5 @@
 #!/bin/bash
-set -e
-
-docker run --name=ubuntu-gnome --it --rm \
+docker run -it --name=ubuntu-gnome --rm \
     --tmpfs /run --tmpfs /run/lock --tmpfs /tmp \
     --cap-add SYS_BOOT --cap-add SYS_ADMIN \
     -v /sys/fs/cgroup:/sys/fs/cgroup \

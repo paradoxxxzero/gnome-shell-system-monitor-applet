@@ -108,6 +108,25 @@ On openSUSE you need to install a devel package that provides the `gnome-shell-e
 
 If we do not have the translation for your language and you want to translate it by yourself, please make a fork, add your `po/<YOUR_LANG>/system-monitor-applet.po` file, and make a pull request.
 
+#### Testing
+
+Testing can be done on your native Linux environment using the install instructions above, or through Docker.
+
+To build and run a Docker image:
+
+    ./build-docker.sh
+    ./run-docker.sh
+
+To connect to the container's desktop through VNC:
+
+    ./open-docker.sh
+
+Once logged in, you'll still need to manually enable the extension by open the Gnome Tweaks tool.
+
+Afterwards, when you're done testing, you can destroy the container with:
+
+    ./close-docker.sh
+
 #### Deployment
     
 1. To create a ZIP file with the specified version number, ready to upload to [GNOME Shell Extensions](https://extensions.gnome.org/) or similar repository, run:

@@ -2,19 +2,22 @@
 FROM ubuntu:20.04
 
 ENV container docker
+
+# Ensure apt doesn't block waiting to prompt us.
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install locale
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    locales && \
-    echo "$LANG UTF-8" >> /etc/locale.gen && \
-    locale-gen && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install locale.
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales \
+    && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
+    && dpkg-reconfigure --frontend=noninteractive locales \
+    && update-locale LANG=en_US.UTF-8
+ENV LANG en_US.UTF-8 
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+ENV LC_CTYPE en_US.UTF-8
 
-# Install systemd
+# Install systemd.
 RUN apt-get update && apt-get install -y \
     dbus dbus-x11 systemd && \
     apt-get clean && \
@@ -27,7 +30,7 @@ VOLUME ["/sys/fs/cgroup"]
 STOPSIGNAL SIGRTMIN+3
 CMD [ "/sbin/init" ]
 
-# Install GNOME
+# Install GNOME.
 # NOTE if you want plain gnome, use: apt-get install -y --no-install-recommends gnome-session gnome-terminal and remove the modification of /etc/gdm3/custom.conf
 RUN apt-get update \
   && apt-get install -y ubuntu-desktop fcitx-config-gtk gnome-tweak-tool gnome-usage git \
@@ -39,7 +42,7 @@ RUN apt-get update \
 RUN apt-get update \
   && apt-get install -y gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
 
-# Install TigerVNC server
+# Install TigerVNC server.
 # TODO set VNC port in service file > exec command
 # TODO check if it works with default config file
 # NOTE tigervnc because of XKB extension: https://github.com/i3/i3/issues/1983
@@ -59,7 +62,7 @@ COPY tigervnc@.service /etc/systemd/system/tigervnc@.service
 RUN systemctl enable tigervnc@:1
 EXPOSE 5901
 
-# Install noVNC
+# Install noVNC.
 # TODO novnc depends on net-tools until version 1.1.0: https://github.com/novnc/noVNC/issues/1075
 RUN apt-get update && apt-get install -y \
     net-tools novnc \
@@ -71,7 +74,7 @@ COPY novnc.service /etc/systemd/system/novnc.service
 RUN systemctl enable novnc
 EXPOSE 6901
 
-# Create unprivileged user
+# Create unprivileged user.
 # NOTE user hardcoded in tigervnc.service
 # NOTE alternative is to use libnss_switch and create user at runtime -> use entrypoint script
 ARG UID=1000
@@ -92,11 +95,12 @@ RUN sudo bash -c 'echo "X-GNOME-Autostart-enabled=false" >> /etc/xdg/autostart/g
 RUN mkdir -p $HOME/.local/share/gnome-shell/extensions
 COPY ./system-monitor@paradoxxx.zero.gmail.com $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com
 RUN gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
+#TODO: gnome-extensions enable doesn't seem to work since dbus isn't running
 
-# Set up VNC
+# Set up VNC.
 RUN mkdir -p $HOME/.vnc
 COPY xstartup $HOME/.vnc/xstartup
-RUN echo "acoman" | vncpasswd -f >> $HOME/.vnc/passwd && chmod 600 $HOME/.vnc/passwd
+RUN echo "password" | vncpasswd -f >> $HOME/.vnc/passwd && chmod 600 $HOME/.vnc/passwd
 
-# switch back to root to start systemd
+# Switch back to root to start systemd.
 USER root

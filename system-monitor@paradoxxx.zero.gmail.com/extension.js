@@ -49,7 +49,7 @@ var Me = ExtensionUtils.getCurrentExtension();
 var Convenience = Me.imports.convenience;
 var Compat = Me.imports.compat;
 
-var Background, GTop, IconSize, Locale, MountsMonitor, NM, NetworkManager, Schema, StatusArea, Style, TipItem, gc_timeout, menu_timeout;
+var Background, GTop, IconSize, Locale, MountsMonitor, NM, NetworkManager, Schema, StatusArea, Style, gc_timeout, menu_timeout;
 
 try {
     GTop = imports.gi.GTop;
@@ -669,6 +669,8 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
+var TipItem = null;
+
 if (shell_Version < '3.36') {
     TipItem = class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
         constructor() {
@@ -683,7 +685,7 @@ if (shell_Version < '3.36') {
         {
             GTypeName: 'TipItem'
         },
-        class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
+        class TipItem extends PopupMenu.PopupBaseMenuItem {
             _init() {
                 super._init();
                 // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);
@@ -693,7 +695,6 @@ if (shell_Version < '3.36') {
         }
     );
 }
-
 const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
     constructor(sourceActor) {
         // PopupMenu.PopupMenuBase.prototype._init.call(this, sourceActor, 'sm-tooltip-box');

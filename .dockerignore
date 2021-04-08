@@ -1,0 +1,5 @@
+.git
+_build
+archlinux
+dist
+*.out

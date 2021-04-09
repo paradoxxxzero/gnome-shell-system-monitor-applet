@@ -111,7 +111,7 @@ const ColorSelect = class SystemMonitor_ColorSelect {
     constructor(name) {
         this.label = new Gtk.Label({label: name + _(':')});
         this.picker = new Gtk.ColorButton();
-        this.actor = box(5);
+        this.actor = box(true, 5);
         this.actor.add(this.label);
         this.actor.add(this.picker);
         this.picker.set_use_alpha(true);

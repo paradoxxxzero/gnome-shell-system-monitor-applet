@@ -1,3 +1,22 @@
+![Extension uploader](https://github.com/mgalgs/gnome-shell-system-monitor-applet/workflows/Extension%20uploader/badge.svg)
+![Repo syncer](https://github.com/mgalgs/gnome-shell-system-monitor-applet/workflows/Repo%20syncer/badge.svg)
+
+This fork of `paradoxxxzero/gnome-shell-system-monitor-applet` is for
+packaging purposes only. This fork contains Github Actions workflows
+([here](.github/workflows)) to continuously sync against the upstream
+`master` branch and upload the resulting build to extensions.gnome.org
+([system-monitor-next](https://extensions.gnome.org/extension/3010/system-monitor-next/)).
+
+Any issues, bug reports, feature requests, etc. for the extension itself
+should be submitted to the [upstream
+repo](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet),
+but build/sync issues should be reported here.
+
+The approach in this repo is preferable for users on bleeding edge
+distributions who prefer not to wait for a stable release from the main
+repo. Of course, since we're releasing directly from `master` some
+instability is inevitable.
+
 ## GNOME Shell system monitor extension
 
 [![Build Status](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet)

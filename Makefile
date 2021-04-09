@@ -123,6 +123,7 @@ ZIPFILE=$(UUID)$(VSTRING).zip
 
 zip-file: build.clean build
 	$(Q)cd _build ; zip $(V) -qr $(ZIPFILE) .
+	$(Q)mkdir -p dist
 	$(Q)mv _build/$(ZIPFILE) ./dist/$(ZIPFILE)
 	$(call msg,$@,OK)
 

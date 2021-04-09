@@ -1,0 +1,23 @@
+name: Extension uploader
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - 'system-monitor@paradoxxx.zero.gmail.com/**'
+jobs:
+  upload_plz_thx:
+    name: Uploader
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: ./actions/uploader/
+      uses: ./actions/uploader/
+      env:
+        USERNAME: ${{ secrets.GNOME_USERNAME }}
+        PASSWORD: ${{ secrets.GNOME_PASSWORD }}
+    - name: Archive extension zipball
+      uses: actions/upload-artifact@v2
+      with:
+        name: zipball
+        path: dist/system-monitor@paradoxxx.zero.gmail.com.zip

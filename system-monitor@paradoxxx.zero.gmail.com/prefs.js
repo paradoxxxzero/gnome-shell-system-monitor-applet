@@ -69,39 +69,52 @@ function check_sensors(sensor_type) {
     return [sensor_list, string_list];
 }
 
-function box(isHorizontal, spacing, hasBorder) {
+/**
+ * @param args.hasBorder Whether the box has a border (true) or not
+ * @param args.horizontal Whether the box is horizontal (true)
+ *      or vertical (false)
+ * @param args.shouldPack Determines whether a horizontal box should have
+ *      uniform spacing for its children. Only applies to horizontal boxes
+ * @param args.spacing The amount of spacing for a given box
+ * @returns a new Box with settings specified by args
+ */
+function box(args = {}) {
     const options = { };
 
-    if (typeof spacing !== 'undefined') {
-        options.spacing = spacing;
+    if (typeof args.spacing !== 'undefined') {
+        options.spacing = args.spacing;
     }
 
     if (shellMajorVersion < 40) {
-        if (hasBorder) {
+        if (args.hasBorder) {
             options.border_width = 10;
         }
 
-        return isHorizontal ? new Gtk.HBox(options) : new Gtk.VBox(options);
+        return args.horizontal ?
+            new Gtk.HBox(options) : new Gtk.VBox(options);
     }
 
-    if (hasBorder) {
+    if (args.hasBorder) {
         options.margin_top = 10;
         options.margin_bottom = 10;
         options.margin_start = 10;
         options.margin_end = 10;
     }
 
-    options.orientation = isHorizontal ?
+    options.orientation = args.horizontal ?
         Gtk.Orientation.HORIZONTAL : Gtk.Orientation.VERTICAL;
 
     const aliasBox = new Gtk.Box(options);
 
-    if (isHorizontal) {
+    if (args.shouldPack) {
         aliasBox.set_homogeneous(true);
     }
 
+
     aliasBox.add = aliasBox.append;
     aliasBox.pack_start = aliasBox.prepend;
+    // normally, this would be append; it is aliased to prepend because
+    // that appears to yield the same behavior as version < 40
     aliasBox.pack_end = aliasBox.prepend;
 
     return aliasBox;
@@ -111,7 +124,7 @@ const ColorSelect = class SystemMonitor_ColorSelect {
     constructor(name) {
         this.label = new Gtk.Label({label: name + _(':')});
         this.picker = new Gtk.ColorButton();
-        this.actor = box(true, 5);
+        this.actor = box({horizontal: true, spacing: 5});
         this.actor.add(this.label);
         this.actor.add(this.picker);
         this.picker.set_use_alpha(true);
@@ -129,7 +142,7 @@ const IntSelect = class SystemMonitor_IntSelect {
     constructor(name) {
         this.label = new Gtk.Label({label: name + _(':')});
         this.spin = new Gtk.SpinButton();
-        this.actor = box(true);
+        this.actor = box({horizontal: true, shouldPack: true, });
         this.actor.add(this.label);
         this.actor.add(this.spin);
         this.spin.set_numeric(true);
@@ -148,7 +161,7 @@ const Select = class SystemMonitor_Select {
         this.label = new Gtk.Label({label: name + _(':')});
         // this.label.set_justify(Gtk.Justification.RIGHT);
         this.selector = new Gtk.ComboBoxText();
-        this.actor = box(true, 5);
+        this.actor = box({horizontal: true, shouldPack: true, spacing: 5});
         this.actor.add(this.label);
         this.actor.add(this.selector);
     }
@@ -179,11 +192,11 @@ const SettingFrame = class SystemMonitor {
         this.schema = schema;
         this.label = new Gtk.Label({label: name});
 
-        this.vbox = box(false, 20);
-        this.hbox0 = box(true, 20);
-        this.hbox1 = box(true, 20);
-        this.hbox2 = box(true, 20);
-        this.hbox3 = box(true, 20);
+        this.vbox = box({horizontal: false, shouldPack: true, spacing: 20});
+        this.hbox0 = box({horizontal: true, shouldPack: true, spacing: 20});
+        this.hbox1 = box({horizontal: true, shouldPack: true, spacing: 20});
+        this.hbox2 = box({horizontal: true, shouldPack: true, spacing: 20});
+        this.hbox3 = box({horizontal: true, shouldPack: true, spacing: 20});
 
         if (shellMajorVersion < 40) {
             this.frame = new Gtk.Frame({border_width: 10});
@@ -382,8 +395,10 @@ const App = class SystemMonitor_App {
             this.settings[setting] = new SettingFrame(_(setting.capitalize()), Schema);
         });
 
-        this.main_vbox = box(false, 10, true);
-        this.hbox1 = box(true, 20, true);
+        this.main_vbox = box({
+            hasBorder: true, horizontal: false, spacing: 10});
+        this.hbox1 = box({
+            hasBorder: true, horizontal: true, shouldPack: true, spacing: 20});
         this.main_vbox.pack_start(this.hbox1, false, false, 0);
 
         keys.forEach((key) => {

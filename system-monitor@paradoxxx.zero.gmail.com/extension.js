@@ -915,8 +915,10 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         this.interval = l_limit(Schema.get_int(this.elt + '-refresh-time'));
         this.timeout = Mainloop.timeout_add(
             this.interval,
-            this.update.bind(this)
+            this.update.bind(this),
+            GLib.PRIORITY_DEFAULT_IDLE
         );
+
         Schema.connect(
             'changed::' + this.elt + '-refresh-time',
             (schema, key) => {
@@ -924,7 +926,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.timeout = null;
                 this.interval = l_limit(Schema.get_int(key));
                 this.timeout = Mainloop.timeout_add(
-                    this.interval, this.update.bind(this));
+                    this.interval, this.update.bind(this), GLib.PRIORITY_DEFAULT_IDLE);
             });
         Schema.connect('changed::' + this.elt + '-graph-width',
             this.chart.resize.bind(this.chart));
@@ -936,7 +938,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                     this.timeout = null;
                     this.reset_style();
                     this.timeout = Mainloop.timeout_add(
-                        this.interval, this.update.bind(this));
+                        this.interval, this.update.bind(this), GLib.PRIORITY_DEFAULT_IDLE);
                 });
         }
 

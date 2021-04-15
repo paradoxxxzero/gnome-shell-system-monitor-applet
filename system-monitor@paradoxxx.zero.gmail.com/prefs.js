@@ -2,7 +2,6 @@ const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
 const Gdk = imports.gi.Gdk;
 const GLib = imports.gi.GLib;
-const Clutter = imports.gi.Clutter;
 const ByteArray = imports.byteArray;
 
 const Gettext = imports.gettext.domain('system-monitor');

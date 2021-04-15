@@ -2221,11 +2221,18 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             global.logError('gpu_usage.sh invocation failed');
         }
     }
+    _sanitizeUsageValue(val) {
+        val = parseInt(val);
+        if (isNaN(val)) {
+            val = 0
+        }
+        return val;
+    }
     _readTemperature(procOutput) {
         let usage = procOutput.split('\n');
-        let memTotal = parseInt(usage[0]);
-        let memUsed = parseInt(usage[1]);
-        this.percentage = parseInt(usage[2]);
+        let memTotal = this._sanitizeUsageValue(usage[0]);
+        let memUsed = this._sanitizeUsageValue(usage[1]);
+        this.percentage = this._sanitizeUsageValue(usage[2]);
         if (typeof this.useGiB === 'undefined') {
             this._unit(memTotal);
             this._update_unit();

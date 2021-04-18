@@ -23,7 +23,6 @@
 checkcommand()
 {
 	type $1 > /dev/null 2>&1
-	return "$?"
 }
 
 # This will print three lines. The first one is the the total vRAM available,

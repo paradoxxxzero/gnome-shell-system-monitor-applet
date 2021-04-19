@@ -55,9 +55,9 @@ function check_sensors(sensor_type) {
         if (file.query_exists(null)) {
             // load_contents (and even cat) fails with "Invalid argument" for some label files
             try {
-                const result = file.load_contents(null);
-                if (result[0]) {
-                    return String(parse_bytearray(result[1])).split('\n')[0];
+                let [success, contents] = file.load_contents(null);
+                if (success) {
+                    return String(parse_bytearray(contents)).split('\n')[0];
                 }
             } catch (e) {
                 log('[System monitor] error loading label from file ' + file.get_path() + ': ' + e);

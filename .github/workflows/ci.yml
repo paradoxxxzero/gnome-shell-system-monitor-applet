@@ -1,0 +1,19 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  # For more information on GitHub's ShellCheck Action:
+  # https://github.com/marketplace/actions/shellcheck
+  # For more information on shellcheck failures:
+  # https://github.com/koalaman/shellcheck/wiki/Checks
+  shellcheck:
+    name: shellcheck
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: shellcheck
+      uses: ludeeus/action-shellcheck@master
+      with:
+        # When/if all warnings are fixed, remove this to use the default
+        # behavior to fail (already) on warnings instead:
+        severity: error

@@ -30,8 +30,8 @@ checkcommand()
 if checkcommand nvidia-smi; then
 	nvidia-smi -i 0 --query-gpu=memory.total,memory.used,utilization.gpu --format=csv,noheader,nounits | sed 's%, %\n%g'
 elif checkcommand glxinfo; then
-	TOTALVRAM="`glxinfo | grep -A2 -i GL_NVX_gpu_memory_info | grep -E -i "dedicated" | cut -f2- -d ':' | gawk '{print $1}'`"
-	AVAILVRAM="`glxinfo | grep -A4 -i GL_NVX_gpu_memory_info | grep -E -i "available dedicated" | cut -f2- -d ':' | gawk '{print $1}'`"
+	TOTALVRAM=$(glxinfo | grep -A2 -i GL_NVX_gpu_memory_info | grep -E -i "dedicated" | cut -f2- -d ':' | gawk '{print $1}')
+	AVAILVRAM=$(glxinfo | grep -A4 -i GL_NVX_gpu_memory_info | grep -E -i "available dedicated" | cut -f2- -d ':' | gawk '{print $1}')
 	let FREEVRAM=TOTALVRAM-AVAILVRAM
 	echo "$TOTALVRAM"
 	echo "$FREEVRAM"

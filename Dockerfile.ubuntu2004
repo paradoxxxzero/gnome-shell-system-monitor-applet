@@ -102,5 +102,14 @@ RUN mkdir -p $HOME/.vnc
 COPY xstartup $HOME/.vnc/xstartup
 RUN echo "password" | vncpasswd -f >> $HOME/.vnc/passwd && chmod 600 $HOME/.vnc/passwd
 
+# Set up GUI testing environment
+RUN sudo apt-get update \
+    && sudo apt-get install -y python3-pip \
+    && sudo apt-get clean -y \
+    && sudo rm -rf /var/lib/apt/lists/*
+RUN pip3 install --user dogtail
+RUN chmod +x "/home/${USER}/.local/bin"/*
+RUN echo "export PATH=\"\$PATH:/home/${USER}/.local/bin\"" >> "/home/${USER}/.bashrc"
+
 # Switch back to root to start systemd.
 USER root

@@ -398,21 +398,17 @@ const Chart = class SystemMonitor_Chart {
         }
         cr.$dispose();
     }
-    resize(schema, key) {
-        let old_width = this.width;
-        this.width = Schema.get_int(key);
-        if (old_width === this.width) {
+    resize(width) {
+        if (this.width === width) {
             return;
         }
-        if (Style.get('') === '-compact') {
-            this.width = Math.round(this.width / 1.5);
-        }
-        this.actor.set_width(this.width);
+        this.width = width;
         if (this.width < this.data[0].length) {
             for (let i = 0; i < this.parentC.colors.length; i++) {
                 this.data[i] = this.data[i].slice(-this.width);
             }
         }
+        this.actor.set_width(this.width); // repaints
     }
 }
 
@@ -928,8 +924,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.timeout = Mainloop.timeout_add(
                     this.interval, this.update.bind(this), GLib.PRIORITY_DEFAULT_IDLE);
             });
-        Schema.connect('changed::' + this.elt + '-graph-width',
-            this.chart.resize.bind(this.chart));
+        Schema.connect('changed::' + this.elt + '-graph-width', this.resize.bind(this));
 
         if (this.elt === 'thermal') {
             Schema.connect('changed::thermal-threshold',
@@ -1019,6 +1014,13 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.text_items[0].set_style('color: rgba(255, 255, 255, 1)');
             }
         }
+    }
+    resize(schema, key) {
+        let width = Schema.get_int(key);
+        if (Style.get('') === '-compact') {
+            width = Math.round(width / 1.5);
+        }
+        this.chart.resize(width);
     }
     destroy() {
         TipBox.prototype.destroy.call(this);

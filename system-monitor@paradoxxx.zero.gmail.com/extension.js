@@ -391,14 +391,26 @@ const Chart = class SystemMonitor_Chart {
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.parentC.colors.length - 1; i >= 0; i--) {
-            cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1; j >= 0; j--) {
-                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
+            let samples = this.data[i].length - 1;
+            if (samples > 0) {
+                cr.moveTo(width, height); // bottom right
+                let x = width - 0.25 * this.scale_factor;
+                cr.lineTo(x, (1 - this.data[i][samples] / max) * height);
+                x -= 0.5 * this.scale_factor;
+                for (let j = samples; j >= 0; j--) {
+                    let y = (1 - this.data[i][j] / max) * height;
+                    cr.lineTo(x, y);
+                    x -= 0.5 * this.scale_factor;
+                    cr.lineTo(x, y);
+                    x -= 0.5 * this.scale_factor;
+                }
+                x += 0.25 * this.scale_factor;
+                cr.lineTo(x, (1 - this.data[i][0] / max) * height);
+                cr.lineTo(x, height);
+                cr.closePath();
+                Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
+                cr.fill();
             }
-            cr.lineTo(width - (this.data[i].length - 1), height);
-            cr.closePath();
-            Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
-            cr.fill();
         }
         cr.$dispose();
     }

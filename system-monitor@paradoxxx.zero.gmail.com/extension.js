@@ -573,8 +573,8 @@ const Graph = class SystemMonitor_Graph {
             this.text_scaling = 1;
         }
 
-        this.actor.set_width(this.width * this.scale_factor);
-        this.actor.set_height(this.height * this.scale_factor);
+        this.actor.set_width(this.width * this.scale_factor * this.text_scaling);
+        this.actor.set_height(this.height * this.scale_factor * this.text_scaling);
         this.actor.connect('repaint', this._draw.bind(this));
     }
     create_menu_item() {
@@ -591,16 +591,16 @@ const Graph = class SystemMonitor_Graph {
     }
     set_scale(themeContext) {
         this.scale_factor = themeContext.scale_factor;
-        this.actor.set_width(this.width * this.scale_factor);
-        this.actor.set_height(this.height * this.scale_factor);
+        this.actor.set_width(this.width * this.scale_factor * this.text_scaling);
+        this.actor.set_height(this.height * this.scale_factor * this.text_scaling);
     }
     set_text_scaling(interfaceSettings, key) {
         // FIXME: for some reason we only get this signal once, not on later
         // changes to the setting
         //log('[System monitor] got text scaling signal');
         this.text_scaling = interfaceSettings.get_double(key);
-        this.actor.set_width(this.width * this.scale_factor);
-        this.actor.set_height(this.height * this.scale_factor);
+        this.actor.set_width(this.width * this.scale_factor * this.text_scaling);
+        this.actor.set_height(this.height * this.scale_factor * this.text_scaling);
     }
 }
 

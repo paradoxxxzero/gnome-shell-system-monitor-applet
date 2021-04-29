@@ -2076,8 +2076,6 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
     }
     _apply() {
         this.text_items[0].text = this.menu_items[0].text = this.temperature_text();
-        // Making it looks better in chart.
-        // this.vals = [this.temperature / 100];
         this.temp_over_threshold = this.temperature > Schema.get_int('thermal-threshold');
         this.vals = [this.temperature];
         this.tip_vals[0] = this.temperature_text();

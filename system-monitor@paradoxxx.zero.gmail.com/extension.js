@@ -220,7 +220,6 @@ const smStyleManager = class SystemMonitor_smStyleManager {
         this._bar_width = 300;
         this._bar_height = 150;
         this._bar_fontsize = 14;
-        this._text_scaling = 1;
         this._compact = Schema.get_boolean('compact-display');
 
         if (this._compact) {
@@ -239,14 +238,6 @@ const smStyleManager = class SystemMonitor_smStyleManager {
             this._bar_width *= 3 / 5;
             this._bar_height *= 3 / 5;
             this._bar_fontsize = 12;
-        }
-
-        let interfaceSettings = new Gio.Settings({
-            schema: 'org.gnome.desktop.interface'
-        });
-        this._text_scaling = interfaceSettings.get_double('text-scaling-factor');
-        if (!this._text_scaling) {
-            this._text_scaling = 1;
         }
     }
     get(style) {
@@ -283,7 +274,7 @@ const smStyleManager = class SystemMonitor_smStyleManager {
         return this._pie_height;
     }
     pie_fontsize() {
-        return this._pie_fontsize * this._text_scaling;
+        return this._pie_fontsize;
     }
     bar_width() {
         return this._bar_width;
@@ -292,10 +283,7 @@ const smStyleManager = class SystemMonitor_smStyleManager {
         return this._bar_height;
     }
     bar_fontsize() {
-        return this._bar_fontsize * this._text_scaling;
-    }
-    text_scaling() {
-        return this._text_scaling;
+        return this._bar_fontsize;
     }
 }
 
@@ -567,14 +555,27 @@ const Graph = class SystemMonitor_Graph {
         this.actor = new St.DrawingArea({style_class: Style.get('sm-chart'), reactive: false});
         this.width = width;
         this.height = height;
-        this.actor.set_width(this.width);
-        this.actor.set_height(this.height);
-        this.actor.connect('repaint', this._draw.bind(this));
         this.gtop = new GTop.glibtop_fsusage();
         this.colors = ['#888', '#aaa', '#ccc'];
         for (let color in this.colors) {
             this.colors[color] = color_from_string(this.colors[color]);
         }
+
+        let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        themeContext.connect('notify::scale-factor', this.set_scale.bind(this));
+        this.scale_factor = themeContext.scale_factor;
+        let interfaceSettings = new Gio.Settings({
+            schema: 'org.gnome.desktop.interface'
+        });
+        interfaceSettings.connect('changed', this.set_text_scaling.bind(this));
+        this.text_scaling = interfaceSettings.get_double('text-scaling-factor');
+        if (!this.text_scaling) {
+            this.text_scaling = 1;
+        }
+
+        this.actor.set_width(this.width * this.scale_factor);
+        this.actor.set_height(this.height * this.scale_factor);
+        this.actor.connect('repaint', this._draw.bind(this));
     }
     create_menu_item() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
@@ -588,6 +589,19 @@ const Graph = class SystemMonitor_Graph {
     show(visible) {
         this.menu_item.actor.visible = visible;
     }
+    set_scale(themeContext) {
+        this.scale_factor = themeContext.scale_factor;
+        this.actor.set_width(this.width * this.scale_factor);
+        this.actor.set_height(this.height * this.scale_factor);
+    }
+    set_text_scaling(interfaceSettings, key) {
+        // FIXME: for some reason we only get this signal once, not on later
+        // changes to the setting
+        //log('[System monitor] got text scaling signal');
+        this.text_scaling = interfaceSettings.get_double(key);
+        this.actor.set_width(this.width * this.scale_factor);
+        this.actor.set_height(this.height * this.scale_factor);
+    }
 }
 
 const Bar = class SystemMonitor_Bar extends Graph {
@@ -595,22 +609,21 @@ const Bar = class SystemMonitor_Bar extends Graph {
         super(width, height);
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
-        this.thickness = 15 * Style.text_scaling();
-        this.fontsize = Style.bar_fontsize();
-        this.actor.set_height(this.mounts.length * (3 * this.thickness));
     }
     _draw() {
         if (!this.actor.visible) {
             return;
         }
-        this.actor.set_height(this.mounts.length * (3 * this.thickness));
+        let thickness = 15 * this.scale_factor * this.text_scaling;
+        let fontsize = Style.bar_fontsize() * this.scale_factor * this.text_scaling;
+        this.actor.set_height(this.mounts.length * (3 * thickness));
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
 
         let x0 = width / 8;
-        let y0 = this.thickness / 2;
-        cr.setLineWidth(this.thickness);
-        cr.setFontSize(this.fontsize);
+        let y0 = thickness / 2;
+        cr.setLineWidth(thickness);
+        cr.setFontSize(fontsize);
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
@@ -620,16 +633,16 @@ const Bar = class SystemMonitor_Bar extends Graph {
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
-            cr.moveTo(0, y0 + this.thickness / 3);
+            cr.moveTo(0, y0 + thickness / 3);
             cr.showText(text);
-            cr.moveTo(width - x0, y0 + this.thickness / 3);
+            cr.moveTo(width - x0, y0 + thickness / 3);
             cr.showText(Math.round(perc_full * 100).toString() + '%');
-            y0 += (5 * this.thickness) / 4;
+            y0 += (5 * thickness) / 4;
 
             cr.moveTo(0, y0);
             cr.relLineTo(perc_full * width, 0);
             cr.stroke();
-            y0 += (7 * this.thickness) / 4;
+            y0 += (7 * thickness) / 4;
         }
         cr.$dispose();
     }
@@ -667,9 +680,8 @@ const Pie = class SystemMonitor_Pie extends Graph {
         let rings = (this.mounts.length > 7 ? this.mounts.length : 7);
         // If the text is scaled, we need to make more space for it. Hence, we
         // make the lines thicker.
-        let text_scaling = Style.text_scaling();
-        let thickness = (2 * rc) / (3 * rings) * text_scaling;
-        let fontsize = Style.pie_fontsize();
+        let thickness = (2 * rc) / (3 * rings) * this.text_scaling;
+        let fontsize = Style.pie_fontsize() *  this.scale_factor * this.text_scaling;
         let r = rc - (thickness / 2);
         cr.setLineWidth(thickness);
         cr.setFontSize(fontsize);

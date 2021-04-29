@@ -2081,7 +2081,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         this.temp_over_threshold = this.temperature > Schema.get_int('thermal-threshold');
         this.vals = [this.temperature];
         this.tip_vals[0] = this.temperature_text();
-        this.menu_items[1].text = this.temperature_symbol();
+        this.text_items[1].text = this.menu_items[1].text = this.temperature_symbol();
         this.tip_unit_labels[0].text = _(this.temperature_symbol());
     }
     create_text_items() {

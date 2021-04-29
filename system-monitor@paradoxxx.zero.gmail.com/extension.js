@@ -2066,9 +2066,6 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
                 this.temperature = Math.round(parseInt(parse_bytearray(as_r[1])) / 1000);
-                if (this.fahrenheit_unit) {
-                    this.temperature = Math.round(this.temperature * 1.8 + 32);
-                }
             });
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -2110,7 +2107,11 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         ];
     }
     temperature_text() {
-        return this.temperature.toString();
+        let temperature = this.temperature;
+        if (this.fahrenheit_unit) {
+            temperature = Math.round(temperature * 1.8 + 32);
+        }
+        return temperature.toString();
     }
     temperature_symbol() {
         return this.fahrenheit_unit ? '°F' : '°C';

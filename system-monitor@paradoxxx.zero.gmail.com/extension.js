@@ -344,13 +344,17 @@ const Chart = class SystemMonitor_Chart {
     constructor(width, height, parent) {
         this.actor = new St.DrawingArea({style_class: Style.get('sm-chart'), reactive: false});
         this.parentC = parent;
-        this.actor.set_width(this.width = width);
-        this.actor.set_height(this.height = height);
-        this.actor.connect('repaint', this._draw.bind(this));
+        this.width = width;
+        let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        this.scale_factor = themeContext.scale_factor;
+        this.actor.set_width(this.width * this.scale_factor);
+        this.actor.set_height(height);
         this.data = [];
         for (let i = 0; i < this.parentC.colors.length; i++) {
             this.data[i] = [];
         }
+        themeContext.connect('notify::scale-factor', this.rescale.bind(this));
+        this.actor.connect('repaint', this._draw.bind(this));
     }
     update() {
         let data_a = this.parentC.vals;
@@ -408,7 +412,11 @@ const Chart = class SystemMonitor_Chart {
                 this.data[i] = this.data[i].slice(-this.width);
             }
         }
-        this.actor.set_width(this.width); // repaints
+        this.actor.set_width(this.width * this.scale_factor); // repaints
+    }
+    rescale(themeContext) {
+        this.scale_factor = themeContext.scale_factor;
+        this.actor.set_width(this.width * this.scale_factor); // repaints
     }
 }
 

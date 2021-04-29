@@ -672,7 +672,6 @@ const Pie = class SystemMonitor_Pie extends Graph {
         let cr = this.actor.get_context();
         let xc = width / 2;
         let yc = height / 2;
-        let rc = Math.min(xc, yc);
         let pi = Math.PI;
         function arc(r, value, max, angle) {
             if (max === 0) {
@@ -682,26 +681,33 @@ const Pie = class SystemMonitor_Pie extends Graph {
             cr.arc(xc, yc, r, angle, new_angle);
             return new_angle;
         }
-        let rings = (this.mounts.length > 7 ? this.mounts.length : 7);
-        // If the text is scaled, we need to make more space for it. Hence, we
-        // make the lines thicker.
-        let thickness = (2 * rc) / (3 * rings) * this.text_scaling;
-        let fontsize = Style.pie_fontsize() *  this.scale_factor * this.text_scaling;
-        let r = rc - (thickness / 2);
+
+        // Set the ring thickness so that at least 7 rings can be displayed. If
+        // there are more mounts, make the rings thinner. If the rings are too
+        // thin to have a line height of 1.2 for the labels, shrink the labels.
+        let rings = Math.max(this.mounts.length, 7);
+        let ring_width = width / (2 * rings);
+        let fontsize = Style.pie_fontsize() * this.scale_factor * this.text_scaling;
+        if (ring_width < 1.2 * fontsize) {
+            fontsize = ring_width / 1.2;
+        }
+        let thickness = ring_width / 1.5;
+
         cr.setLineWidth(thickness);
         cr.setFontSize(fontsize);
+        let r = (height - ring_width) / 2;
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
-            cr.moveTo(0, yc - r + thickness / 2);
+            cr.moveTo(0, yc - r + fontsize / 2);
             var text = this.mounts[mount];
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
             cr.showText(text);
             cr.stroke();
-            r -= (3 * thickness) / 2;
+            r -= ring_width;
         }
         cr.$dispose();
     }

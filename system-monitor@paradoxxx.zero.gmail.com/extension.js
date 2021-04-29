@@ -214,11 +214,9 @@ const smStyleManager = class SystemMonitor_smStyleManager {
         this._netunits_kbits = _('kbit/s');
         this._netunits_mbits = _('Mbit/s');
         this._netunits_gbits = _('Gbit/s');
-        this._pie_width = 300;
-        this._pie_height = 300;
+        this._pie_size = 300;
         this._pie_fontsize = 14;
         this._bar_width = 300;
-        this._bar_height = 150;
         this._bar_thickness = 15;
         this._bar_fontsize = 14;
         this._compact = Schema.get_boolean('compact-display');
@@ -233,11 +231,9 @@ const smStyleManager = class SystemMonitor_smStyleManager {
             this._netunits_kbits = 'kb';
             this._netunits_mbits = 'Mb';
             this._netunits_gbits = 'Gb';
-            this._pie_width *= 4 / 5;
-            this._pie_height *= 4 / 5;
+            this._pie_size *= 4 / 5;
             this._pie_fontsize = 12;
             this._bar_width *= 3 / 5;
-            this._bar_height *= 3 / 5;
             this._bar_thickness = 12;
             this._bar_fontsize = 12;
         }
@@ -269,20 +265,14 @@ const smStyleManager = class SystemMonitor_smStyleManager {
     netunits_gbits() {
         return this._netunits_gbits;
     }
-    pie_width() {
-        return this._pie_width;
-    }
-    pie_height() {
-        return this._pie_height;
+    pie_size() {
+        return this._pie_size;
     }
     pie_fontsize() {
         return this._pie_fontsize;
     }
     bar_width() {
         return this._bar_width;
-    }
-    bar_height() {
-        return this._bar_height;
     }
     bar_thickness() {
         return this._bar_thickness;
@@ -610,8 +600,9 @@ const Graph = class SystemMonitor_Graph {
 }
 
 const Bar = class SystemMonitor_Bar extends Graph {
-    constructor(width, height) {
-        super(width, height);
+    constructor() {
+        // Height doesn't matter, it gets set on every draw.
+        super(Style.bar_width(), 100);
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
     }
@@ -658,8 +649,8 @@ const Bar = class SystemMonitor_Bar extends Graph {
 }
 
 const Pie = class SystemMonitor_Pie extends Graph {
-    constructor(width, height) {
-        super(width, height);
+    constructor() {
+        super(Style.pie_size(), Style.pie_size());
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
     }
@@ -2438,8 +2429,8 @@ function enable() {
         Main.__sm = {
             tray: new PanelMenu.Button(0.5),
             icon: new Icon(),
-            pie: new Pie(Style.pie_width(), Style.pie_height()), // 300, 300
-            bar: new Bar(Style.bar_width(), Style.bar_height()), // 300, 150
+            pie: new Pie(),
+            bar: new Bar(),
             elts: [],
         };
 

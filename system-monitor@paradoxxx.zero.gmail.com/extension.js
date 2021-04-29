@@ -219,6 +219,7 @@ const smStyleManager = class SystemMonitor_smStyleManager {
         this._pie_fontsize = 14;
         this._bar_width = 300;
         this._bar_height = 150;
+        this._bar_thickness = 15;
         this._bar_fontsize = 14;
         this._compact = Schema.get_boolean('compact-display');
 
@@ -237,6 +238,7 @@ const smStyleManager = class SystemMonitor_smStyleManager {
             this._pie_fontsize = 12;
             this._bar_width *= 3 / 5;
             this._bar_height *= 3 / 5;
+            this._bar_thickness = 12;
             this._bar_fontsize = 12;
         }
     }
@@ -281,6 +283,9 @@ const smStyleManager = class SystemMonitor_smStyleManager {
     }
     bar_height() {
         return this._bar_height;
+    }
+    bar_thickness() {
+        return this._bar_thickness;
     }
     bar_fontsize() {
         return this._bar_fontsize;
@@ -614,7 +619,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
         if (!this.actor.visible) {
             return;
         }
-        let thickness = 15 * this.scale_factor * this.text_scaling;
+        let thickness = Style.bar_thickness() * this.scale_factor * this.text_scaling;
         let fontsize = Style.bar_fontsize() * this.scale_factor * this.text_scaling;
         this.actor.set_height(this.mounts.length * (3 * thickness));
         let [width, height] = this.actor.get_surface_size();

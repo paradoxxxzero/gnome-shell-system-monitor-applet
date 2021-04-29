@@ -700,14 +700,18 @@ const Pie = class SystemMonitor_Pie extends Graph {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
-            cr.moveTo(0, yc - r + fontsize / 2);
+            cr.stroke();
+            r -= ring_width;
+        }
+        let y = (ring_width + fontsize) / 2;
+        for (let mount in this.mounts) {
             var text = this.mounts[mount];
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
+            cr.moveTo(0, y);
             cr.showText(text);
-            cr.stroke();
-            r -= ring_width;
+            y += ring_width;
         }
         cr.$dispose();
     }

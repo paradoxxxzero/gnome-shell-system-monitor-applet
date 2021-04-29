@@ -2113,7 +2113,7 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         return this.temperature.toString();
     }
     temperature_symbol() {
-        return this.fahrenheit_unit ? '\u2109' : '\u2103';
+        return this.fahrenheit_unit ? '°F' : '°C';
     }
 }
 

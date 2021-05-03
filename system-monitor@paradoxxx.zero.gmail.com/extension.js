@@ -735,15 +735,15 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
 
         let sourceTopLeftX = 0;
         let sourceTopLeftY = 0;
-        if (typeof this.sourceActor.get_transformed_extents === "function") {
-                let extents = this.sourceActor.get_transformed_extents();
-                let sourceTopLeft = extents.get_top_left();
-                sourceTopLeftY = sourceTopLeft.y;
-                sourceTopLeftX = sourceTopLeft.x;
+        if (typeof this.sourceActor.get_transformed_extents === 'function') {
+            let extents = this.sourceActor.get_transformed_extents();
+            let sourceTopLeft = extents.get_top_left();
+            sourceTopLeftY = sourceTopLeft.y;
+            sourceTopLeftX = sourceTopLeft.x;
         } else {
-                let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
-                sourceTopLeftY = allocation.y1;
-                sourceTopLeftX = allocation.x1;
+            let allocation = Shell.util_get_transformed_allocation(this.sourceActor);
+            sourceTopLeftY = allocation.y1;
+            sourceTopLeftX = allocation.x1;
         }
         let monitor = Main.layoutManager.findMonitorForActor(this.sourceActor);
         let [x, y] = [sourceTopLeftX + contentbox.x1,

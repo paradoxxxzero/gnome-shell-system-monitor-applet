@@ -29,10 +29,10 @@ RUN apt-get update && apt-get install -y \
 RUN systemctl disable systemd-resolved
 VOLUME ["/sys/fs/cgroup"]
 STOPSIGNAL SIGRTMIN+3
-#CMD [ "/sbin/init" ]
-ADD ./docker/start.sh /
-RUN chmod +x /start.sh
-CMD ["/start.sh"]
+CMD [ "/sbin/init" ]
+#ADD ./docker/start.sh /
+#RUN chmod +x /start.sh
+#CMD ["/start.sh"]
 
 # Install GNOME.
 # NOTE if you want plain gnome, use: apt-get install -y --no-install-recommends gnome-session gnome-terminal and remove the modification of /etc/gdm3/custom.conf

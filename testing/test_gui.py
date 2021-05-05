@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import traceback
 
 os.system('gsettings set org.gnome.desktop.interface toolkit-accessibility true')#TODO:remove, redundant?
 
@@ -73,5 +74,7 @@ try:
         .child(name="Close", roleName=ROLE_PUSH_BUTTON) \
         .click()
 
+except Exception as exc:
+    traceback.print_exc()
 finally:
     os.system('rm RUNNING')

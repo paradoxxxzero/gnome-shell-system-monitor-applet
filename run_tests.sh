@@ -7,11 +7,11 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-echo "[$(date)] Building Docker image."
-./docker/build-docker.sh
+#echo "[$(date)] Building Docker image."
+#./docker/build-docker.sh
 
-echo "[$(date)] Running Docker image."
-./docker/run-docker.sh
+#echo "[$(date)] Running Docker image."
+#./docker/run-docker.sh
 
 if [ -s testing/stderr.log ]
 then

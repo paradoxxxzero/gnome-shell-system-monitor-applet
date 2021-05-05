@@ -56,4 +56,7 @@ script:
 #-   sudo journalctl /usr/bin/gnome-shell|grep "\-\- No entries \-\-"
 
 # Run Docker GUI tests.
+-   docker --version
+-   ./docker/build-docker.sh
+-   ./docker/run-docker.sh || true
 -   ./run_tests.sh

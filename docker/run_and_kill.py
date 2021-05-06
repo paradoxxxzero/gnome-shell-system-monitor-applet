@@ -46,6 +46,7 @@ class ProcessMonitor(threading.Thread):
 
 t = ProcessMonitor()
 t.daemon = True
+print('\rStarting run-docker.sh.')
 t.start()
 
 while 1:

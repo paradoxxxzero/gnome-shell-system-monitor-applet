@@ -10,7 +10,7 @@ import sys
 import time
 import threading
 
-STARTED_TAG = b'Ubuntu 20.04.1 LTS'
+STARTED_TAG = b'Ubuntu 20.04'
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 

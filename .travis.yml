@@ -8,8 +8,14 @@ node_js: node
 #env:
 #-   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5
 
-services:
--   docker
+#services:
+#-   docker
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 install:
 -   sudo apt-key update
@@ -17,10 +23,10 @@ install:
 #-   sudo apt -yq install xvfb gnome-shell
 -   npm install -g eslint
 
-addons:
-  apt:
-    packages:
-      - docker-ce
+#addons:
+  #apt:
+    #packages:
+      #- docker-ce
 
 #before_script:
 #  - "export DISPLAY=:99.0"

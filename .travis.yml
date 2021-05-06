@@ -8,9 +8,6 @@ node_js: node
 #env:
 #-   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5
 
-#services:
-#-   docker
-
 before_install:
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -20,20 +17,15 @@ before_install:
 install:
 -   sudo apt-key update
 -   sudo apt-get -yq update
-#-   sudo apt -yq install xvfb gnome-shell
+-   sudo apt -yq install xvfb gnome-shell
 -   npm install -g eslint
 
-#addons:
-  #apt:
-    #packages:
-      #- docker-ce
-
-#before_script:
-#  - "export DISPLAY=:99.0"
-#  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
-#  - sleep 3 # give xvfb some time to start
-#  - sudo gnome-shell &
-#  - sleep 3 # give gnome-shell some time to start
+before_script:
+  - "export DISPLAY=:99.0"
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+  - sleep 3 # give xvfb some time to start
+  - sudo gnome-shell &
+  - sleep 3 # give gnome-shell some time to start
 
 script:
 
@@ -69,5 +61,6 @@ script:
 # Run Docker GUI tests.
 -   docker --version
 -   ./docker/build-docker.sh
--   ./docker/run-docker.sh || true
+#-   ./docker/run-docker.sh || true
+-   ./docker/run_and_kill.py || true
 -   ./run_tests.sh

@@ -13,6 +13,8 @@ NC='\033[0m'
 #echo "[$(date)] Running Docker image."
 #./docker/run-docker.sh
 
+cat testing/stdout.log
+
 if [ -s testing/stderr.log ]
 then
     echo -e "${RED}Errors found!"

@@ -8,8 +8,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV DISPLAY ${DISPLAY:-:1}
 
 # Install locale.
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales \
+RUN apt-get -qq update \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y locales \
     && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
     && dpkg-reconfigure --frontend=noninteractive locales \
     && update-locale LANG=en_US.UTF-8
@@ -19,7 +19,7 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 
 # Install systemd.
-RUN apt-get update && apt-get install -y \
+RUN apt-get -qq update && apt-get -qq install -y \
     dbus dbus-x11 systemd nano && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* &&\
@@ -35,23 +35,23 @@ CMD [ "/sbin/init" ]
 #CMD ["/start.sh"]
 
 # Install GNOME.
-# NOTE if you want plain gnome, use: apt-get install -y --no-install-recommends gnome-session gnome-terminal and remove the modification of /etc/gdm3/custom.conf
-RUN apt-get update \
-  && apt-get install -y ubuntu-desktop fcitx-config-gtk gnome-tweak-tool gnome-usage git \
+# NOTE if you want plain gnome, use: apt-get -qq install -y --no-install-recommends gnome-session gnome-terminal and remove the modification of /etc/gdm3/custom.conf
+RUN apt-get -yq update \
+  && apt-get -qq install -y ubuntu-desktop fcitx-config-gtk gnome-tweak-tool gnome-usage git \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && sed -i 's/\[daemon\]/[daemon]\nInitialSetupEnable=false/' /etc/gdm3/custom.conf
 
 # Install applet dependencies.
-RUN apt-get update \
-  && apt-get install -y gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
+RUN apt-get -qq update \
+  && apt-get -qq install -y gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
 
 # Install TigerVNC server.
 # TODO set VNC port in service file > exec command
 # TODO check if it works with default config file
 # NOTE tigervnc because of XKB extension: https://github.com/i3/i3/issues/1983
-RUN apt-get update \
-  && apt-get install -y tigervnc-common tigervnc-scraping-server tigervnc-standalone-server tigervnc-viewer tigervnc-xorg-extension \
+RUN apt-get -qq update \
+  && apt-get -qq install -y tigervnc-common tigervnc-scraping-server tigervnc-standalone-server tigervnc-viewer tigervnc-xorg-extension \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 # TODO fix PID problem: Type=forking would be best, but system daemon is run as root on startup
@@ -68,7 +68,7 @@ EXPOSE 5901
 
 # Install noVNC.
 # TODO novnc depends on net-tools until version 1.1.0: https://github.com/novnc/noVNC/issues/1075
-RUN apt-get update && apt-get install -y \
+RUN apt-get -qq update && apt-get -qq install -y \
     net-tools novnc \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
@@ -84,7 +84,7 @@ EXPOSE 6901
 ARG UID=1000
 ARG USER=default
 RUN useradd ${USER} -u ${UID} -U -d /home/${USER} -m -s /bin/bash
-RUN apt-get update && apt-get install -y sudo && apt-get clean && rm -rf /var/lib/apt/lists/* && \
+RUN apt-get -qq update && apt-get -qq install -y sudo && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     echo "${USER} ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/${USER}" && \
     chmod 440 "/etc/sudoers.d/${USER}"
 USER "${USER}"
@@ -110,8 +110,8 @@ COPY ./docker/ubuntu/xstartup $HOME/.vnc/xstartup
 RUN echo "password" | vncpasswd -f >> $HOME/.vnc/passwd && chmod 600 $HOME/.vnc/passwd
 
 # Set up GUI testing environment
-RUN sudo apt-get update \
-    && sudo apt-get install -y python3-pip \
+RUN sudo apt-get -qq update \
+    && sudo apt-get -qq install -y python3-pip \
     && sudo apt-get clean -y \
     && sudo rm -rf /var/lib/apt/lists/*
 RUN pip3 install --user dogtail

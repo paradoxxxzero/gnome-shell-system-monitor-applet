@@ -1,0 +1,16 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build Docker
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checking out our code
+        uses: actions/checkout@master
+      - name: Run Docker
+        run: |
+          docker --version
+          ./docker/build-docker.sh
+          ./docker/run-docker.sh || true
+          ./docker/run_and_kill.py || true
+          ./run_tests.sh

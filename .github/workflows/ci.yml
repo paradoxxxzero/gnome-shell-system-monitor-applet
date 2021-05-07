@@ -15,6 +15,9 @@ jobs:
         uses: actions/checkout@master
       - name: Run Docker
         run: |
+          ls -lah /run
+          ls -lah /run/lock
+          ls -lah /tmp
           docker --version
           ./docker/build-docker.sh
           ./docker/run-docker.sh || true

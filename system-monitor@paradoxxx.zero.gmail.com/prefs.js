@@ -9,7 +9,6 @@ const Gettext = imports.gettext.domain('system-monitor');
 
 let extension = imports.misc.extensionUtils.getCurrentExtension();
 let convenience = extension.imports.convenience;
-let Compat = extension.imports.compat;
 
 const _ = Gettext.gettext;
 const N_ = function (e) {
@@ -187,10 +186,20 @@ const ColorSelect = class SystemMonitor_ColorSelect {
         this.picker.set_use_alpha(true);
     }
     set_value(value) {
-        let clutterColor = Compat.color_from_string(value);
         let color = new Gdk.RGBA();
-        let ctemp = [clutterColor.red, clutterColor.green, clutterColor.blue, clutterColor.alpha / 255];
-        color.parse('rgba(' + ctemp.join(',') + ')');
+
+        if (Gtk.get_major_version() >= 4) {
+            // GDK did not support parsing hex colours with alpha before GTK 4.
+            color.parse(value);
+        } else {
+            // Use the Compat only when GTK 4 is not available,
+            // since it depends on the deprecated Clutter library.
+            let Compat = extension.imports.compat;
+            let clutterColor = Compat.color_from_string(value);
+            let ctemp = [clutterColor.red, clutterColor.green, clutterColor.blue, clutterColor.alpha / 255];
+            color.parse('rgba(' + ctemp.join(',') + ')');
+        }
+
         this.picker.set_rgba(color);
     }
 }

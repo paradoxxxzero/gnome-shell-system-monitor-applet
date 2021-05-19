@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Checking out our code
         uses: actions/checkout@master
+      - uses: docker/setup-buildx-action@v1
       - name: Run Docker
         run: |
           ls -lah /run

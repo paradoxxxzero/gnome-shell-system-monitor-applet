@@ -8,11 +8,11 @@ SCRIPT_DIR="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
 cd $SCRIPT_DIR
 
 # Give gnome-session time to startup.
-sleep 5
+sleep 30
 
 # Give the setting time to take effect.
 gsettings set org.gnome.desktop.interface toolkit-accessibility true
-sleep 5
+sleep 30
 
 # Run tests.
 python3 test_gui.py

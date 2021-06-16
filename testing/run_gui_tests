@@ -1,0 +1,22 @@
+#!/bin/bash
+# Helper script for our tests.
+
+. /home/default/.bashrc
+
+# Ensure we're in our shared directory.
+SCRIPT_DIR="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
+cd $SCRIPT_DIR
+
+# Give gnome-session time to startup.
+sleep 30
+
+# Give the setting time to take effect.
+gsettings set org.gnome.desktop.interface toolkit-accessibility true
+sleep 30
+
+# Run tests.
+python3 test_gui.py
+
+# Kill the container.
+# Disable this if you want the container to remain up for inspection.
+sudo shutdown now

@@ -5,10 +5,11 @@ ENV container docker
 
 # Ensure apt doesn't block waiting to prompt us.
 ENV DEBIAN_FRONTEND noninteractive
+ENV DISPLAY ${DISPLAY:-:1}
 
 # Install locale.
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales \
+RUN apt-get -qq update \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y locales \
     && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
     && dpkg-reconfigure --frontend=noninteractive locales \
     && update-locale LANG=en_US.UTF-8
@@ -18,8 +19,8 @@ ENV LC_ALL en_US.UTF-8
 ENV LC_CTYPE en_US.UTF-8
 
 # Install systemd.
-RUN apt-get update && apt-get install -y \
-    dbus dbus-x11 systemd && \
+RUN apt-get -qq update && apt-get -qq install -y \
+    dbus dbus-x11 systemd nano && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* &&\
     dpkg-divert --local --rename --add /sbin/udevadm &&\
@@ -29,25 +30,28 @@ RUN systemctl disable systemd-resolved
 VOLUME ["/sys/fs/cgroup"]
 STOPSIGNAL SIGRTMIN+3
 CMD [ "/sbin/init" ]
+#ADD ./docker/start.sh /
+#RUN chmod +x /start.sh
+#CMD ["/start.sh"]
 
 # Install GNOME.
-# NOTE if you want plain gnome, use: apt-get install -y --no-install-recommends gnome-session gnome-terminal and remove the modification of /etc/gdm3/custom.conf
-RUN apt-get update \
-  && apt-get install -y ubuntu-desktop fcitx-config-gtk gnome-tweak-tool gnome-usage git \
+# NOTE if you want plain gnome, use: apt-get -qq install -y --no-install-recommends gnome-session gnome-terminal and remove the modification of /etc/gdm3/custom.conf
+RUN apt-get -yq update \
+  && apt-get -qq install -y ubuntu-desktop fcitx-config-gtk gnome-tweak-tool gnome-usage git \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && sed -i 's/\[daemon\]/[daemon]\nInitialSetupEnable=false/' /etc/gdm3/custom.conf
 
 # Install applet dependencies.
-RUN apt-get update \
-  && apt-get install -y gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
+RUN apt-get -qq update \
+  && apt-get -qq install -y gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
 
 # Install TigerVNC server.
 # TODO set VNC port in service file > exec command
 # TODO check if it works with default config file
 # NOTE tigervnc because of XKB extension: https://github.com/i3/i3/issues/1983
-RUN apt-get update \
-  && apt-get install -y tigervnc-common tigervnc-scraping-server tigervnc-standalone-server tigervnc-viewer tigervnc-xorg-extension \
+RUN apt-get -qq update \
+  && apt-get -qq install -y tigervnc-common tigervnc-scraping-server tigervnc-standalone-server tigervnc-viewer tigervnc-xorg-extension \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 # TODO fix PID problem: Type=forking would be best, but system daemon is run as root on startup
@@ -58,19 +62,19 @@ RUN apt-get update \
 # -> this should be fixed by official systemd file once released: https://github.com/TigerVNC/tigervnc/pull/838
 # TODO specify options like geometry as environment variables -> source variables in service via EnvironmentFile=/path/to/env
 # NOTE logout will stop tigervnc service -> need to manually start (gdm for graphical login is not working)
-COPY tigervnc@.service /etc/systemd/system/tigervnc@.service
+COPY ./docker/ubuntu/tigervnc@.service /etc/systemd/system/tigervnc@.service
 RUN systemctl enable tigervnc@:1
 EXPOSE 5901
 
 # Install noVNC.
 # TODO novnc depends on net-tools until version 1.1.0: https://github.com/novnc/noVNC/issues/1075
-RUN apt-get update && apt-get install -y \
+RUN apt-get -qq update && apt-get -qq install -y \
     net-tools novnc \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html
 # TODO specify options like ports as environment variables -> source variables in service via EnvironmentFile=/path/to/env
-COPY novnc.service /etc/systemd/system/novnc.service
+COPY ./docker/ubuntu/novnc.service /etc/systemd/system/novnc.service
 RUN systemctl enable novnc
 EXPOSE 6901
 
@@ -80,7 +84,7 @@ EXPOSE 6901
 ARG UID=1000
 ARG USER=default
 RUN useradd ${USER} -u ${UID} -U -d /home/${USER} -m -s /bin/bash
-RUN apt-get update && apt-get install -y sudo && apt-get clean && rm -rf /var/lib/apt/lists/* && \
+RUN apt-get -qq update && apt-get -qq install -y sudo && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     echo "${USER} ALL=(ALL) NOPASSWD: ALL" > "/etc/sudoers.d/${USER}" && \
     chmod 440 "/etc/sudoers.d/${USER}"
 USER "${USER}"
@@ -91,6 +95,9 @@ WORKDIR "/home/${USER}"
 # Disable annoying Gnome welcome screen.
 RUN sudo bash -c 'echo "X-GNOME-Autostart-enabled=false" >> /etc/xdg/autostart/gnome-initial-setup-first-login.desktop'
 
+# Required by Dogtail for interaction with Gnome.
+RUN /usr/bin/dbus-run-session /usr/bin/gsettings set org.gnome.desktop.interface toolkit-accessibility true
+
 # Install extension.
 RUN mkdir -p $HOME/.local/share/gnome-shell/extensions
 COPY ./system-monitor@paradoxxx.zero.gmail.com $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com
@@ -99,17 +106,20 @@ RUN gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
 
 # Set up VNC.
 RUN mkdir -p $HOME/.vnc
-COPY xstartup $HOME/.vnc/xstartup
+COPY ./docker/ubuntu/xstartup $HOME/.vnc/xstartup
 RUN echo "password" | vncpasswd -f >> $HOME/.vnc/passwd && chmod 600 $HOME/.vnc/passwd
 
 # Set up GUI testing environment
-RUN sudo apt-get update \
-    && sudo apt-get install -y python3-pip \
+RUN sudo apt-get -qq update \
+    && sudo apt-get -qq install -y python3-pip \
     && sudo apt-get clean -y \
     && sudo rm -rf /var/lib/apt/lists/*
 RUN pip3 install --user dogtail
 RUN chmod +x "/home/${USER}/.local/bin"/*
 RUN echo "export PATH=\"\$PATH:/home/${USER}/.local/bin\"" >> "/home/${USER}/.bashrc"
+
+# Run our test script at user start.
+# RUN echo "cd /home/default/shared; ./run_gui_tests.sh" >> "/home/${USER}/.profile"
 
 # Switch back to root to start systemd.
 USER root

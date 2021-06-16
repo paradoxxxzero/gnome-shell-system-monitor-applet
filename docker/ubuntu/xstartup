@@ -15,6 +15,9 @@ gsettings set org.gnome.desktop.interface toolkit-accessibility true
 
 vncconfig -nowin &
 
+# Workaround a permission issue with Travis CI
+sudo chown -R default:default /home/default/shared
+
 # Lauch our custom tests. Note, this waits for a few seconds to give gnome-session time to initialize.
 cd /home/default/shared
 sudo su - default -c "export DISPLAY=:1; nohup /home/default/shared/run_gui_tests >> /home/default/shared/stdout.log 2>> /home/default/shared/stderr.log &"

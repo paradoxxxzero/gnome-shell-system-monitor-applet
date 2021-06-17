@@ -695,7 +695,7 @@ if (shell_Version < '3.36') {
         {
             GTypeName: 'TipItem'
         },
-        class TipItem extends PopupMenu.PopupBaseMenuItem {
+        class SystemMonitor_TipItem extends PopupMenu.PopupBaseMenuItem {
             _init() {
                 super._init();
                 // PopupMenu.PopupBaseMenuItem.prototype._init.call(this);

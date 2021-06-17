@@ -30,7 +30,7 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Arch Linux:
 
-      $ sudo pacman -S libgtop networkmanager gnome-system-monitor
+      $ sudo pacman -S libgtop networkmanager gnome-system-monitor clutter
 
 * On openSUSE (Leap 42.1):
 

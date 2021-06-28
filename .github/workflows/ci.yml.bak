@@ -25,4 +25,4 @@ jobs:
           ./docker/build-docker.sh
           ./docker/run-docker.sh || true
           ./docker/run_and_kill.py || true
-          ./run_tests.sh
+          ./check_tests.sh

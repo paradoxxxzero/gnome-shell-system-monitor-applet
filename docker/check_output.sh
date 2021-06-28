@@ -11,20 +11,14 @@ NC='\033[0m'
 SCRIPT_DIR="$(dirname "$(readlink -f ${BASH_SOURCE[0]})")"
 cd $SCRIPT_DIR
 
-#echo "[$(date)] Building Docker image."
-#./docker/build-docker.sh
-
-#echo "[$(date)] Running Docker image."
-#./docker/run-docker.sh
-
 docker --version
 ls -lah .
-cat testing/stdout.log
+cat ../testing/stdout.log
 
-if [ -s testing/stderr.log ]
+if [ -s ../testing/stderr.log ]
 then
     echo -e "${RED}Errors found!"
-    cat testing/stderr.log
+    cat ../testing/stderr.log
     echo -e "${NC}"
     exit 1
 else

@@ -60,7 +60,4 @@ script:
 
 # Run Docker GUI tests.
 -   docker --version
--   ./docker/build-docker.sh
-#-   ./docker/run-docker.sh || true
--   ./docker/run_and_kill.py || true
--   ./run_tests.sh
+-   ./test.sh

@@ -376,7 +376,11 @@ const SettingFrame = class SystemMonitor {
         } else if (config.match(/-color$/)) {
             let item = new ColorSelect(_(config.split('-')[0].capitalize()));
             item.set_value(this.schema.get_string(key));
-            this.hbox2.pack_end(item.actor, true, false, 0);
+            if (shellMajorVersion < 40) {
+                this.hbox2.pack_end(item.actor, true, false, 0);
+            } else {
+                this.hbox2.append(item.actor);
+            }
             item.picker.connect('color-set', function (color) {
                 set_color(color, Schema, key);
             });
@@ -397,9 +401,15 @@ const SettingFrame = class SystemMonitor {
             }
             // this.hbox3.add(item.actor);
             if (configParent === 'fan') {
-                this.hbox2.pack_end(item.actor, true, false, 0);
-            } else {
+                if (shellMajorVersion < 40) {
+                    this.hbox2.pack_end(item.actor, true, false, 0);
+                } else {
+                    this.hbox2.append(item.actor);
+                }
+            } else if (shellMajorVersion < 40) {
                 this.hbox2.pack_start(item.actor, true, false, 0);
+            } else {
+                this.hbox2.prepend(item.actor);
             }
             item.selector.connect('changed', function (combo) {
                 set_string(combo, Schema, key, _slist);
@@ -425,7 +435,11 @@ const SettingFrame = class SystemMonitor {
             let item = new Select(_('Usage Style'));
             item.add([_('pie'), _('bar'), _('none')]);
             item.set_value(this.schema.get_enum(key));
-            this.hbox3.pack_end(item.actor, false, false, 20);
+            if (shellMajorVersion < 40) {
+                this.hbox3.pack_end(item.actor, false, false, 20);
+            } else {
+                this.hbox3.append(item.actor);
+            }
 
             item.selector.connect('changed', function (style) {
                 set_enum(style, Schema, key);
@@ -465,7 +479,11 @@ const App = class SystemMonitor_App {
             hasBorder: true, horizontal: false, spacing: 10});
         this.hbox1 = box({
             hasBorder: true, horizontal: true, shouldPack: true, spacing: 20});
-        this.main_vbox.pack_start(this.hbox1, false, false, 0);
+        if (shellMajorVersion < 40) {
+            this.main_vbox.pack_start(this.hbox1, false, false, 0);
+        } else {
+            this.main_vbox.prepend(this.hbox1);
+        }
 
         keys.forEach((key) => {
             if (key === 'icon-display') {
@@ -498,7 +516,11 @@ const App = class SystemMonitor_App {
                 let item = new ColorSelect(_('Background Color'))
                 item.set_value(Schema.get_string(key))
                 this.items.push(item)
-                this.hbox1.pack_start(item.actor, true, false, 0)
+                if (shellMajorVersion < 40) {
+                    this.hbox1.pack_start(item.actor, true, false, 0)
+                } else {
+                    this.hbox1.prepend(item.actor)
+                }
                 item.picker.connect('color-set', function (color) {
                     set_color(color, Schema, key);
                 });

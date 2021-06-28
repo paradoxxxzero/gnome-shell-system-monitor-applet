@@ -214,13 +214,11 @@ const smStyleManager = class SystemMonitor_smStyleManager {
         this._netunits_kbits = _('kbit/s');
         this._netunits_mbits = _('Mbit/s');
         this._netunits_gbits = _('Gbit/s');
-        this._pie_width = 300;
-        this._pie_height = 300;
+        this._pie_size = 300;
         this._pie_fontsize = 14;
         this._bar_width = 300;
-        this._bar_height = 150;
+        this._bar_thickness = 15;
         this._bar_fontsize = 14;
-        this._text_scaling = 1;
         this._compact = Schema.get_boolean('compact-display');
 
         if (this._compact) {
@@ -233,20 +231,11 @@ const smStyleManager = class SystemMonitor_smStyleManager {
             this._netunits_kbits = 'kb';
             this._netunits_mbits = 'Mb';
             this._netunits_gbits = 'Gb';
-            this._pie_width *= 4 / 5;
-            this._pie_height *= 4 / 5;
+            this._pie_size *= 4 / 5;
             this._pie_fontsize = 12;
             this._bar_width *= 3 / 5;
-            this._bar_height *= 3 / 5;
+            this._bar_thickness = 12;
             this._bar_fontsize = 12;
-        }
-
-        let interfaceSettings = new Gio.Settings({
-            schema: 'org.gnome.desktop.interface'
-        });
-        this._text_scaling = interfaceSettings.get_double('text-scaling-factor');
-        if (!this._text_scaling) {
-            this._text_scaling = 1;
         }
     }
     get(style) {
@@ -276,26 +265,20 @@ const smStyleManager = class SystemMonitor_smStyleManager {
     netunits_gbits() {
         return this._netunits_gbits;
     }
-    pie_width() {
-        return this._pie_width;
-    }
-    pie_height() {
-        return this._pie_height;
+    pie_size() {
+        return this._pie_size;
     }
     pie_fontsize() {
-        return this._pie_fontsize * this._text_scaling;
+        return this._pie_fontsize;
     }
     bar_width() {
         return this._bar_width;
     }
-    bar_height() {
-        return this._bar_height;
+    bar_thickness() {
+        return this._bar_thickness;
     }
     bar_fontsize() {
-        return this._bar_fontsize * this._text_scaling;
-    }
-    text_scaling() {
-        return this._text_scaling;
+        return this._bar_fontsize;
     }
 }
 
@@ -344,13 +327,17 @@ const Chart = class SystemMonitor_Chart {
     constructor(width, height, parent) {
         this.actor = new St.DrawingArea({style_class: Style.get('sm-chart'), reactive: false});
         this.parentC = parent;
-        this.actor.set_width(this.width = width);
-        this.actor.set_height(this.height = height);
-        this.actor.connect('repaint', this._draw.bind(this));
+        this.width = width;
+        let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        this.scale_factor = themeContext.scale_factor;
+        this.actor.set_width(this.width * this.scale_factor);
+        this.actor.set_height(height);
         this.data = [];
         for (let i = 0; i < this.parentC.colors.length; i++) {
             this.data[i] = [];
         }
+        themeContext.connect('notify::scale-factor', this.rescale.bind(this));
+        this.actor.connect('repaint', this._draw.bind(this));
     }
     update() {
         let data_a = this.parentC.vals;
@@ -387,32 +374,44 @@ const Chart = class SystemMonitor_Chart {
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.parentC.colors.length - 1; i >= 0; i--) {
-            cr.moveTo(width, height);
-            for (let j = this.data[i].length - 1; j >= 0; j--) {
-                cr.lineTo(width - (this.data[i].length - 1 - j), (1 - this.data[i][j] / max) * height);
+            let samples = this.data[i].length - 1;
+            if (samples > 0) {
+                cr.moveTo(width, height); // bottom right
+                let x = width - 0.25 * this.scale_factor;
+                cr.lineTo(x, (1 - this.data[i][samples] / max) * height);
+                x -= 0.5 * this.scale_factor;
+                for (let j = samples; j >= 0; j--) {
+                    let y = (1 - this.data[i][j] / max) * height;
+                    cr.lineTo(x, y);
+                    x -= 0.5 * this.scale_factor;
+                    cr.lineTo(x, y);
+                    x -= 0.5 * this.scale_factor;
+                }
+                x += 0.25 * this.scale_factor;
+                cr.lineTo(x, (1 - this.data[i][0] / max) * height);
+                cr.lineTo(x, height);
+                cr.closePath();
+                Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
+                cr.fill();
             }
-            cr.lineTo(width - (this.data[i].length - 1), height);
-            cr.closePath();
-            Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
-            cr.fill();
         }
         cr.$dispose();
     }
-    resize(schema, key) {
-        let old_width = this.width;
-        this.width = Schema.get_int(key);
-        if (old_width === this.width) {
+    resize(width) {
+        if (this.width === width) {
             return;
         }
-        if (Style.get('') === '-compact') {
-            this.width = Math.round(this.width / 1.5);
-        }
-        this.actor.set_width(this.width);
+        this.width = width;
         if (this.width < this.data[0].length) {
             for (let i = 0; i < this.parentC.colors.length; i++) {
                 this.data[i] = this.data[i].slice(-this.width);
             }
         }
+        this.actor.set_width(this.width * this.scale_factor); // repaints
+    }
+    rescale(themeContext) {
+        this.scale_factor = themeContext.scale_factor;
+        this.actor.set_width(this.width * this.scale_factor); // repaints
     }
 }
 
@@ -551,14 +550,27 @@ const Graph = class SystemMonitor_Graph {
         this.actor = new St.DrawingArea({style_class: Style.get('sm-chart'), reactive: false});
         this.width = width;
         this.height = height;
-        this.actor.set_width(this.width);
-        this.actor.set_height(this.height);
-        this.actor.connect('repaint', this._draw.bind(this));
         this.gtop = new GTop.glibtop_fsusage();
         this.colors = ['#888', '#aaa', '#ccc'];
         for (let color in this.colors) {
             this.colors[color] = color_from_string(this.colors[color]);
         }
+
+        let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        themeContext.connect('notify::scale-factor', this.set_scale.bind(this));
+        this.scale_factor = themeContext.scale_factor;
+        let interfaceSettings = new Gio.Settings({
+            schema: 'org.gnome.desktop.interface'
+        });
+        interfaceSettings.connect('changed', this.set_text_scaling.bind(this));
+        this.text_scaling = interfaceSettings.get_double('text-scaling-factor');
+        if (!this.text_scaling) {
+            this.text_scaling = 1;
+        }
+
+        this.actor.set_width(this.width * this.scale_factor * this.text_scaling);
+        this.actor.set_height(this.height * this.scale_factor * this.text_scaling);
+        this.actor.connect('repaint', this._draw.bind(this));
     }
     create_menu_item() {
         this.menu_item = new PopupMenu.PopupBaseMenuItem({reactive: false});
@@ -572,29 +584,42 @@ const Graph = class SystemMonitor_Graph {
     show(visible) {
         this.menu_item.actor.visible = visible;
     }
+    set_scale(themeContext) {
+        this.scale_factor = themeContext.scale_factor;
+        this.actor.set_width(this.width * this.scale_factor * this.text_scaling);
+        this.actor.set_height(this.height * this.scale_factor * this.text_scaling);
+    }
+    set_text_scaling(interfaceSettings, key) {
+        // FIXME: for some reason we only get this signal once, not on later
+        // changes to the setting
+        //log('[System monitor] got text scaling signal');
+        this.text_scaling = interfaceSettings.get_double(key);
+        this.actor.set_width(this.width * this.scale_factor * this.text_scaling);
+        this.actor.set_height(this.height * this.scale_factor * this.text_scaling);
+    }
 }
 
 const Bar = class SystemMonitor_Bar extends Graph {
-    constructor(width, height) {
-        super(width, height);
+    constructor() {
+        // Height doesn't matter, it gets set on every draw.
+        super(Style.bar_width(), 100);
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
-        this.thickness = 15 * Style.text_scaling();
-        this.fontsize = Style.bar_fontsize();
-        this.actor.set_height(this.mounts.length * (3 * this.thickness));
     }
     _draw() {
         if (!this.actor.visible) {
             return;
         }
-        this.actor.set_height(this.mounts.length * (3 * this.thickness));
+        let thickness = Style.bar_thickness() * this.scale_factor * this.text_scaling;
+        let fontsize = Style.bar_fontsize() * this.scale_factor * this.text_scaling;
+        this.actor.set_height(this.mounts.length * (3 * thickness));
         let [width, height] = this.actor.get_surface_size();
         let cr = this.actor.get_context();
 
         let x0 = width / 8;
-        let y0 = this.thickness / 2;
-        cr.setLineWidth(this.thickness);
-        cr.setFontSize(this.fontsize);
+        let y0 = thickness / 2;
+        cr.setLineWidth(thickness);
+        cr.setFontSize(fontsize);
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
@@ -604,16 +629,16 @@ const Bar = class SystemMonitor_Bar extends Graph {
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
-            cr.moveTo(0, y0 + this.thickness / 3);
+            cr.moveTo(0, y0 + thickness / 3);
             cr.showText(text);
-            cr.moveTo(width - x0, y0 + this.thickness / 3);
+            cr.moveTo(width - x0, y0 + thickness / 3);
             cr.showText(Math.round(perc_full * 100).toString() + '%');
-            y0 += (5 * this.thickness) / 4;
+            y0 += (5 * thickness) / 4;
 
             cr.moveTo(0, y0);
             cr.relLineTo(perc_full * width, 0);
             cr.stroke();
-            y0 += (7 * this.thickness) / 4;
+            y0 += (7 * thickness) / 4;
         }
         cr.$dispose();
     }
@@ -624,8 +649,8 @@ const Bar = class SystemMonitor_Bar extends Graph {
 }
 
 const Pie = class SystemMonitor_Pie extends Graph {
-    constructor(width, height) {
-        super(width, height);
+    constructor() {
+        super(Style.pie_size(), Style.pie_size());
         this.mounts = MountsMonitor.get_mounts();
         MountsMonitor.add_listener(this.update_mounts.bind(this));
     }
@@ -638,7 +663,6 @@ const Pie = class SystemMonitor_Pie extends Graph {
         let cr = this.actor.get_context();
         let xc = width / 2;
         let yc = height / 2;
-        let rc = Math.min(xc, yc);
         let pi = Math.PI;
         function arc(r, value, max, angle) {
             if (max === 0) {
@@ -648,27 +672,37 @@ const Pie = class SystemMonitor_Pie extends Graph {
             cr.arc(xc, yc, r, angle, new_angle);
             return new_angle;
         }
-        let rings = (this.mounts.length > 7 ? this.mounts.length : 7);
-        // If the text is scaled, we need to make more space for it. Hence, we
-        // make the lines thicker.
-        let text_scaling = Style.text_scaling();
-        let thickness = (2 * rc) / (3 * rings) * text_scaling;
-        let fontsize = Style.pie_fontsize();
-        let r = rc - (thickness / 2);
+
+        // Set the ring thickness so that at least 7 rings can be displayed. If
+        // there are more mounts, make the rings thinner. If the rings are too
+        // thin to have a line height of 1.2 for the labels, shrink the labels.
+        let rings = Math.max(this.mounts.length, 7);
+        let ring_width = width / (2 * rings);
+        let fontsize = Style.pie_fontsize() * this.scale_factor * this.text_scaling;
+        if (ring_width < 1.2 * fontsize) {
+            fontsize = ring_width / 1.2;
+        }
+        let thickness = ring_width / 1.5;
+
         cr.setLineWidth(thickness);
         cr.setFontSize(fontsize);
+        let r = (height - ring_width) / 2;
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
-            cr.moveTo(0, yc - r + thickness / 2);
+            cr.stroke();
+            r -= ring_width;
+        }
+        let y = (ring_width + fontsize) / 2;
+        for (let mount in this.mounts) {
             var text = this.mounts[mount];
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
+            cr.moveTo(0, y);
             cr.showText(text);
-            cr.stroke();
-            r -= (3 * thickness) / 2;
+            y += ring_width;
         }
         cr.$dispose();
     }
@@ -928,8 +962,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.timeout = Mainloop.timeout_add(
                     this.interval, this.update.bind(this), GLib.PRIORITY_DEFAULT_IDLE);
             });
-        Schema.connect('changed::' + this.elt + '-graph-width',
-            this.chart.resize.bind(this.chart));
+        Schema.connect('changed::' + this.elt + '-graph-width', this.resize.bind(this));
 
         if (this.elt === 'thermal') {
             Schema.connect('changed::thermal-threshold',
@@ -1019,6 +1052,13 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.text_items[0].set_style('color: rgba(255, 255, 255, 1)');
             }
         }
+    }
+    resize(schema, key) {
+        let width = Schema.get_int(key);
+        if (Style.get('') === '-compact') {
+            width = Math.round(width / 1.5);
+        }
+        this.chart.resize(width);
     }
     destroy() {
         TipBox.prototype.destroy.call(this);
@@ -2388,8 +2428,8 @@ function enable() {
         Main.__sm = {
             tray: new PanelMenu.Button(0.5),
             icon: new Icon(),
-            pie: new Pie(Style.pie_width(), Style.pie_height()), // 300, 300
-            bar: new Bar(Style.bar_width(), Style.bar_height()), // 300, 150
+            pie: new Pie(),
+            bar: new Bar(),
             elts: [],
         };
 

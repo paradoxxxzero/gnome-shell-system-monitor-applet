@@ -2066,9 +2066,6 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
             file.load_contents_async(null, (source, result) => {
                 let as_r = source.load_contents_finish(result)
                 this.temperature = Math.round(parseInt(parse_bytearray(as_r[1])) / 1000);
-                if (this.fahrenheit_unit) {
-                    this.temperature = Math.round(this.temperature * 1.8 + 32);
-                }
             });
         } else if (this.display_error) {
             global.logError('error reading: ' + sfile);
@@ -2079,12 +2076,10 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
     }
     _apply() {
         this.text_items[0].text = this.menu_items[0].text = this.temperature_text();
-        // Making it looks better in chart.
-        // this.vals = [this.temperature / 100];
         this.temp_over_threshold = this.temperature > Schema.get_int('thermal-threshold');
         this.vals = [this.temperature];
         this.tip_vals[0] = this.temperature_text();
-        this.menu_items[1].text = this.temperature_symbol();
+        this.text_items[1].text = this.menu_items[1].text = this.temperature_symbol();
         this.tip_unit_labels[0].text = _(this.temperature_symbol());
     }
     create_text_items() {
@@ -2110,10 +2105,14 @@ const Thermal = class SystemMonitor_Thermal extends ElementBase {
         ];
     }
     temperature_text() {
-        return this.temperature.toString();
+        let temperature = this.temperature;
+        if (this.fahrenheit_unit) {
+            temperature = Math.round(temperature * 1.8 + 32);
+        }
+        return temperature.toString();
     }
     temperature_symbol() {
-        return this.fahrenheit_unit ? '\u2109' : '\u2103';
+        return this.fahrenheit_unit ? '°F' : '°C';
     }
 }
 

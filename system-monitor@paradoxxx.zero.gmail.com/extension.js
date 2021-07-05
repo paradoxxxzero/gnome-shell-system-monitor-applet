@@ -107,11 +107,12 @@ Clutter.Actor.prototype.reparent = function reparent(newParent) {
     newParent.add_child(this);
 }
 
-function parse_bytearray(bytearray) {
-    if (!ByteArray.toString(bytearray).match(/GjsModule byteArray/)) {
-        return ByteArray.toString(bytearray);
+function parse_bytearray(maybeBA) {
+    const decoded = ByteArray.toString(maybeBA);
+    if ((/GjsModule byteArray/).test(decoded)) {
+        return maybeBA;
     }
-    return bytearray
+    return decoded;
 }
 
 function l_limit(t) {
@@ -299,46 +300,47 @@ const smStyleManager = class SystemMonitor_smStyleManager {
     }
 }
 
-const smDialog = class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
-    constructor() {
-        super({styleClass: 'prompt-dialog'});
-        let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
-            vertical: false});
-        this.contentLayout.add(mainContentBox,
-            {x_fill: true,
-                y_fill: true});
+const smDialog = GObject.registerClass(
+    class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
+        constructor() {
+            super({styleClass: 'prompt-dialog'});
+            let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
+                vertical: false});
+            this.contentLayout.add(mainContentBox,
+                {x_fill: true,
+                    y_fill: true});
 
-        let messageBox = new St.BoxLayout({style_class: 'prompt-dialog-message-layout',
-            vertical: true});
-        mainContentBox.add(messageBox,
-            {y_align: St.Align.START});
+            let messageBox = new St.BoxLayout({style_class: 'prompt-dialog-message-layout',
+                vertical: true});
+            mainContentBox.add(messageBox,
+                {y_align: St.Align.START});
 
-        this._subjectLabel = new St.Label({style_class: 'prompt-dialog-headline',
-            text: _('System Monitor Extension')});
+            this._subjectLabel = new St.Label({style_class: 'prompt-dialog-headline',
+                text: _('System Monitor Extension')});
 
-        messageBox.add(this._subjectLabel,
-            {y_fill: false,
-                y_align: St.Align.START});
+            messageBox.add(this._subjectLabel,
+                {y_fill: false,
+                    y_align: St.Align.START});
 
-        this._descriptionLabel = new St.Label({style_class: 'prompt-dialog-description',
-            text: MESSAGE});
+            this._descriptionLabel = new St.Label({style_class: 'prompt-dialog-description',
+                text: MESSAGE});
 
-        messageBox.add(this._descriptionLabel,
-            {y_fill: true,
-                y_align: St.Align.START});
+            messageBox.add(this._descriptionLabel,
+                {y_fill: true,
+                    y_align: St.Align.START});
 
 
-        this.setButtons([
-            {
-                label: _('Cancel'),
-                action: () => {
-                    this.close();
-                },
-                key: Clutter.Escape
-            }
-        ]);
-    }
-}
+            this.setButtons([
+                {
+                    label: _('Cancel'),
+                    action: () => {
+                        this.close();
+                    },
+                    key: Clutter.Escape
+                }
+            ]);
+        }
+    });
 
 const Chart = class SystemMonitor_Chart {
     constructor(width, height, parent) {

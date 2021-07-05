@@ -109,28 +109,28 @@
     </key>
     <key name="gpu-display" type="b">
       <default>false</default>
-      <summary>Display gpu usage</summary>
-      <description>Set to false to remove gpu display in status bar</description>
+      <summary>Display GPU usage</summary>
+      <description>Set to false to remove GPU display in status bar</description>
     </key>
     <key name="gpu-refresh-time" type="i">
       <default>5000</default>
       <summary>Memory refresh time</summary>
-      <description>Time in ms between 2 refresh of gpu usage</description>
+      <description>Time in ms between 2 refreshes of GPU usage</description>
     </key>
     <key name="gpu-graph-width" type="i">
       <default>100</default>
-      <summary>Gpu usage graph width</summary>
+      <summary>GPU usage graph width</summary>
       <description>Graph width in pixel</description>
     </key>
     <key name="gpu-show-text" type="b">
       <default>true</default>
       <summary>Display 'gpu'</summary>
-      <description>Set to true to show 'gpu' before gpu display</description>
+      <description>Set to true to show 'gpu' before GPU display</description>
     </key>
     <key name="gpu-show-menu" type="b">
       <default>false</default>
-      <summary>Display Gpu In Menu</summary>
-      <description>Set to true to show gpu in pop-up menu</description>
+      <summary>Display GPU In Menu</summary>
+      <description>Set to true to show GPU in pop-up menu</description>
     </key>
     <key name="gpu-style" enum="org.gnome.shell.extensions.system-monitor.display-style">
       <default>'graph'</default>
@@ -398,7 +398,11 @@
     </key>
     <key name="gpu-used-color" type="s">
       <default>'#00b35b'</default>
-      <summary>Color of program gpu memory in the chart</summary>
+      <summary>Color of program GPU usage in the chart</summary>
+    </key>
+    <key name="gpu-memory-color" type="s">
+      <default>'#00ff82'</default>
+      <summary>Color of program GPU memory in the chart</summary>
     </key>
     <key name="thermal-tz0-color" type="s">
       <default>'#f2002e'</default>

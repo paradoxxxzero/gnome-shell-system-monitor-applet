@@ -1,6 +1,6 @@
-## Gnome shell system monitor extension
+## GNOME Shell system monitor extension
 
-[![Build Status](https://img.shields.io/travis/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.org/paradoxxxzero/gnome-shell-system-monitor-applet)
+[![Build Status](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet)
 
 ![screenshot-small](http://i.imgur.com/ka9OA.png)
 
@@ -13,27 +13,39 @@
 #### Prerequisites
 
 This extension [requires GNOME Shell v3.26 or later](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/blob/master/system-monitor%40paradoxxx.zero.gmail.com/metadata.json#L2).
-Please see the alternate branches [gnome-3.0](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.0) and [gnome-3.2](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/tree/gnome-3.2) if you are using an older version of GNOME Shell (check with `gnome-shell --version`).
 
 Before installing this extension, ensure you have the necessary system packages installed:
 
 * On Ubuntu:
 
-      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
-      
+      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0 gnome-system-monitor
+
 * On Debian:
 
-      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0
+      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0 gnome-system-monitor
 
 * On Fedora:
 
-      $ sudo yum install --assumeyes libgtop2-devel NetworkManager-glib-devel
-    
+      $ sudo dnf install libgtop2-devel NetworkManager-libnm-devel gnome-system-monitor
+
+* On Arch Linux:
+
+      $ sudo pacman -S libgtop networkmanager gnome-system-monitor clutter
+
 * On openSUSE (Leap 42.1):
 
-      $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10
+      $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10 gnome-system-monitor
 
-Additionally, if you have an Nvidia graphics card, and want to monitor its memory usage, you'll need to install `nvidia-smi`.
+* On Mageia 64-bit (just remove "64" on i586):
+
+      $ sudo urpmi lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
+
+    or
+
+      $ sudo dnf install lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
+
+
+Additionally, if you have an NVIDIA graphics card, and want to monitor its memory usage, you'll need to install `nvidia-smi`.
 
 For the browser installation (recommended), you will need the GNOME Shell integration browser extension for
 [Chrome](https://chrome.google.com/webstore/detail/gnome-shell-integration/gphhapmejobijbbhgpjhcjognlahblep),
@@ -53,13 +65,13 @@ preferably in Firefox, and install by clicking the toggle button next to the ext
 If the install was successful, the toggle button should now show "ON".
 If it failed, ensure that you installed all the [necessary dependencies](#prerequisites),
 and that you granted the browser permission to install extensions when prompted.
-Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt).
+Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt), but it won't work with Wayland.
 
 #### Repository installation
 
-* Extension is in Fedora 25, 26, 27 and Rawhide repositories, you can install it for all users with the following command:
+* Extension is in Fedora onwards (up to Fedora 33, last update) and Rawhide repositories, you can install it for all users with the following command:
 
-    $ sudo dnf install gnome-shell-extension-system-monitor-applet
+      $ sudo dnf install gnome-shell-extension-system-monitor-applet
 
 * Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
 
@@ -70,10 +82,10 @@ extract the archive, open a shell into its directory, and run:
 
     make install
 
-Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don't have it: (sudo apt-get install git-core, sudo pacman -S git, etc), then run:
+Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don't have it: (`sudo apt-get install git-core`, `sudo pacman -S git`, etc.), then run:
 
     GIT_PROJECTS=~/git_projects
-    PROJECT_NAME=system-monitor@paradoxxx.zero.gmail.com
+    PROJECT_NAME=gnome-shell-system-monitor-applet
     mkdir $GIT_PROJECTS
     cd $GIT_PROJECTS
     git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git $PROJECT_NAME
@@ -82,8 +94,9 @@ Alternately, if you plan on doing development on the extension, or testing modif
     { [ -d "./$PROJECT_NAME" ] || [ -L "./$PROJECT_NAME" ]; } && rm -Rf "./$PROJECT_NAME"
     ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
     gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
+    gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
 
-And restart gnome-shell (`Alt + F2`, then `r`) or reboot the machine.
+And reload GNOME Shell (`Alt + F2`, then `r`) or restart your GNOME session if you are using Wayland.
 
 On openSUSE you need to install a devel package that provides the `gnome-shell-extension-tool` command:
 
@@ -93,11 +106,30 @@ On openSUSE you need to install a devel package that provides the `gnome-shell-e
 
 #### Translation
 
-If we do not have the translation of your language and you want to translate by yourself, please make a fork, add your po/YOUR_LANG/system-monitor-applet.po file, and make a pull request.
+If we do not have the translation for your language and you want to translate it by yourself, please make a fork, add your `po/<YOUR_LANG>/system-monitor-applet.po` file, and make a pull request.
+
+#### Testing
+
+Testing can be done on your native Linux environment using the install instructions above, or through Docker.
+
+To build and run a Docker image:
+
+    ./build-docker.sh
+    ./run-docker.sh
+
+To connect to the container's desktop through VNC:
+
+    ./open-docker.sh
+
+Once logged in, you'll still need to manually enable the extension by open the Gnome Tweaks tool.
+
+Afterwards, when you're done testing, you can destroy the container with:
+
+    ./close-docker.sh
 
 #### Deployment
     
-1. To create a zip file with the specified version number, ready to upload to [Gnome Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
+1. To create a ZIP file with the specified version number, ready to upload to [GNOME Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
 
     make zip-file VERSION=<version>
 
@@ -105,14 +137,14 @@ To determine the version number to use, check the extensions site and increment 
 
 The specified version number is just for documentation and isn't strictly necessary in the uploaded file, since the extensions website will dynamically set this and override whatever we enter.
 
-2. Once uploaded, [create a Github release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
+2. Once uploaded, [create a GitHub release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
 
 ### Authors
 
 [paradoxxxzero](https://github.com/paradoxxxzero)
 [yuyichao](https://github.com/yuyichao)
 [darkxst](https://github.com/darkxst)
-And [many contributors](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/contributors)
+and [many contributors](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/contributors)
 
 ### License
 
@@ -125,8 +157,8 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program. If not, see <http://www.gnu.org/licenses/>.

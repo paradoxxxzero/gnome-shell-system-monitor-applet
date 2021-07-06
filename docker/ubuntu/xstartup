@@ -1,0 +1,26 @@
+#!/bin/sh
+
+export XDG_SESSION_TYPE=x11
+export XKL_XMODMAP_DISABLE=1
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+# Prevent screen from locking after inactivity.
+# There's no password set, so we won't be able to unlock it.
+gsettings set org.gnome.desktop.screensaver lock-enabled false
+gsettings set org.gnome.desktop.interface toolkit-accessibility true
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+
+vncconfig -nowin &
+
+# Workaround a permission issue with Travis CI
+sudo chown -R default:default /home/default/shared
+
+# Lauch our custom tests. Note, this waits for a few seconds to give gnome-session time to initialize.
+cd /home/default/shared
+sudo su - default -c "export DISPLAY=:1; nohup /home/default/shared/run_gui_tests >> /home/default/shared/stdout.log 2>> /home/default/shared/stderr.log &"
+
+# Launch the desktop.
+dbus-launch --exit-with-session gnome-session

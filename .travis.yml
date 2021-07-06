@@ -2,36 +2,23 @@
 # https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
 dist: xenial
 sudo: required
-language: python
-python: 2.7
+language: node_js
+node_js: node
 
-env:
--   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5
+#env:
+#-   MAX_CPU_PERCENT=20 MAX_MEM_PERCENT=5
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get -qq update
+  - sudo apt-get -qq -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 install:
 -   sudo apt-key update
 -   sudo apt-get -yq update
 -   sudo apt -yq install xvfb gnome-shell
-
-# Install NodeJS from upstream, since the version that comes with Ubuntu 14 is ancient.
-# https://askubuntu.com/a/548776/13217
--   sudo apt-get -yq install curl
--   curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
--   sudo apt-get install -yq nodejs
-
-# Necessary on some versions of Ubuntu 14, which has a malformed npm/nodejs package.
--   sudo bash -c "[ ! -f /usr/bin/node ] && ln -s /usr/bin/nodejs /usr/bin/node || true"
--   which nodejs
--   which node
-
-# Install NPM from upstream.
--   git clone git://github.com/npm/cli.git
--   cd cli/scripts
--   chmod +x install.sh
--   sudo ./install.sh
--   cd ../..
-
--   sudo npm install -g eslint
+-   npm install -g eslint
 
 before_script:
   - "export DISPLAY=:99.0"
@@ -43,30 +30,34 @@ before_script:
 script:
 
 # Clear initial gnome-shell errors we don't care about.
--   sudo journalctl /usr/bin/gnome-shell
--   sudo journalctl --rotate
--   sudo journalctl --vacuum-time=1s
+#-   sudo journalctl /usr/bin/gnome-shell
+#-   sudo journalctl --rotate
+#-   sudo journalctl --vacuum-time=1s
 
 # Show pre-extension gnome-shell performance.
--   ps -C gnome-shell -o %cpu,%mem,cmd
+#-   ps -C gnome-shell -o %cpu,%mem,cmd
 
 # Run JSlint check.
 -   cd $TRAVIS_BUILD_DIR
 -   ./checkjs.sh
 
 # Install and enable extension.
--   sudo make install
--   gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com
+#-   sudo make install
+#-   gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com
 
 # Give extension time to run.
--   sleep 10
+#-   sleep 10
 
 # Show post-extension gnome-shell performance.
--   ps -C gnome-shell -o %cpu,%mem,cmd
-# Check CPU. On localhost with 2.80GHz x 4 takes ~3%, on Travis ~15%.
--   bash -c '[[ $(bc <<< "$(ps -C gnome-shell -o %cpu|tail -1) < $MAX_CPU_PERCENT") -eq 1 ]]'
-# Check memory. On localhost with 32GB of memory, ~0.6%, on Travis ~3%.
--   bash -c '[[ $(bc <<< "$(ps -C gnome-shell -o %mem|tail -1) < $MAX_MEM_PERCENT") -eq 1 ]]'
-# Confirm extension hasn't thrown any errors.
--   sudo journalctl /usr/bin/gnome-shell
--   sudo journalctl /usr/bin/gnome-shell|grep "\-\- No entries \-\-"
+#-   ps -C gnome-shell -o %cpu,%mem,cmd
+## Check CPU. On localhost with 2.80GHz x 4 takes ~3%, on Travis ~15%.
+#-   bash -c '[[ $(bc <<< "$(ps -C gnome-shell -o %cpu|tail -1) < $MAX_CPU_PERCENT") -eq 1 ]]'
+## Check memory. On localhost with 32GB of memory, ~0.6%, on Travis ~3%.
+#-   bash -c '[[ $(bc <<< "$(ps -C gnome-shell -o %mem|tail -1) < $MAX_MEM_PERCENT") -eq 1 ]]'
+## Confirm extension hasn't thrown any errors.
+#-   sudo journalctl /usr/bin/gnome-shell
+#-   sudo journalctl /usr/bin/gnome-shell|grep "\-\- No entries \-\-"
+
+# Run Docker GUI tests.
+-   docker --version
+-   ./test.sh

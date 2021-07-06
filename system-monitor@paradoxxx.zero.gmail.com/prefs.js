@@ -465,14 +465,26 @@ const SettingFrame = class SystemMonitor {
 
 const App = class SystemMonitor_App {
     constructor() {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_names = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
+        let ordered_items = {};
+        let setting_items = [];
+        // Get preferred position of the tabs
+        for (let item of setting_names) {
+            ordered_items[Schema.get_int(item + '-position')] = item;
+        }
+        // Populate setting_items with the names in order of preference
+        for (let i = 0; i < Object.keys(ordered_items).length; i++) {
+            setting_items.push(ordered_items[i]);
+        }
         let keys = Schema.list_keys();
 
         this.items = [];
         this.settings = [];
+        this.frameToLabel = {}; // Maps Gtk.Widget to the English name of the setting
 
         setting_items.forEach((setting) => {
             this.settings[setting] = new SettingFrame(_(setting.capitalize()), Schema);
+            this.frameToLabel[this.settings[setting].frame] = setting;
         });
 
         this.main_vbox = box({
@@ -531,9 +543,20 @@ const App = class SystemMonitor_App {
                 }
             }
         });
-        this.notebook = new Gtk.Notebook()
+
+        this.notebook = new Gtk.Notebook();
+        this.notebook.connect('page-reordered', (widget_, pageNum_) => {
+            // After a page has been moved, update the order preferences
+            for (let i = 0; i < this.notebook.get_n_pages(); i++) {
+                let frame = this.notebook.get_nth_page(i);
+                let name = this.frameToLabel[frame];
+                Schema.set_int(name + '-position', i);
+            }
+        });
+
         setting_items.forEach((setting) => {
             this.notebook.append_page(this.settings[setting].frame, this.settings[setting].label)
+            this.notebook.set_tab_reorderable(this.settings[setting].frame, true);
             if (shellMajorVersion < 40) {
                 this.main_vbox.show_all();
                 this.main_vbox.pack_start(this.notebook, true, true, 0)

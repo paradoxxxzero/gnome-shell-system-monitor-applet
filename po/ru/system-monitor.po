@@ -2,12 +2,12 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Viacheslav Dikonov <slava@altlinux.ru>, 2011.
-#: extension.js:844
+#: extension.js:906
 msgid ""
 msgstr ""
 "Project-Id-Version: system-monitor-applet\n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
-"POT-Creation-Date: 2021-03-21 14:18+0100\n"
+"POT-Creation-Date: 2021-07-07 19:01+0200\n"
 "PO-Revision-Date: 2017-11-08 22:30-0500\n"
 "Last-Translator: Georgii Iesaulov <esauloff@gmail.com>\n"
 "Language-Team: Russian <RU@li.org>\n"
@@ -16,68 +16,67 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: prefs.js:69 prefs.js:90 prefs.js:110 prefs.js:67 prefs.js:87 prefs.js:107
-#: prefs.js:72 prefs.js:108
+#: prefs.js:181 prefs.js:209 prefs.js:227
 msgid ":"
 msgstr ""
 
-#: prefs.js:161 prefs.js:159 prefs.js:178
+#: prefs.js:344
 msgid "Display"
 msgstr "Показывать"
 
-#: prefs.js:166 prefs.js:164 prefs.js:191
+#: prefs.js:357
 msgid "Refresh Time"
 msgstr "Частота обновления"
 
-#: prefs.js:171 prefs.js:169 prefs.js:196
+#: prefs.js:362
 msgid "Graph Width"
 msgstr "Ширина графика"
 
-#: prefs.js:176 prefs.js:174 prefs.js:182
+#: prefs.js:348
 msgid "Show Text"
 msgstr "Текст"
 
-#: prefs.js:184 prefs.js:182 prefs.js:201
+#: prefs.js:367
 msgid "Display Style"
 msgstr "Стиль"
 
-#: prefs.js:267 prefs.js:274 prefs.js:310
+#: prefs.js:490
 msgid "Display Icon"
 msgstr "Показывать значок"
 
-#: prefs.js:276 prefs.js:283 prefs.js:319
+#: prefs.js:495
 msgid "Display in the Middle"
 msgstr "Поместить в центр"
 
-#: prefs.js:288 prefs.js:306 prefs.js:342
+#: prefs.js:516
 msgid "Background Color"
 msgstr "Цвет фона"
 
-#: prefs.js:197 prefs.js:195 prefs.js:247
+#: prefs.js:423
 msgid "Display Individual Cores"
 msgstr "Показать отдельные ядра"
 
-#: prefs.js:193 prefs.js:191 prefs.js:243
+#: prefs.js:419
 msgid "Show network speed in bits"
 msgstr "Скорость сети в битах"
 
-#: prefs.js:205 prefs.js:208 prefs.js:220
+#: prefs.js:390
 msgid "Sensor"
 msgstr "Датчик"
 
-#: prefs.js:207 prefs.js:210 prefs.js:222
+#: prefs.js:392
 msgid "Please install lm-sensors"
 msgstr "Установите lm-sensors"
 
-#: prefs.js:282 prefs.js:300 prefs.js:336
+#: prefs.js:511
 msgid "Move the clock"
 msgstr "Переместить часы"
 
-#: prefs.js:286 prefs.js:289 prefs.js:325
+#: prefs.js:500
 msgid "Compact Display"
 msgstr "Компактный"
 
-#: extension.js:746 extension.js:1117 extension.js:1237 extension.js:1238
+#: extension.js:1308
 msgid "Cpu"
 msgstr "Процессор"
 
@@ -96,7 +95,7 @@ msgstr "Приоритет"
 msgid "Iowait"
 msgstr "IOwait"
 
-#: extension.js:941 extension.js:1378 extension.js:1600 extension.js:1601
+#: extension.js:1671
 msgid "Memory"
 msgstr "Память"
 
@@ -109,22 +108,20 @@ msgstr "Кэш"
 msgid "Buffer"
 msgstr "Буфер записи"
 
-#: extension.js:1134 extension.js:1598 extension.js:1899 extension.js:1900
+#: extension.js:1986
 msgid "Swap"
 msgstr "Подкачка"
 
 msgid "Used"
 msgstr "Используется"
 
-#: extension.js:1010 extension.js:1428 extension.js:1710 extension.js:1711
+#: extension.js:1781
 msgid "Net"
 msgstr "Сеть"
 
-#: extension.js:1589
 msgid "Up"
 msgstr "Передача"
 
-#: extension.js:1586
 msgid "Down"
 msgstr "Приём"
 
@@ -140,7 +137,7 @@ msgstr "коллизии"
 msgid "Collisions"
 msgstr "Коллизии"
 
-#: extension.js:836 extension.js:1264 extension.js:1419 extension.js:1420
+#: extension.js:1490
 msgid "Disk"
 msgstr "Диск"
 
@@ -150,32 +147,30 @@ msgstr "Запись"
 msgid "Read"
 msgstr "Чтение"
 
-#: extension.js:1182 extension.js:1312 extension.js:1322 extension.js:1478
-#: extension.js:1510 extension.js:1479 extension.js:1511
+#: extension.js:1549 extension.js:1581
 msgid "R"
 msgstr ""
 
-#: extension.js:1185 extension.js:1315 extension.js:1325 extension.js:1489
-#: extension.js:1519 extension.js:1490 extension.js:1520
+#: extension.js:1560 extension.js:1590
 msgid "W"
 msgstr ""
 
-#: prefs.js:185 prefs.js:183 prefs.js:202
+#: prefs.js:368
 msgid "graph"
 msgstr "график"
 
-#: prefs.js:185 prefs.js:183 prefs.js:202
+#: prefs.js:368
 msgid "digit"
 msgstr "цифровой"
 
-#: prefs.js:185 prefs.js:183 prefs.js:202
+#: prefs.js:368
 msgid "both"
 msgstr "вместе"
 
 msgid "cpu"
 msgstr "процессор"
 
-#: extension.js:811 extension.js:914 extension.js:915
+#: extension.js:978
 msgid "mem"
 msgstr "память"
 
@@ -188,11 +183,11 @@ msgstr "сеть"
 msgid "disk"
 msgstr "диск"
 
-#: extension.js:1346 extension.js:1900 extension.js:2436 extension.js:2439
+#: extension.js:2536
 msgid "Preferences..."
 msgstr "Настройка..."
 
-#: extension.js:1340 extension.js:1894 extension.js:2430 extension.js:2433
+#: extension.js:2530
 msgid "System Monitor..."
 msgstr "Системный монитор..."
 
@@ -244,163 +239,146 @@ msgstr "запись"
 msgid "read"
 msgstr "чтение"
 
-#: extension.js:167 extension.js:1454 extension.js:1545 extension.js:1554
-#: extension.js:1577 extension.js:1581 extension.js:1585 extension.js:1588
-#: extension.js:203 extension.js:1734 extension.js:1821 extension.js:1829
-#: extension.js:1855 extension.js:1866 extension.js:1877 extension.js:204
-#: extension.js:1735 extension.js:1822 extension.js:1830 extension.js:1856
-#: extension.js:1867 extension.js:1878
+#: extension.js:211 extension.js:1805 extension.js:1900 extension.js:1912
+#: extension.js:1942 extension.js:1953 extension.js:1964
 msgid "KiB/s"
 msgstr ""
 
-#: extension.js:166 extension.js:168 extension.js:1277 extension.js:1321
-#: extension.js:1324 extension.js:1549 extension.js:1558 extension.js:202
-#: extension.js:204 extension.js:1427 extension.js:1824 extension.js:1832
-#: extension.js:203 extension.js:205 extension.js:1428 extension.js:1825
-#: extension.js:1833
+#: extension.js:210 extension.js:212 extension.js:1498 extension.js:1903
+#: extension.js:1915
 msgid "MiB/s"
 msgstr ""
 
-#: extension.js:178 extension.js:1597 extension.js:1605 extension.js:205
-#: extension.js:1804 extension.js:1812 extension.js:206 extension.js:1805
-#: extension.js:1813
+#: extension.js:214 extension.js:1875 extension.js:1887
 msgid "kbit/s"
 msgstr ""
 
-#: extension.js:179 extension.js:1600 extension.js:1608 extension.js:206
-#: extension.js:1807 extension.js:1815 extension.js:207 extension.js:1808
-#: extension.js:1816
+#: extension.js:215 extension.js:1878 extension.js:1890
 msgid "Mbit/s"
 msgstr ""
 
-#: extension.js:1419 extension.js:1635 extension.js:1683 extension.js:2210
-#: extension.js:2247 extension.js:1684 extension.js:2211 extension.js:2248
+#: extension.js:1754 extension.js:2303 extension.js:2345
 msgid "MiB"
 msgstr ""
 
-#: extension.js:1714 extension.js:1685 extension.js:2212 extension.js:2249
-#: extension.js:1686 extension.js:2213 extension.js:2250
+#: extension.js:1756 extension.js:2305 extension.js:2347
 msgid "GiB"
 msgstr ""
 
-#: extension.js:184 extension.js:220 extension.js:221
+#: extension.js:228
 msgid "kB"
 msgstr ""
 
-#: extension.js:183 extension.js:185 extension.js:219 extension.js:221
-#: extension.js:220 extension.js:222
+#: extension.js:227 extension.js:229
 msgid "MB"
 msgstr ""
 
-#: extension.js:1179 extension.js:1644 extension.js:2002 extension.js:2007
-#: extension.js:2003 extension.js:2008
+#: extension.js:2089 extension.js:2094
 msgid "Thermal"
 msgstr "Температура"
 
 msgid "thermal"
 msgstr "температура"
 
-#: prefs.js:180 prefs.js:178 prefs.js:186
+#: prefs.js:352
 msgid "Show In Menu"
 msgstr "Показывать в меню"
 
-#: prefs.js:222 prefs.js:229 prefs.js:251
+#: prefs.js:427
 msgid "Show Time Remaining"
 msgstr "Оставшееся время"
 
-#: prefs.js:226 prefs.js:233 prefs.js:255
+#: prefs.js:431
 msgid "Hide System Icon"
 msgstr "Скрыть системный значок"
 
-#: prefs.js:230 prefs.js:237 prefs.js:259
+#: prefs.js:435
 msgid "Usage Style"
 msgstr "Стиль"
 
-#: prefs.js:231 prefs.js:238 prefs.js:260
+#: prefs.js:436
 msgid "pie"
 msgstr "круговая"
 
-#: prefs.js:231 prefs.js:238 prefs.js:260
+#: prefs.js:436
 msgid "bar"
 msgstr "гистограмма"
 
-#: prefs.js:231 prefs.js:238 prefs.js:260
+#: prefs.js:436
 msgid "none"
 msgstr "нет"
 
-#: extension.js:97 extension.js:255 extension.js:299 extension.js:300
+#: extension.js:300
 msgid "System Monitor Extension"
 msgstr "Расширение системного монитора"
 
-#: extension.js:113 extension.js:271 extension.js:315 extension.js:316
+#: extension.js:316
 msgid "Cancel"
 msgstr "Отмена"
 
-#: extension.js:601 extension.js:875 extension.js:1005 extension.js:1006
+#: extension.js:1076
 msgid "Battery"
 msgstr "Батарея"
 
 msgid "battery"
 msgstr "батарея"
 
-#: extension.js:896 extension.js:1334 extension.js:1529 extension.js:1530
+#: extension.js:1600
 msgid "Freq"
 msgstr "Частота"
 
 msgid "freq"
 msgstr "частота"
 
-#: extension.js:1540 extension.js:1692 extension.js:2077 extension.js:2078
+#: extension.js:2163
 msgid "Fan"
 msgstr "Вентилятор"
 
 msgid "fan"
 msgstr "вентилятор"
 
-#: extension.js:1542 extension.js:1566 extension.js:1574 extension.js:1698
-#: extension.js:1722 extension.js:1730 extension.js:2082 extension.js:2112
-#: extension.js:2122 extension.js:2083 extension.js:2113 extension.js:2123
+#: extension.js:2168 extension.js:2198 extension.js:2208
 msgid "rpm"
 msgstr ""
 
-#: prefs.js:294 prefs.js:330
+#: prefs.js:505
 msgid "Show tooltip"
 msgstr "Показывать подсказку"
 
-#: extension.js:1097 extension.js:1216 extension.js:1217
+#: extension.js:1287
 msgid "CPU"
 msgstr ""
 
-#: prefs.js:267 prefs.js:268
+#: prefs.js:448
 msgid "Display temperature in Fahrenheit"
 msgstr "Температура в Фаренгейтах"
 
-#: prefs.js:277 prefs.js:272
+#: prefs.js:452
 msgid "Temperature threshold (0 to disable)"
 msgstr "Температурный порог (0 для отключения)"
 
-#: prefs.js:33
+#: prefs.js:34
 #, javascript-format
 msgid "#%02x%02x%02x%02x"
 msgstr ""
 
-#: prefs.js:279
+#: prefs.js:459
 msgid "** Only Nvidia GPUs supported so far **"
 msgstr ""
 
-#: extension.js:1880 extension.js:1881
+#: extension.js:1967
 msgid " ↓"
 msgstr ""
 
-#: extension.js:1886 extension.js:1887
+#: extension.js:1973
 msgid " KiB/s"
 msgstr ""
 
-#: extension.js:1889 extension.js:1890
+#: extension.js:1976
 msgid " ↑"
 msgstr ""
 
-#: extension.js:2132 extension.js:2137 extension.js:2133 extension.js:2138
+#: extension.js:2218 extension.js:2223
 msgid "GPU"
 msgstr ""
 
@@ -422,6 +400,18 @@ msgid ""
 "gnome-system-monitor \n"
 "\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
 "gir1.0, gnome-system-monitor\n"
+msgstr ""
+
+#: extension.js:213 extension.js:1907 extension.js:1919
+msgid "GiB/s"
+msgstr ""
+
+#: extension.js:216 extension.js:1882 extension.js:1894
+msgid "Gbit/s"
+msgstr ""
+
+#: extension.js:230
+msgid "GB"
 msgstr ""
 
 #~ msgid "System Monitor Applet Configurator"

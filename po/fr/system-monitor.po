@@ -4,13 +4,12 @@
 # GNOME shell system monitor extension.
 # Guillaume Ayoub <guillaume.ayoub@kozea.fr>, 2011.
 #
-#: extension.js:906
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-system-monitor-applet\n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
 "POT-Creation-Date: 2021-07-07 19:01+0200\n"
-"PO-Revision-Date: 2021-03-21 14:26+0100\n"
+"PO-Revision-Date: 2021-07-07 20:05+0200\n"
 "Last-Translator: Davy Defaud <davy.defaud@free.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "Language: fr\n"
@@ -364,7 +363,7 @@ msgstr "Seuil de température (0 pour désactiver)"
 #: prefs.js:34
 #, javascript-format
 msgid "#%02x%02x%02x%02x"
-msgstr ""
+msgstr "#%02x%02x%02x%02x"
 
 #: prefs.js:459
 msgid "** Only Nvidia GPUs supported so far **"
@@ -421,16 +420,13 @@ msgstr ""
 "gir1.0 et gnome-system-monitor.\n"
 
 #: extension.js:213 extension.js:1907 extension.js:1919
-#, fuzzy
 msgid "GiB/s"
-msgstr "Kio/s"
+msgstr "Gio/s"
 
 #: extension.js:216 extension.js:1882 extension.js:1894
-#, fuzzy
 msgid "Gbit/s"
-msgstr "kbit/s"
+msgstr "Gbit/s"
 
 #: extension.js:230
-#, fuzzy
 msgid "GB"
-msgstr "Gio"
+msgstr "Go"

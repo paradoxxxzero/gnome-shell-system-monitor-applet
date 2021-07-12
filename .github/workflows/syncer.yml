@@ -21,3 +21,10 @@ jobs:
         token: ${{ secrets.PAT }}
     - name: ./actions/syncer/
       uses: ./actions/syncer/
+    - name: The job has failed
+      if: ${{ failure() }}
+      uses: JasonEtco/create-an-issue@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
+      with:
+        filename: .github/sync-failed-template.md

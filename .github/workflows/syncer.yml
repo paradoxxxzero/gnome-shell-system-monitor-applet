@@ -28,3 +28,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       with:
         filename: .github/sync-failed-template.md
+        update_existing: true

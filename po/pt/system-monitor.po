@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
 "POT-Creation-Date: 2021-07-07 19:01+0200\n"
-"PO-Revision-Date: 2017-08-05 12:10+0100\n"
-"Last-Translator: Waldir Pimenta <waldyrious@gmail.com>\n"
-"Language-Team: pt_PT <LL@li.org>\n"
-"Language: Portuguese\n"
+"PO-Revision-Date: 2021-08-05 13:14-0300\n"
+"Last-Translator: Lucas Fank <lucaslucasfank@gmail.com>\n"
+"Language-Team: \n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -58,7 +58,7 @@ msgstr "Mostrar núcleos individuais"
 
 #: prefs.js:419
 msgid "Show network speed in bits"
-msgstr "Mostrar velocidade em bits/s"
+msgstr "Mostrar velocidade em bits"
 
 #: prefs.js:390
 msgid "Sensor"
@@ -78,7 +78,7 @@ msgstr "Modo compacto"
 
 #: extension.js:1308
 msgid "Cpu"
-msgstr "Processador (CPU)"
+msgstr "CPU"
 
 msgid "User"
 msgstr "Utilizador"
@@ -97,7 +97,7 @@ msgstr "IOwait"
 
 #: extension.js:1671
 msgid "Memory"
-msgstr "Memória (RAM)"
+msgstr "Memória"
 
 msgid "Program"
 msgstr "Programas"
@@ -110,7 +110,7 @@ msgstr "Tampão (buffer)"
 
 #: extension.js:1986
 msgid "Swap"
-msgstr "Memória virtual (swap)"
+msgstr "Swap"
 
 msgid "Used"
 msgstr "Em uso"
@@ -251,11 +251,11 @@ msgstr "MiB/s"
 
 #: extension.js:214 extension.js:1875 extension.js:1887
 msgid "kbit/s"
-msgstr ""
+msgstr "kbit/s"
 
 #: extension.js:215 extension.js:1878 extension.js:1890
 msgid "Mbit/s"
-msgstr ""
+msgstr "Mbit/s"
 
 #: extension.js:1754 extension.js:2303 extension.js:2345
 msgid "MiB"
@@ -263,7 +263,7 @@ msgstr "MiB"
 
 #: extension.js:1756 extension.js:2305 extension.js:2347
 msgid "GiB"
-msgstr ""
+msgstr "GiB"
 
 #: extension.js:228
 msgid "kB"
@@ -360,15 +360,15 @@ msgstr "Limite de temperatura (0 para desativar)"
 #: prefs.js:34
 #, javascript-format
 msgid "#%02x%02x%02x%02x"
-msgstr ""
+msgstr "#%02x%02x%02x%02x"
 
 #: prefs.js:459
 msgid "** Only Nvidia GPUs supported so far **"
-msgstr ""
+msgstr "** Apenas placas de vídeo Nvidia suportadas no momento **"
 
 #: extension.js:1967
 msgid " ↓"
-msgstr ""
+msgstr " ↓"
 
 #: extension.js:1973
 #, fuzzy
@@ -377,16 +377,16 @@ msgstr "KiB/s"
 
 #: extension.js:1976
 msgid " ↑"
-msgstr ""
+msgstr " ↑"
 
 #: extension.js:2218 extension.js:2223
 #, fuzzy
 msgid "GPU"
-msgstr "CPU"
+msgstr "GPU"
 
 #, fuzzy
 msgid "Gpu"
-msgstr "Processador (CPU)"
+msgstr "Gpu"
 
 #: extension.js:79
 #, fuzzy
@@ -410,20 +410,22 @@ msgstr ""
 "\t    no Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0\n"
 "\t    no Fedora: libgtop2-devel, NetworkManager-glib-devel\n"
 "\t    no Arch: libgtop, networkmanager\n"
-"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+"\t    no openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+"\t    no Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
+"gir1.0, gnome-system-monitor\n"
 
 #: extension.js:213 extension.js:1907 extension.js:1919
 #, fuzzy
 msgid "GiB/s"
-msgstr "KiB/s"
+msgstr "GiB/s"
 
 #: extension.js:216 extension.js:1882 extension.js:1894
 msgid "Gbit/s"
-msgstr ""
+msgstr "Gbit/s"
 
 #: extension.js:230
 msgid "GB"
-msgstr ""
+msgstr "GB"
 
 #~ msgid "System Monitor Applet Configurator"
 #~ msgstr "Configurador do System Monitor Applet"

@@ -33,7 +33,7 @@ msgstr "Rafraîchissement"
 
 #: prefs.js:362
 msgid "Graph Width"
-msgstr "Largeur du graphe"
+msgstr "Largeur du graphique"
 
 #: prefs.js:348
 msgid "Show Text"
@@ -41,7 +41,7 @@ msgstr "Afficher le texte"
 
 #: prefs.js:367
 msgid "Display Style"
-msgstr "Type d’affichage"
+msgstr "Style d’affichage"
 
 #: prefs.js:490
 msgid "Display Icon"
@@ -164,7 +164,7 @@ msgstr "graphe"
 
 #: prefs.js:368
 msgid "digit"
-msgstr "chiffres"
+msgstr "chiffre"
 
 #: prefs.js:368
 msgid "both"
@@ -342,7 +342,7 @@ msgstr "ventilateur"
 
 #: extension.js:2168 extension.js:2198 extension.js:2208
 msgid "rpm"
-msgstr "tr/min"
+msgstr "tours/min"
 
 #: prefs.js:505
 msgid "Show tooltip"

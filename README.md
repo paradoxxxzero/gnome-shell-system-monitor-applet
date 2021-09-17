@@ -18,31 +18,31 @@ Before installing this extension, ensure you have the necessary system packages 
 
 * On Ubuntu:
 
-      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0 gnome-system-monitor
+      sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0 gnome-system-monitor
 
 * On Debian:
 
-      $ sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0 gnome-system-monitor
+      sudo apt install gir1.2-gtop-2.0 gir1.2-nm-1.0 gir1.2-clutter-1.0 gnome-system-monitor
 
 * On Fedora:
 
-      $ sudo dnf install libgtop2-devel NetworkManager-libnm-devel gnome-system-monitor
+      sudo dnf install libgtop2-devel NetworkManager-libnm-devel gnome-system-monitor
 
 * On Arch Linux:
 
-      $ sudo pacman -S libgtop networkmanager gnome-system-monitor clutter
+      sudo pacman -S libgtop networkmanager gnome-system-monitor clutter
 
 * On openSUSE (Leap 42.1):
 
-      $ sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10 gnome-system-monitor
+      sudo zypper install gnome-shell-devel libgtop-devel libgtop-2_0-10 gnome-system-monitor
 
 * On Mageia 64-bit (just remove "64" on i586):
 
-      $ sudo urpmi lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
+      sudo urpmi lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
 
     or
 
-      $ sudo dnf install lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
+      sudo dnf install lib64gtop-gir2.0 lib64nm-gir1.0 lib64clutter-gir1.0 gnome-system-monitor
 
 
 Additionally, if you have an NVIDIA graphics card, and want to monitor its memory usage, you'll need to install `nvidia-smi`.
@@ -71,7 +71,7 @@ Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in t
 
 * Extension is in Fedora onwards (up to Fedora 33, last update) and Rawhide repositories, you can install it for all users with the following command:
 
-      $ sudo dnf install gnome-shell-extension-system-monitor-applet
+      sudo dnf install gnome-shell-extension-system-monitor-applet
 
 * Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
 
@@ -100,7 +100,7 @@ And reload GNOME Shell (`Alt + F2`, then `r`) or restart your GNOME session if y
 
 On openSUSE you need to install a devel package that provides the `gnome-shell-extension-tool` command:
 
-    $ sudo zypper install gnome-shell-devel
+    sudo zypper install gnome-shell-devel
 
 ### Development
 

@@ -52,6 +52,7 @@ For the browser installation (recommended), you will need the GNOME Shell integr
 [Firefox](https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/) or
 [Opera](https://addons.opera.com/en/extensions/details/gnome-shell-integration/).
 
+Note: You may need to reboot your system after installing dependencies.
 Note: If you're using Firefox 52 or later, [you will also need to install `chrome-gnome-shell`](https://blogs.gnome.org/ne0sight/2016/12/25/how-to-install-gnome-shell-extensions-with-firefox-52/).
 The instructions are available [on the GNOME wiki](https://wiki.gnome.org/Projects/GnomeShellIntegrationForChrome/Installation#Ubuntu_Linux).
 

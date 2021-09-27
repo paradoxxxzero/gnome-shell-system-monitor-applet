@@ -2442,8 +2442,8 @@ function enable() {
         Main.__sm.elts = createCpus();
         Main.__sm.elts.push(new Freq());
         Main.__sm.elts.push(new Mem());
-        Main.__sm.elts.push(new Swap());
         Main.__sm.elts.push(new Net());
+        Main.__sm.elts.push(new Swap());
         Main.__sm.elts.push(new Disk());
         Main.__sm.elts.push(new Gpu());
         Main.__sm.elts.push(new Thermal());

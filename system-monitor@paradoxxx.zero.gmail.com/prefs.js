@@ -465,7 +465,7 @@ const SettingFrame = class SystemMonitor {
 
 const App = class SystemMonitor_App {
     constructor() {
-        let setting_items = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
+        let setting_items = ['cpu', 'memory', 'net', 'swap', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
         let keys = Schema.list_keys();
 
         this.items = [];

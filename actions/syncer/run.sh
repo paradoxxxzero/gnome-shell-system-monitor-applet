@@ -17,6 +17,10 @@ git remote -v
 git fetch upstream
 git rebase upstream/master || {
     echo "Couldn't rebase against upstream :(. Please rebase manually."
+    # Right now the repo is in a mangled state, awaiting merge conflict
+    # resolution. Abort the rebase to ensure that all of our fork patches
+    # are present for subsequent actions.
+    git rebase --abort
     exit 1
 }
 echo "After rebase: next=$(git rev-parse master) upstream=$(git rev-parse upstream/master)"

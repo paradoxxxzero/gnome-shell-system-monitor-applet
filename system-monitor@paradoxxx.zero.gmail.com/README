@@ -3,4 +3,4 @@ libclutter, libgtop and NetworkManager gir bindings, and gnome-system-monitor
     on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gnome-system-monitor
     on Fedora: libgtop2-devel NetworkManager-libnm-devel, gnome-system-monitor
     on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-gir1.0, gnome-system-monitor
-    on Arch Linux: libgtop, networkmanager, gnome-system-monitor
+    on Arch Linux: networkmanager, gnome-system-monitor

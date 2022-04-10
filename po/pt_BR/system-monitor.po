@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: system-monitor\n"
 "Report-Msgid-Bugs-To: paradoxxx.zero@gmail.com\n"
 "POT-Creation-Date: 2021-07-07 19:01+0200\n"
-"PO-Revision-Date: 2017-01-31 02:54-0200\n"
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
+"PO-Revision-Date: 2021-08-05 13:14-0300\n"
+"Last-Translator: Lucas Fank <lucaslucasfank@gmail.com>\n"
+"Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,7 +28,7 @@ msgstr "Exibir"
 
 #: prefs.js:357
 msgid "Refresh Time"
-msgstr "Tempo de atualização"
+msgstr "Frequência de atualização"
 
 #: prefs.js:362
 msgid "Graph Width"
@@ -60,7 +60,7 @@ msgstr "Exibir núcleos individuais"
 
 #: prefs.js:419
 msgid "Show network speed in bits"
-msgstr "Apresentar velocidade em bits por segundo"
+msgstr "Exibir velocidade em bits"
 
 #: prefs.js:390
 msgid "Sensor"
@@ -76,14 +76,14 @@ msgstr "Deslocar o relógio"
 
 #: prefs.js:500
 msgid "Compact Display"
-msgstr "Modo compactado"
+msgstr "Exibição compactada"
 
 #: extension.js:1308
 msgid "Cpu"
-msgstr "Processador (CPU)"
+msgstr "Cpu"
 
 msgid "User"
-msgstr "Utilizador"
+msgstr "Usuário"
 
 msgid "System"
 msgstr "Sistema"
@@ -99,7 +99,7 @@ msgstr "IOwait"
 
 #: extension.js:1671
 msgid "Memory"
-msgstr "Memória (RAM)"
+msgstr "Memória"
 
 msgid "Program"
 msgstr "Programa"
@@ -112,10 +112,10 @@ msgstr "Buffer"
 
 #: extension.js:1986
 msgid "Swap"
-msgstr "Memória virtual (swap)"
+msgstr "Swap"
 
 msgid "Used"
-msgstr "Em utilização"
+msgstr "Em uso"
 
 #: extension.js:1781
 msgid "Net"
@@ -189,11 +189,11 @@ msgstr "disco"
 
 #: extension.js:2536
 msgid "Preferences..."
-msgstr "Preferências…"
+msgstr "Preferências..."
 
 #: extension.js:2530
 msgid "System Monitor..."
-msgstr "Monitor do Sistema…"
+msgstr "Monitor do Sistema..."
 
 msgid "System monitor"
 msgstr "Monitor do sistema"
@@ -246,29 +246,29 @@ msgstr "leitura"
 #: extension.js:211 extension.js:1805 extension.js:1900 extension.js:1912
 #: extension.js:1942 extension.js:1953 extension.js:1964
 msgid "KiB/s"
-msgstr "KB/s"
+msgstr "KiB/s"
 
 #: extension.js:210 extension.js:212 extension.js:1498 extension.js:1903
 #: extension.js:1915
 msgid "MiB/s"
-msgstr "MB/s"
+msgstr "MiB/s"
 
 #: extension.js:214 extension.js:1875 extension.js:1887
 msgid "kbit/s"
-msgstr ""
+msgstr "kbit/s"
 
 #: extension.js:215 extension.js:1878 extension.js:1890
 msgid "Mbit/s"
-msgstr ""
+msgstr "Mbit/s"
 
 #: extension.js:1754 extension.js:2303 extension.js:2345
 msgid "MiB"
-msgstr "MB"
+msgstr "MiB"
 
 #: extension.js:1756 extension.js:2305 extension.js:2347
 #, fuzzy
 msgid "GiB"
-msgstr "MB"
+msgstr "GiB"
 
 #: extension.js:228
 msgid "kB"
@@ -303,7 +303,7 @@ msgstr "Estilo de uso"
 
 #: prefs.js:436
 msgid "pie"
-msgstr "setores"
+msgstr "pizza"
 
 #: prefs.js:436
 msgid "bar"
@@ -315,7 +315,7 @@ msgstr "nenhum"
 
 #: extension.js:300
 msgid "System Monitor Extension"
-msgstr "Extensão de monitor do sistema"
+msgstr "Extensão de Monitor do Sistema"
 
 #: extension.js:316
 msgid "Cancel"
@@ -360,38 +360,38 @@ msgstr "Exibir temperatura em Fahrenheit"
 
 #: prefs.js:452
 msgid "Temperature threshold (0 to disable)"
-msgstr ""
+msgstr "Limite de temperatura (0 para desativar)"
 
 #: prefs.js:34
 #, javascript-format
 msgid "#%02x%02x%02x%02x"
-msgstr ""
+msgstr "#%02x%02x%02x%02x"
 
 #: prefs.js:459
 msgid "** Only Nvidia GPUs supported so far **"
-msgstr ""
+msgstr "** Apenas placas de vídeo Nvidia suportadas no momento **"
 
 #: extension.js:1967
 msgid " ↓"
-msgstr ""
+msgstr " ↓"
 
 #: extension.js:1973
 #, fuzzy
 msgid " KiB/s"
-msgstr "KB/s"
+msgstr "KiB/s"
 
 #: extension.js:1976
 msgid " ↑"
-msgstr ""
+msgstr " ↑"
 
 #: extension.js:2218 extension.js:2223
 #, fuzzy
 msgid "GPU"
-msgstr "CPU"
+msgstr "GPU"
 
 #, fuzzy
 msgid "Gpu"
-msgstr "Processador (CPU)"
+msgstr "Gpu"
 
 #: extension.js:79
 #, fuzzy
@@ -415,18 +415,20 @@ msgstr ""
 "\t    no Ubuntu: gir1.2-gtop-2.0, gir1.2-networkmanager-1.0 \n"
 "\t    no Fedora: libgtop2-devel, NetworkManager-glib-devel \n"
 "\t    no Arch: libgtop, networkmanager\n"
-"\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+"\t    no openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0\n"
+"\t    no Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-"
+"gir1.0, gnome-system-monitor\n"
 
 #: extension.js:213 extension.js:1907 extension.js:1919
 #, fuzzy
 msgid "GiB/s"
-msgstr "KB/s"
+msgstr "GiB/s"
 
 #: extension.js:216 extension.js:1882 extension.js:1894
 msgid "Gbit/s"
-msgstr ""
+msgstr "Gbit/s"
 
 #: extension.js:230
 #, fuzzy
 msgid "GB"
-msgstr "MB"
+msgstr "GB"

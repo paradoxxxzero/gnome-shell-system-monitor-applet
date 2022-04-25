@@ -11,7 +11,7 @@ makedepends=('git')
 provides=("system-monitor-applet")
 #install=gschemas.install
 
-_gitroot="git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git"
+_gitroot="https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git"
 _gitname="gnome-shell-system-monitor-applet"
 
 build() {

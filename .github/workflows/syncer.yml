@@ -1,7 +1,7 @@
 name: Repo syncer
 on:
   schedule:
-    - cron: "*/60 * * * *"
+    - cron: "0 */6 * * *"
   push:
     branches:
     - master  # We mostly rely on the above cron schedule but having this

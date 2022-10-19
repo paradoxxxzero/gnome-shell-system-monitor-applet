@@ -1082,7 +1082,11 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
         this.icon_hidden = false;
         this.percentage = 0;
         this.timeString = '-- ';
-        this._proxy = StatusArea.aggregateMenu._power._proxy;
+        if (shell_Version => '43') {
+            this._proxy = StatusArea.quickSettings._system._systemItem._powerToggle._proxy;
+        } else {
+            this._proxy = StatusArea.aggregateMenu._power._proxy;
+        }
         if (typeof (this._proxy) === 'undefined') {
             this._proxy = StatusArea.battery._proxy;
         }

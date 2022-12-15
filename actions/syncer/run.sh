@@ -5,6 +5,7 @@ set -e
 mkdir -pv ~/.ssh
 ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+git config --global --add safe.directory /github/workspace
 git config --global user.email mitch.special@gmail.com
 git config --global user.name "Mitchel Humpherys"
 git config --global http.postBuffer 1048576000

@@ -870,7 +870,7 @@ const TipBox = class SystemMonitor_TipBox {
             this.out_to = 0;
         }
         if (!this.in_to) {
-            this.in_to = Mainloop.timeout_add(500,
+            this.in_to = Mainloop.timeout_add(Schema.get_int('tooltip-delay-ms'),
                 this.show_tip.bind(this));
         }
     }
@@ -880,7 +880,7 @@ const TipBox = class SystemMonitor_TipBox {
             this.in_to = 0;
         }
         if (!this.out_to) {
-            this.out_to = Mainloop.timeout_add(500,
+            this.out_to = Mainloop.timeout_add(Schema.get_int('tooltip-delay-ms'),
                 this.hide_tip.bind(this));
         }
     }

@@ -507,6 +507,12 @@ const App = class SystemMonitor_App {
                 this.items.push(item)
                 this.hbox1.add(item)
                 Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            } else if (key === 'tooltip-delay-ms') {
+                let item = new IntSelect(_('Tooltip delay'));
+                item.set_args(0, 100000, 50, 1000);
+                this.items.push(item)
+                this.hbox1.add(item.actor);
+                Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
             } else if (key === 'move-clock') {
                 let item = new Gtk.CheckButton({label: _('Move the clock')})
                 this.items.push(item)

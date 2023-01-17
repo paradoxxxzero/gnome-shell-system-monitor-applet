@@ -323,6 +323,11 @@
       <summary>Enable or disable the tooltip</summary>
       <description>True: show tool tip on mouse hover </description>
     </key>
+    <key name="tooltip-delay-ms" type="i">
+      <default>0</default>
+      <summary>Tooltip delay</summary>
+      <description>Milliseconds to wait before showing/hiding a tooltip</description>
+    </key>
     <key name="compact-display" type="b">
       <default>false</default>
       <summary>Optimize view for small displays</summary>

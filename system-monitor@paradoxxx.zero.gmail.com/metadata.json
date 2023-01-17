@@ -6,5 +6,6 @@
     "description": "Display system information in GNOME Shell status bar, such as memory, CPU, disk and battery usages, network rates…",
     "settings-schema":  "org.gnome.shell.extensions.system-monitor",
     "gettext-domain": "system-monitor",
+    "session-modes": ["user", "unlock-dialog"],
     "version": -1
 }

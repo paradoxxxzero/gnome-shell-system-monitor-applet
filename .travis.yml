@@ -1,7 +1,6 @@
 # https://docs.travis-ci.com/user/multi-os/
 # https://docs.travis-ci.com/user/ci-environment/#Virtualization-environments
-dist: xenial
-sudo: required
+dist: focal
 language: node_js
 node_js: node
 

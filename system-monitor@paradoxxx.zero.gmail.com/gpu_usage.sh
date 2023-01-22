@@ -40,9 +40,13 @@ elif lsmod | grep amdgpu > /dev/null; then
 	cat /sys/class/drm/card0/device/gpu_busy_percent
 
 elif checkcommand glxinfo; then
-	TOTALVRAM=$(glxinfo | grep -A2 -i GL_NVX_gpu_memory_info | grep -E -i "dedicated" | cut -f2- -d ':' | gawk '{print $1}')
-	AVAILVRAM=$(glxinfo | grep -A4 -i GL_NVX_gpu_memory_info | grep -E -i "available dedicated" | cut -f2- -d ':' | gawk '{print $1}')
-	FREEVRAM=$((TOTALVRAM-AVAILVRAM))
+	TOTALVRAM=$(glxinfo | grep -A2 -i GL_NVX_gpu_memory_info | grep -E -i 'dedicated')
+	TOTALVRAM=${TOTALVRAM##*:[[:blank:]]}
+	TOTALVRAM=${TOTALVRAM%%[[:blank:]]MB*}
+	AVAILVRAM=$(glxinfo | grep -A4 -i GL_NVX_gpu_memory_info | grep -E -i 'available dedicated')
+	AVAILVRAM=${AVAILVRAM##*:[[:blank:]]}
+	AVAILVRAM=${AVAILVRAM%%[[:blank:]]MB*}
+	let FREEVRAM=TOTALVRAM-AVAILVRAM
 	echo "$TOTALVRAM"
 	echo "$FREEVRAM"
 

@@ -2402,6 +2402,14 @@ function init() {
     IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
 }
 
+function _onSessionModeChanged(session) {
+    if (session.currentMode === 'user' || session.parentMode === 'user') {
+        Main.__sm.tray.show()
+    } else if (session.currentMode === 'unlock-dialog' && !Schema.get_boolean('show-on-lockscreen')) {
+        Main.__sm.tray.hide()
+    }
+}
+
 function enable() {
     log('[System monitor] applet enabling');
     Schema = Convenience.getSettings();
@@ -2568,6 +2576,10 @@ function enable() {
         });
         tray.menu.addMenuItem(item);
         Main.panel.menuManager.addMenu(tray.menu);
+
+        if (shell_Version >= '42') {
+            Main.sessionMode.connect('updated', _onSessionModeChanged);
+        }
     }
     log('[System monitor] applet enabling done');
 }

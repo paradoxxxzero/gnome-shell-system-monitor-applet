@@ -5,6 +5,7 @@ on:
     - master
     paths:
     - 'system-monitor@paradoxxx.zero.gmail.com/**'
+  workflow_dispatch: {}
 jobs:
   upload_plz_thx:
     name: Uploader

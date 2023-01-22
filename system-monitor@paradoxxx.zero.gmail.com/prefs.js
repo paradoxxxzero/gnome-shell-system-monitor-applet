@@ -454,11 +454,6 @@ const SettingFrame = class SystemMonitor {
             this.hbox3.add(item.actor);
             Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         }
-        if (configParent.indexOf('gpu') !== -1 &&
-            config === 'display') {
-            let item = new Gtk.Label({label: _('** Only Nvidia GPUs supported so far **')});
-            this.hbox3.add(item);
-        }
         this._reorder();
     }
 }

@@ -6,6 +6,7 @@ set -e
     echo "Please execute this script from the root of the extension repo"
     exit 1
 }
+git config --global --add safe.directory /github/workspace
 make zip-file clean
 export USERNAME
 export PASSWORD

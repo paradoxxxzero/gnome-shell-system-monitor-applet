@@ -792,6 +792,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         let tipx = cx - width / 2;
         tipx = Math.max(tipx, monitor.x);
         tipx = Math.min(tipx, monitor.x + monitor.width - width);
+        tipx = Math.floor(tipx);
         let tipy = Math.floor(ym);
         // Hacky condition to determine if the status bar is at the top or at the bottom of the screen
         if (sourceTopLeftY / monitor.height > 0.3) {

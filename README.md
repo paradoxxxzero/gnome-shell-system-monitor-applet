@@ -104,6 +104,12 @@ On openSUSE you need to install a devel package that provides the `gnome-shell-e
 
 ### Development
 
+If you make changes to the GSettings schema xml file
+(`system-monitor@paradoxxx.zero.gmail.com/schemas/org.gnome.shell.extensions.system-monitor.gschema.xml`)
+you'll need to recompile the binary schema file, which can be done with:
+
+    make extension
+
 #### Translation
 
 If we do not have the translation for your language and you want to translate it by yourself, please make a fork, add your `po/<YOUR_LANG>/system-monitor-applet.po` file, and make a pull request.

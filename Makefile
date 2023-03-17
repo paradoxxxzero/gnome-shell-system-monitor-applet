@@ -134,7 +134,7 @@ zip-file.clean:
 
 PHONY += extension extension.clean _drop-gschemas
 
-extension: _drop-gschemas ./$(UUID)/schemas/gschemas.compiled
+extension: ./$(UUID)/schemas/gschemas.compiled
 	$(call msg,$@,OK)
 
 clean:: extension.clean
@@ -142,7 +142,7 @@ extension.clean:
 	$(Q)git checkout -f -- ./$(UUID)/schemas/gschemas.compiled
 	$(call msg,$@,OK)
 
-./$(UUID)/schemas/gschemas.compiled: ./$(UUID)/schemas/org.gnome.shell.extensions.system-monitor.gschema.xml
+./$(UUID)/schemas/gschemas.compiled: _drop-gschemas ./$(UUID)/schemas/org.gnome.shell.extensions.system-monitor.gschema.xml
 	$(Q)glib-compile-schemas ./$(UUID)/schemas/
 	$(call msg,gschemas,OK)
 

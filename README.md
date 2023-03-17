@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet)
 
-![screenshot-small](http://i.imgur.com/ka9OA.png)
+![screenshot-small](https://i.imgur.com/ka9OA.png)
 
-![screenshot-mid](http://i.imgur.com/mmRTu.png)
+![screenshot-mid](https://i.imgur.com/mmRTu.png)
 
-![screenshot-large](http://i.imgur.com/X7Sss.png)
+![screenshot-large](https://i.imgur.com/X7Sss.png)
 
 ### Installation
 
@@ -161,4 +161,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.

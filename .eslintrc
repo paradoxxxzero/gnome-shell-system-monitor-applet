@@ -1,4 +1,4 @@
-// http://eslint.org/docs/rules/
+// https://eslint.org/docs/rules/
 {
   //"extends": "eslint:recommended",
   "env": {

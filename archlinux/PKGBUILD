@@ -4,7 +4,7 @@ pkgver=20120504
 pkgrel=1
 pkgdesc="System monitor extension for Gnome-Shell (display mem swap cpu usage)"
 arch=('any')
-url="http://github.com/paradoxxxzero/gnome-shell-system-monitor-applet"
+url="https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet"
 license=('GPL3')
 depends=('gnome-shell>=3.3.90' 'libgtop' 'networkmanager')
 makedepends=('git')

@@ -283,47 +283,55 @@ const smStyleManager = class SystemMonitor_smStyleManager {
     }
 }
 
-const smDialog = GObject.registerClass(
-    class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
-        constructor() {
-            super({styleClass: 'prompt-dialog'});
-            let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
-                vertical: false});
-            this.contentLayout.add(mainContentBox,
-                {x_fill: true,
-                    y_fill: true});
+var smDialog = class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
+    _init() {
+        super._init({styleClass: 'prompt-dialog'});
+        let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
+            vertical: false});
+        this.contentLayout.add(mainContentBox,
+            {x_fill: true,
+                y_fill: true});
 
-            let messageBox = new St.BoxLayout({style_class: 'prompt-dialog-message-layout',
-                vertical: true});
-            mainContentBox.add(messageBox,
-                {y_align: St.Align.START});
+        let messageBox = new St.BoxLayout({style_class: 'prompt-dialog-message-layout',
+            vertical: true});
+        mainContentBox.add(messageBox,
+            {y_align: St.Align.START});
 
-            this._subjectLabel = new St.Label({style_class: 'prompt-dialog-headline',
-                text: _('System Monitor Extension')});
+        this._subjectLabel = new St.Label({style_class: 'prompt-dialog-headline',
+            text: _('System Monitor Extension')});
 
-            messageBox.add(this._subjectLabel,
-                {y_fill: false,
-                    y_align: St.Align.START});
+        messageBox.add(this._subjectLabel,
+            {y_fill: false,
+                y_align: St.Align.START});
 
-            this._descriptionLabel = new St.Label({style_class: 'prompt-dialog-description',
-                text: MESSAGE});
+        this._descriptionLabel = new St.Label({style_class: 'prompt-dialog-description',
+            text: MESSAGE});
 
-            messageBox.add(this._descriptionLabel,
-                {y_fill: true,
-                    y_align: St.Align.START});
+        messageBox.add(this._descriptionLabel,
+            {y_fill: true,
+                y_align: St.Align.START});
 
 
-            this.setButtons([
-                {
-                    label: _('Cancel'),
-                    action: () => {
-                        this.close();
-                    },
-                    key: Clutter.Escape
-                }
-            ]);
-        }
-    });
+        this.setButtons([
+            {
+                label: _('Cancel'),
+                action: () => {
+                    this.close();
+                },
+                key: Clutter.Escape
+            }
+        ]);
+    }
+}
+
+// Add compatibility with Gnome-Shell < 3.34 - for example RHEL 8 with 3.32.2
+// ModalDialog was converted to GObject.registerClass in 3.34
+if (shell_Version >= '3.34') {
+    smDialog = GObject.registerClass(
+        {GTypeName: 'smDialog'},
+        smDialog
+    );
+}
 
 const Chart = class SystemMonitor_Chart {
     constructor(width, height, parent) {

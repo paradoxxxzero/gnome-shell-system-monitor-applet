@@ -1,10 +1,8 @@
 name: Extension uploader
 on:
   push:
-    branches:
-    - master
-    paths:
-    - 'system-monitor@paradoxxx.zero.gmail.com/**'
+    tags:
+    - '*'
   workflow_dispatch: {}
 jobs:
   upload_plz_thx:

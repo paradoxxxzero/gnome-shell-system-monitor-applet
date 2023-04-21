@@ -525,11 +525,6 @@ const App = class SystemMonitor_App {
                 this.items.push(item)
                 this.hbox1.add(item)
                 Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'show-on-lockscreen') {
-                let item = new Gtk.CheckButton({label: _('Show on lockscreen')})
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
             } else if (key === 'background') {
                 let item = new ColorSelect(_('Background Color'))
                 item.set_value(Schema.get_string(key))

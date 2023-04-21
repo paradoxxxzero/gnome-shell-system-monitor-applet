@@ -333,11 +333,6 @@
       <summary>Optimize view for small displays</summary>
       <description>Optimize texts sizes to fit on a small display </description>
     </key>
-    <key name="show-on-lockscreen" type="b">
-      <default>false</default>
-      <summary>Show on lockscreen</summary>
-      <description>Allow the extension to run while the screen is locked. Also avoids resetting graph history</description>
-    </key>
     <key name="memory-program-color" type="s">
       <default>'#00b35b'</default>
       <summary>Color of program memory in the chart</summary>

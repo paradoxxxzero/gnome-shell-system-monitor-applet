@@ -6,6 +6,5 @@
     "description": "Display system information in GNOME Shell status bar, such as memory, CPU, disk and battery usages, network rates…\n\nThis fork of paradoxxxzero/gnome-shell-system-monitor-applet is for packaging purposes only. This extension is built and updated continuously with the upstream master branch.\n\nThis is preferable for users on bleeding edge distributions that prefer not to wait for a stable release from the main repo. Of course, since we're releasing directly from master some instability is inevitable.\n\nIf you get an error after updating, try restarting Gnome Shell with Alt-F2 then 'r'.",
     "settings-schema":  "org.gnome.shell.extensions.system-monitor",
     "gettext-domain": "system-monitor",
-    "session-modes": ["user", "unlock-dialog"],
     "version": -1
 }

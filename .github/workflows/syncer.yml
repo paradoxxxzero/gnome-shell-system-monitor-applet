@@ -2,14 +2,6 @@ name: Repo syncer
 on:
   schedule:
     - cron: "0 */6 * * *"
-  push:
-    branches:
-    - master  # We mostly rely on the above cron schedule but having this
-              # push handler is handy so that we re-sync after making
-              # changes to our GA workflows or scripts. Unfortunately,
-              # since this workflow can actually push to master it could
-              # trigger itself a second time, but that second run shouldn't
-              # have any updates so it will just complete quietly.
 jobs:
   sync_plz_thx:
     name: Sync and push

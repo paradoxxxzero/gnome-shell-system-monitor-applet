@@ -28,7 +28,10 @@ checkcommand()
 # This will print three lines. The first one is the the total vRAM available,
 # the second one is the used vRAM and the third on is the GPU usage in %.
 if checkcommand nvidia-smi; then
-	nvidia-smi -i 0 --query-gpu=memory.total,memory.used,utilization.gpu --format=csv,noheader,nounits | while IFS=', ' read -r a b c; do echo "$a"; echo "$b"; echo "$c"; done
+        #For all attached Nvidia GPUs, aggregate total vRAM available, total vRAM used, and total GPU usage.
+        #The graph is at maximum when all GPUs' vRAM is used and all GPUs are 100% busy.
+	#Works for any number of attached NVidia GPUs, from 1 to N (the same way the CPU monitor aggregates any number of cores).
+	nvidia-smi --query-gpu=memory.total,memory.used,utilization.gpu --format=csv,noheader,nounits | while IFS=', ' read -r a b c;  do let i++;  let aa+=a; let bb+=b; let cc+=c; echo $i $aa $bb $cc; done | tail -n1 | while read i aa bb cc; do echo $aa; echo $bb; echo $((cc/i)); done;
 
 elif lsmod | grep amdgpu > /dev/null; then
 	total=$(cat /sys/class/drm/card0/device/mem_info_vram_total)

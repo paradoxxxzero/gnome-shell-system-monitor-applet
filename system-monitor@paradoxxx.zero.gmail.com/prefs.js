@@ -1,28 +1,19 @@
-const Gtk = imports.gi.Gtk;
-const Gio = imports.gi.Gio;
-const Gdk = imports.gi.Gdk;
-const GLib = imports.gi.GLib;
-const ByteArray = imports.byteArray;
-const Config = imports.misc.config;
+import { ExtensionPreferences, gettext as _ } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
+import Gtk from "gi://Gtk";
+import Gio from "gi://Gio";
+import Gdk from "gi://Gdk";
+import Adw from "gi://Adw";
+import * as Config from "resource:///org/gnome/Shell/Extensions/js/misc/config.js";
 
-const Gettext = imports.gettext.domain('system-monitor');
-
-let extension = imports.misc.extensionUtils.getCurrentExtension();
-let convenience = extension.imports.convenience;
-
-const _ = Gettext.gettext;
 const N_ = function (e) {
     return e;
 };
 
-let Schema;
+function sm_log(message) {
+    console.log(`[system-monitor-next-prefs] ${message}`);
+}
 
 const shellMajorVersion = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
-
-function init() {
-    convenience.initTranslations();
-    Schema = convenience.getSettings();
-}
 
 String.prototype.capitalize = function () {
     return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
@@ -40,10 +31,8 @@ function color_to_hex(color) {
 }
 
 function parse_bytearray(bytearray) {
-    if (!ByteArray.toString(bytearray).match(/GjsModule byteArray/)) {
-        return ByteArray.toString(bytearray);
-    }
-    return bytearray
+    const decoder = new TextDecoder('utf-8');
+    return decoder.decode(bytearray);
 }
 
 function check_sensors(sensor_type) {
@@ -62,7 +51,7 @@ function check_sensors(sensor_type) {
                     return String(parse_bytearray(contents)).split('\n')[0];
                 }
             } catch (e) {
-                log('[System monitor] error loading label from file ' + file.get_path() + ': ' + e);
+                sm_log('error loading label from file ' + file.get_path() + ': ' + e);
             }
         }
         return null;
@@ -72,7 +61,7 @@ function check_sensors(sensor_type) {
         const chip_children = chip_dir.enumerate_children(
             'standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
         if (!chip_children) {
-            log('[System monitor] error enumerating children of chip ' + chip_dir.get_path());
+            sm_log('error enumerating children of chip ' + chip_dir.get_path());
             return false;
         }
 
@@ -101,7 +90,7 @@ function check_sensors(sensor_type) {
     const hwmon_children = hwmon_dir.enumerate_children(
         'standard::name,standard::type', Gio.FileQueryInfoFlags.NONE, null);
     if (!hwmon_children) {
-        log('[System monitor] error enumerating hwmon children');
+        sm_log('error enumerating hwmon children');
         return [[], []];
     }
 
@@ -192,10 +181,7 @@ const ColorSelect = class SystemMonitor_ColorSelect {
             // GDK did not support parsing hex colours with alpha before GTK 4.
             color.parse(value);
         } else {
-            // Use the Compat only when GTK 4 is not available,
-            // since it depends on the deprecated Clutter library.
-            let Compat = extension.imports.compat;
-            let clutterColor = Compat.color_from_string(value);
+            let clutterColor = Clutter.Color.from_string(value)[1];
             let ctemp = [clutterColor.red, clutterColor.green, clutterColor.blue, clutterColor.alpha / 255];
             color.parse('rgba(' + ctemp.join(',') + ')');
         }
@@ -242,15 +228,15 @@ const Select = class SystemMonitor_Select {
 }
 
 function set_enum(combo, schema, name) {
-    Schema.set_enum(name, combo.get_active());
+    schema.set_enum(name, combo.get_active());
 }
 
 function set_color(color, schema, name) {
-    Schema.set_string(name, color_to_hex(color.get_rgba()))
+    schema.set_string(name, color_to_hex(color.get_rgba()))
 }
 
 function set_string(combo, schema, name, _slist) {
-    Schema.set_string(name, _slist[combo.get_active()]);
+    schema.set_string(name, _slist[combo.get_active()]);
 }
 
 const SettingFrame = class SystemMonitor {
@@ -338,38 +324,39 @@ const SettingFrame = class SystemMonitor {
     add(key) {
         const configParent = key.substring(0, key.indexOf('-'));
         const config = key.substring(configParent.length + 1);
+        const me = this;
 
         // hbox0
         if (config === 'display') {
             let item = new Gtk.CheckButton({label: _('Display')});
             this.hbox0.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'show-text') {
             let item = new Gtk.CheckButton({label: _('Show Text')});
             this.hbox0.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'show-menu') {
             let item = new Gtk.CheckButton({label: _('Show In Menu')});
             this.hbox0.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         // hbox1
         } else if (config === 'refresh-time') {
             let item = new IntSelect(_('Refresh Time'));
             item.set_args(50, 100000, 1000, 5000);
             this.hbox1.add(item.actor);
-            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'graph-width') {
             let item = new IntSelect(_('Graph Width'));
             item.set_args(1, 1000, 1, 10);
             this.hbox1.add(item.actor);
-            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'style') {
             let item = new Select(_('Display Style'));
             item.add([_('digit'), _('graph'), _('both')]);
             item.set_value(this.schema.get_enum(key));
             this.hbox1.add(item.actor);
             item.selector.connect('changed', function (style) {
-                set_enum(style, Schema, key);
+                set_enum(style, me.schema, key);
             });
             // Schema.bind(key, item.selector, 'active', Gio.SettingsBindFlags.DEFAULT);
         // hbox2
@@ -382,7 +369,7 @@ const SettingFrame = class SystemMonitor {
                 this.hbox2.append(item.actor);
             }
             item.picker.connect('color-set', function (color) {
-                set_color(color, Schema, key);
+                set_color(color, me.schema, key);
             });
         } else if (config.match(/sensor/)) {
             let sensor_type = configParent === 'fan' ? 'fan' : 'temp';
@@ -412,25 +399,25 @@ const SettingFrame = class SystemMonitor {
                 this.hbox2.prepend(item.actor);
             }
             item.selector.connect('changed', function (combo) {
-                set_string(combo, Schema, key, _slist);
+                set_string(combo, me.schema, key, _slist);
             });
         // hbox3
         } else if (config === 'speed-in-bits') {
             let item = new Gtk.CheckButton({label: _('Show network speed in bits')});
             this.hbox3.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'individual-cores') {
             let item = new Gtk.CheckButton({label: _('Display Individual Cores')});
             this.hbox3.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'time') {
             let item = new Gtk.CheckButton({label: _('Show Time Remaining')});
             this.hbox3.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'hidesystem') {
             let item = new Gtk.CheckButton({label: _('Hide System Icon')});
             this.hbox3.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'usage-style') {
             let item = new Select(_('Usage Style'));
             item.add([_('pie'), _('bar'), _('none')]);
@@ -442,24 +429,25 @@ const SettingFrame = class SystemMonitor {
             }
 
             item.selector.connect('changed', function (style) {
-                set_enum(style, Schema, key);
+                set_enum(style, me.schema, key);
             });
         } else if (config === 'fahrenheit-unit') {
             let item = new Gtk.CheckButton({label: _('Display temperature in Fahrenheit')});
             this.hbox3.add(item);
-            Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
         } else if (config === 'threshold') {
             let item = new IntSelect(_('Temperature threshold (0 to disable)'));
             item.set_args(0, 300, 5, 5);
             this.hbox3.add(item.actor);
-            Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
+            this.schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
         }
         this._reorder();
     }
 }
 
 const App = class SystemMonitor_App {
-    constructor() {
+    constructor(Schema) {
+        const me = this;
         let setting_names = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
         let ordered_items = {};
         let setting_items = [];
@@ -548,9 +536,9 @@ const App = class SystemMonitor_App {
         this.notebook = new Gtk.Notebook();
         this.notebook.connect('page-reordered', (widget_, pageNum_) => {
             // After a page has been moved, update the order preferences
-            for (let i = 0; i < this.notebook.get_n_pages(); i++) {
-                let frame = this.notebook.get_nth_page(i);
-                let name = this.frameToLabel[frame];
+            for (let i = 0; i < me.notebook.get_n_pages(); i++) {
+                let frame = me.notebook.get_nth_page(i);
+                let name = me.frameToLabel[frame];
                 Schema.set_int(name + '-position', i);
             }
         });
@@ -571,7 +559,21 @@ const App = class SystemMonitor_App {
     }
 }
 
-function buildPrefsWidget() {
-    let widget = new App();
-    return widget.main_vbox;
+export default class SystemMonitorExtensionPreferences extends ExtensionPreferences {
+    fillPreferencesWindow(window) {
+        const page = new Adw.PreferencesPage({
+            title: _("System Monitor Next Preferences"),
+            icon_name: "dialog-information-symbolic",
+        });
+        window.add(page);
+
+        const group = new Adw.PreferencesGroup({
+            title: _("General"),
+            description: _("Configure the appearance of the extension"),
+        });
+        page.add(group);
+
+        let widget = new App(this.getSettings());
+        group.add(widget.main_vbox);
+    }
 }

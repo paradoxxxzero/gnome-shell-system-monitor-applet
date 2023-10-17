@@ -100,7 +100,7 @@ To install the extension from source, clone this repo and create the
 appropriate symlink in the Gnome Shell extensions directory like so:
 
     cd ~/.local/share/gnome-shell/extensions
-    ln -sv /path/to/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com/
+    ln -sv /path/to/gnome-shell-system-monitor-applet/system-monitor-next@paradoxxx.zero.gmail.com/
 
 And reload your Gnome Shell session. You can do this in X11 by pressing
 `Alt-F2`, then `r`. If using Wayland, you'll need to logout/login.

@@ -574,6 +574,11 @@ export default class SystemMonitorExtensionPreferences extends ExtensionPreferen
         page.add(group);
 
         let widget = new App(this.getSettings());
-        group.add(widget.main_vbox);
+
+        const scrolledWindow = new Gtk.ScrolledWindow();
+        scrolledWindow.set_policy(Gtk.PolicyType.ALWAYS, Gtk.PolicyType.NEVER);
+        scrolledWindow.set_child(widget.main_vbox);
+
+        group.add(scrolledWindow);
     }
 }

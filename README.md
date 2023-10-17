@@ -96,55 +96,38 @@ Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in t
 
 #### Manual installation
 
-[Download the ZIP/Tarball](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases),
-extract the archive, open a shell into its directory, and run:
+To install the extension from source, clone this repo and create the
+appropriate symlink in the Gnome Shell extensions directory like so:
 
-    make install
-
-Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don't have it: (`sudo apt-get install git-core`, `sudo pacman -S git`, etc.), then run:
-
-    GIT_PROJECTS=~/git_projects
-    PROJECT_NAME=gnome-shell-system-monitor-applet
-    mkdir $GIT_PROJECTS
-    cd $GIT_PROJECTS
-    git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git $PROJECT_NAME
-    mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
-    { [ -d "./$PROJECT_NAME" ] || [ -L "./$PROJECT_NAME" ]; } && rm -Rf "./$PROJECT_NAME"
-    ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
-    gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
-    gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
+    ln -sv /path/to/gnome-shell-system-monitor-applet/system-monitor@paradoxxx.zero.gmail.com/
 
-And reload GNOME Shell (`Alt + F2`, then `r`) or restart your GNOME session if you are using Wayland.
+And reload your Gnome Shell session. You can do this in X11 by pressing
+`Alt-F2`, then `r`. If using Wayland, you'll need to logout/login.
 
-On openSUSE you need to install a devel package that provides the `gnome-shell-extension-tool` command:
+After reloading Gnome Shell, you can enable the extension from the
+Extensions app, or by running:
 
-    sudo zypper install gnome-shell-devel
+    gnome-extensions enable system-monitor-next@paradoxxx.zero.gmail.com
 
-### Development
+If you're going to be doing development/testing under Wayland and don't
+want to keep logging out/in you can use Gnome Shell's support for [nested
+sessions under
+Wayland](https://gjs.guide/extensions/development/creating.html#wayland-sessions). To
+start a nested session, run:
+
+    dbus-run-session -- gnome-shell --nested --wayland
+
+then start a new terminal *inside* the nested session (it will show up
+outside of the nested window, but don't panic; the dbus session address
+will be configured to point at the nested session), and run the above
+`gnome-extensions enable` command in your new terminal. You may also need
+to enable extensions using the Gnome Extensions app inside your nested
+session.
 
 #### Translation
 
 If we do not have the translation for your language and you want to translate it by yourself, please make a fork, add your `po/<YOUR_LANG>/system-monitor-applet.po` file, and make a pull request.
-
-#### Testing
-
-Testing can be done on your native Linux environment using the install instructions above, or through Docker.
-
-To build and run a Docker image:
-
-    ./build-docker.sh
-    ./run-docker.sh
-
-To connect to the container's desktop through VNC:
-
-    ./open-docker.sh
-
-Once logged in, you'll still need to manually enable the extension by open the Gnome Tweaks tool.
-
-Afterwards, when you're done testing, you can destroy the container with:
-
-    ./close-docker.sh
 
 #### Deployment
     

@@ -1,23 +1,17 @@
 ![Extension uploader](https://github.com/mgalgs/gnome-shell-system-monitor-applet/workflows/Extension%20uploader/badge.svg)
 ![Repo syncer](https://github.com/mgalgs/gnome-shell-system-monitor-applet/workflows/Repo%20syncer/badge.svg)
 
-This fork of `paradoxxxzero/gnome-shell-system-monitor-applet` is for
-packaging purposes only. This fork contains Github Actions workflows
-([here](.github/workflows)) to continuously sync against the upstream
-`master` branch and upload the resulting build to extensions.gnome.org
-([system-monitor-next](https://extensions.gnome.org/extension/3010/system-monitor-next/)).
+This fork of `paradoxxxzero/gnome-shell-system-monitor-applet` was
+originally for packaging purposes only, with the intent of maintaining a
+continuously updated release [on
+extensions.gnome.org](https://extensions.gnome.org/extension/3010/system-monitor-next/)
+so that users wouldn't have to wait for the (often slow) release process of
+the original project.
 
-Any issues, bug reports, feature requests, etc. for the extension itself
-should be submitted to the [upstream
-repo](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet),
-but build/sync issues should be reported here.
+However, the upstream repo now appears to be unmaintained, so this
+repository is now a full and proper fork.
 
-The approach in this repo is preferable for users on bleeding edge
-distributions who prefer not to wait for a stable release from the main
-repo. Of course, since we're releasing directly from `master` some
-instability is inevitable.
-
-## GNOME Shell system monitor extension
+## GNOME Shell system monitor NEXT extension
 
 [![Build Status](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet)
 
@@ -31,7 +25,8 @@ instability is inevitable.
 
 #### Prerequisites
 
-This extension [requires GNOME Shell v3.26 or later](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/blob/master/system-monitor%40paradoxxx.zero.gmail.com/metadata.json#L2).
+This extension requires Gnome Shell 45 or later. For earlier versions,
+please see the `pre-45` git branch.
 
 Before installing this extension, ensure you have the necessary system packages installed:
 
@@ -78,7 +73,7 @@ The instructions are available [on the GNOME wiki](https://wiki.gnome.org/Projec
 
 It's recommended you install the extension via the Gnome Shell Extensions website.
 
-Visit [this extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
+Visit [this extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/3010/system-monitor-next/),
 preferably in Firefox, and install by clicking the toggle button next to the extension's name.
 
 If the install was successful, the toggle button should now show "ON".
@@ -123,16 +118,12 @@ session.
 If we do not have the translation for your language and you want to translate it by yourself, please make a fork, add your `po/<YOUR_LANG>/system-monitor-applet.po` file, and make a pull request.
 
 #### Deployment
-    
+
 1. To create a ZIP file with the specified version number, ready to upload to [GNOME Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
 
     make zip-file VERSION=<version>
 
-To determine the version number to use, check the extensions site and increment from the largest published version.
-
-The specified version number is just for documentation and isn't strictly necessary in the uploaded file, since the extensions website will dynamically set this and override whatever we enter.
-
-2. Once uploaded, [create a GitHub release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
+This process is automated by [the uploader Github Action](actions/uploader).
 
 ### Authors
 

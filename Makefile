@@ -1,7 +1,7 @@
 # -*- coding: utf-8; mode: makefile-gmake -*-
 # Basic Makefile
 
-UUID = system-monitor@paradoxxx.zero.gmail.com
+UUID = system-monitor-next@paradoxxx.zero.gmail.com
 INSTALLNAME = $(UUID)
 
 BASE_MODULES = \
@@ -172,13 +172,13 @@ build.clean:
 PHONY += translate
 translate: extension
 	$(Q)cd po;\
-           ./compile.sh ../system-monitor@paradoxxx.zero.gmail.com/locale \
+           ./compile.sh ../system-monitor-next@paradoxxx.zero.gmail.com/locale \
 	   | tr '\n' ' ' \
 	   | sed -e 's/^/  [$@   ] /;'; echo
 	$(call msg,$@,OK)
 
 clean:: translation.clean
 translation.clean:
-	$(Q)git checkout -f -- system-monitor@paradoxxx.zero.gmail.com/locale
+	$(Q)git checkout -f -- system-monitor-next@paradoxxx.zero.gmail.com/locale
 
 .PHONY: $(PHONY)

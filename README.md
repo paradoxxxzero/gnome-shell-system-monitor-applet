@@ -86,14 +86,6 @@ If it failed, ensure that you installed all the [necessary dependencies](#prereq
 and that you granted the browser permission to install extensions when prompted.
 Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt), but it won't work with Wayland.
 
-#### Repository installation
-
-* Extension is in Fedora onwards (up to Fedora 33, last update) and Rawhide repositories, you can install it for all users with the following command:
-
-      sudo dnf install gnome-shell-extension-system-monitor-applet
-
-* Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
-
 #### Manual installation
 
 To install the extension from source, clone this repo and create the

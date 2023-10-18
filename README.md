@@ -84,7 +84,8 @@ preferably in Firefox, and install by clicking the toggle button next to the ext
 If the install was successful, the toggle button should now show "ON".
 If it failed, ensure that you installed all the [necessary dependencies](#prerequisites),
 and that you granted the browser permission to install extensions when prompted.
-Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt), but it won't work with Wayland.
+Additionally, rebooting gnome-shell may help (under X11: type `Alt + F2` and input `r` in
+the prompt, or under Wayland: logout/login).
 
 #### Manual installation
 

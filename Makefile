@@ -10,7 +10,6 @@ BASE_MODULES = \
   $(UUID)/metadata.json \
   $(UUID)/prefs.js \
   $(UUID)/stylesheet.css \
-  $(UUID)/convenience.js \
   $(UUID)/compat.js \
   $(UUID)/gpu_usage.sh
 

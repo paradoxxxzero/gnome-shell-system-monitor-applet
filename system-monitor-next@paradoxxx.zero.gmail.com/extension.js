@@ -2404,7 +2404,6 @@ export default class SystemMonitorExtension extends Extension {
 
             // Items to Monitor
             let tray = this.__sm.tray;
-            let elts = this.__sm.elts;
 
             // Load the preferred position of the displays and insert them in said order.
             const positionList = {};
@@ -2421,17 +2420,6 @@ export default class SystemMonitorExtension extends Extension {
             positionList[this._Schema.get_int('fan-position')] = new Fan(this);
             // See TODO inside Battery
             // positionList[this._Schema.get_int('battery-position')] = new Battery(this);
-
-            for (let i = 0; i < Object.keys(positionList).length; i++) {
-                if (i === cpuPosition) {
-                    // CPUs are in an array, store them one by one
-                    for (let cpu of positionList[cpuPosition]) {
-                        elts.push(cpu);
-                    }
-                } else {
-                    elts.push(positionList[i]);
-                }
-            }
 
             if (this._Schema.get_boolean('move-clock')) {
                 let dateMenu = Main.panel.statusArea.dateMenu;
@@ -2450,9 +2438,16 @@ export default class SystemMonitorExtension extends Extension {
             let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
             tray.add_actor(box);
             box.add_actor(this.__sm.icon.actor);
+
+            // Need to convert the positionList object into an array
+            // (sorted by object key) and then expand out the CPUs list
+            const sortedPLEntries = Object.entries(positionList).sort((a, b) => a[0] - b[0]);
+            const sortedPLValues = sortedPLEntries.map(([key, value]) => value);
+            const elts = sortedPLValues.flat();
+
             // Add items to panel box
-            for (let elt in elts) {
-                box.add_actor(elts[elt].actor);
+            for (const elt of elts) {
+                box.add_actor(elt.actor);
             }
 
             // Build Menu Info Box Table

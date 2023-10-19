@@ -19,4 +19,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: zipball
-        path: dist/system-monitor@paradoxxx.zero.gmail.com.zip
+        path: dist/system-monitor-next@paradoxxx.zero.gmail.com.zip

@@ -2443,10 +2443,10 @@ export default class SystemMonitorExtension extends Extension {
             // (sorted by object key) and then expand out the CPUs list
             const sortedPLEntries = Object.entries(positionList).sort((a, b) => a[0] - b[0]);
             const sortedPLValues = sortedPLEntries.map(([key, value]) => value);
-            const elts = sortedPLValues.flat();
+            this.__sm.elts = sortedPLValues.flat();
 
             // Add items to panel box
-            for (const elt of elts) {
+            for (const elt of this.__sm.elts) {
                 box.add_actor(elt.actor);
             }
 

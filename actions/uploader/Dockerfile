@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 
 ENV LANG="en_US.UTF-8"
 RUN apt update && apt install -y curl
@@ -14,11 +14,9 @@ RUN apt install -y \
         gir1.2-nm-1.0 \
         git \
         libglib2.0-bin \
-        python3-dev \
-        python3-pip \
+        python3-selenium \
         unzip \
         zip
 
-RUN pip3 install selenium
 COPY . /app
 CMD ["/app/run.sh"]

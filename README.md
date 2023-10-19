@@ -1,23 +1,17 @@
 ![Extension uploader](https://github.com/mgalgs/gnome-shell-system-monitor-applet/workflows/Extension%20uploader/badge.svg)
 ![Repo syncer](https://github.com/mgalgs/gnome-shell-system-monitor-applet/workflows/Repo%20syncer/badge.svg)
 
-This fork of `paradoxxxzero/gnome-shell-system-monitor-applet` is for
-packaging purposes only. This fork contains Github Actions workflows
-([here](.github/workflows)) to continuously sync against the upstream
-`master` branch and upload the resulting build to extensions.gnome.org
-([system-monitor-next](https://extensions.gnome.org/extension/3010/system-monitor-next/)).
+This fork of `paradoxxxzero/gnome-shell-system-monitor-applet` was
+originally for packaging purposes only, with the intent of maintaining a
+continuously updated release [on
+extensions.gnome.org](https://extensions.gnome.org/extension/3010/system-monitor-next/)
+so that users wouldn't have to wait for the (often slow) release process of
+the original project.
 
-Any issues, bug reports, feature requests, etc. for the extension itself
-should be submitted to the [upstream
-repo](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet),
-but build/sync issues should be reported here.
+However, the upstream repo now appears to be unmaintained, so this
+repository is now a full and proper fork.
 
-The approach in this repo is preferable for users on bleeding edge
-distributions who prefer not to wait for a stable release from the main
-repo. Of course, since we're releasing directly from `master` some
-instability is inevitable.
-
-## GNOME Shell system monitor extension
+## GNOME Shell system monitor NEXT extension
 
 [![Build Status](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet)
 
@@ -31,7 +25,8 @@ instability is inevitable.
 
 #### Prerequisites
 
-This extension [requires GNOME Shell v3.26 or later](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/blob/master/system-monitor%40paradoxxx.zero.gmail.com/metadata.json#L2).
+This extension requires Gnome Shell 45 or later. For earlier versions,
+please see the `pre-45` git branch.
 
 Before installing this extension, ensure you have the necessary system packages installed:
 
@@ -78,85 +73,57 @@ The instructions are available [on the GNOME wiki](https://wiki.gnome.org/Projec
 
 It's recommended you install the extension via the Gnome Shell Extensions website.
 
-Visit [this extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/120/system-monitor/),
+Visit [this extension's page on extensions.gnome.org](https://extensions.gnome.org/extension/3010/system-monitor-next/),
 preferably in Firefox, and install by clicking the toggle button next to the extension's name.
 
 If the install was successful, the toggle button should now show "ON".
 If it failed, ensure that you installed all the [necessary dependencies](#prerequisites),
 and that you granted the browser permission to install extensions when prompted.
-Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in the prompt), but it won't work with Wayland.
-
-#### Repository installation
-
-* Extension is in Fedora onwards (up to Fedora 33, last update) and Rawhide repositories, you can install it for all users with the following command:
-
-      sudo dnf install gnome-shell-extension-system-monitor-applet
-
-* Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
+Additionally, rebooting gnome-shell may help (under X11: type `Alt + F2` and input `r` in
+the prompt, or under Wayland: logout/login).
 
 #### Manual installation
 
-[Download the ZIP/Tarball](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases),
-extract the archive, open a shell into its directory, and run:
+To install the extension from source, clone this repo and create the
+appropriate symlink in the Gnome Shell extensions directory like so:
 
-    make install
-
-Alternately, if you plan on doing development on the extension, or testing modifications, it's advised you checkout the Git repository and install a symlink. First, install git if you don't have it: (`sudo apt-get install git-core`, `sudo pacman -S git`, etc.), then run:
-
-    GIT_PROJECTS=~/git_projects
-    PROJECT_NAME=gnome-shell-system-monitor-applet
-    mkdir $GIT_PROJECTS
-    cd $GIT_PROJECTS
-    git clone git://github.com/paradoxxxzero/gnome-shell-system-monitor-applet.git $PROJECT_NAME
-    mkdir -p ~/.local/share/gnome-shell/extensions
     cd ~/.local/share/gnome-shell/extensions
-    { [ -d "./$PROJECT_NAME" ] || [ -L "./$PROJECT_NAME" ]; } && rm -Rf "./$PROJECT_NAME"
-    ln -s $GIT_PROJECTS/gnome-shell-system-monitor-applet/$PROJECT_NAME
-    gnome-shell-extension-tool --enable-extension=$PROJECT_NAME
-    gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
+    ln -sv /path/to/gnome-shell-system-monitor-applet/system-monitor-next@paradoxxx.zero.gmail.com/
 
-And reload GNOME Shell (`Alt + F2`, then `r`) or restart your GNOME session if you are using Wayland.
+And reload your Gnome Shell session. You can do this in X11 by pressing
+`Alt-F2`, then `r`. If using Wayland, you'll need to logout/login.
 
-On openSUSE you need to install a devel package that provides the `gnome-shell-extension-tool` command:
+After reloading Gnome Shell, you can enable the extension from the
+Extensions app, or by running:
 
-    sudo zypper install gnome-shell-devel
+    gnome-extensions enable system-monitor-next@paradoxxx.zero.gmail.com
 
-### Development
+If you're going to be doing development/testing under Wayland and don't
+want to keep logging out/in you can use Gnome Shell's support for [nested
+sessions under
+Wayland](https://gjs.guide/extensions/development/creating.html#wayland-sessions). To
+start a nested session, run:
+
+    dbus-run-session -- gnome-shell --nested --wayland
+
+then start a new terminal *inside* the nested session (it will show up
+outside of the nested window, but don't panic; the dbus session address
+will be configured to point at the nested session), and run the above
+`gnome-extensions enable` command in your new terminal. You may also need
+to enable extensions using the Gnome Extensions app inside your nested
+session.
 
 #### Translation
 
 If we do not have the translation for your language and you want to translate it by yourself, please make a fork, add your `po/<YOUR_LANG>/system-monitor-applet.po` file, and make a pull request.
 
-#### Testing
-
-Testing can be done on your native Linux environment using the install instructions above, or through Docker.
-
-To build and run a Docker image:
-
-    ./build-docker.sh
-    ./run-docker.sh
-
-To connect to the container's desktop through VNC:
-
-    ./open-docker.sh
-
-Once logged in, you'll still need to manually enable the extension by open the Gnome Tweaks tool.
-
-Afterwards, when you're done testing, you can destroy the container with:
-
-    ./close-docker.sh
-
 #### Deployment
-    
+
 1. To create a ZIP file with the specified version number, ready to upload to [GNOME Shell Extensions](https://extensions.gnome.org/) or similar repository, run:
 
     make zip-file VERSION=<version>
 
-To determine the version number to use, check the extensions site and increment from the largest published version.
-
-The specified version number is just for documentation and isn't strictly necessary in the uploaded file, since the extensions website will dynamically set this and override whatever we enter.
-
-2. Once uploaded, [create a GitHub release](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases) with the same version number.
+This process is automated by [the uploader Github Action](actions/uploader).
 
 ### Authors
 

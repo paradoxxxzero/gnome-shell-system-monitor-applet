@@ -100,8 +100,8 @@ RUN /usr/bin/dbus-run-session /usr/bin/gsettings set org.gnome.desktop.interface
 
 # Install extension.
 RUN mkdir -p $HOME/.local/share/gnome-shell/extensions
-COPY ./system-monitor@paradoxxx.zero.gmail.com $HOME/.local/share/gnome-shell/extensions/system-monitor@paradoxxx.zero.gmail.com
-RUN gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
+COPY ./system-monitor-next@paradoxxx.zero.gmail.com $HOME/.local/share/gnome-shell/extensions/system-monitor-next@paradoxxx.zero.gmail.com
+RUN gnome-extensions enable system-monitor-next@paradoxxx.zero.gmail.com
 #TODO: gnome-extensions enable doesn't seem to work since dbus isn't running
 
 # Set up VNC.

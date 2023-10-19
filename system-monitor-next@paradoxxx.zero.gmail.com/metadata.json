@@ -1,0 +1,10 @@
+{
+    "shell-version": ["45"],
+    "uuid": "system-monitor-next@paradoxxx.zero.gmail.com",
+    "name": "system-monitor-next",
+    "url": "https://github.com/mgalgs/gnome-shell-system-monitor-applet",
+    "description": "Display system information in GNOME Shell status bar, such as memory, CPU, disk and battery usages, network rates…\n\nThis is a fork of the seemingly abandoned paradoxxxzero/gnome-shell-system-monitor-applet.\n\nIf you get an error after updating, try restarting Gnome Shell with Alt-F2 then 'r' (or logout/login under Wayland).",
+    "settings-schema":  "org.gnome.shell.extensions.system-monitor",
+    "gettext-domain": "system-monitor",
+    "version": -1
+}

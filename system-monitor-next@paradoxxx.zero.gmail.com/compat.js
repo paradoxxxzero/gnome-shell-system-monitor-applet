@@ -1,5 +1,5 @@
-const Config = imports.misc.config;
-const Clutter = imports.gi.Clutter;
+import Config from "resource:///org/gnome/shell/misc/config.js";
+import Clutter from "gi://Clutter";
 
 /** Compare two dotted version strings (like '10.2.3').
  * @returns {Integer} 0: v1 == v2, -1: v1 < v2, 1: v1 > v2

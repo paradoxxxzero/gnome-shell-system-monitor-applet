@@ -1,8 +1,14 @@
-import { ExtensionPreferences, gettext as _ } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
+
+'use strict';
+
+import GObject from "gi://GObject";
 import Gtk from "gi://Gtk";
 import Gio from "gi://Gio";
 import Gdk from "gi://Gdk";
 import Adw from "gi://Adw";
+
+import { ExtensionPreferences, gettext as _ } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
+
 import * as Config from "resource:///org/gnome/Shell/Extensions/js/misc/config.js";
 
 const N_ = function (e) {
@@ -559,8 +565,67 @@ const App = class SystemMonitor_App {
     }
 }
 
+const SystemMonitorGeneralPrefsPage = GObject.registerClass({
+    GTypeName: 'SystemMonitorGeneralPrefsPage',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefs_general_adw1.ui'),
+    InternalChildren: ['background', 'icon_display', 'show_tooltip', 'move_clock',
+        'compact_display', 'center_display', 'tooltip_delay_ms'],
+}, class SystemMonitorGeneralPrefsPage extends Adw.PreferencesPage {
+    constructor(settings, params = {}) {
+        super(params);
+
+        this._settings = settings;
+
+        let color = new Gdk.RGBA();
+        color.parse(this._settings.get_string('background'));
+        this._background.set_rgba(color);
+
+        let colorDialog = new Gtk.ColorDialog({
+            modal: true,
+            with_alpha: true,
+        });
+        this._background.set_dialog(colorDialog);
+
+        this._background.connect('notify::rgba', colorButton => {
+            this._settings.set_string('background', color_to_hex(colorButton.get_rgba()));
+        });
+        this._settings.connect('changed::background', () => {
+            color.parse(this._settings.get_string('background'));
+            this._background.set_rgba(color);
+        });
+
+        this._settings.bind('icon-display', this._icon_display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('show-tooltip', this._show_tooltip,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('move-clock', this._move_clock,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('compact-display', this._compact_display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('center-display', this._center_display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('tooltip-delay-ms', this._tooltip_delay_ms,
+            'value', Gio.SettingsBindFlags.DEFAULT
+        );
+    }
+});
+
 export default class SystemMonitorExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
+        let settings = this.getSettings();
+
+        let generalSettingsPage = new SystemMonitorGeneralPrefsPage(settings);
+        window.add(generalSettingsPage);
+
+        window.search_enabled = true;
+        window.set_default_size(585, 700);
+
+        /*
         const page = new Adw.PreferencesPage({
             title: _("System Monitor Next Preferences"),
             icon_name: "dialog-information-symbolic",
@@ -580,5 +645,7 @@ export default class SystemMonitorExtensionPreferences extends ExtensionPreferen
         scrolledWindow.set_child(widget.main_vbox);
 
         group.add(scrolledWindow);
+        */
     }
 }
+

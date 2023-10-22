@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="system-monitor">
+  <template class="SystemMonitorWidgetPrefsPage" parent="AdwPreferencesPage">
+    <property name="name">widget-preferences_page</property>
+    <property name="title" translatable="yes">Widget Preferences</property>
+    <property name="icon-name">folder-symbolic</property>
+    <child>
+      <object class="AdwPreferencesGroup" id="widget_prefs_group"></object>
+    </child>
+  </template>
+</interface>
+

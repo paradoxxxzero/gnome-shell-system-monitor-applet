@@ -615,13 +615,317 @@ const SystemMonitorGeneralPrefsPage = GObject.registerClass({
     }
 });
 
+const SystemMonitorExpanderRow = GObject.registerClass({
+    GTypeName: 'SystemMonitorExpanderRow',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefs_expander_row_adw1.ui'),
+    InternalChildren: ['display', 'show_menu', 'show_text', 'style', 'graph_width', 'refresh_time'],
+}, class SystemMonitorExpanderRow extends Adw.ExpanderRow {
+    constructor(settings, widgetType, params = {}) {
+        super(params);
+
+        this._settings = settings;
+
+        this.title = _(widgetType.capitalize());
+
+        this._color = new Gdk.RGBA();
+        this._colorDialog = new Gtk.ColorDialog({
+            modal: true,
+            with_alpha: true,
+        });
+
+        this._settings.bind(`${widgetType}-display`, this._display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind(`${widgetType}-show-menu`, this._show_menu,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind(`${widgetType}-show-text`, this._show_text,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+
+        this._style.set_selected(this._settings.get_enum(`${widgetType}-style`));
+        this._style.connect('notify::selected', widget => {
+            this._settings.set_enum(`${widgetType}-style`, widget.selected);
+        });
+
+        this._settings.bind(`${widgetType}-graph-width`, this._graph_width,
+            'value', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind(`${widgetType}-refresh-time`, this._refresh_time,
+            'value', Gio.SettingsBindFlags.DEFAULT
+        );
+
+        switch (widgetType) {
+            case 'cpu': {
+                let cpuColors = [
+                    'cpu-user-color',
+                    'cpu-iowait-color',
+                    'cpu-nice-color',
+                    'cpu-system-color',
+                    'cpu-other-color',
+                ];
+
+                this._addColorsItem(cpuColors);
+
+                let item = new Adw.SwitchRow({title: _('Display Individual Cores')});
+                this._settings.bind('cpu-individual-cores', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            case 'freq': {
+                let freqColors = [
+                    'freq-freq-color',
+                ];
+
+                this._addColorsItem(freqColors);
+                break;
+            }
+            case 'memory': {
+                let memoryColors = [
+                    'memory-program-color',
+                    'memory-buffer-color',
+                    'memory-cache-color',
+                ];
+
+                this._addColorsItem(memoryColors);
+                break;
+            }
+            case 'swap': {
+                let swapColors = [
+                    'swap-used-color',
+                ];
+
+                this._addColorsItem(swapColors);
+                break;
+            }
+            case 'net': {
+                let netColors = [
+                    'net-down-color',
+                    'net-up-color',
+                    'net-downerrors-color',
+                    'net-uperrors-color',
+                    'net-collisions-color',
+                ];
+
+                this._addColorsItem(netColors);
+
+                let item = new Adw.SwitchRow({title: _('Show network speed in bits')});
+                this._settings.bind('net-speed-in-bits', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            case 'disk': {
+                let diskColors = [
+                    'disk-read-color',
+                    'disk-write-color',
+                ];
+
+                this._addColorsItem(diskColors);
+
+                let stringListModel = new Gtk.StringList();
+                stringListModel.append(_('pie'));
+                stringListModel.append(_('bar'));
+                stringListModel.append(_('none'));
+
+                let item = new Adw.ComboRow({title: _('Usage Style')});
+                item.set_model(stringListModel);
+
+                item.set_selected(this._settings.get_enum('disk-usage-style'));
+                item.connect('notify::selected', widget => {
+                    this._settings.set_enum('disk-usage-style', widget.selected);
+                });
+                this.add_row(item);
+                break;
+            }
+            case 'gpu': {
+                let gpuColors = [
+                    'gpu-used-color',
+                    'gpu-memory-color',
+                ];
+
+                this._addColorsItem(gpuColors);
+                break;
+            }
+            case 'thermal': {
+                let thermalColors = [
+                    'thermal-tz0-color',
+                ];
+
+                let [_slist, _strlist] = check_sensors('temp');
+                let stringListModel = new Gtk.StringList();
+
+                if (_slist.length === 0)
+                    stringListModel.append(_('Please install lm-sensors'));
+                else if (_slist.length === 1)
+                    this.settings.set_string('thermal-sensor-file', _slist[0]);
+
+                _strlist.forEach(str => {
+                    stringListModel.append(str);
+                });
+
+                let item = new Adw.ComboRow({title: _('Sensor:')});
+                item.set_model(stringListModel);
+
+                try {
+                    item.set_selected(_slist.indexOf(this._settings.get_string('thermal-sensor-file')));
+                } catch (e) {
+                    item.set_selected(0);
+                }
+
+                item.connect('notify::selected', widget => {
+                    this._settings.set_string('thermal-sensor-file', _slist[widget.selected]);
+                });
+                this.add_row(item);
+                this._addColorsItem(thermalColors);
+
+                item = new Adw.SpinRow({
+                    title: _('Temperature threshold (0 to disable)'),
+                    adjustment: new Gtk.Adjustment({
+                        value: 0,
+                        lower: 0,
+                        upper: 300,
+                        step_increment: 5,
+                        page_increment: 10,
+                    }),
+                });
+                item.set_numeric(true);
+                item.set_update_policy(Gtk.UPDATE_IF_VALID);
+                this._settings.bind('thermal-threshold', item,
+                    'value', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+
+                item = new Adw.SwitchRow({title: _('Display temperature in Fahrenheit')});
+                this._settings.bind('thermal-fahrenheit-unit', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            case 'fan': {
+                let fanColors = [
+                    'fan-fan0-color',
+                ];
+
+                this._addColorsItem(fanColors);
+
+                let [_slist, _strlist] = check_sensors('fan');
+                let stringListModel = new Gtk.StringList();
+
+                if (_slist.length === 0)
+                    stringListModel.append(_('Please install lm-sensors'));
+                else if (_slist.length === 1)
+                    this.settings.set_string('fan-sensor-file', _slist[0]);
+
+                _strlist.forEach(str => {
+                    stringListModel.append(str);
+                });
+
+                let item = new Adw.ComboRow({title: _('Sensor:')});
+                item.set_model(stringListModel);
+
+                try {
+                    item.set_selected(_slist.indexOf(this._settings.get_string('fan-sensor-file')));
+                } catch (e) {
+                    item.set_selected(0);
+                }
+
+                item.connect('notify::selected', widget => {
+                    this._settings.set_string('fan-sensor-file', _slist[widget.selected]);
+                });
+                this.add_row(item);
+                break;
+            }
+            case 'battery': {
+                let batteryColors = [
+                    'battery-batt0-color',
+                ];
+
+                this._addColorsItem(batteryColors);
+
+                let item = new Adw.SwitchRow({title: _('Show Time Remaining')});
+                this._settings.bind('battery-time', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+
+                item = new Adw.SwitchRow({title: _('Hide System Icon')});
+                this._settings.bind('battery-hidesystem', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    _addColorsItem(colors) {
+        colors.forEach(color => {
+            let actionRow = new Adw.ActionRow({title: color.split('-')[1].capitalize()});
+            let colorItem = new Gtk.ColorDialogButton({valign: Gtk.Align.CENTER});
+
+            this._color.parse(this._settings.get_string(color));
+            colorItem.set_rgba(this._color);
+            colorItem.set_dialog(this._colorDialog);
+
+            colorItem.connect('notify::rgba', colorButton => {
+                this._settings.set_string(color, color_to_hex(colorButton.get_rgba()));
+            });
+            this._settings.connect(`changed::${color}`, () => {
+                this._color.parse(this._settings.get_string(color));
+                colorItem.set_rgba(this._color);
+            });
+
+            actionRow.add_suffix(colorItem);
+            this.add_row(actionRow);
+        });
+    }
+});
+
+const SystemMonitorWidgetPrefsPage = GObject.registerClass({
+    GTypeName: 'SystemMonitorWidgetPrefsPage',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefs_widget_prefs_adw1.ui'),
+    InternalChildren: ['widget_prefs_group'],
+}, class SystemMonitorWidgetPrefsPage extends Adw.PreferencesPage {
+    constructor(settings, params = {}) {
+        super(params);
+
+        let widgetNames = [
+            'cpu',
+            'freq',
+            'memory',
+            'swap',
+            'net',
+            'disk',
+            'gpu',
+            'thermal',
+            'fan',
+            'battery',
+        ];
+
+        widgetNames.forEach(widgetName => {
+            let item = new SystemMonitorExpanderRow(settings, widgetName);
+            this._widget_prefs_group.add(item);
+        });
+    }
+});
+
 export default class SystemMonitorExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         let settings = this.getSettings();
 
         let generalSettingsPage = new SystemMonitorGeneralPrefsPage(settings);
         window.add(generalSettingsPage);
+        let widgetPrefesPage = new SystemMonitorWidgetPrefsPage(settings);
+        window.add(widgetPrefesPage);
 
+        window.set_title(_('System Monitor Next Preferences'));
         window.search_enabled = true;
         window.set_default_size(585, 700);
 

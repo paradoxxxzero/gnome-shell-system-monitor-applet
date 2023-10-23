@@ -142,7 +142,7 @@ function build_menu_info(extension) {
 
 function change_menu() {
     this.menu_visible = this.extension._Schema.get_boolean(this.elt + '-show-menu');
-    build_menu_info();
+    build_menu_info(this.extension);
 }
 
 function change_usage(extension) {
@@ -1095,7 +1095,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 // log("[System monitor] No battery found");
                 this.actor.hide();
                 this.menu_visible = false;
-                build_menu_info();
+                build_menu_info(this.extension);
             }
         } else {
             this._proxy.GetDevicesRemote((devices, error) => {
@@ -1103,7 +1103,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                     sm_log('Power proxy error: ' + error);
                     this.actor.hide();
                     this.menu_visible = false;
-                    build_menu_info();
+                    build_menu_info(this.extension);
                     return;
                 }
 
@@ -1123,7 +1123,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                     // log("[System monitor] No battery found");
                     this.actor.hide();
                     this.menu_visible = false;
-                    build_menu_info();
+                    build_menu_info(this.extension);
                 }
             });
         }
@@ -1145,7 +1145,7 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
         }
         if (this.extension._Schema.get_boolean(this.elt + '-show-menu') && !this.menu_visible) {
             this.menu_visible = true;
-            build_menu_info();
+            build_menu_info(this.extension);
         }
     }
     hide_system_icon(override) {

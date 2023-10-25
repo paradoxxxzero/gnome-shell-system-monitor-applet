@@ -47,7 +47,6 @@ const UPower = UPowerGlib;
 
 let smDepsGtop = true;
 let smDepsNM = true;
-let gc_timeout, menu_timeout;
 
 // stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;
@@ -2373,12 +2372,15 @@ export default class SystemMonitorExtension extends Extension {
 
         this._Background = color_from_string(this._Schema.get_string('background'));
 
+        this.dialogTimeout = null;
+        this.menuTimeout = null;
+
         if (!(smDepsGtop && smDepsNM)) {
             this.__sm = {
                 smdialog: new smDialog()
             };
 
-            let dialog_timeout = GLib.timeout_add_seconds(
+            this.dialogTimeout = GLib.timeout_add_seconds(
                 GLib.PRIORITY_DEFAULT,
                 1,
                 () => {
@@ -2476,11 +2478,11 @@ export default class SystemMonitorExtension extends Extension {
             const sm = this.__sm;
             tray.menu.connect(
                 'open-state-changed',
-                function (menu, isOpen) {
+                (menu, isOpen) => {
                     if (isOpen) {
                         sm.pie.actor.queue_repaint();
 
-                        menu_timeout = GLib.timeout_add_seconds(
+                        this.menuTimeout = GLib.timeout_add_seconds(
                             GLib.PRIORITY_DEFAULT,
                             5,
                             () => {
@@ -2488,7 +2490,7 @@ export default class SystemMonitorExtension extends Extension {
                                 return GLib.SOURCE_CONTINUE;
                             });
                     } else {
-                        GLib.Source.remove(menu_timeout);
+                        GLib.Source.remove(this.menuTimeout);
                     }
                 }
             );
@@ -2516,6 +2518,14 @@ export default class SystemMonitorExtension extends Extension {
     }
 
     disable() {
+        if (this.dialogTimeout) {
+            GLib.Source.remove(this.dialogTimeout);
+            this.dialogTimeout = null;
+        }
+        if (this.menuTimeout) {
+            GLib.Source.remove(this.menuTimeout);
+            this.menuTimeout = null;
+        }
         // restore clock
         if (this.__sm.tray.clockMoved) {
             let dateMenu = Main.panel.statusArea.dateMenu;

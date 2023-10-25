@@ -2541,7 +2541,6 @@ export default class SystemMonitorExtension extends Extension {
             this._Style = null;
         }
 
-        this._Schema.run_dispose();
         for (let eltName in this.__sm.elts) {
             this.__sm.elts[eltName].destroy();
         }

@@ -45,9 +45,9 @@ import * as Util from "resource:///org/gnome/shell/misc/util.js";
 const NetworkManager = NM;
 const UPower = UPowerGlib;
 
-var smDepsGtop = true;
-var smDepsNM = true;
-var gc_timeout, menu_timeout;
+let smDepsGtop = true;
+let smDepsNM = true;
+let gc_timeout, menu_timeout;
 
 // stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;
@@ -598,7 +598,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
             Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
 
-            var text = this.mounts[mount];
+            let text = this.mounts[mount];
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
@@ -669,7 +669,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
         }
         let y = (ring_width + fontsize) / 2;
         for (let mount in this.mounts) {
-            var text = this.mounts[mount];
+            let text = this.mounts[mount];
             if (text.length > 10) {
                 text = text.split('/').pop();
             }
@@ -686,7 +686,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
     }
 }
 
-var TipItem = GObject.registerClass(
+let TipItem = GObject.registerClass(
     {
         GTypeName: 'TipItem'
     },
@@ -1570,7 +1570,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
         let num_cpus = GTop.glibtop_get_sysinfo().ncpu;
         let i = 0;
         let file = Gio.file_new_for_path(`/sys/devices/system/cpu/cpu${i}/cpufreq/scaling_cur_freq`);
-        var that = this;
+        let that = this;
         file.load_contents_async(null, function cb(source, result) {
             let as_r = source.load_contents_finish(result);
             total_frequency += parseInt(parse_bytearray(as_r[1]));
@@ -1596,7 +1596,7 @@ const Freq = class SystemMonitor_Freq extends ElementBase {
     }
     // pad a string with leading spaces
     _pad(number, length) {
-        var str = '' + number;
+        let str = '' + number;
         while (str.length < length) {
             str = ' ' + str;
         }
@@ -1820,7 +1820,7 @@ const Net = class SystemMonitor_Net extends ElementBase {
 
     // pad a string with leading spaces
     _pad(number, length) {
-        var str = '' + number;
+        let str = '' + number;
         while (str.length < length) {
             str = ' ' + str;
         }

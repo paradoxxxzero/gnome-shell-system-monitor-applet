@@ -871,6 +871,7 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         this.text_items = [];
         this.menu_items = [];
         this.menu_visible = true;
+        this.timeout = null;
 
         Object.assign(this, properties);
 
@@ -913,38 +914,20 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
                 this.actor.visible = Schema.get_boolean(key);
             });
 
-        this.interval = l_limit(Schema.get_int(this.elt + '-refresh-time'));
-        this.timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT_IDLE,
-            this.interval,
-            this.update.bind(this),
-        );
+        this.restart_update_timer(l_limit(Schema.get_int(this.elt + '-refresh-time')));
 
         Schema.connect(
             'changed::' + this.elt + '-refresh-time',
             (schema, key) => {
-                GLib.Source.remove(this.timeout);
-                this.timeout = null;
-                this.interval = l_limit(Schema.get_int(key));
-                this.timeout = GLib.timeout_add(
-                    GLib.PRIORITY_DEFAULT_IDLE,
-                    this.interval,
-                    this.update.bind(this),
-                );
+                this.restart_update_timer(l_limit(Schema.get_int(key)));
             });
         Schema.connect('changed::' + this.elt + '-graph-width', this.resize.bind(this));
 
         if (this.elt === 'thermal') {
             Schema.connect('changed::thermal-threshold',
                 () => {
-                    GLib.Source.remove(this.timeout);
-                    this.timeout = null;
                     this.reset_style();
-                    this.timeout = GLib.timeout_add(
-                        GLib.PRIORITY_DEFAULT_IDLE,
-                        this.interval,
-                        this.update.bind(this),
-                    );
+                    this.restart_update_timer();
                 });
         }
 
@@ -968,6 +951,22 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', change_style.bind(this));
         this.menu_items = this.create_menu_items();
+    }
+    restart_update_timer(interval = null) {
+        interval = interval || this._lastInterval;
+        if (!interval) {
+            sm_log("Invalid call to restart_update_timer");
+            return;
+        }
+        if (this.timeout) {
+            GLib.Source.remove(this.timeout);
+        }
+        this.timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT_IDLE,
+            interval,
+            this.update.bind(this),
+        );
+        this._lastInterval = interval;
     }
     tip_format(unit) {
         if (typeof (unit) === 'undefined') {

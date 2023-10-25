@@ -2475,18 +2475,17 @@ export default class SystemMonitorExtension extends Extension {
 
             tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-            const sm = this.__sm;
             tray.menu.connect(
                 'open-state-changed',
                 (menu, isOpen) => {
                     if (isOpen) {
-                        sm.pie.actor.queue_repaint();
+                        this.__sm.pie.actor.queue_repaint();
 
                         this.menuTimeout = GLib.timeout_add_seconds(
                             GLib.PRIORITY_DEFAULT,
                             5,
                             () => {
-                                sm.pie.actor.queue_repaint();
+                                this.__sm.pie.actor.queue_repaint();
                                 return GLib.SOURCE_CONTINUE;
                             });
                     } else {

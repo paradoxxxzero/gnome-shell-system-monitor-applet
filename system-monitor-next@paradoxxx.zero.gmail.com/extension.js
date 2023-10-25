@@ -804,60 +804,56 @@ const TipBox = class SystemMonitor_TipBox {
             return;
         }
         this.tipmenu.close();
-        if (this.out_to) {
-            GLib.Source.remove(this.out_to);
-            this.out_to = 0;
-        }
-        if (this.in_to) {
-            GLib.source.remove(this.in_to);
-            this.in_to = 0;
-        }
+        this.stop_out_timer();
+        this.stop_in_timer();
     }
     on_enter() {
-        const Schema = this.extension._Schema;
-        let show_tooltip = Schema.get_boolean('show-tooltip');
+        let show_tooltip = this.extension._Schema.get_boolean('show-tooltip');
 
         if (!show_tooltip) {
             return;
         }
 
-        if (this.out_to) {
-            GLib.Source.remove(this.out_to);
-            this.out_to = 0;
-        }
+        this.stop_out_timer();
+        this.start_in_timer();
+    }
+    on_leave() {
+        this.stop_in_timer();
+        this.start_out_timer();
+    }
+    start_in_timer() {
         if (!this.in_to) {
             this.in_to = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT,
-                Schema.get_int('tooltip-delay-ms'),
+                this.extension._Schema.get_int('tooltip-delay-ms'),
                 this.show_tip.bind(this),
             );
         }
     }
-    on_leave() {
-        const Schema = this.extension._Schema;
+    stop_in_timer() {
         if (this.in_to) {
             GLib.Source.remove(this.in_to);
             this.in_to = 0;
         }
+    }
+    start_out_timer() {
         if (!this.out_to) {
             this.out_to = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT,
-                Schema.get_int('tooltip-delay-ms'),
+                this.extension._Schema.get_int('tooltip-delay-ms'),
                 this.hide_tip.bind(this),
             );
         }
     }
-    destroy() {
-        if (this.in_to) {
-            GLib.Source.remove(this.in_to);
-            this.in_to = 0;
-        }
-
+    stop_out_timer() {
         if (this.out_to) {
             GLib.Source.remove(this.out_to);
             this.out_to = 0;
         }
-
+    }
+    destroy() {
+        this.stop_in_timer();
+        this.stop_out_timer();
         this.actor.destroy();
     }
 }

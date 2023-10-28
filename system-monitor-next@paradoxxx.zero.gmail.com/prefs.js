@@ -1,3 +1,4 @@
+/* -*- mode: js2; js2-basic-offset: 4; indent-tabs-mode: nil -*- */
 
 'use strict';
 
@@ -565,6 +566,7 @@ const App = class SystemMonitor_App {
     }
 }
 
+// ** General Preferences Page **
 const SystemMonitorGeneralPrefsPage = GObject.registerClass({
     GTypeName: 'SystemMonitorGeneralPrefsPage',
     Template: import.meta.url.replace('prefs.js', 'ui/prefs_general_adw1.ui'),
@@ -615,6 +617,230 @@ const SystemMonitorGeneralPrefsPage = GObject.registerClass({
     }
 });
 
+// ** Widget Position Preferences Page **
+// the code of this preferences page is an adaptation of the "Top Bar Organizer" code.
+// https://gitlab.gnome.org/julianschacher/top-bar-organizer
+const SMWidgetPosPrefsItem = GObject.registerClass({
+    GTypeName: 'SMWidgetPosPrefsItem',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetPositionItem.ui'),
+    Signals: {
+        'move': {param_types: [GObject.TYPE_STRING]},
+    },
+}, class SMWidgetPosPrefsItem extends Adw.ActionRow {
+    static {
+        this.install_action('row.move-up', null, (self, _actionName, _param) => self.emit('move', 'up'));
+        this.install_action('row.move-down', null, (self, _actionName, _param) => self.emit('move', 'down'));
+    }
+
+    constructor(settings, widgetType, params = {}) {
+        super(params);
+
+        this._settings = settings;
+        this._widgetType = widgetType;
+
+        this.title = _(this._widgetType.capitalize());
+
+        this._drag_starting_point_x = 0;
+        this._drag_starting_point_y = 0;
+    }
+
+    onDragPrepare(_source, x, y) {
+        const value = new GObject.Value();
+        value.init(SMWidgetPosPrefsItem);
+        value.set_object(this);
+
+        this._drag_starting_point_x = x;
+        this._drag_starting_point_y = y;
+        return Gdk.ContentProvider.new_for_value(value);
+    }
+
+    onDragBegin(_source, drag) {
+        let dragWidget = new Gtk.ListBox();
+        dragWidget.set_size_request(this.get_width(), this.get_height());
+
+        let dragSMWidgetPosPrefsItem = new SMWidgetPosPrefsItem(this._settings, this._widgetType, {});
+        dragWidget.append(dragSMWidgetPosPrefsItem);
+        dragWidget.drag_highlight_row(dragSMWidgetPosPrefsItem);
+
+        let currentDragIcon = Gtk.DragIcon.get_for_drag(drag);
+        currentDragIcon.set_child(dragWidget);
+        drag.set_hotspot(this._drag_starting_point_x, this._drag_starting_point_y);
+    }
+
+    // Handle a new drop on `this` properly. `value` is the thing getting dropped.
+    onDrop(_target, value, _x, _y) {
+        // If `this` got dropped onto itself, do nothing.
+        if (value === this)
+            return;
+
+        // Get the ListBox.
+        const listBox = this.get_parent();
+
+        // Get the position of `this` and the drop value.
+        const ownPosition = this.get_index();
+        const valuePosition = value.get_index();
+
+        // Remove the drop value from its list box.
+        listBox.removeRow(value);
+
+        // Since drop value was removed get the position of `this` again.
+        const updatedOwnPosition = this.get_index();
+
+        if (valuePosition < ownPosition) {
+            // If the drop value was before `this`, add the drop value after `this`.
+            listBox.insertRow(value, updatedOwnPosition + 1);
+        } else {
+            // Otherwise, add the drop value where `this` currently is.
+            listBox.insertRow(value, updatedOwnPosition);
+        }
+
+        // Save the widgets order to settings and make sure move
+        // actions are correctly enabled/disabled.
+        listBox.saveWidgetsPositionToSettings();
+        listBox.determineRowMoveActionEnable();
+    }
+});
+
+const SMWidgetPosPrefsListBox = GObject.registerClass({
+    GTypeName: 'SMWidgetPosPrefsListBox',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetPositionList.ui'),
+    Signals: {
+        'row-move': {param_types: [SMWidgetPosPrefsItem, GObject.TYPE_STRING]},
+    },
+}, class SMWidgetPosPrefsListBox extends Gtk.ListBox {
+    constructor(settings, params = {}) {
+        super(params);
+
+        this._settings = settings;
+        this._rowSignalHandlerIds = new Map();
+
+        let widgetTypes = [
+            'cpu',
+            'freq',
+            'memory',
+            'swap',
+            'net',
+            'disk',
+            'gpu',
+            'thermal',
+            'fan',
+            'battery',
+        ];
+
+        widgetTypes.forEach(widgetType => {
+            let item = new SMWidgetPosPrefsItem(settings, widgetType);
+            let position = this._settings.get_int(`${widgetType}-position`);
+            this.insertRow(item, position);
+        });
+
+        this.determineRowMoveActionEnable();
+    }
+
+    // Inserts the given SMWidgetPosPrefsItem to this at the given position.
+    // Also handles stuff like connecting signals.
+    insertRow(row, position) {
+        this.insert(row, position);
+
+        const signalHandlerIds = [];
+
+        signalHandlerIds.push(row.connect('move', (row, direction) => {
+            this.emit('row-move', row, direction);
+        }));
+
+        this._rowSignalHandlerIds.set(row, signalHandlerIds);
+    }
+
+    // Removes the given SMWidgetPosPrefsItem from this.
+    // Also handles stuff like disconnecting signals.
+    removeRow(row) {
+        const signalHandlerIds = this._rowSignalHandlerIds.get(row);
+
+        for (const id of signalHandlerIds)
+            row.disconnect(id);
+
+        this.remove(row);
+    }
+
+    // Save the widgets order to settings.
+    saveWidgetsPositionToSettings() {
+        let currentWidgetsOrder = [];
+
+        for (let potentialSMWidgetPosPrefsItem of this) {
+            // Only process SMWidgetPosPrefsItem.
+            if (potentialSMWidgetPosPrefsItem.constructor.$gtype.name !== 'SMWidgetPosPrefsItem')
+                continue;
+
+            currentWidgetsOrder.push(potentialSMWidgetPosPrefsItem._widgetType);
+        }
+
+        currentWidgetsOrder.forEach(widgetType => {
+            this._settings.set_int(`${widgetType}-position`, currentWidgetsOrder.indexOf(widgetType));
+        });
+    }
+
+    // Determines whether or not each move action of each SMWidgetPosPrefsItem should be enabled or disabled.
+    determineRowMoveActionEnable() {
+        for (let potentialSMWidgetPosPrefsItem of this) {
+            // Only process SMWidgetPosPrefsItem.
+            if (potentialSMWidgetPosPrefsItem.constructor.$gtype.name !== 'SMWidgetPosPrefsItem')
+                continue;
+
+
+            const row = potentialSMWidgetPosPrefsItem;
+
+            // If the current row is the topmost row then disable the move-up action.
+            if (row.get_index() === 0)
+                row.action_set_enabled('row.move-up', false);
+            else // Else enable it.
+                row.action_set_enabled('row.move-up', true);
+
+            // If the current row is the bottommost row then disable the move-down action.
+            const rowNextSibling = row.get_next_sibling();
+            if (rowNextSibling === null)
+                row.action_set_enabled('row.move-down', false);
+            else // Else enable it.
+                row.action_set_enabled('row.move-down', true);
+        }
+    }
+});
+
+const SMWidgetPosPrefsPage = GObject.registerClass({
+    GTypeName: 'SMWidgetPosPrefsPage',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetPositionPrefsPage.ui'),
+    InternalChildren: ['widget_position_group'],
+}, class SMWidgetPosPrefsPage extends Adw.PreferencesPage {
+    constructor(settings, params = {}) {
+        super(params);
+
+        let widgetListBox = new SMWidgetPosPrefsListBox(settings);
+        widgetListBox.set_css_classes(['boxed-list']); 
+        widgetListBox.connect('row-move', this.onRowMove);
+        this._widget_position_group.add(widgetListBox);
+    }
+
+    onRowMove(listBox, row, direction) {
+        const rowPosition = row.get_index();
+
+        if (direction === 'up') {
+            if (rowPosition !== 0) {
+                listBox.removeRow(row);
+                listBox.insertRow(row, rowPosition - 1);
+                listBox.saveWidgetsPositionToSettings();
+                listBox.determineRowMoveActionEnable();
+            }
+        } else {
+            const rowNextSibling = row.get_next_sibling();
+            if (rowNextSibling !== null) {
+                listBox.removeRow(row);
+                listBox.insertRow(row, rowPosition + 1);
+                listBox.saveWidgetsPositionToSettings();
+                listBox.determineRowMoveActionEnable();
+            }
+        }
+    }
+});
+
+// ** Widget Preferences Page **
 const SystemMonitorExpanderRow = GObject.registerClass({
     GTypeName: 'SystemMonitorExpanderRow',
     Template: import.meta.url.replace('prefs.js', 'ui/prefs_expander_row_adw1.ui'),
@@ -916,18 +1142,23 @@ const SystemMonitorWidgetPrefsPage = GObject.registerClass({
     }
 });
 
+// ** Extension Preferences **
 export default class SystemMonitorExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         let settings = this.getSettings();
 
         let generalSettingsPage = new SystemMonitorGeneralPrefsPage(settings);
         window.add(generalSettingsPage);
-        let widgetPrefesPage = new SystemMonitorWidgetPrefsPage(settings);
-        window.add(widgetPrefesPage);
+
+        let widgetPositionSettingsPage = new SMWidgetPosPrefsPage(settings);
+        window.add(widgetPositionSettingsPage);
+
+        let widgetPreferencesPage = new SystemMonitorWidgetPrefsPage(settings);
+        window.add(widgetPreferencesPage);
 
         window.set_title(_('System Monitor Next Preferences'));
         window.search_enabled = true;
-        window.set_default_size(585, 700);
+        window.set_default_size(645, 715);
 
         /*
         const page = new Adw.PreferencesPage({
@@ -952,4 +1183,3 @@ export default class SystemMonitorExtensionPreferences extends ExtensionPreferen
         */
     }
 }
-

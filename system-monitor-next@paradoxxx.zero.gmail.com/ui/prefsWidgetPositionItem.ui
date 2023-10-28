@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="system-monitor">
+  <template class="SMWidgetPosPrefsItem" parent="AdwActionRow">
+    <child type="prefix">
+      <object class="GtkImage">
+        <property name="icon-name">list-drag-handle-symbolic</property>
+          <style>
+            <class name="drag-handle"/>
+          </style>
+      </object>
+    </child>
+    <child type="suffix">
+      <object class="GtkMenuButton">
+        <property name="valign">center</property>
+        <property name="icon-name">view-more-symbolic</property>
+        <property name="tooltip-text">Options</property>
+        <property name="menu-model">optionsMenuModel</property>
+        <style>
+          <class name="flat"/>
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="GtkDragSource">
+        <property name="actions">move</property>
+        <signal name="prepare" handler="onDragPrepare"/>
+        <signal name="drag-begin" handler="onDragBegin"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkDropTarget">
+        <property name="actions">move</property>
+        <property name="formats">SMWidgetPosPrefsItem</property>
+        <signal name="drop" handler="onDrop"/>
+      </object>
+    </child>
+  </template>
+  <menu id="optionsMenuModel">
+    <section>
+      <item>
+        <attribute name="label">Move Up</attribute>
+        <attribute name="action">row.move-up</attribute>
+      </item>
+      <item>
+        <attribute name="label">Move Down</attribute>
+        <attribute name="action">row.move-down</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

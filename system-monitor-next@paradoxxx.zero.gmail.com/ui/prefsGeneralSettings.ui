@@ -6,8 +6,8 @@
     <property name="icon-name">folder-symbolic</property>
     <child>
       <object class="AdwPreferencesGroup">
-        <property name="title" translatable="yes">General settings</property>
-        <property name="description" translatable="yes">Configure the appearance of the extension</property>
+        <property name="title" translatable="yes">Configure the appearance of the extension</property>
+        <!-- <property name="description" translatable="yes">Configure the appearance of the extension</property> -->
         <child>
           <object class="AdwActionRow">
             <property name="title" translatable="yes">Background Color</property>

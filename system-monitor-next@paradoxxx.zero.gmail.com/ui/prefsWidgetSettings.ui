@@ -2,11 +2,12 @@
 <interface domain="system-monitor">
   <template class="SystemMonitorWidgetPrefsPage" parent="AdwPreferencesPage">
     <property name="name">widget-preferences_page</property>
-    <property name="title" translatable="yes">Widget Preferences</property>
+    <property name="title" translatable="yes">Widget Appearance</property>
     <property name="icon-name">folder-symbolic</property>
     <child>
-      <object class="AdwPreferencesGroup" id="widget_prefs_group"></object>
+      <object class="AdwPreferencesGroup" id="widget_prefs_group">
+        <property name="title" translatable="yes">Configure the widget appearance</property>
+     </object>
     </child>
   </template>
 </interface>
-

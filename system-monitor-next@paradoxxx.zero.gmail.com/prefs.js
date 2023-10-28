@@ -120,7 +120,7 @@ function check_sensors(sensor_type) {
 // ** General Preferences Page **
 const SystemMonitorGeneralPrefsPage = GObject.registerClass({
     GTypeName: 'SystemMonitorGeneralPrefsPage',
-    Template: import.meta.url.replace('prefs.js', 'ui/prefs_general_adw1.ui'),
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsGeneralSettings.ui'),
     InternalChildren: ['background', 'icon_display', 'show_tooltip', 'move_clock',
         'compact_display', 'center_display', 'tooltip_delay_ms'],
 }, class SystemMonitorGeneralPrefsPage extends Adw.PreferencesPage {
@@ -364,7 +364,7 @@ const SMWidgetPosPrefsPage = GObject.registerClass({
         super(params);
 
         let widgetListBox = new SMWidgetPosPrefsListBox(settings);
-        widgetListBox.set_css_classes(['boxed-list']); 
+        widgetListBox.set_css_classes(['boxed-list']);
         widgetListBox.connect('row-move', this.onRowMove);
         this._widget_position_group.add(widgetListBox);
     }
@@ -394,7 +394,7 @@ const SMWidgetPosPrefsPage = GObject.registerClass({
 // ** Widget Preferences Page **
 const SystemMonitorExpanderRow = GObject.registerClass({
     GTypeName: 'SystemMonitorExpanderRow',
-    Template: import.meta.url.replace('prefs.js', 'ui/prefs_expander_row_adw1.ui'),
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsExpanderRow.ui'),
     InternalChildren: ['display', 'show_menu', 'show_text', 'style', 'graph_width', 'refresh_time'],
 }, class SystemMonitorExpanderRow extends Adw.ExpanderRow {
     constructor(settings, widgetType, params = {}) {
@@ -667,7 +667,7 @@ const SystemMonitorExpanderRow = GObject.registerClass({
 
 const SystemMonitorWidgetPrefsPage = GObject.registerClass({
     GTypeName: 'SystemMonitorWidgetPrefsPage',
-    Template: import.meta.url.replace('prefs.js', 'ui/prefs_widget_prefs_adw1.ui'),
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetSettings.ui'),
     InternalChildren: ['widget_prefs_group'],
 }, class SystemMonitorWidgetPrefsPage extends Adw.PreferencesPage {
     constructor(settings, params = {}) {

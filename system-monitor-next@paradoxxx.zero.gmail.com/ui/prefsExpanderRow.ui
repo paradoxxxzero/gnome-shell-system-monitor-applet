@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface domain="system-monitor">
-  <template class="SystemMonitorExpanderRow" parent="AdwExpanderRow">
+  <template class="SMExpanderRow" parent="AdwExpanderRow">
     <property name="title" translatable="yes">Name</property>
       <child>
         <object class="AdwSwitchRow" id="display">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface domain="system-monitor">
-  <template class="SystemMonitorGeneralPrefsPage" parent="AdwPreferencesPage">
+  <template class="SMGeneralPrefsPage" parent="AdwPreferencesPage">
     <property name="name">general-settings-page</property>
     <property name="title" translatable="yes">General</property>
     <property name="icon-name">folder-symbolic</property>

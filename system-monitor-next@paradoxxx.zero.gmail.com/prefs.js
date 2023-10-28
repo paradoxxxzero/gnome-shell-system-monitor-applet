@@ -118,12 +118,12 @@ function check_sensors(sensor_type) {
 }
 
 // ** General Preferences Page **
-const SystemMonitorGeneralPrefsPage = GObject.registerClass({
-    GTypeName: 'SystemMonitorGeneralPrefsPage',
+const SMGeneralPrefsPage = GObject.registerClass({
+    GTypeName: 'SMGeneralPrefsPage',
     Template: import.meta.url.replace('prefs.js', 'ui/prefsGeneralSettings.ui'),
     InternalChildren: ['background', 'icon_display', 'show_tooltip', 'move_clock',
         'compact_display', 'center_display', 'tooltip_delay_ms'],
-}, class SystemMonitorGeneralPrefsPage extends Adw.PreferencesPage {
+}, class SMGeneralPrefsPage extends Adw.PreferencesPage {
     constructor(settings, params = {}) {
         super(params);
 
@@ -392,11 +392,11 @@ const SMWidgetPosPrefsPage = GObject.registerClass({
 });
 
 // ** Widget Preferences Page **
-const SystemMonitorExpanderRow = GObject.registerClass({
-    GTypeName: 'SystemMonitorExpanderRow',
+const SMExpanderRow = GObject.registerClass({
+    GTypeName: 'SMExpanderRow',
     Template: import.meta.url.replace('prefs.js', 'ui/prefsExpanderRow.ui'),
     InternalChildren: ['display', 'show_menu', 'show_text', 'style', 'graph_width', 'refresh_time'],
-}, class SystemMonitorExpanderRow extends Adw.ExpanderRow {
+}, class SMExpanderRow extends Adw.ExpanderRow {
     constructor(settings, widgetType, params = {}) {
         super(params);
 
@@ -665,11 +665,11 @@ const SystemMonitorExpanderRow = GObject.registerClass({
     }
 });
 
-const SystemMonitorWidgetPrefsPage = GObject.registerClass({
-    GTypeName: 'SystemMonitorWidgetPrefsPage',
+const SMWidgetPrefsPage = GObject.registerClass({
+    GTypeName: 'SMWidgetPrefsPage',
     Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetSettings.ui'),
     InternalChildren: ['widget_prefs_group'],
-}, class SystemMonitorWidgetPrefsPage extends Adw.PreferencesPage {
+}, class SMWidgetPrefsPage extends Adw.PreferencesPage {
     constructor(settings, params = {}) {
         super(params);
 
@@ -687,7 +687,7 @@ const SystemMonitorWidgetPrefsPage = GObject.registerClass({
         ];
 
         widgetNames.forEach(widgetName => {
-            let item = new SystemMonitorExpanderRow(settings, widgetName);
+            let item = new SMExpanderRow(settings, widgetName);
             this._widget_prefs_group.add(item);
         });
     }
@@ -698,13 +698,13 @@ export default class SystemMonitorExtensionPreferences extends ExtensionPreferen
     fillPreferencesWindow(window) {
         let settings = this.getSettings();
 
-        let generalSettingsPage = new SystemMonitorGeneralPrefsPage(settings);
+        let generalSettingsPage = new SMGeneralPrefsPage(settings);
         window.add(generalSettingsPage);
 
         let widgetPositionSettingsPage = new SMWidgetPosPrefsPage(settings);
         window.add(widgetPositionSettingsPage);
 
-        let widgetPreferencesPage = new SystemMonitorWidgetPrefsPage(settings);
+        let widgetPreferencesPage = new SMWidgetPrefsPage(settings);
         window.add(widgetPreferencesPage);
 
         window.set_title(_('System Monitor Next Preferences'));

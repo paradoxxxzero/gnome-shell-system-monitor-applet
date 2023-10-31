@@ -1,9 +1,14 @@
-import { ExtensionPreferences, gettext as _ } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
+/* -*- mode: js2; js2-basic-offset: 4; indent-tabs-mode: nil -*- */
+
+'use strict';
+
+import GObject from "gi://GObject";
 import Gtk from "gi://Gtk";
 import Gio from "gi://Gio";
 import Gdk from "gi://Gdk";
 import Adw from "gi://Adw";
-import * as Config from "resource:///org/gnome/Shell/Extensions/js/misc/config.js";
+
+import { ExtensionPreferences, gettext as _ } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
 
 const N_ = function (e) {
     return e;
@@ -12,8 +17,6 @@ const N_ = function (e) {
 function sm_log(message) {
     console.log(`[system-monitor-next-prefs] ${message}`);
 }
-
-const shellMajorVersion = parseInt(Config.PACKAGE_VERSION.split('.')[0]);
 
 String.prototype.capitalize = function () {
     return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
@@ -114,471 +117,598 @@ function check_sensors(sensor_type) {
     return [sensor_files, sensor_labels];
 }
 
-/**
- * @param args.hasBorder Whether the box has a border (true) or not
- * @param args.horizontal Whether the box is horizontal (true)
- *      or vertical (false)
- * @param args.shouldPack Determines whether a horizontal box should have
- *      uniform spacing for its children. Only applies to horizontal boxes
- * @param args.spacing The amount of spacing for a given box
- * @returns a new Box with settings specified by args
- */
-function box(args = {}) {
-    const options = { };
+// ** General Preferences Page **
+const SMGeneralPrefsPage = GObject.registerClass({
+    GTypeName: 'SMGeneralPrefsPage',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsGeneralSettings.ui'),
+    InternalChildren: ['background', 'icon_display', 'show_tooltip', 'move_clock',
+        'compact_display', 'center_display', 'tooltip_delay_ms'],
+}, class SMGeneralPrefsPage extends Adw.PreferencesPage {
+    constructor(settings, params = {}) {
+        super(params);
 
-    if (typeof args.spacing !== 'undefined') {
-        options.spacing = args.spacing;
-    }
+        this._settings = settings;
 
-    if (shellMajorVersion < 40) {
-        if (args.hasBorder) {
-            options.border_width = 10;
-        }
-
-        return args.horizontal ?
-            new Gtk.HBox(options) : new Gtk.VBox(options);
-    }
-
-    if (args.hasBorder) {
-        options.margin_top = 10;
-        options.margin_bottom = 10;
-        options.margin_start = 10;
-        options.margin_end = 10;
-    }
-
-    options.orientation = args.horizontal ?
-        Gtk.Orientation.HORIZONTAL : Gtk.Orientation.VERTICAL;
-
-    const aliasBox = new Gtk.Box(options);
-
-    if (args.shouldPack) {
-        aliasBox.set_homogeneous(true);
-    }
-
-
-    aliasBox.add = aliasBox.append;
-    aliasBox.pack_start = aliasBox.prepend;
-    // normally, this would be append; it is aliased to prepend because
-    // that appears to yield the same behavior as version < 40
-    aliasBox.pack_end = aliasBox.prepend;
-
-    return aliasBox;
-}
-
-const ColorSelect = class SystemMonitor_ColorSelect {
-    constructor(name) {
-        this.label = new Gtk.Label({label: name + _(':')});
-        this.picker = new Gtk.ColorButton();
-        this.actor = box({horizontal: true, spacing: 5});
-        this.actor.add(this.label);
-        this.actor.add(this.picker);
-        this.picker.set_use_alpha(true);
-    }
-    set_value(value) {
         let color = new Gdk.RGBA();
+        color.parse(this._settings.get_string('background'));
+        this._background.set_rgba(color);
 
-        if (Gtk.get_major_version() >= 4) {
-            // GDK did not support parsing hex colours with alpha before GTK 4.
-            color.parse(value);
-        } else {
-            let clutterColor = Clutter.Color.from_string(value)[1];
-            let ctemp = [clutterColor.red, clutterColor.green, clutterColor.blue, clutterColor.alpha / 255];
-            color.parse('rgba(' + ctemp.join(',') + ')');
-        }
+        let colorDialog = new Gtk.ColorDialog({
+            modal: true,
+            with_alpha: true,
+        });
+        this._background.set_dialog(colorDialog);
 
-        this.picker.set_rgba(color);
-    }
-}
-
-const IntSelect = class SystemMonitor_IntSelect {
-    constructor(name) {
-        this.label = new Gtk.Label({label: name + _(':')});
-        this.spin = new Gtk.SpinButton();
-        this.actor = box({horizontal: true, shouldPack: true, });
-        this.actor.add(this.label);
-        this.actor.add(this.spin);
-        this.spin.set_numeric(true);
-    }
-    set_args(minv, maxv, incre, page) {
-        this.spin.set_range(minv, maxv);
-        this.spin.set_increments(incre, page);
-    }
-    set_value(value) {
-        this.spin.set_value(value);
-    }
-}
-
-const Select = class SystemMonitor_Select {
-    constructor(name) {
-        this.label = new Gtk.Label({label: name + _(':')});
-        // this.label.set_justify(Gtk.Justification.RIGHT);
-        this.selector = new Gtk.ComboBoxText();
-        this.actor = box({horizontal: true, shouldPack: true, spacing: 5});
-        this.actor.add(this.label);
-        this.actor.add(this.selector);
-    }
-    set_value(value) {
-        this.selector.set_active(value);
-    }
-    add(items) {
-        items.forEach((item) => {
-            this.selector.append_text(item);
-        })
-    }
-}
-
-function set_enum(combo, schema, name) {
-    schema.set_enum(name, combo.get_active());
-}
-
-function set_color(color, schema, name) {
-    schema.set_string(name, color_to_hex(color.get_rgba()))
-}
-
-function set_string(combo, schema, name, _slist) {
-    schema.set_string(name, _slist[combo.get_active()]);
-}
-
-const SettingFrame = class SystemMonitor {
-    constructor(name, schema) {
-        this.schema = schema;
-        this.label = new Gtk.Label({label: name});
-
-        this.vbox = box({horizontal: false, shouldPack: true, spacing: 20});
-        this.hbox0 = box({horizontal: true, shouldPack: true, spacing: 20});
-        this.hbox1 = box({horizontal: true, shouldPack: true, spacing: 20});
-        this.hbox2 = box({horizontal: true, shouldPack: true, spacing: 20});
-        this.hbox3 = box({horizontal: true, shouldPack: true, spacing: 20});
-
-        if (shellMajorVersion < 40) {
-            this.frame = new Gtk.Frame({border_width: 10});
-            this.frame.add(this.vbox);
-        } else {
-            this.frame = new Gtk.Frame({
-                margin_top: 10,
-                margin_bottom: 10,
-                margin_start: 10,
-                margin_end: 10
-            });
-            this.frame.set_child(this.vbox);
-        }
-
-
-        if (shellMajorVersion < 40) {
-            this.vbox.pack_start(this.hbox0, true, false, 0);
-            this.vbox.pack_start(this.hbox1, true, false, 0);
-            this.vbox.pack_start(this.hbox2, true, false, 0);
-            this.vbox.pack_start(this.hbox3, true, false, 0);
-        } else {
-            this.vbox.append(this.hbox0);
-            this.vbox.append(this.hbox1);
-            this.vbox.append(this.hbox2);
-            this.vbox.append(this.hbox3);
-        }
-    }
-
-    /** Enforces child ordering of first 2 boxes by label */
-    _reorder() {
-        if (shellMajorVersion < 40) {
-            /** @return {string} label of/inside component */
-            const labelOf = el => {
-                if (el.get_children) {
-                    return labelOf(el.get_children()[0]);
-                }
-                return el && el.label || '';
-            };
-            [this.hbox0, this.hbox1].forEach(hbox => {
-                hbox.get_children()
-                    .sort((c1, c2) => labelOf(c1).localeCompare(labelOf(c2)))
-                    .forEach((child, index) => hbox.reorder_child(child, index));
-            });
-        } else {
-            /** @return {string} label of/inside component */
-            const labelOf = el => {
-                if (el.get_label) {
-                    return el.get_label();
-                }
-                return labelOf(el.get_first_child());
-            }
-
-            [this.hbox0, this.hbox1].forEach(hbox => {
-                const children = [];
-                let next = hbox.get_first_child();
-
-                while (next !== null) {
-                    children.push(next);
-                    next = next.get_next_sibling();
-                }
-
-                const sorted = children
-                    .sort((c1, c2) => labelOf(c1).localeCompare(labelOf(c2)));
-
-                sorted
-                    .forEach((child, index) => {
-                        hbox.reorder_child_after(child, sorted[index - 1] || null);
-                    });
-            });
-        }
-    }
-
-    add(key) {
-        const configParent = key.substring(0, key.indexOf('-'));
-        const config = key.substring(configParent.length + 1);
-        const me = this;
-
-        // hbox0
-        if (config === 'display') {
-            let item = new Gtk.CheckButton({label: _('Display')});
-            this.hbox0.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'show-text') {
-            let item = new Gtk.CheckButton({label: _('Show Text')});
-            this.hbox0.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'show-menu') {
-            let item = new Gtk.CheckButton({label: _('Show In Menu')});
-            this.hbox0.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        // hbox1
-        } else if (config === 'refresh-time') {
-            let item = new IntSelect(_('Refresh Time'));
-            item.set_args(50, 100000, 1000, 5000);
-            this.hbox1.add(item.actor);
-            this.schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'graph-width') {
-            let item = new IntSelect(_('Graph Width'));
-            item.set_args(1, 1000, 1, 10);
-            this.hbox1.add(item.actor);
-            this.schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'style') {
-            let item = new Select(_('Display Style'));
-            item.add([_('digit'), _('graph'), _('both')]);
-            item.set_value(this.schema.get_enum(key));
-            this.hbox1.add(item.actor);
-            item.selector.connect('changed', function (style) {
-                set_enum(style, me.schema, key);
-            });
-            // Schema.bind(key, item.selector, 'active', Gio.SettingsBindFlags.DEFAULT);
-        // hbox2
-        } else if (config.match(/-color$/)) {
-            let item = new ColorSelect(_(config.split('-')[0].capitalize()));
-            item.set_value(this.schema.get_string(key));
-            if (shellMajorVersion < 40) {
-                this.hbox2.pack_end(item.actor, true, false, 0);
-            } else {
-                this.hbox2.append(item.actor);
-            }
-            item.picker.connect('color-set', function (color) {
-                set_color(color, me.schema, key);
-            });
-        } else if (config.match(/sensor/)) {
-            let sensor_type = configParent === 'fan' ? 'fan' : 'temp';
-            let [_slist, _strlist] = check_sensors(sensor_type);
-            let item = new Select(_('Sensor'));
-            if (_slist.length === 0) {
-                item.add([_('Please install lm-sensors')]);
-            } else if (_slist.length === 1) {
-                this.schema.set_string(key, _slist[0]);
-            }
-            item.add(_strlist);
-            try {
-                item.set_value(_slist.indexOf(this.schema.get_string(key)));
-            } catch (e) {
-                item.set_value(0);
-            }
-            // this.hbox3.add(item.actor);
-            if (configParent === 'fan') {
-                if (shellMajorVersion < 40) {
-                    this.hbox2.pack_end(item.actor, true, false, 0);
-                } else {
-                    this.hbox2.append(item.actor);
-                }
-            } else if (shellMajorVersion < 40) {
-                this.hbox2.pack_start(item.actor, true, false, 0);
-            } else {
-                this.hbox2.prepend(item.actor);
-            }
-            item.selector.connect('changed', function (combo) {
-                set_string(combo, me.schema, key, _slist);
-            });
-        // hbox3
-        } else if (config === 'speed-in-bits') {
-            let item = new Gtk.CheckButton({label: _('Show network speed in bits')});
-            this.hbox3.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'individual-cores') {
-            let item = new Gtk.CheckButton({label: _('Display Individual Cores')});
-            this.hbox3.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'time') {
-            let item = new Gtk.CheckButton({label: _('Show Time Remaining')});
-            this.hbox3.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'hidesystem') {
-            let item = new Gtk.CheckButton({label: _('Hide System Icon')});
-            this.hbox3.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'usage-style') {
-            let item = new Select(_('Usage Style'));
-            item.add([_('pie'), _('bar'), _('none')]);
-            item.set_value(this.schema.get_enum(key));
-            if (shellMajorVersion < 40) {
-                this.hbox3.pack_end(item.actor, false, false, 20);
-            } else {
-                this.hbox3.append(item.actor);
-            }
-
-            item.selector.connect('changed', function (style) {
-                set_enum(style, me.schema, key);
-            });
-        } else if (config === 'fahrenheit-unit') {
-            let item = new Gtk.CheckButton({label: _('Display temperature in Fahrenheit')});
-            this.hbox3.add(item);
-            this.schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-        } else if (config === 'threshold') {
-            let item = new IntSelect(_('Temperature threshold (0 to disable)'));
-            item.set_args(0, 300, 5, 5);
-            this.hbox3.add(item.actor);
-            this.schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
-        }
-        this._reorder();
-    }
-}
-
-const App = class SystemMonitor_App {
-    constructor(Schema) {
-        const me = this;
-        let setting_names = ['cpu', 'memory', 'swap', 'net', 'disk', 'gpu', 'thermal', 'fan', 'freq', 'battery'];
-        let ordered_items = {};
-        let setting_items = [];
-        // Get preferred position of the tabs
-        for (let item of setting_names) {
-            ordered_items[Schema.get_int(item + '-position')] = item;
-        }
-        // Populate setting_items with the names in order of preference
-        for (let i = 0; i < Object.keys(ordered_items).length; i++) {
-            setting_items.push(ordered_items[i]);
-        }
-        let keys = Schema.list_keys();
-
-        this.items = [];
-        this.settings = [];
-        this.frameToLabel = {}; // Maps Gtk.Widget to the English name of the setting
-
-        setting_items.forEach((setting) => {
-            this.settings[setting] = new SettingFrame(_(setting.capitalize()), Schema);
-            this.frameToLabel[this.settings[setting].frame] = setting;
+        this._background.connect('notify::rgba', colorButton => {
+            this._settings.set_string('background', color_to_hex(colorButton.get_rgba()));
+        });
+        this._settings.connect('changed::background', () => {
+            color.parse(this._settings.get_string('background'));
+            this._background.set_rgba(color);
         });
 
-        this.main_vbox = box({
-            hasBorder: true, horizontal: false, spacing: 10});
-        this.hbox1 = box({
-            hasBorder: true, horizontal: true, shouldPack: true, spacing: 20});
-        if (shellMajorVersion < 40) {
-            this.main_vbox.pack_start(this.hbox1, false, false, 0);
+        this._settings.bind('icon-display', this._icon_display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('show-tooltip', this._show_tooltip,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('move-clock', this._move_clock,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('compact-display', this._compact_display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('center-display', this._center_display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('tooltip-delay-ms', this._tooltip_delay_ms,
+            'value', Gio.SettingsBindFlags.DEFAULT
+        );
+    }
+});
+
+// ** Widget Position Preferences Page **
+// the code of this preferences page is an adaptation of the "Top Bar Organizer" code.
+// https://gitlab.gnome.org/julianschacher/top-bar-organizer
+const SMWidgetPosPrefsItem = GObject.registerClass({
+    GTypeName: 'SMWidgetPosPrefsItem',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetPositionItem.ui'),
+    Signals: {
+        'move': {param_types: [GObject.TYPE_STRING]},
+    },
+}, class SMWidgetPosPrefsItem extends Adw.ActionRow {
+    static {
+        this.install_action('row.move-up', null, (self, _actionName, _param) => self.emit('move', 'up'));
+        this.install_action('row.move-down', null, (self, _actionName, _param) => self.emit('move', 'down'));
+    }
+
+    constructor(settings, widgetType, params = {}) {
+        super(params);
+
+        this._settings = settings;
+        this._widgetType = widgetType;
+
+        this.title = _(this._widgetType.capitalize());
+
+        this._drag_starting_point_x = 0;
+        this._drag_starting_point_y = 0;
+    }
+
+    onDragPrepare(_source, x, y) {
+        const value = new GObject.Value();
+        value.init(SMWidgetPosPrefsItem);
+        value.set_object(this);
+
+        this._drag_starting_point_x = x;
+        this._drag_starting_point_y = y;
+        return Gdk.ContentProvider.new_for_value(value);
+    }
+
+    onDragBegin(_source, drag) {
+        let dragWidget = new Gtk.ListBox();
+        dragWidget.set_size_request(this.get_width(), this.get_height());
+
+        let dragSMWidgetPosPrefsItem = new SMWidgetPosPrefsItem(this._settings, this._widgetType, {});
+        dragWidget.append(dragSMWidgetPosPrefsItem);
+        dragWidget.drag_highlight_row(dragSMWidgetPosPrefsItem);
+
+        let currentDragIcon = Gtk.DragIcon.get_for_drag(drag);
+        currentDragIcon.set_child(dragWidget);
+        drag.set_hotspot(this._drag_starting_point_x, this._drag_starting_point_y);
+    }
+
+    // Handle a new drop on `this` properly. `value` is the thing getting dropped.
+    onDrop(_target, value, _x, _y) {
+        // If `this` got dropped onto itself, do nothing.
+        if (value === this)
+            return;
+
+        // Get the ListBox.
+        const listBox = this.get_parent();
+
+        // Get the position of `this` and the drop value.
+        const ownPosition = this.get_index();
+        const valuePosition = value.get_index();
+
+        // Remove the drop value from its list box.
+        listBox.removeRow(value);
+
+        // Since drop value was removed get the position of `this` again.
+        const updatedOwnPosition = this.get_index();
+
+        if (valuePosition < ownPosition) {
+            // If the drop value was before `this`, add the drop value after `this`.
+            listBox.insertRow(value, updatedOwnPosition + 1);
         } else {
-            this.main_vbox.prepend(this.hbox1);
+            // Otherwise, add the drop value where `this` currently is.
+            listBox.insertRow(value, updatedOwnPosition);
         }
 
-        keys.forEach((key) => {
-            if (key === 'icon-display') {
-                let item = new Gtk.CheckButton({label: _('Display Icon')});
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'center-display') {
-                let item = new Gtk.CheckButton({label: _('Display in the Middle')})
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'compact-display') {
-                let item = new Gtk.CheckButton({label: _('Compact Display')})
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'show-tooltip') {
-                let item = new Gtk.CheckButton({label: _('Show tooltip')})
-                item.set_active(Schema.get_boolean(key))
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'tooltip-delay-ms') {
-                let item = new IntSelect(_('Tooltip delay'));
-                item.set_args(0, 100000, 50, 1000);
-                this.items.push(item)
-                this.hbox1.add(item.actor);
-                Schema.bind(key, item.spin, 'value', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'move-clock') {
-                let item = new Gtk.CheckButton({label: _('Move the clock')})
-                this.items.push(item)
-                this.hbox1.add(item)
-                Schema.bind(key, item, 'active', Gio.SettingsBindFlags.DEFAULT);
-            } else if (key === 'background') {
-                let item = new ColorSelect(_('Background Color'))
-                item.set_value(Schema.get_string(key))
-                this.items.push(item)
-                if (shellMajorVersion < 40) {
-                    this.hbox1.pack_start(item.actor, true, false, 0)
-                } else {
-                    this.hbox1.prepend(item.actor)
-                }
-                item.picker.connect('color-set', function (color) {
-                    set_color(color, Schema, key);
+        // Save the widgets order to settings and make sure move
+        // actions are correctly enabled/disabled.
+        listBox.saveWidgetsPositionToSettings();
+        listBox.determineRowMoveActionEnable();
+    }
+});
+
+const SMWidgetPosPrefsListBox = GObject.registerClass({
+    GTypeName: 'SMWidgetPosPrefsListBox',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetPositionList.ui'),
+    Signals: {
+        'row-move': {param_types: [SMWidgetPosPrefsItem, GObject.TYPE_STRING]},
+    },
+}, class SMWidgetPosPrefsListBox extends Gtk.ListBox {
+    constructor(settings, params = {}) {
+        super(params);
+
+        this._settings = settings;
+        this._rowSignalHandlerIds = new Map();
+
+        let widgetTypes = [
+            'cpu',
+            'freq',
+            'memory',
+            'swap',
+            'net',
+            'disk',
+            'gpu',
+            'thermal',
+            'fan',
+            'battery',
+        ];
+
+        widgetTypes.forEach(widgetType => {
+            let item = new SMWidgetPosPrefsItem(settings, widgetType);
+            let position = this._settings.get_int(`${widgetType}-position`);
+            this.insertRow(item, position);
+        });
+
+        this.determineRowMoveActionEnable();
+    }
+
+    // Inserts the given SMWidgetPosPrefsItem to this at the given position.
+    // Also handles stuff like connecting signals.
+    insertRow(row, position) {
+        this.insert(row, position);
+
+        const signalHandlerIds = [];
+
+        signalHandlerIds.push(row.connect('move', (row, direction) => {
+            this.emit('row-move', row, direction);
+        }));
+
+        this._rowSignalHandlerIds.set(row, signalHandlerIds);
+    }
+
+    // Removes the given SMWidgetPosPrefsItem from this.
+    // Also handles stuff like disconnecting signals.
+    removeRow(row) {
+        const signalHandlerIds = this._rowSignalHandlerIds.get(row);
+
+        for (const id of signalHandlerIds)
+            row.disconnect(id);
+
+        this.remove(row);
+    }
+
+    // Save the widgets order to settings.
+    saveWidgetsPositionToSettings() {
+        let currentWidgetsOrder = [];
+
+        for (let potentialSMWidgetPosPrefsItem of this) {
+            // Only process SMWidgetPosPrefsItem.
+            if (potentialSMWidgetPosPrefsItem.constructor.$gtype.name !== 'SMWidgetPosPrefsItem')
+                continue;
+
+            currentWidgetsOrder.push(potentialSMWidgetPosPrefsItem._widgetType);
+        }
+
+        currentWidgetsOrder.forEach(widgetType => {
+            this._settings.set_int(`${widgetType}-position`, currentWidgetsOrder.indexOf(widgetType));
+        });
+    }
+
+    // Determines whether or not each move action of each SMWidgetPosPrefsItem should be enabled or disabled.
+    determineRowMoveActionEnable() {
+        for (let potentialSMWidgetPosPrefsItem of this) {
+            // Only process SMWidgetPosPrefsItem.
+            if (potentialSMWidgetPosPrefsItem.constructor.$gtype.name !== 'SMWidgetPosPrefsItem')
+                continue;
+
+
+            const row = potentialSMWidgetPosPrefsItem;
+
+            // If the current row is the topmost row then disable the move-up action.
+            if (row.get_index() === 0)
+                row.action_set_enabled('row.move-up', false);
+            else // Else enable it.
+                row.action_set_enabled('row.move-up', true);
+
+            // If the current row is the bottommost row then disable the move-down action.
+            const rowNextSibling = row.get_next_sibling();
+            if (rowNextSibling === null)
+                row.action_set_enabled('row.move-down', false);
+            else // Else enable it.
+                row.action_set_enabled('row.move-down', true);
+        }
+    }
+});
+
+const SMWidgetPosPrefsPage = GObject.registerClass({
+    GTypeName: 'SMWidgetPosPrefsPage',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetPositionPrefsPage.ui'),
+    InternalChildren: ['widget_position_group'],
+}, class SMWidgetPosPrefsPage extends Adw.PreferencesPage {
+    constructor(settings, params = {}) {
+        super(params);
+
+        let widgetListBox = new SMWidgetPosPrefsListBox(settings);
+        widgetListBox.set_css_classes(['boxed-list']);
+        widgetListBox.connect('row-move', this.onRowMove);
+        this._widget_position_group.add(widgetListBox);
+    }
+
+    onRowMove(listBox, row, direction) {
+        const rowPosition = row.get_index();
+
+        if (direction === 'up') {
+            if (rowPosition !== 0) {
+                listBox.removeRow(row);
+                listBox.insertRow(row, rowPosition - 1);
+                listBox.saveWidgetsPositionToSettings();
+                listBox.determineRowMoveActionEnable();
+            }
+        } else {
+            const rowNextSibling = row.get_next_sibling();
+            if (rowNextSibling !== null) {
+                listBox.removeRow(row);
+                listBox.insertRow(row, rowPosition + 1);
+                listBox.saveWidgetsPositionToSettings();
+                listBox.determineRowMoveActionEnable();
+            }
+        }
+    }
+});
+
+// ** Widget Preferences Page **
+const SMExpanderRow = GObject.registerClass({
+    GTypeName: 'SMExpanderRow',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsExpanderRow.ui'),
+    InternalChildren: ['display', 'show_menu', 'show_text', 'style', 'graph_width', 'refresh_time'],
+}, class SMExpanderRow extends Adw.ExpanderRow {
+    constructor(settings, widgetType, params = {}) {
+        super(params);
+
+        this._settings = settings;
+
+        this.title = _(widgetType.capitalize());
+
+        this._color = new Gdk.RGBA();
+        this._colorDialog = new Gtk.ColorDialog({
+            modal: true,
+            with_alpha: true,
+        });
+
+        this._settings.bind(`${widgetType}-display`, this._display,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind(`${widgetType}-show-menu`, this._show_menu,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind(`${widgetType}-show-text`, this._show_text,
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+
+        this._style.set_selected(this._settings.get_enum(`${widgetType}-style`));
+        this._style.connect('notify::selected', widget => {
+            this._settings.set_enum(`${widgetType}-style`, widget.selected);
+        });
+
+        this._settings.bind(`${widgetType}-graph-width`, this._graph_width,
+            'value', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind(`${widgetType}-refresh-time`, this._refresh_time,
+            'value', Gio.SettingsBindFlags.DEFAULT
+        );
+
+        switch (widgetType) {
+            case 'cpu': {
+                let cpuColors = [
+                    'cpu-user-color',
+                    'cpu-iowait-color',
+                    'cpu-nice-color',
+                    'cpu-system-color',
+                    'cpu-other-color',
+                ];
+
+                this._addColorsItem(cpuColors);
+
+                let item = new Adw.SwitchRow({title: _('Display Individual Cores')});
+                this._settings.bind('cpu-individual-cores', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            case 'freq': {
+                let freqColors = [
+                    'freq-freq-color',
+                ];
+
+                this._addColorsItem(freqColors);
+                break;
+            }
+            case 'memory': {
+                let memoryColors = [
+                    'memory-program-color',
+                    'memory-buffer-color',
+                    'memory-cache-color',
+                ];
+
+                this._addColorsItem(memoryColors);
+                break;
+            }
+            case 'swap': {
+                let swapColors = [
+                    'swap-used-color',
+                ];
+
+                this._addColorsItem(swapColors);
+                break;
+            }
+            case 'net': {
+                let netColors = [
+                    'net-down-color',
+                    'net-up-color',
+                    'net-downerrors-color',
+                    'net-uperrors-color',
+                    'net-collisions-color',
+                ];
+
+                this._addColorsItem(netColors);
+
+                let item = new Adw.SwitchRow({title: _('Show network speed in bits')});
+                this._settings.bind('net-speed-in-bits', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            case 'disk': {
+                let diskColors = [
+                    'disk-read-color',
+                    'disk-write-color',
+                ];
+
+                this._addColorsItem(diskColors);
+
+                let stringListModel = new Gtk.StringList();
+                stringListModel.append(_('pie'));
+                stringListModel.append(_('bar'));
+                stringListModel.append(_('none'));
+
+                let item = new Adw.ComboRow({title: _('Usage Style')});
+                item.set_model(stringListModel);
+
+                item.set_selected(this._settings.get_enum('disk-usage-style'));
+                item.connect('notify::selected', widget => {
+                    this._settings.set_enum('disk-usage-style', widget.selected);
                 });
-            } else {
-                let sections = key.split('-');
-                if (setting_items.indexOf(sections[0]) >= 0) {
-                    this.settings[sections[0]].add(key);
+                this.add_row(item);
+                break;
+            }
+            case 'gpu': {
+                let gpuColors = [
+                    'gpu-used-color',
+                    'gpu-memory-color',
+                ];
+
+                this._addColorsItem(gpuColors);
+                break;
+            }
+            case 'thermal': {
+                let thermalColors = [
+                    'thermal-tz0-color',
+                ];
+
+                let [_slist, _strlist] = check_sensors('temp');
+                let stringListModel = new Gtk.StringList();
+
+                if (_slist.length === 0)
+                    stringListModel.append(_('Please install lm-sensors'));
+                else if (_slist.length === 1)
+                    this.settings.set_string('thermal-sensor-file', _slist[0]);
+
+                _strlist.forEach(str => {
+                    stringListModel.append(str);
+                });
+
+                let item = new Adw.ComboRow({title: _('Sensor:')});
+                item.set_model(stringListModel);
+
+                try {
+                    item.set_selected(_slist.indexOf(this._settings.get_string('thermal-sensor-file')));
+                } catch (e) {
+                    item.set_selected(0);
                 }
-            }
-        });
 
-        this.notebook = new Gtk.Notebook();
-        this.notebook.connect('page-reordered', (widget_, pageNum_) => {
-            // After a page has been moved, update the order preferences
-            for (let i = 0; i < me.notebook.get_n_pages(); i++) {
-                let frame = me.notebook.get_nth_page(i);
-                let name = me.frameToLabel[frame];
-                Schema.set_int(name + '-position', i);
-            }
-        });
+                item.connect('notify::selected', widget => {
+                    this._settings.set_string('thermal-sensor-file', _slist[widget.selected]);
+                });
+                this.add_row(item);
+                this._addColorsItem(thermalColors);
 
-        setting_items.forEach((setting) => {
-            this.notebook.append_page(this.settings[setting].frame, this.settings[setting].label)
-            this.notebook.set_tab_reorderable(this.settings[setting].frame, true);
-            if (shellMajorVersion < 40) {
-                this.main_vbox.show_all();
-                this.main_vbox.pack_start(this.notebook, true, true, 0)
-            } else {
-                this.main_vbox.append(this.notebook);
+                item = new Adw.SpinRow({
+                    title: _('Temperature threshold (0 to disable)'),
+                    adjustment: new Gtk.Adjustment({
+                        value: 0,
+                        lower: 0,
+                        upper: 300,
+                        step_increment: 5,
+                        page_increment: 10,
+                    }),
+                });
+                item.set_numeric(true);
+                item.set_update_policy(Gtk.UPDATE_IF_VALID);
+                this._settings.bind('thermal-threshold', item,
+                    'value', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+
+                item = new Adw.SwitchRow({title: _('Display temperature in Fahrenheit')});
+                this._settings.bind('thermal-fahrenheit-unit', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
             }
-        });
-        if (shellMajorVersion < 40) {
-            this.main_vbox.show_all();
+            case 'fan': {
+                let fanColors = [
+                    'fan-fan0-color',
+                ];
+
+                this._addColorsItem(fanColors);
+
+                let [_slist, _strlist] = check_sensors('fan');
+                let stringListModel = new Gtk.StringList();
+
+                if (_slist.length === 0)
+                    stringListModel.append(_('Please install lm-sensors'));
+                else if (_slist.length === 1)
+                    this.settings.set_string('fan-sensor-file', _slist[0]);
+
+                _strlist.forEach(str => {
+                    stringListModel.append(str);
+                });
+
+                let item = new Adw.ComboRow({title: _('Sensor:')});
+                item.set_model(stringListModel);
+
+                try {
+                    item.set_selected(_slist.indexOf(this._settings.get_string('fan-sensor-file')));
+                } catch (e) {
+                    item.set_selected(0);
+                }
+
+                item.connect('notify::selected', widget => {
+                    this._settings.set_string('fan-sensor-file', _slist[widget.selected]);
+                });
+                this.add_row(item);
+                break;
+            }
+            case 'battery': {
+                let batteryColors = [
+                    'battery-batt0-color',
+                ];
+
+                this._addColorsItem(batteryColors);
+
+                let item = new Adw.SwitchRow({title: _('Show Time Remaining')});
+                this._settings.bind('battery-time', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+
+                item = new Adw.SwitchRow({title: _('Hide System Icon')});
+                this._settings.bind('battery-hidesystem', item,
+                    'active', Gio.SettingsBindFlags.DEFAULT
+                );
+                this.add_row(item);
+                break;
+            }
+            default:
+                break;
         }
     }
-}
 
+    _addColorsItem(colors) {
+        colors.forEach(color => {
+            let actionRow = new Adw.ActionRow({title: color.split('-')[1].capitalize()});
+            let colorItem = new Gtk.ColorDialogButton({valign: Gtk.Align.CENTER});
+
+            this._color.parse(this._settings.get_string(color));
+            colorItem.set_rgba(this._color);
+            colorItem.set_dialog(this._colorDialog);
+
+            colorItem.connect('notify::rgba', colorButton => {
+                this._settings.set_string(color, color_to_hex(colorButton.get_rgba()));
+            });
+            this._settings.connect(`changed::${color}`, () => {
+                this._color.parse(this._settings.get_string(color));
+                colorItem.set_rgba(this._color);
+            });
+
+            actionRow.add_suffix(colorItem);
+            this.add_row(actionRow);
+        });
+    }
+});
+
+const SMWidgetPrefsPage = GObject.registerClass({
+    GTypeName: 'SMWidgetPrefsPage',
+    Template: import.meta.url.replace('prefs.js', 'ui/prefsWidgetSettings.ui'),
+    InternalChildren: ['widget_prefs_group'],
+}, class SMWidgetPrefsPage extends Adw.PreferencesPage {
+    constructor(settings, params = {}) {
+        super(params);
+
+        let widgetNames = [
+            'cpu',
+            'freq',
+            'memory',
+            'swap',
+            'net',
+            'disk',
+            'gpu',
+            'thermal',
+            'fan',
+            'battery',
+        ];
+
+        widgetNames.forEach(widgetName => {
+            let item = new SMExpanderRow(settings, widgetName);
+            this._widget_prefs_group.add(item);
+        });
+    }
+});
+
+// ** Extension Preferences **
 export default class SystemMonitorExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
-        const page = new Adw.PreferencesPage({
-            title: _("System Monitor Next Preferences"),
-            icon_name: "dialog-information-symbolic",
-        });
-        window.add(page);
+        let settings = this.getSettings();
 
-        const group = new Adw.PreferencesGroup({
-            title: _("General"),
-            description: _("Configure the appearance of the extension"),
-        });
-        page.add(group);
+        let generalSettingsPage = new SMGeneralPrefsPage(settings);
+        window.add(generalSettingsPage);
 
-        let widget = new App(this.getSettings());
+        let widgetPositionSettingsPage = new SMWidgetPosPrefsPage(settings);
+        window.add(widgetPositionSettingsPage);
 
-        const scrolledWindow = new Gtk.ScrolledWindow();
-        scrolledWindow.set_policy(Gtk.PolicyType.ALWAYS, Gtk.PolicyType.NEVER);
-        scrolledWindow.set_child(widget.main_vbox);
+        let widgetPreferencesPage = new SMWidgetPrefsPage(settings);
+        window.add(widgetPreferencesPage);
 
-        group.add(scrolledWindow);
+        window.set_title(_('System Monitor Next Preferences'));
+        window.search_enabled = true;
+        window.set_default_size(645, 715);
     }
 }

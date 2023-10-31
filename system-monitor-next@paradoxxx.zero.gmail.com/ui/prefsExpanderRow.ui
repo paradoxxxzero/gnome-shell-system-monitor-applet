@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="system-monitor">
+  <template class="SMExpanderRow" parent="AdwExpanderRow">
+    <property name="title" translatable="yes">Name</property>
+      <child>
+        <object class="AdwSwitchRow" id="display">
+          <property name="title" translatable="yes">Display</property>
+        </object>
+      </child>
+      <child>
+        <object class="AdwSwitchRow" id="show_menu">
+          <property name="title" translatable="yes">Show in Menu</property>
+        </object>
+      </child>
+      <child>
+        <object class="AdwSwitchRow" id="show_text">
+          <property name="title" translatable="yes">Show Text</property>
+        </object>
+      </child>
+      <child>
+        <object class="AdwComboRow" id="style">
+          <property name="title" translatable="yes">Display Style</property>
+          <property name="model">
+            <object class="GtkStringList">
+              <items>
+                <item translatable="yes">digit</item>
+                <item translatable="yes">graph</item>
+                <item translatable="yes">both</item>
+              </items>
+            </object>
+          </property>
+        </object>
+      </child>
+      <child>
+        <object class="AdwSpinRow" id="graph_width">
+          <property name="title" translatable="yes">Graph Width</property>
+          <property name="numeric">true</property>
+          <property name="update-policy">if-valid</property>
+          <property name="adjustment">
+            <object class="GtkAdjustment">
+              <property name="lower">1</property>
+              <property name="upper">1000</property>
+              <property name="value">0</property>
+              <property name="step_increment">1</property>
+              <property name="page-increment">10</property>
+            </object>
+          </property>
+        </object>
+      </child>
+      <child>
+        <object class="AdwSpinRow" id="refresh_time">
+          <property name="title" translatable="yes">Refresh Time</property>
+          <property name="numeric">true</property>
+          <property name="update-policy">if-valid</property>
+          <property name="adjustment">
+            <object class="GtkAdjustment">
+              <property name="lower">0</property>
+              <property name="upper">100000</property>
+              <property name="value">0</property>
+              <property name="step_increment">1000</property>
+              <property name="page-increment">5000</property>
+            </object>
+          </property>
+        </object>
+      </child>
+  </template>
+</interface>
+

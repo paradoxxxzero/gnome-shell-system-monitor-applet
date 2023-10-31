@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="system-monitor">
+  <template class="SMGeneralPrefsPage" parent="AdwPreferencesPage">
+    <property name="name">general-settings-page</property>
+    <property name="title" translatable="yes">General</property>
+    <property name="icon-name">folder-symbolic</property>
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">Configure the appearance of the extension</property>
+        <!-- <property name="description" translatable="yes">Configure the appearance of the extension</property> -->
+        <child>
+          <object class="AdwActionRow">
+            <property name="title" translatable="yes">Background Color</property>
+            <child>
+              <object class="GtkColorDialogButton" id="background">
+                <property name="valign">center</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="icon_display">
+            <property name="title" translatable="yes">Display Icon</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="show_tooltip">
+            <property name="title" translatable="yes">Show tooltip</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="move_clock">
+            <property name="title" translatable="yes">Move the clock</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="compact_display">
+            <property name="title" translatable="yes">Compact Display</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="center_display">
+            <property name="title" translatable="yes">Display in the Middle</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSpinRow" id="tooltip_delay_ms">
+            <property name="title" translatable="yes">Tooltip delay</property>
+            <property name="numeric">true</property>
+            <property name="update-policy">if-valid</property>
+            <property name="adjustment">
+              <object class="GtkAdjustment">
+                <property name="lower">0</property>
+                <property name="upper">100000</property>
+                <property name="value">0</property>
+                <property name="step_increment">50</property>
+                <property name="page-increment">1000</property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

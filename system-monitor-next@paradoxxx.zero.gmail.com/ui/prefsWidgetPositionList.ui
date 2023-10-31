@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="system-monitor">
+  <template class="SMWidgetPosPrefsListBox" parent="GtkListBox">
+    <property name="selection-mode">none</property>
+    <property name="show-separators">True</property>
+    <style>
+        <class name="boxed-list"/>
+    </style>
+  </template>
+</interface>

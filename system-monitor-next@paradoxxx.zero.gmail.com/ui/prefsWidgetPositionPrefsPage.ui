@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="system-monitor">
+  <template class="SMWidgetPosPrefsPage" parent="AdwPreferencesPage">
+    <property name="name">widget_position_settings_page</property>
+    <property name="title" translatable="yes">Widget Position</property>
+    <property name="icon-name">folder-symbolic</property>
+    <child>
+      <object class="AdwPreferencesGroup" id="widget_position_group">
+        <property name="title" translatable="yes">Configure the widget position</property>
+        <property name="description" translatable="yes">Simply use drag and drop to order the items.</property>
+      </object>
+    </child>
+  </template>
+</interface>

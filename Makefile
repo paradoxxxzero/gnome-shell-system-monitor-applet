@@ -155,6 +155,8 @@ PHONY += build build.clean
 build: translate
 	$(Q)mkdir -p _build
 	$(Q)cp $(VV) $(BASE_MODULES) _build
+	$(Q)mkdir -p _build/ui
+	$(Q)cp $(VV) -r $(UUID)/ui/* _build/ui/
 	$(Q)mkdir -p _build/locale
 	$(Q)cp $(VV) -r $(UUID)/locale/* _build/locale/
 	$(Q)mkdir -p _build/schemas

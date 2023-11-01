@@ -538,7 +538,7 @@ const SMExpanderRow = GObject.registerClass({
                 if (_slist.length === 0)
                     stringListModel.append(_('Please install lm-sensors'));
                 else if (_slist.length === 1)
-                    this.settings.set_string('thermal-sensor-file', _slist[0]);
+                    this._settings.set_string('thermal-sensor-file', _slist[0]);
 
                 _strlist.forEach(str => {
                     stringListModel.append(str);
@@ -596,7 +596,7 @@ const SMExpanderRow = GObject.registerClass({
                 if (_slist.length === 0)
                     stringListModel.append(_('Please install lm-sensors'));
                 else if (_slist.length === 1)
-                    this.settings.set_string('fan-sensor-file', _slist[0]);
+                    this._settings.set_string('fan-sensor-file', _slist[0]);
 
                 _strlist.forEach(str => {
                     stringListModel.append(str);

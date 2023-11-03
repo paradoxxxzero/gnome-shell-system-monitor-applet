@@ -36,7 +36,6 @@ import * as ModalDialog from "resource:///org/gnome/shell/ui/modalDialog.js";
 import * as ExtensionSystem from "resource:///org/gnome/shell/ui/extensionSystem.js";
 
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
-import * as Panel from "resource:///org/gnome/shell/ui/panel.js";
 import * as PanelMenu from "resource:///org/gnome/shell/ui/panelMenu.js";
 import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 
@@ -44,6 +43,8 @@ import * as Util from "resource:///org/gnome/shell/misc/util.js";
 
 const NetworkManager = NM;
 const UPower = UPowerGlib;
+// Copied as of https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/5fa08fe53376f5dca755360bd005a4a51ca78917/js/ui/panel.js#L45
+const PANEL_ICON_SIZE = 16;
 
 let smDepsGtop = true;
 let smDepsNM = true;
@@ -1154,8 +1155,10 @@ const Battery = class SystemMonitor_Battery extends ElementBase {
                 this.icon_hidden = true;
             }
         } else if (this.icon_hidden) {
-            let Indicator = new Panel.PANEL_ITEM_IMPLEMENTATIONS.battery();
-            Main.panel.addToStatusArea('battery', Indicator, Main.sessionMode.panel.right.indexOf('battery'), 'right');
+            // TODO: Figure out what to put here instead
+            // (git blame for more info)
+            // let Indicator = new Panel.PANEL_ITEM_IMPLEMENTATIONS.battery();
+            // Main.panel.addToStatusArea('battery', Indicator, Main.sessionMode.panel.right.indexOf('battery'), 'right');
             this.icon_hidden = false;
             // Main.panel._updatePanel('right');
         }
@@ -2358,7 +2361,7 @@ export default class SystemMonitorExtension extends Extension {
             this._Locale = this._Locale.split('_')[0];
         }
 
-        this._IconSize = Math.round(Panel.PANEL_ICON_SIZE * 4 / 5);
+        this._IconSize = Math.round(PANEL_ICON_SIZE * 4 / 5);
 
         this._Schema = this.getSettings();
 

@@ -40,7 +40,7 @@ def main(username, password, zipball_path):
     # submit new build
     ipt_source = driver.find_by_css('input#id_source')
     ipt_source.send_keys(zipball_path)
-    driver.find_by_css('#id_gplv2_compliant').click()
+    driver.find_by_css('#id_shell_license_compliant').click()
     driver.find_by_css('#id_tos_compliant').click()
     print("Submitting extension form")
     driver.find_by_css('#container button[type=submit]').click()

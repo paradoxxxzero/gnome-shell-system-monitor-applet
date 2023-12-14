@@ -463,9 +463,16 @@ const smMountsMonitor = class SystemMonitor_smMountsMonitor {
     }
     is_sys_mount(mpath) {
         let file = Gio.file_new_for_path(mpath);
-        let info = file.query_info(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT,
-            Gio.FileQueryInfoFlags.NONE, null);
-        return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+        try {
+            let info = file.query_info(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT,
+                Gio.FileQueryInfoFlags.NONE, null);
+            return info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_UNIX_IS_MOUNTPOINT);
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND)) {
+                return false;
+            }
+            throw e;
+        }
     }
     is_ro_mount(mount) {
         // FIXME: running this function after "login after waking from suspend"

@@ -262,26 +262,26 @@ gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n\
             super({styleClass: 'prompt-dialog'});
             let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
                                                    vertical: false});
-            this.contentLayout.add(mainContentBox,
+            this.contentLayout.add_child(mainContentBox,
                                    {x_fill: true,
                                     y_fill: true});
 
             let messageBox = new St.BoxLayout({style_class: 'prompt-dialog-message-layout',
                                                vertical: true});
-            mainContentBox.add(messageBox,
+            mainContentBox.add_child(messageBox,
                                {y_align: St.Align.START});
 
             this._subjectLabel = new St.Label({style_class: 'prompt-dialog-headline',
                                                text: _('System Monitor Extension')});
 
-            messageBox.add(this._subjectLabel,
+            messageBox.add_child(this._subjectLabel,
                            {y_fill: false,
                             y_align: St.Align.START});
 
             this._descriptionLabel = new St.Label({style_class: 'prompt-dialog-description',
                                                    text: MESSAGE});
 
-            messageBox.add(this._descriptionLabel,
+            messageBox.add_child(this._descriptionLabel,
                            {y_fill: true,
                             y_align: St.Align.START});
 
@@ -715,7 +715,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         //     this._boxGetPreferredWidth).bind(this);
         // this.actor.connect('get-preferred-height',
         //     this._boxGetPreferredHeight.bind(this));
-        this.actor.add_actor(this.box);
+        this.actor.add_child(this.box);
     }
     // _boxGetPreferredWidth (actor, forHeight, alloc) {
     //     // let columnWidths = this.getColumnWidths();
@@ -798,7 +798,7 @@ const TipBox = class SystemMonitor_TipBox {
         }
         this.tipmenu = tipmenu;
         if (this.tipmenu) {
-            Main.uiGroup.add_actor(this.tipmenu.actor);
+            Main.uiGroup.add_child(this.tipmenu.actor);
             this.hide_tip();
         }
     }
@@ -943,15 +943,15 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
         Schema.connect('changed::' + this.elt + '-show-menu', change_menu.bind(this));
 
-        this.actor.add_actor(this.label);
+        this.actor.add_child(this.label);
         this.text_box = new St.BoxLayout();
 
-        this.actor.add_actor(this.text_box);
+        this.actor.add_child(this.text_box);
         this.text_items = this.create_text_items();
         for (let item in this.text_items) {
-            this.text_box.add_actor(this.text_items[item]);
+            this.text_box.add_child(this.text_items[item]);
         }
-        this.actor.add_actor(this.chart.actor);
+        this.actor.add_child(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', change_style.bind(this));
         this.menu_items = this.create_menu_items();
@@ -986,12 +986,12 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         for (let i = 0; i < this.color_name.length; i++) {
             let tipline = new TipItem();
             this.tipmenu.addMenuItem(tipline);
-            tipline.actor.add(new St.Label({text: _(this.color_name[i])}));
+            tipline.actor.add_child(new St.Label({text: _(this.color_name[i])}));
             this.tip_labels[i] = new St.Label({text: ''});
-            tipline.actor.add(this.tip_labels[i]);
+            tipline.actor.add_child(this.tip_labels[i]);
 
             this.tip_unit_labels[i] = new St.Label({text: unit[i]});
-            tipline.actor.add(this.tip_unit_labels[i]);
+            tipline.actor.add_child(this.tip_unit_labels[i]);
             this.tip_vals[i] = 0;
         }
     }
@@ -2443,8 +2443,8 @@ export default class SystemMonitorExtension extends Extension {
             // The spacing adds a distance between the graphs/text on the top bar
             let spacing = this._Schema.get_boolean('compact-display') ? '1' : '4';
             let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
-            tray.add_actor(box);
-            box.add_actor(this.__sm.icon.actor);
+            tray.add_child(box);
+            box.add_child(this.__sm.icon.actor);
 
             // Need to convert the positionList object into an array
             // (sorted by object key) and then expand out the CPUs list
@@ -2454,13 +2454,13 @@ export default class SystemMonitorExtension extends Extension {
 
             // Add items to panel box
             for (const elt of this.__sm.elts) {
-                box.add_actor(elt.actor);
+                box.add_child(elt.actor);
             }
 
             // Build Menu Info Box Table
             let menu_info = new PopupMenu.PopupBaseMenuItem({reactive: false});
             let menu_info_box = new St.BoxLayout();
-            menu_info.actor.add(menu_info_box);
+            menu_info.actor.add_child(menu_info_box);
             this.__sm.tray.menu.addMenuItem(menu_info, 0);
 
             build_menu_info(this);

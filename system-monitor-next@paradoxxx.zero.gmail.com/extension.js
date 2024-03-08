@@ -2448,7 +2448,7 @@ export default class SystemMonitorExtension extends Extension {
 
             if (this._Schema.get_boolean('move-clock')) {
                 let dateMenu = Main.panel.statusArea.dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.container);
+                Main.panel._centerBox.remove_child(dateMenu.container);
                 Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
                 tray.clockMoved = true;
             }
@@ -2548,7 +2548,7 @@ export default class SystemMonitorExtension extends Extension {
         // restore clock
         if (this.__sm.tray.clockMoved) {
             let dateMenu = Main.panel.statusArea.dateMenu;
-            Main.panel._rightBox.remove_actor(dateMenu.container);
+            Main.panel._rightBox.remove_child(dateMenu.container);
             Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
         }
         // restore system power icon if necessary

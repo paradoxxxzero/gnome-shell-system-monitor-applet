@@ -346,7 +346,12 @@ const Chart = class SystemMonitor_Chart {
             max = Math.max.apply(this, this.data[this.data.length - 1]);
             max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
         }
-        Clutter.cairo_set_source_color(cr, this.extension._Background);
+        // GNOME 46 removed Clutter.cairo_set_source_color
+        if (Clutter.cairo_set_source_color)
+            Clutter.cairo_set_source_color(cr, this.extension._Background);
+        else
+            cr.setSourceColor(this.extension._Background);
+
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.parentC.colors.length - 1; i >= 0; i--) {
@@ -367,7 +372,11 @@ const Chart = class SystemMonitor_Chart {
                 cr.lineTo(x, (1 - this.data[i][0] / max) * height);
                 cr.lineTo(x, height);
                 cr.closePath();
-                Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
+                if (Clutter.cairo_set_source_color)
+                    Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
+                else
+                    cr.setSourceColor(this.parentC.colors[i]);
+
                 cr.fill();
             }
         }
@@ -603,7 +612,11 @@ const Bar = class SystemMonitor_Bar extends Graph {
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
-            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            // GNOME 46 removed Clutter.cairo_set_source_color
+            if (Clutter.cairo_set_source_color)
+                Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            else
+                cr.setSourceColor(this.colors[mount % this.colors.length]);
 
             let text = this.mounts[mount];
             if (text.length > 10) {
@@ -669,7 +682,12 @@ const Pie = class SystemMonitor_Pie extends Graph {
         let r = (height - ring_width) / 2;
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
-            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            // GNOME 46 removed Clutter.cairo_set_source_color
+            if (Clutter.cairo_set_source_color)
+                Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            else
+                cr.setSourceColor(this.colors[mount % this.colors.length]);
+
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
             cr.stroke();
             r -= ring_width;

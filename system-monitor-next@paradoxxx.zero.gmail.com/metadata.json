@@ -1,5 +1,5 @@
 {
-    "shell-version": ["45"],
+    "shell-version": ["45","46"],
     "uuid": "system-monitor-next@paradoxxx.zero.gmail.com",
     "name": "system-monitor-next",
     "url": "https://github.com/mgalgs/gnome-shell-system-monitor-applet",

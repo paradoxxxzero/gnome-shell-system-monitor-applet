@@ -31,8 +31,6 @@ import UPowerGlib from "gi://UPowerGlib";
 import GTop from "gi://GTop";
 import NM from "gi://NM";
 
-import * as ModalDialog from "resource:///org/gnome/shell/ui/modalDialog.js";
-
 import * as ExtensionSystem from "resource:///org/gnome/shell/ui/extensionSystem.js";
 
 import * as Main from "resource:///org/gnome/shell/ui/main.js";
@@ -45,9 +43,6 @@ const NetworkManager = NM;
 const UPower = UPowerGlib;
 // Copied as of https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/5fa08fe53376f5dca755360bd005a4a51ca78917/js/ui/panel.js#L45
 const PANEL_ICON_SIZE = 16;
-
-let smDepsGtop = true;
-let smDepsNM = true;
 
 // stale network shares will cause the shell to freeze, enable this with caution
 const ENABLE_NETWORK_DISK_USAGE = false;
@@ -163,6 +158,13 @@ function interesting_mountpoint(mount) {
     return ((mount[0].indexOf('/dev/') === 0 || mount[2].toLowerCase() === 'nfs') && mount[2].toLowerCase() !== 'udf');
 }
 
+// Gnome 45 Clutter.cairo_set_source_color compatibility
+function sm_cairo_set_source_color(cr, bg_color) {
+    if (Clutter.cairo_set_source_color)
+        Clutter.cairo_set_source_color(cr, bg_color);
+    else
+        cr.setSourceColor(bg_color);
+}
 
 const smStyleManager = class SystemMonitor_smStyleManager {
     constructor(extension) {
@@ -245,59 +247,6 @@ const smStyleManager = class SystemMonitor_smStyleManager {
     }
 }
 
-const smDialog = GObject.registerClass(
-    class SystemMonitor_smDialog extends ModalDialog.ModalDialog {
-        constructor(extension) {
-            this.extension = extension;
-
-            const MESSAGE = _('Dependencies Missing\n\
-Please install: \n\
-gnome-system-monitor and libgtop, clutter and Network Manager gir bindings \n\
-\t    on Debian and Ubuntu: gir1.2-gtop-2.0, gir1.2-nm-1.0, gir1.2-clutter-1.0, gnome-system-monitor \n\
-\t    on Fedora: libgtop2-devel, NetworkManager-libnm-devel, gnome-system-monitor \n\
-\t    on Arch: libgtop, networkmanager, gnome-system-monitor\n\
-\t    on openSUSE: typelib-1_0-GTop-2_0, typelib-1_0-NetworkManager-1_0, gnome-system-monitor \n\
-\t    on Mageia 64-bit: lib64gtop-gir2.0, lib64nm-gir1.0, lib64clutter-gir1.0, gnome-system-monitor\n');
-
-            super({styleClass: 'prompt-dialog'});
-            let mainContentBox = new St.BoxLayout({style_class: 'prompt-dialog-main-layout',
-                                                   vertical: false});
-            this.contentLayout.add(mainContentBox,
-                                   {x_fill: true,
-                                    y_fill: true});
-
-            let messageBox = new St.BoxLayout({style_class: 'prompt-dialog-message-layout',
-                                               vertical: true});
-            mainContentBox.add(messageBox,
-                               {y_align: St.Align.START});
-
-            this._subjectLabel = new St.Label({style_class: 'prompt-dialog-headline',
-                                               text: _('System Monitor Extension')});
-
-            messageBox.add(this._subjectLabel,
-                           {y_fill: false,
-                            y_align: St.Align.START});
-
-            this._descriptionLabel = new St.Label({style_class: 'prompt-dialog-description',
-                                                   text: MESSAGE});
-
-            messageBox.add(this._descriptionLabel,
-                           {y_fill: true,
-                            y_align: St.Align.START});
-
-
-            this.setButtons([
-                {
-                    label: _('Cancel'),
-                    action: () => {
-                        this.close();
-                    },
-                    key: Clutter.Escape
-                }
-            ]);
-        }
-    });
-
 const Chart = class SystemMonitor_Chart {
     constructor(extension, width, height, parent) {
         this.extension = extension;
@@ -346,7 +295,7 @@ const Chart = class SystemMonitor_Chart {
             max = Math.max.apply(this, this.data[this.data.length - 1]);
             max = Math.max(1, Math.pow(2, Math.ceil(Math.log(max) / Math.log(2))));
         }
-        Clutter.cairo_set_source_color(cr, this.extension._Background);
+        sm_cairo_set_source_color(cr, this.extension._Background);
         cr.rectangle(0, 0, width, height);
         cr.fill();
         for (let i = this.parentC.colors.length - 1; i >= 0; i--) {
@@ -367,7 +316,7 @@ const Chart = class SystemMonitor_Chart {
                 cr.lineTo(x, (1 - this.data[i][0] / max) * height);
                 cr.lineTo(x, height);
                 cr.closePath();
-                Clutter.cairo_set_source_color(cr, this.parentC.colors[i]);
+                sm_cairo_set_source_color(cr, this.parentC.colors[i]);
                 cr.fill();
             }
         }
@@ -603,7 +552,7 @@ const Bar = class SystemMonitor_Bar extends Graph {
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
             let perc_full = (this.gtop.blocks - this.gtop.bfree) / this.gtop.blocks;
-            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            sm_cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
 
             let text = this.mounts[mount];
             if (text.length > 10) {
@@ -669,7 +618,7 @@ const Pie = class SystemMonitor_Pie extends Graph {
         let r = (height - ring_width) / 2;
         for (let mount in this.mounts) {
             GTop.glibtop_get_fsusage(this.gtop, this.mounts[mount]);
-            Clutter.cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
+            sm_cairo_set_source_color(cr, this.colors[mount % this.colors.length]);
             arc(r, this.gtop.blocks - this.gtop.bfree, this.gtop.blocks, -pi / 2);
             cr.stroke();
             r -= ring_width;
@@ -715,7 +664,7 @@ const TipMenu = class SystemMonitor_TipMenu extends PopupMenu.PopupMenuBase {
         //     this._boxGetPreferredWidth).bind(this);
         // this.actor.connect('get-preferred-height',
         //     this._boxGetPreferredHeight.bind(this));
-        this.actor.add_actor(this.box);
+        this.actor.add_child(this.box);
     }
     // _boxGetPreferredWidth (actor, forHeight, alloc) {
     //     // let columnWidths = this.getColumnWidths();
@@ -798,7 +747,7 @@ const TipBox = class SystemMonitor_TipBox {
         }
         this.tipmenu = tipmenu;
         if (this.tipmenu) {
-            Main.uiGroup.add_actor(this.tipmenu.actor);
+            Main.uiGroup.add_child(this.tipmenu.actor);
             this.hide_tip();
         }
     }
@@ -943,15 +892,15 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         this.menu_visible = Schema.get_boolean(this.elt + '-show-menu');
         Schema.connect('changed::' + this.elt + '-show-menu', change_menu.bind(this));
 
-        this.actor.add_actor(this.label);
+        this.actor.add_child(this.label);
         this.text_box = new St.BoxLayout();
 
-        this.actor.add_actor(this.text_box);
+        this.actor.add_child(this.text_box);
         this.text_items = this.create_text_items();
         for (let item in this.text_items) {
-            this.text_box.add_actor(this.text_items[item]);
+            this.text_box.add_child(this.text_items[item]);
         }
-        this.actor.add_actor(this.chart.actor);
+        this.actor.add_child(this.chart.actor);
         change_style.call(this);
         Schema.connect('changed::' + this.elt + '-style', change_style.bind(this));
         this.menu_items = this.create_menu_items();
@@ -986,12 +935,12 @@ const ElementBase = class SystemMonitor_ElementBase extends TipBox {
         for (let i = 0; i < this.color_name.length; i++) {
             let tipline = new TipItem();
             this.tipmenu.addMenuItem(tipline);
-            tipline.actor.add(new St.Label({text: _(this.color_name[i])}));
+            tipline.actor.add_child(new St.Label({text: _(this.color_name[i])}));
             this.tip_labels[i] = new St.Label({text: ''});
-            tipline.actor.add(this.tip_labels[i]);
+            tipline.actor.add_child(this.tip_labels[i]);
 
             this.tip_unit_labels[i] = new St.Label({text: unit[i]});
-            tipline.actor.add(this.tip_unit_labels[i]);
+            tipline.actor.add_child(this.tip_unit_labels[i]);
             this.tip_vals[i] = 0;
         }
     }
@@ -2377,152 +2326,133 @@ export default class SystemMonitorExtension extends Extension {
 
         this._Background = color_from_string(this._Schema.get_string('background'));
 
-        this.dialogTimeout = null;
         this.menuTimeout = null;
 
-        if (!(smDepsGtop && smDepsNM)) {
-            this.__sm = {
-                smdialog: new smDialog()
-            };
-
-            this.dialogTimeout = GLib.timeout_add_seconds(
-                GLib.PRIORITY_DEFAULT,
-                1,
-                () => {
-                    this.__sm.smdialog.open();
-                    return GLib.SOURCE_REMOVE;
-                });
-        } else {
-            let panel = Main.panel._rightBox;
-            if (this._Schema.get_boolean('center-display')) {
-                panel = Main.panel._centerBox;
-            }
-
-            this._MountsMonitor.connect();
-
-            // Debug
-            this.__sm = {
-                tray: new PanelMenu.Button(0.5),
-                icon: new Icon(this),
-                pie: new Pie(this),
-                bar: new Bar(this),
-                elts: [],
-            };
-
-            // Items to Monitor
-            let tray = this.__sm.tray;
-
-            // Load the preferred position of the displays and insert them in said order.
-            const positionList = {};
-            // CPUs are inserted differently, so cpu-position is stored apart
-            const cpuPosition = this._Schema.get_int('cpu-position');
-            positionList[cpuPosition] = createCpus(this);
-            positionList[this._Schema.get_int('freq-position')] = new Freq(this);
-            positionList[this._Schema.get_int('memory-position')] = new Mem(this);
-            positionList[this._Schema.get_int('swap-position')] = new Swap(this);
-            positionList[this._Schema.get_int('net-position')] = new Net(this);
-            positionList[this._Schema.get_int('disk-position')] = new Disk(this);
-            positionList[this._Schema.get_int('gpu-position')] = new Gpu(this);
-            positionList[this._Schema.get_int('thermal-position')] = new Thermal(this);
-            positionList[this._Schema.get_int('fan-position')] = new Fan(this);
-            // See TODO inside Battery
-            // positionList[this._Schema.get_int('battery-position')] = new Battery(this);
-
-            if (this._Schema.get_boolean('move-clock')) {
-                let dateMenu = Main.panel.statusArea.dateMenu;
-                Main.panel._centerBox.remove_actor(dateMenu.container);
-                Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
-                tray.clockMoved = true;
-            }
-
-            this._Schema.connect('changed::background', (schema, key) => {
-                this._Background = color_from_string(this._Schema.get_string(key));
-            });
-            Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
-
-            // The spacing adds a distance between the graphs/text on the top bar
-            let spacing = this._Schema.get_boolean('compact-display') ? '1' : '4';
-            let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
-            tray.add_actor(box);
-            box.add_actor(this.__sm.icon.actor);
-
-            // Need to convert the positionList object into an array
-            // (sorted by object key) and then expand out the CPUs list
-            const sortedPLEntries = Object.entries(positionList).sort((a, b) => a[0] - b[0]);
-            const sortedPLValues = sortedPLEntries.map(([key, value]) => value);
-            this.__sm.elts = sortedPLValues.flat();
-
-            // Add items to panel box
-            for (const elt of this.__sm.elts) {
-                box.add_actor(elt.actor);
-            }
-
-            // Build Menu Info Box Table
-            let menu_info = new PopupMenu.PopupBaseMenuItem({reactive: false});
-            let menu_info_box = new St.BoxLayout();
-            menu_info.actor.add(menu_info_box);
-            this.__sm.tray.menu.addMenuItem(menu_info, 0);
-
-            build_menu_info(this);
-
-            tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-            let pie_item = this.__sm.pie;
-            pie_item.create_menu_item();
-            tray.menu.addMenuItem(pie_item.menu_item);
-
-            let bar_item = this.__sm.bar;
-            bar_item.create_menu_item();
-            tray.menu.addMenuItem(bar_item.menu_item);
-
-            change_usage(this);
-            this._Schema.connect('changed::disk-usage-style', change_usage);
-
-            tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-
-            tray.menu.connect(
-                'open-state-changed',
-                (menu, isOpen) => {
-                    if (isOpen) {
-                        this.__sm.pie.actor.queue_repaint();
-
-                        this.menuTimeout = GLib.timeout_add_seconds(
-                            GLib.PRIORITY_DEFAULT,
-                            5,
-                            () => {
-                                this.__sm.pie.actor.queue_repaint();
-                                return GLib.SOURCE_CONTINUE;
-                            });
-                    } else {
-                        GLib.Source.remove(this.menuTimeout);
-                    }
-                }
-            );
-
-            let _appSys = Shell.AppSystem.get_default();
-            let _gsmApp = _appSys.lookup_app('org.gnome.SystemMonitor.desktop') || _appSys.lookup_app('gnome-system-monitor.desktop');
-
-            let item;
-            item = new PopupMenu.PopupMenuItem(_('System Monitor...'));
-            item.connect('activate', () => {
-                _gsmApp.activate();
-            });
-            tray.menu.addMenuItem(item);
-
-            item = new PopupMenu.PopupMenuItem(_('Preferences...'));
-            item.connect('activate', () => {
-                this.openPreferences();
-            });
-            tray.menu.addMenuItem(item);
-            Main.panel.menuManager.addMenu(tray.menu);
+        let panel = Main.panel._rightBox;
+        if (this._Schema.get_boolean('center-display')) {
+            panel = Main.panel._centerBox;
         }
+
+        this._MountsMonitor.connect();
+
+        // Debug
+        this.__sm = {
+            tray: new PanelMenu.Button(0.5),
+            icon: new Icon(this),
+            pie: new Pie(this),
+            bar: new Bar(this),
+            elts: [],
+        };
+
+        // Items to Monitor
+        let tray = this.__sm.tray;
+
+        // Load the preferred position of the displays and insert them in said order.
+        const positionList = {};
+        // CPUs are inserted differently, so cpu-position is stored apart
+        const cpuPosition = this._Schema.get_int('cpu-position');
+        positionList[cpuPosition] = createCpus(this);
+        positionList[this._Schema.get_int('freq-position')] = new Freq(this);
+        positionList[this._Schema.get_int('memory-position')] = new Mem(this);
+        positionList[this._Schema.get_int('swap-position')] = new Swap(this);
+        positionList[this._Schema.get_int('net-position')] = new Net(this);
+        positionList[this._Schema.get_int('disk-position')] = new Disk(this);
+        positionList[this._Schema.get_int('gpu-position')] = new Gpu(this);
+        positionList[this._Schema.get_int('thermal-position')] = new Thermal(this);
+        positionList[this._Schema.get_int('fan-position')] = new Fan(this);
+        // See TODO inside Battery
+        // positionList[this._Schema.get_int('battery-position')] = new Battery(this);
+
+        if (this._Schema.get_boolean('move-clock')) {
+            let dateMenu = Main.panel.statusArea.dateMenu;
+            Main.panel._centerBox.remove_child(dateMenu.container);
+            Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
+            tray.clockMoved = true;
+        }
+
+        this._Schema.connect('changed::background', (schema, key) => {
+            this._Background = color_from_string(this._Schema.get_string(key));
+        });
+        Main.panel._addToPanelBox('system-monitor', tray, 1, panel);
+
+        // The spacing adds a distance between the graphs/text on the top bar
+        let spacing = this._Schema.get_boolean('compact-display') ? '1' : '4';
+        let box = new St.BoxLayout({style: 'spacing: ' + spacing + 'px;'});
+        tray.add_child(box);
+        box.add_child(this.__sm.icon.actor);
+
+        // Need to convert the positionList object into an array
+        // (sorted by object key) and then expand out the CPUs list
+        const sortedPLEntries = Object.entries(positionList).sort((a, b) => a[0] - b[0]);
+        const sortedPLValues = sortedPLEntries.map(([key, value]) => value);
+        this.__sm.elts = sortedPLValues.flat();
+
+        // Add items to panel box
+        for (const elt of this.__sm.elts) {
+            box.add_child(elt.actor);
+        }
+
+        // Build Menu Info Box Table
+        let menu_info = new PopupMenu.PopupBaseMenuItem({reactive: false});
+        let menu_info_box = new St.BoxLayout();
+        menu_info.actor.add_child(menu_info_box);
+        this.__sm.tray.menu.addMenuItem(menu_info, 0);
+
+        build_menu_info(this);
+
+        tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        let pie_item = this.__sm.pie;
+        pie_item.create_menu_item();
+        tray.menu.addMenuItem(pie_item.menu_item);
+
+        let bar_item = this.__sm.bar;
+        bar_item.create_menu_item();
+        tray.menu.addMenuItem(bar_item.menu_item);
+
+        change_usage(this);
+        this._Schema.connect('changed::disk-usage-style', change_usage);
+
+        tray.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        tray.menu.connect(
+            'open-state-changed',
+            (menu, isOpen) => {
+                if (isOpen) {
+                    this.__sm.pie.actor.queue_repaint();
+
+                    this.menuTimeout = GLib.timeout_add_seconds(
+                        GLib.PRIORITY_DEFAULT,
+                        5,
+                        () => {
+                            this.__sm.pie.actor.queue_repaint();
+                            return GLib.SOURCE_CONTINUE;
+                        });
+                } else {
+                    GLib.Source.remove(this.menuTimeout);
+                }
+            }
+        );
+
+        let _appSys = Shell.AppSystem.get_default();
+        let _gsmApp = _appSys.lookup_app('org.gnome.SystemMonitor.desktop') || _appSys.lookup_app('gnome-system-monitor.desktop');
+
+        let item;
+        item = new PopupMenu.PopupMenuItem(_('System Monitor...'));
+        item.connect('activate', () => {
+            _gsmApp.activate();
+        });
+        tray.menu.addMenuItem(item);
+
+        item = new PopupMenu.PopupMenuItem(_('Preferences...'));
+        item.connect('activate', () => {
+            this.openPreferences();
+        });
+        tray.menu.addMenuItem(item);
+        Main.panel.menuManager.addMenu(tray.menu);
     }
 
     disable() {
-        if (this.dialogTimeout) {
-            GLib.Source.remove(this.dialogTimeout);
-            this.dialogTimeout = null;
-        }
         if (this.menuTimeout) {
             GLib.Source.remove(this.menuTimeout);
             this.menuTimeout = null;
@@ -2530,7 +2460,7 @@ export default class SystemMonitorExtension extends Extension {
         // restore clock
         if (this.__sm.tray.clockMoved) {
             let dateMenu = Main.panel.statusArea.dateMenu;
-            Main.panel._rightBox.remove_actor(dateMenu.container);
+            Main.panel._rightBox.remove_child(dateMenu.container);
             Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
         }
         // restore system power icon if necessary

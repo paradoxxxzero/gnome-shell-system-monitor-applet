@@ -1,5 +1,10 @@
 ## GNOME Shell system monitor extension
 
+> [!IMPORTANT]
+> This repository has been deprecated in favour of this fork: https://github.com/mgalgs/gnome-shell-system-monitor-next-applet
+>
+> See there for support beyond GNOME Shell 40
+
 [![Build Status](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet.svg?branch=master)](https://travis-ci.com/paradoxxxzero/gnome-shell-system-monitor-applet)
 
 ![screenshot-small](http://i.imgur.com/ka9OA.png)

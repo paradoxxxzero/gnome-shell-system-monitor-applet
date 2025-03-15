@@ -80,6 +80,10 @@ Additionally, rebooting gnome-shell may help (type `Alt + F2` and input `r` in t
 
 * Enable it with `gnome-tweak-tool` or `gnome-shell-extension-tool --enable-extension=system-monitor@paradoxxx.zero.gmail.com`
 
+* On CentOS 7:
+
+      yum install gnome-shell-extension-system-monitor-applet.noarch
+
 #### Manual installation
 
 [Download the ZIP/Tarball](https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet/releases),

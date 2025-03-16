@@ -1501,7 +1501,7 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
         this.last = [0, 0];
         this.usage = [0, 0];
         this.last_time = 0;
-        this.tip_format(_('MiB/s'));
+        this.tip_format(_('MB/s'));  // changed from MiB to MB (space standard)
         this.update();
     }
     update_mounts(mounts) {
@@ -1515,21 +1515,34 @@ const Disk = class SystemMonitor_Disk extends ElementBase {
             let as_r = source.load_contents_finish(result);
             let lines = parse_bytearray(as_r[1]).toString().split('\n');
 
+            let blocks = Gio.file_new_for_path('/sys/block');
+            let list = blocks.enumerate_children('standard::name', 0, null);
+            let disks = [];
+            let disk = null;
+            while (disk = list.next_file(null)) {
+                disks.push(disk.get_name());
+            }
+
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];
                 let entry = line.trim().split(/[\s]+/);
                 if (typeof (entry[1]) === 'undefined') {
                     break;
                 }
-                accum[0] += parseInt(entry[5]);
-                accum[1] += parseInt(entry[9]);
+
+                if (disks.indexOf(entry[2]) != -1) {
+                    // sectors of 512 bytes: / 2048 to get MiB or
+                    //                       * 512 / 1000000 to get MB
+                    accum[0] += parseInt(entry[5]) * 512 / 1000000; // read
+                    accum[1] += parseInt(entry[9]) * 512 / 1000000; // write
+                }
             }
 
-            let time = GLib.get_monotonic_time() / 1000;
-            let delta = (time - this.last_time) / 1000;
+            let time = GLib.get_monotonic_time() / 1000000; // micro to seconds
+            let delta = time - this.last_time;
             if (delta > 0) {
                 for (let i = 0; i < 2; i++) {
-                    this.usage[i] = ((accum[i] - this.last[i]) / delta / 1024 / 8);
+                    this.usage[i] = ((accum[i] - this.last[i]) / delta);
                     this.last[i] = accum[i];
                 }
             }
@@ -2318,8 +2331,8 @@ const Gpu = class SystemMonitor_Gpu extends ElementBase {
             this.vals = [0, 0];
             this.tip_vals = [0, 0];
         } else {
-            // we subtract percentage from memory because we do not want memory to be 
-            // "accumulated" in the chart with utilization; these two measures should be 
+            // we subtract percentage from memory because we do not want memory to be
+            // "accumulated" in the chart with utilization; these two measures should be
             // independent
             this.vals = [this.percentage, this.mem / this.total * 100 - this.percentage];
             this.tip_vals = [Math.round(this.vals[0]), this.mem];
